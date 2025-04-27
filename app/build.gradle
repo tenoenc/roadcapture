@@ -1,10 +1,13 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.devtools.ksp'
+    id 'com.google.gms.google-services'
+    id 'dagger.hilt.android.plugin'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.kotlin.kapt'
-    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
-    id 'dagger.hilt.android.plugin'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+    id 'androidx.navigation.safeargs.kotlin'
 }
 
 android {

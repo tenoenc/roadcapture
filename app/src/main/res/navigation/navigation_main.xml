@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/navigation_main" app:startDestination="@id/loginFragment">
+    <fragment android:id="@+id/loginFragment" android:name="com.tenacy.roadcapture.ui.LoginFragment"
+              android:label="LoginFragment"
+              tools:layout="@layout/fragment_login">
+        <deepLink
+                app:uri="roadcapturenaverauthcallbackscheme://authorities/{authority}?firebaseToken={firebaseToken}&amp;name={name}&amp;profileImage={profileImage}" />
+        <action android:id="@+id/action_login_to_main"
+                app:popUpTo="@id/loginFragment"
+                app:popUpToInclusive="true"
+                app:destination="@id/mainFragment"/>
+    </fragment>
+    <fragment android:id="@+id/mainFragment" android:name="com.tenacy.roadcapture.ui.MainFragment"
+              android:label="MainFragment"
+              tools:layout="@layout/fragment_main"/>
+</navigation>

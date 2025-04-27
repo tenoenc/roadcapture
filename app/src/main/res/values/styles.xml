@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Body_12_R">
+        <item name="android:fontFamily">@font/pretendardjp_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">18dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Body_12_M">
+        <item name="android:fontFamily">@font/pretendardjp_medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">18dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Body_12_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">18dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="Body_13_R">
+        <item name="android:fontFamily">@font/pretendardjp_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">20dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Body_13_M">
+        <item name="android:fontFamily">@font/pretendardjp_medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">20dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Body_13_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">20dp</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="Body_14_R">
+        <item name="android:fontFamily">@font/pretendardjp_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">22dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Body_14_M">
+        <item name="android:fontFamily">@font/pretendardjp_medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">21dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Body_14_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">21dp</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Body_15_R">
+        <item name="android:fontFamily">@font/pretendardjp_regular</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">22dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Body_15_M">
+        <item name="android:fontFamily">@font/pretendardjp_medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">22dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="Body_16_M">
+        <item name="android:fontFamily">@font/pretendardjp_medium</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">24dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Body_16_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">24dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Title_16">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">24dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="Title_18">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">26dp</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="Title_20">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">28dp</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="Title_24">
+        <item name="android:fontFamily">@font/pretendardjp_bold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">34dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+</resources>
