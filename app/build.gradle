@@ -1,0 +1,201 @@
+plugins {
+    id 'com.android.application'
+    id 'com.google.devtools.ksp'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
+    id 'dagger.hilt.android.plugin'
+}
+
+android {
+    namespace 'com.tenacy.roadcapture'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.tenacy.roadcapture"
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            ndk {
+                debugSymbolLevel 'NONE'
+            }
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+        dataBinding true
+    }
+
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
+    configurations {
+        implementation.exclude group: 'org.jetbrains', module: 'annotations'
+    }
+}
+
+dependencies {
+
+    /**
+     * **********************************************************
+     *              Core
+     * **********************************************************
+     */
+    implementation libs.androidx.core.ktx
+
+    /**
+     * **********************************************************
+     *              UI
+     * **********************************************************
+     */
+    implementation libs.androidx.appcompat
+    implementation libs.material
+    implementation libs.androidx.activity
+    implementation libs.androidx.constraintlayout
+    implementation libs.androidx.core.splashscreen
+    implementation libs.flexbox
+    implementation libs.lottie
+//    implementation libs.singledateandtimepicker
+
+    /**
+     * **********************************************************
+     *              Firebase
+     * **********************************************************
+     */
+    implementation platform(libs.firebase.bom)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+    implementation(libs.firebase.auth)
+    implementation libs.firebase.analytics
+
+    /**
+     * **********************************************************
+     *              Authentication
+     * **********************************************************
+     */
+    implementation libs.oauth //네이버
+
+    implementation libs.v2.all //카카오
+    implementation libs.v2.user
+
+    implementation libs.googleid //구글 & 페이스북
+    implementation libs.facebook.android.sdk
+
+    implementation libs.androidx.credentials //Credentials API(사용자 인증 정보)
+    implementation libs.androidx.credentials.play.services.auth
+
+    implementation libs.gms.play.services.auth //Google Service Auth
+
+    /**
+     * **********************************************************
+     *              Reactive Programming
+     * **********************************************************
+     */
+    implementation libs.kotlinx.coroutines.android //Coroutine
+    implementation libs.kotlinx.coroutines.core
+    implementation libs.kotlinx.coroutines.reactive
+    implementation libs.kotlinx.coroutines.rx3
+
+    implementation libs.rxandroid //Rx
+    implementation libs.rxjava
+    implementation libs.rxkotlin
+
+    /**
+     * **********************************************************
+     *              Jetpack Libs
+     * **********************************************************
+     */
+    implementation libs.androidx.navigation.fragment.ktx //Navigation
+    implementation libs.androidx.navigation.ui.ktx
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    implementation libs.androidx.room.rxjava3
+    implementation libs.androidx.room.paging
+    implementation libs.androidx.paging.runtime.ktx
+    ksp libs.androidx.room.compiler
+
+    /**
+     * **********************************************************
+     *              Network
+     * **********************************************************
+     */
+    implementation libs.retrofit // Retrofit
+    implementation libs.adapter.rxjava3
+    implementation libs.converter.gson
+    implementation libs.converter.scalars
+    implementation libs.gson
+    implementation libs.error.prone.annotations
+
+    implementation libs.okhttp // OkHttp3
+    implementation libs.logging.interceptor
+
+    /**
+     * **********************************************************
+     *              Converter(JSON Serialization & Deserialization)
+     * **********************************************************
+     */
+    implementation libs.converter.moshi
+    implementation libs.kotlin.stdlib
+    implementation libs.kotlinx.serialization.json
+
+    /**
+     * **********************************************************
+     *              SharedPreference
+     * **********************************************************
+     */
+    implementation libs.kotpref
+
+    /**
+     * **********************************************************
+     *              Dependency Injection
+     * **********************************************************
+     */
+    implementation libs.hilt.android
+    implementation libs.play.services.location
+    ksp libs.hilt.compiler
+
+    /**
+     * **********************************************************
+     *              Etc
+     * **********************************************************
+     */
+    coreLibraryDesugaring libs.desugar.jdk.libs //De-sugaring
+
+    implementation libs.glide //Glide
+    implementation libs.compiler
+
+    implementation libs.androidx.media3.exoplayer // Media3 dependencies
+    implementation libs.androidx.media3.ui
+    implementation libs.androidx.media3.common
+
+    /**
+     * **********************************************************
+     *              Test
+     * **********************************************************
+     */
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.junit
+    androidTestImplementation libs.androidx.espresso.core
+}
