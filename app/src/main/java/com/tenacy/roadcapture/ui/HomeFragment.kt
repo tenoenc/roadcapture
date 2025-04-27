@@ -1,26 +1,24 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.FragmentMainBinding
+import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.util.launchOnLifecycle
 import com.tenacy.roadcapture.util.mainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class MainFragment: BaseFragment() {
+class HomeFragment: BaseFragment() {
 
-    private var _binding: FragmentMainBinding? = null
+    private var _binding: FragmentHomeBinding? = null
     val binding get() = _binding!!
 
-    private val vm: MainViewModel by viewModels()
+    private val vm: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +26,7 @@ class MainFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentMainBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -39,19 +37,12 @@ class MainFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViews()
         setupObservers()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun setupViews() {
-        val nestedNavHostFragment = childFragmentManager.findFragmentById(R.id.nested_container) as NavHostFragment
-        val nestedNavController = nestedNavHostFragment.navController
-        binding.bottomNav.setupWithNavController(nestedNavController)
     }
 
     private fun setupObservers() {
@@ -62,20 +53,14 @@ class MainFragment: BaseFragment() {
         launchOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
-                    (event as? MainViewEvent)?.let { handleViewEvents(it) }
+                    (event as? HomeViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: MainViewEvent) {
-        when (event) {
-            is MainViewEvent.Logout -> {
-                mainActivity.signOut()
-            }
-            is MainViewEvent.New -> {
-                Log.d("TAG", "New Button Clicked!")
-            }
-        }
+    private fun handleViewEvents(event: HomeViewEvent) {
+//        when (event) {
+//        }
     }
 }

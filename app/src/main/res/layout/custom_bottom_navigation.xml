@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/background_normal"
+            android:paddingTop="2dp"
+            android:paddingBottom="4dp">
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/bn_home"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:paddingHorizontal="56dp"
+                      app:layout_constraintHorizontal_chainStyle="spread_inside"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintEnd_toStartOf="@id/bn_new"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView android:layout_width="24dp"
+                       android:layout_height="24dp"
+                       android:id="@+id/img_bn_home"
+                       android:src="@drawable/ic_home"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/txt_bn_home"
+                      android:includeFontPadding="false"
+                      android:textAppearance="@style/Body_10_M"
+                      android:textColor="@color/label_normal"
+                      android:text="홈"
+                      android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+        <ImageButton android:layout_width="33dp"
+                     android:layout_height="33dp"
+                     android:id="@+id/bn_new"
+                     android:src="@drawable/ic_circle_plus"
+                     android:background="@null"
+                     android:scaleType="fitCenter"
+                     app:layout_constraintStart_toEndOf="@id/bn_home"
+                     app:layout_constraintEnd_toStartOf="@id/bn_my_album"
+                     app:layout_constraintTop_toTopOf="parent"
+                     app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/bn_my_album"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:paddingHorizontal="56dp"
+                      app:layout_constraintStart_toEndOf="@id/bn_new"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView android:layout_width="24dp"
+                       android:layout_height="24dp"
+                       android:id="@+id/img_bn_my_album"
+                       android:src="@drawable/ic_book"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/txt_bn_my_album"
+                      android:includeFontPadding="false"
+                      android:textAppearance="@style/Body_10_M"
+                      android:textColor="@color/label_normal"
+                      android:text="내 앨범"
+                      android:layout_marginTop="2dp"/>
+
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

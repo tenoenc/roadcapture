@@ -19,4 +19,9 @@ sealed class LoginViewEvent: ViewEvent {
 
 sealed class MainViewEvent: ViewEvent {
     data object Logout: MainViewEvent()
+    data object New: MainViewEvent()
 }
+
+sealed class HomeViewEvent: ViewEvent
+
+sealed class MyAlbumViewEvent: ViewEvent

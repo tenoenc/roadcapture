@@ -17,4 +17,10 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    fun onNewClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            viewEvent(MainViewEvent.New)
+        }
+    }
+
 }
