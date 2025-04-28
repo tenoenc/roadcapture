@@ -32,7 +32,7 @@ fun ImageView.showImage(url: String?, bitmap: Bitmap?, uri: Uri?, radius: Int?) 
         .into(this)
 }
 
-private fun buildTransformations(radius: Int?) = MultiTransformation(
+fun buildTransformations(radius: Int?) = MultiTransformation(
     buildList {
         add(CenterCrop())
         radius?.takeIf { it > 0 }?.let {

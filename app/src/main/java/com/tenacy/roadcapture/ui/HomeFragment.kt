@@ -5,11 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.navigation.fragment.NavHostFragment
-import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
-import com.tenacy.roadcapture.util.launchOnLifecycle
-import com.tenacy.roadcapture.util.mainActivity
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -50,7 +47,7 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun observeViewEvents() {
-        launchOnLifecycle {
+        repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
                     (event as? HomeViewEvent)?.let { handleViewEvents(it) }

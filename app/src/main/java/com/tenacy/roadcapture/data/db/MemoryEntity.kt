@@ -23,7 +23,7 @@ data class MemoryEntity(
     val id: Long = 0,
     val content: String,
     val photoUri: Uri,
-    val locationName: String,
+    val locationName: String?,
     val country: String,
     val region: String?,
     val city: String?,

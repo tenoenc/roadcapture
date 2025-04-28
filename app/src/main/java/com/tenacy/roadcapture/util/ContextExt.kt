@@ -10,7 +10,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-fun Fragment.launchOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
+fun Fragment.repeatOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
     viewLifecycleOwner.lifecycleScope.launch(dispatcher) {
         viewLifecycleOwner.repeatOnLifecycle(lifecycleState) {
             block()
@@ -18,9 +18,9 @@ fun Fragment.launchOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Mai
     }
 }
 
-fun AppCompatActivity.launchOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
+fun AppCompatActivity.repeatOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
     lifecycleScope.launch(dispatcher) {
-        repeatOnLifecycle(lifecycleState) {
+        this@repeatOnLifecycle.repeatOnLifecycle(lifecycleState) {
             block()
         }
     }

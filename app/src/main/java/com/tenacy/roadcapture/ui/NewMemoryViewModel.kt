@@ -3,13 +3,22 @@ package com.tenacy.roadcapture.ui
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.tenacy.roadcapture.data.db.LocationDao
+import com.tenacy.roadcapture.data.db.LocationEntity
+import com.tenacy.roadcapture.data.db.MemoryDao
+import com.tenacy.roadcapture.data.db.MemoryEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class NewMemoryViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
+    private val memoryDao: MemoryDao,
+    private val locationDao: LocationDao,
 ) : BaseViewModel() {
 
     val tags: List<String>
@@ -43,14 +52,6 @@ class NewMemoryViewModel @Inject constructor(
         initialValue = EditTextState.Normal,
     )
 
-    fun setContentFocus(hasFocus: Boolean) {
-        _contentFocus.update { hasFocus }
-    }
-
-    fun onContentInputAttempt(currentLength: Int) {
-        _contentInputAttemptOverflow.update{ currentLength >= 20 }
-    }
-
     init {
         photoUri = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
         val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
@@ -62,5 +63,47 @@ class NewMemoryViewModel @Inject constructor(
             placeLocation.district,
             placeLocation.street,
         )
+    }
+
+    fun setContentFocus(hasFocus: Boolean) {
+        _contentFocus.update { hasFocus }
+    }
+
+    fun onContentInputAttempt(currentLength: Int) {
+        _contentInputAttemptOverflow.update{ currentLength >= 20 }
+    }
+
+    fun onNewClick() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentContent = content.value
+            val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
+
+            val locationEntity = LocationEntity(
+                latitude = placeLocation.coordinates.latitude,
+                longitude = placeLocation.coordinates.longitude,
+                createdAt = LocalDateTime.now(),
+            )
+
+            val locationId = locationDao.insert(locationEntity)
+
+            val memoryEntity = MemoryEntity(
+                content = currentContent,
+                photoUri = photoUri,
+                locationName = placeLocation.name,
+                country = placeLocation.country,
+                region = placeLocation.region,
+                city = placeLocation.city,
+                district = placeLocation.district,
+                street = placeLocation.street,
+                details = placeLocation.detail,
+                formattedAddress = placeLocation.formattedAddress,
+                locationId = locationId,
+                createdAt = LocalDateTime.now(),
+            )
+
+            val memoryId = memoryDao.insert(memoryEntity)
+
+            viewEvent(NewMemoryViewEvent.ResultBack(memoryId))
+        }
     }
 }

@@ -11,7 +11,7 @@ import androidx.room.TypeConverters
         MemoryEntity::class,
         LocationEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 @TypeConverters(RoomConverters::class, UriConverter::class)

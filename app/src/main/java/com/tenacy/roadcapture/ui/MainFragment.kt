@@ -10,7 +10,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
-import com.tenacy.roadcapture.util.launchOnLifecycle
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.mainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -72,7 +72,7 @@ class MainFragment: BaseFragment() {
     }
 
     private fun observeViewEvents() {
-        launchOnLifecycle {
+        repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
                     (event as? MainViewEvent)?.let { handleViewEvents(it) }

@@ -67,6 +67,11 @@ class CameraFragment : BaseFragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vm
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,6 +90,12 @@ class CameraFragment : BaseFragment() {
 
         setupCamera()
         setupUI()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        cameraExecutor.shutdown()
+        _binding = null
     }
 
     private fun setupCamera() {
@@ -217,9 +228,9 @@ class CameraFragment : BaseFragment() {
             setCompressionQuality(95)
             setHideBottomControls(false)
             setFreeStyleCropEnabled(false)
-            // 16:9 비율만 선택 가능하도록 설정
+            // 4:3 비율만 선택 가능하도록 설정
             setAspectRatioOptions(0,
-                com.yalantis.ucrop.model.AspectRatio("16:9", 16f, 9f))
+                com.yalantis.ucrop.model.AspectRatio("4:3", 4f, 3f))
             setToolbarTitle("이미지 자르기")
             setToolbarColor(ContextCompat.getColor(requireContext(), android.R.color.black))
             setStatusBarColor(ContextCompat.getColor(requireContext(), android.R.color.black))
@@ -229,7 +240,7 @@ class CameraFragment : BaseFragment() {
 
         val uCrop = UCrop.of(sourceUri, destinationUri)
             .withOptions(options)
-            .withAspectRatio(16f, 9f) // 16:9 비율
+            .withAspectRatio(4f, 3f) // 16:9 비율
 
         cropLauncher.launch(uCrop.getIntent(requireContext()))
     }
@@ -253,12 +264,6 @@ class CameraFragment : BaseFragment() {
         // 카메라 UI 다시 표시
         binding.previewView.visibility = View.VISIBLE
         binding.cameraControlsLayout.visibility = View.VISIBLE
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        cameraExecutor.shutdown()
-        _binding = null
     }
 
     companion object {

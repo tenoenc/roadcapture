@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.data.db
 
 import androidx.room.TypeConverter
+import com.tenacy.roadcapture.util.toLocalDateTime
 import com.tenacy.roadcapture.util.toTimestamp
 import java.time.Instant
 import java.time.LocalDateTime
@@ -11,7 +12,7 @@ class RoomConverters {
 
     @TypeConverter
     fun fromTimestamp(value: Long?): LocalDateTime? {
-        return value?.let { Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDateTime() }
+        return value?.toLocalDateTime()
     }
 
     @TypeConverter

@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -21,14 +22,18 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
-import com.google.android.libraries.places.api.Places
+import com.google.maps.android.PolyUtil
+import com.google.maps.android.clustering.ClusterManager
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
-import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.util.extractLocationData
+import com.tenacy.roadcapture.util.mainActivity
+import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -36,8 +41,9 @@ import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @AndroidEntryPoint
-class TripFragment: BaseFragment(), OnMapReadyCallback {
+class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
 
+    // ===== 1. 속성(Property) 그룹 =====
     private var _binding: FragmentTripBinding? = null
     val binding get() = _binding!!
 
@@ -45,40 +51,48 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
 
     private lateinit var map: GoogleMap
     private var routePolyline: Polyline? = null
-    private val photoMarkers = mutableMapOf<Long, com.google.android.gms.maps.model.Marker>()
 
+    private lateinit var markerRenderer: MarkerClusterRenderer
+    private lateinit var clusterManager: ClusterManager<ClusterMarkerItem>
+    private val clusterItems = mutableMapOf<Long, ClusterMarkerItem>()
+    private var isClusterManagerInitialized = false
+
+    // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
-
         override fun onPermissionGranted() {
             Log.d("TAG", "카메라 권한 허용됨")
+            checkLocationPermission()
         }
 
         override fun onPermissionDenied(p0: MutableList<String>?) {
             Log.d("TAG", "카메라 권한 거부됨")
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
+                vm.stopTraveling()
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("카메라 권한이 없어\n앨범을 만들 수 없습니다", ToastMessageType.Warning)))
-                findNavController().popBackStack()
             }
         }
     }
 
     private val locationPermissionListener = object : PermissionListener {
-
         @SuppressLint("MissingPermission")
         override fun onPermissionGranted() {
             Log.d("TAG", "onPermissionGranted")
+            vm.startTraveling()
             setupMaps()
+            setupObservers()
+            setupClusterManager()
         }
 
         override fun onPermissionDenied(p0: MutableList<String>?) {
             Log.d("TAG", "onPermissionDenied")
-            lifecycleScope.launch {
+            lifecycleScope.launch(Dispatchers.Main) {
+                vm.stopTraveling()
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 권한이 없어\n앨범을 만들 수 없습니다", ToastMessageType.Warning)))
-                findNavController().popBackStack()
             }
         }
     }
 
+    // ===== 3. 라이프사이클 메서드 그룹 =====
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         vm
@@ -86,44 +100,47 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentTripBinding.inflate(inflater, container, false)
-
         binding.vm = vm
         binding.lifecycleOwner = this
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupViews()
-        setupObservers()
+        observeViewEvents()
         setupPermissions()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        routePolyline?.remove()
-        photoMarkers.values.forEach { it.remove() }
-        photoMarkers.clear()
-
         _binding = null
     }
 
+    // ===== 4. 인터페이스 구현 메서드 그룹 =====
     override fun onMapReady(map: GoogleMap) {
         this@TripFragment.map = map
-
-        moveCameraToCurrentLocation(zoom = 30f)
     }
 
+    override fun onClusterItemClick(item: ClusterMarkerItem): Boolean {
+        try {
+            showImageDetailDialog(item)
+            return true // 이벤트 소비
+        } catch (e: Exception) {
+            Log.e("TripFragment", "마커 클릭 처리 오류", e)
+            return false
+        }
+    }
+
+    // ===== 5. 초기 설정 메서드 그룹 =====
     private fun setupViews() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
     private fun setupObservers() {
-        observeViewEvents()
         observeData()
+        observeSavedState()
     }
 
     @SuppressLint("MissingPermission")
@@ -132,78 +149,87 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
         map.uiSettings.isCompassEnabled = false
         map.isMyLocationEnabled = true
 
-        vm.routePoints.value?.let { updateRouteOnMap(it) }
-        vm.markers.value?.let { updatePhotoMarkers(it) }
+        moveCameraToCurrentLocation(zoom = 30f)
 
         setupLocationUpdates()
     }
 
+    private fun setupClusterManager() {
+        if(isClusterManagerInitialized) return
+
+        // 클러스터 매니저 초기화
+        clusterManager = ClusterManager(requireContext(), map)
+
+        // 클러스터 매니저 옵션 설정
+        clusterManager.setAnimation(true)  // 클러스터 애니메이션 활성화
+
+        // 커스텀 렌더러 생성 및 적용
+        markerRenderer = MarkerClusterRenderer(this@TripFragment, map, clusterManager)
+        clusterManager.renderer = markerRenderer
+
+        // 클러스터 아이템 클릭 리스너 설정
+        clusterManager.setOnClusterItemClickListener(this)
+
+        // 클러스터 클릭 리스너 설정
+        clusterManager.setOnClusterClickListener { cluster ->
+            // 클러스터를 클릭했을 때 확대
+            val builder = LatLngBounds.Builder()
+            for (item in cluster.items) {
+                builder.include(item.position)
+            }
+
+            // 해당 위치로 카메라 이동
+            val bounds = builder.build()
+            val padding = resources.displayMetrics.widthPixels / 6 // 패딩 값
+
+            try {
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+                true // 이벤트 소비
+            } catch (e: Exception) {
+                // 드물게 IllegalStateException 발생 가능
+                Log.e("TripFragment", "클러스터 확대 오류", e)
+                false
+            }
+        }
+
+        // 카메라 이동 완료 리스너 설정
+        val mapCameraIdleListener = GoogleMap.OnCameraIdleListener {
+            // 클러스터 관리 처리
+            clusterManager.onCameraIdle()
+
+            // 줌 레벨에 따른 경로 최적화 적용
+            vm.routePoints.value?.let { applyRouteOptimization(it) }
+        }
+
+        // 맵에 리스너 설정
+        map.setOnCameraIdleListener(mapCameraIdleListener)
+        map.setOnMarkerClickListener(clusterManager)
+
+        isClusterManagerInitialized = true
+    }
+
     private fun setupLocationUpdates() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        repeatOnLifecycle {
             while(isActive) {
                 getCurrentLocation()?.let { latLng ->
                     vm.saveCurrentLocation(latLng)
                 }
-                delay(10000)
+                delay(10 * 1000)
             }
         }
-    }
-
-    private fun observeData() {
-        launchOnLifecycle {
-            vm.routePoints.collectLatest { points ->
-                points?.let(::updateRouteOnMap)
-            }
-        }
-        launchOnLifecycle {
-            vm.markers.collectLatest { markers ->
-                markers?.let(::updatePhotoMarkers)
-            }
-        }
-    }
-
-    private fun observeViewEvents() {
-        launchOnLifecycle {
-            vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
-                    (event as? TripViewEvent)?.let { handleViewEvents(it) }
-                }
-            }
-        }
-    }
-
-    private fun handleViewEvents(event: TripViewEvent) {
-        when (event) {
-            is TripViewEvent.ResetCameraPosition -> {
-                // 북쪽 방향으로 맵 회전
-                val cameraPosition = CameraPosition.Builder()
-                    .target(map.cameraPosition.target)
-                    .zoom(map.cameraPosition.zoom)
-                    .bearing(0f)
-                    .build()
-                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-            }
-            is TripViewEvent.ResetCamera -> {
-                moveCameraToCurrentLocation()
-            }
-            is TripViewEvent.Capture -> {
-                lifecycleScope.launch(Dispatchers.IO) {
-                    val location = getCurrentLocation()
-                    // Places API에서 Geocoding API로 변경
-                    val placeLocation = requireContext().extractLocationData(location) ?: return@launch
-                    withContext(Dispatchers.Main) {
-                        findNavController().navigate(TripFragmentDirections.actionTripToCamera(placeLocation))
-                    }
-                }
+        repeatOnLifecycle {
+            while(isActive) {
+                vm.updateDurationText()
+                delay(60 * 1000)
             }
         }
     }
 
     private fun setupPermissions() {
         checkCameraPermission()
-        checkLocationPermission()
     }
 
+    // ===== 6. 권한 처리 메서드 그룹 =====
     private fun checkLocationPermission() =
         TedPermission.create()
             .setPermissionListener(locationPermissionListener)
@@ -226,60 +252,71 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
             .setGotoSettingButtonText("설정")
             .check()
 
-    private fun updateRouteOnMap(routePoints: List<LatLng>) {
-        if (!::map.isInitialized || routePoints.isEmpty()) return
-
-        // 기존 Polyline이 있으면 제거
-        routePolyline?.remove()
-
-        val polylineOptions = PolylineOptions()
-            .addAll(routePoints)
-            .width(4f.toPx.toFloat())
-            .color(ContextCompat.getColor(requireContext(), R.color.primary))
-            .geodesic(true) // 지구 곡률 고려
-
-        routePolyline = map.addPolyline(polylineOptions)
+    // ===== 7. 데이터 관찰 메서드 그룹 =====
+    private fun observeData() {
+        repeatOnLifecycle {
+            vm.routePoints.collectLatest { points ->
+                points?.let(::updateRouteOnMap)
+            }
+        }
+        repeatOnLifecycle {
+            vm.markers.collectLatest { markers ->
+                markers?.let(::updatePhotoMarkers)
+            }
+        }
     }
 
-    private fun updatePhotoMarkers(markers: List<Marker>) {
-        if (!::map.isInitialized) return
+    private fun observeSavedState() {
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            findNavController().currentBackStackEntry?.savedStateHandle
+                ?.getStateFlow<Long?>(KEY_MEMORY_ID, null)?.collect { memoryId ->
+                    if (memoryId == null) return@collect
+                    vm.fetchData()
+                }
+        }
+    }
 
-        val currentMarkerIds = photoMarkers.keys.toMutableSet()
-
-        // 사진이 있는 위치만 마커로 표시
-        for (location in markers) {
-            if (location.photo != null) {
-                val markerId = location.id
-                val position = LatLng(location.latitude, location.longitude)
-
-                if (markerId in photoMarkers) {
-                    // 기존 마커가 있으면 위치만 업데이트 (필요시)
-                    // photoMarkers[markerId]?.position = position
-
-                    // 이미 처리한 마커 ID 집합에서 제거
-                    currentMarkerIds.remove(markerId)
-                } else {
-                    // 새 마커 추가
-                    val markerOptions = MarkerOptions()
-                        .position(position)
-                        .title("사진: ${location.photo.id}")
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-
-                    val marker = map.addMarker(markerOptions)
-                    if (marker != null) {
-                        photoMarkers[markerId] = marker
-                    }
+    private fun observeViewEvents() {
+        repeatOnLifecycle {
+            vm.viewEvent.collect {
+                it?.getContentIfNotHandled()?.let { event ->
+                    (event as? TripViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
+    }
 
-        // 더 이상 필요 없는 마커 제거
-        for (outdatedId in currentMarkerIds) {
-            photoMarkers[outdatedId]?.remove()
-            photoMarkers.remove(outdatedId)
+    // ===== 8. 이벤트 처리 메서드 그룹 =====
+    private fun handleViewEvents(event: TripViewEvent) {
+        when (event) {
+            is TripViewEvent.ResetCameraPosition -> {
+                // 북쪽 방향으로 맵 회전
+                val cameraPosition = CameraPosition.Builder()
+                    .target(map.cameraPosition.target)
+                    .zoom(map.cameraPosition.zoom)
+                    .bearing(0f)
+                    .build()
+                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+            }
+            is TripViewEvent.ResetCamera -> {
+                moveCameraToCurrentLocation()
+            }
+            is TripViewEvent.Capture -> {
+                lifecycleScope.launch(Dispatchers.IO) {
+                    val location = getCurrentLocation()
+                    val placeLocation = requireContext().extractLocationData(location) ?: return@launch
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(TripFragmentDirections.actionTripToCamera(placeLocation))
+                    }
+                }
+            }
+            is TripViewEvent.StopTraveling -> {
+                findNavController().popBackStack()
+            }
         }
     }
 
+    // ===== 9. 지도 컨트롤 메서드 그룹 =====
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation(): LatLng? {
         if (!::map.isInitialized) return null
@@ -300,6 +337,104 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
         }
     }
 
+    // ===== 10. 경로 처리 메서드 그룹 =====
+    private fun updateRouteOnMap(routePoints: List<LatLng>) {
+        if (!::map.isInitialized || routePoints.isEmpty()) return
+
+        // 초기 렌더링에서도 간소화와 LOD 적용
+        applyRouteOptimization(routePoints)
+    }
+
+    private fun applyRouteOptimization(routePoints: List<LatLng>) {
+        if (!::map.isInitialized || routePoints.isEmpty()) return
+
+        // 현재 줌 레벨에 따른 간소화 수준 결정
+        val zoom = map.cameraPosition.zoom
+        val simplificationTolerance = when {
+            zoom >= 18 -> 5.0   // 매우 가까운 줌: 높은 상세도 (적은 간소화)
+            zoom >= 15 -> 10.0  // 가까운 줌: 중간 상세도
+            zoom >= 12 -> 20.0  // 중간 줌: 낮은 상세도
+            zoom >= 9 -> 50.0   // 먼 줌: 매우 낮은 상세도
+            else -> 100.0       // 매우 먼 줌: 극도로 낮은 상세도
+        }
+
+        // 백그라운드에서 좌표점 간소화 처리
+        lifecycleScope.launch(Dispatchers.Default) {
+            // 좌표점 간소화 적용 (Douglas-Peucker 알고리즘)
+            val optimizedPoints = PolyUtil.simplify(routePoints, simplificationTolerance)
+
+            Log.d("RouteOptimization", "원본 포인트: ${routePoints.size}, 간소화 후: ${optimizedPoints.size}")
+
+            // UI 스레드에서 경로 업데이트
+            withContext(Dispatchers.Main) {
+                // 기존 Polyline이 있으면 제거
+                routePolyline?.remove()
+
+                val polylineOptions = PolylineOptions()
+                    .addAll(optimizedPoints)
+                    .width(4f.toPx.toFloat())
+                    .color(ContextCompat.getColor(requireContext(), R.color.primary))
+                    .geodesic(true)
+
+                routePolyline = map.addPolyline(polylineOptions)
+            }
+        }
+    }
+
+    // ===== 11. 마커 처리 메서드 그룹 =====
+    private fun updatePhotoMarkers(markers: List<Marker>) {
+        if (!::map.isInitialized || !::clusterManager.isInitialized) return
+
+        val currentMarkerIds = clusterItems.keys.toMutableSet()
+        val updatedItems = mutableSetOf<Long>()
+
+        // Process markers with photos
+        for (location in markers) {
+            if (location.photo != null) {
+                val markerId = location.id
+                val position = LatLng(location.latitude, location.longitude)
+                updatedItems.add(markerId)
+
+                if (markerId !in clusterItems) {
+                    // Create new cluster item for new markers
+                    createPhotoClusterItem(markerId, position, location.photo.photoUri)
+                }
+            }
+        }
+
+        // Remove markers that are no longer needed
+        val markersToRemove = currentMarkerIds - updatedItems
+        for (markerId in markersToRemove) {
+            clusterItems[markerId]?.let { clusterManager.removeItem(it) }
+            clusterItems.remove(markerId)
+        }
+
+        // Update the cluster
+        clusterManager.cluster()
+    }
+
+    private fun createPhotoClusterItem(markerId: Long, position: LatLng, photoUri: Uri) {
+        try {
+            // Create cluster item
+            val clusterItem = ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri)
+
+            // Add to cluster manager
+            clusterManager.addItem(clusterItem)
+            clusterItems[markerId] = clusterItem
+        } catch (e: Exception) {
+            Log.e("TripFragment", "Error creating photo cluster item", e)
+        }
+    }
+
+    private fun showImageDetailDialog(item: ClusterMarkerItem) {
+        lifecycleScope.launch {
+            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
+                ToastModel("사진 ID: ${item.id} 클릭됨", ToastMessageType.Info)
+            ))
+        }
+    }
+
+    // ===== 12. 데이터 클래스 및 상수 정의 그룹 =====
     @Parcelize
     data class Marker(
         val id: Long,
@@ -316,7 +451,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
         ): Parcelable
 
         companion object {
-
             fun of(dto: MemoryWithLocation) = Marker(
                 dto.location.id,
                 dto.location.latitude,
@@ -340,7 +474,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
     @Parcelize
     data class PlaceLocation(
         val placeId: String,
-        val name: String,                 // 장소/명소 이름
+        val name: String?,                 // 장소/명소 이름
         val country: String,              // 국가
         val region: String?,              // 지역/주/도
         val city: String?,                // 도시
@@ -350,4 +484,8 @@ class TripFragment: BaseFragment(), OnMapReadyCallback {
         val formattedAddress: String,     // 형식화된 전체 주소
         val coordinates: LatLng           // 좌표
     ): Parcelable
+
+    companion object {
+        const val KEY_MEMORY_ID = "memory_id"
+    }
 }

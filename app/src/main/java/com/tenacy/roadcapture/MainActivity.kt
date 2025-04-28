@@ -14,7 +14,7 @@ import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.MyToast
 import com.tenacy.roadcapture.ui.ToastMessageType
 import com.tenacy.roadcapture.util.currentFragment
-import com.tenacy.roadcapture.util.launchOnLifecycle
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.navController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observeViewEventState() {
-        launchOnLifecycle {
+        repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
                     (event as? GlobalViewEvent)?.let { handleViewEvents(it) }

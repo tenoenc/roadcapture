@@ -1,15 +1,16 @@
 package com.tenacy.roadcapture.ui
 
 import android.location.Location
-import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.tenacy.roadcapture.BuildConfig
-import com.tenacy.roadcapture.data.db.*
+import com.tenacy.roadcapture.data.db.LocationDao
+import com.tenacy.roadcapture.data.db.LocationEntity
+import com.tenacy.roadcapture.data.db.MemoryDao
+import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.ui.TripFragment.Marker
-import com.tenacy.roadcapture.util.RetrofitInstance
+import com.tenacy.roadcapture.util.toDurationFormattedText
+import com.tenacy.roadcapture.util.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -25,6 +26,9 @@ class TripViewModel @Inject constructor(
 
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
     private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
+
+    private val _durationText = MutableStateFlow<String?>(null)
+    val durationText = _durationText.asStateFlow()
 
     val markers = combine(_locations, _memories) { locations, memories ->
         val memoryByLocationId = memories.associateBy { it.location.id }
@@ -44,12 +48,10 @@ class TripViewModel @Inject constructor(
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    val albumCreatedAt = Album.createdAt
-
     private val _lastSavedLocation = MutableStateFlow<LatLng?>(null)
 
     init {
-        loadData()
+        fetchData()
         observeData()
     }
 
@@ -59,7 +61,7 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    private fun loadData() {
+    fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.selectAll()
             val memories = memoryDao.selectAll()
@@ -75,7 +77,28 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    fun isAlbumCreated() = Album.createdAt > 0L
+    fun startTraveling() {
+        if(Album.createdAt == 0L) {
+            Album.createdAt = LocalDateTime.now().toTimestamp()
+        }
+        updateDurationText()
+    }
+
+    fun updateDurationText() {
+        val duration = LocalDateTime.now().toTimestamp() - Album.createdAt
+        _durationText.update { duration.toDurationFormattedText() }
+    }
+
+    fun stopTraveling() {
+        viewModelScope.launch(Dispatchers.IO) {
+            Album.clear()
+            memoryDao.clear()
+            locationDao.clear()
+            _durationText.update { null }
+
+            viewEvent(TripViewEvent.StopTraveling)
+        }
+    }
 
     fun saveCurrentLocation(latLng: LatLng) {
         viewModelScope.launch(Dispatchers.IO) {

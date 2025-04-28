@@ -20,7 +20,6 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.tenacy.roadcapture.BuildConfig
-import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
@@ -28,7 +27,7 @@ import com.tenacy.roadcapture.auth.NaverOAuthLoginCallback
 import com.tenacy.roadcapture.databinding.FragmentLoginBinding
 import com.tenacy.roadcapture.util.TagConstants
 import com.tenacy.roadcapture.util.auth
-import com.tenacy.roadcapture.util.launchOnLifecycle
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -104,7 +103,7 @@ class LoginFragment: BaseFragment() {
     }
 
     private fun observeViewEvents() {
-        launchOnLifecycle {
+        repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
                     (event as? LoginViewEvent)?.let { handleViewEvents(it) }

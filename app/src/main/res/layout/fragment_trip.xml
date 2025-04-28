@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable name="vm" type="com.tenacy.roadcapture.ui.TripViewModel"/>
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_trip_container"
@@ -20,10 +22,67 @@
                   app:layout_constraintBottom_toBottomOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>
 
+        <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                           android:layout_height="wrap_content"
+                                                           android:layout_marginStart="20dp"
+                                                           android:layout_marginTop="20dp"
+                                                           app:cardBackgroundColor="#7F80F0D4"
+                                                           app:cardCornerRadius="100dp"
+                                                           app:cardElevation="0dp"
+                                                           app:strokeWidth="0dp"
+                                                           app:contentPaddingRight="8dp"
+                                                           app:contentPaddingLeft="8dp"
+                                                           app:contentPaddingBottom="4dp"
+                                                           app:contentPaddingTop="4dp"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:gravity="center"
+                          android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}">
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_20"
+                          android:textColor="@color/label_neutral"
+                          android:text="@{vm.durationText}"
+                          tools:text="15시간 24분"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginStart="2dp"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_neutral"
+                          android:text="여행중"/>
+
+
+                <ImageView android:layout_width="14dp"
+                           android:layout_height="14dp"
+                           android:layout_marginStart="2dp"
+                           android:src="@drawable/ic_circle_help"/>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <ImageButton android:layout_width="36dp"
+                     android:layout_height="36dp"
+                     android:background="@null"
+                     android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}"
+                     android:src="@drawable/ic_circle_check"
+                     android:scaleType="fitCenter"
+                     android:layout_marginTop="20dp"
+                     android:layout_marginEnd="20dp"
+                     app:layout_constraintEnd_toEndOf="parent"
+                     app:layout_constraintTop_toTopOf="parent"/>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_capture"
                                                                                android:onClick="@{() -> vm.onCaptureClick()}"
+                                                                               android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}"
                                                                                android:layout_marginBottom="20dp"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                app:backgroundTint="@color/background_normal"
@@ -40,6 +99,7 @@
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_location"
                                                                                android:onClick="@{() -> vm.onResetCameraClick()}"
+                                                                               android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                app:backgroundTint="@color/background_normal"
                                                                                android:layout_marginStart="20dp"
@@ -55,6 +115,7 @@
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_compass"
                                                                                android:onClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                               android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}"
                                                                                android:layout_marginStart="20dp"
                                                                                android:layout_marginBottom="12dp"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"

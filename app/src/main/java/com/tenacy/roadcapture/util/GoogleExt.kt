@@ -16,19 +16,19 @@ import kotlin.coroutines.resume
 /**
  * Geocoder를 사용하여 위도/경도로부터 주소 정보를 가져와 PlaceLocation 객체를 생성합니다.
  */
-suspend fun Context.extractLocationData(latLng: LatLng?): PlaceLocation? = withContext(Dispatchers.IO) {
+suspend fun Context.extractLocationData(latLng: LatLng?): PlaceLocation? {
     try {
-        if (latLng == null) return@withContext null
+        if (latLng == null) return null
 
 //        val locale = getLocaleFromLatLng(latLng)
 //        val geocoder = Geocoder(this@extractLocationData, locale ?: Locale.US)
         val geocoder = Geocoder(this@extractLocationData, Locale.getDefault())
-        val address = getAddressFromLocation(geocoder, latLng) ?: return@withContext null
+        val address = getAddressFromLocation(geocoder, latLng) ?: return null
 
-        createPlaceLocationFromAddress(address, latLng)
+        return createPlaceLocationFromAddress(address, latLng)
     } catch (e: Exception) {
         Log.e("GeocoderUtils", "주소 변환 실패: ${e.message}")
-        null
+        return null
     }
 }
 
@@ -74,27 +74,27 @@ private fun createPlaceLocationFromAddress(address: Address, latLng: LatLng): Pl
     val detail = address.subThoroughfare
 
     // 표시 이름 결정 (가장 구체적인 정보 사용)
-    val name = when {
-        !address.featureName.isNullOrEmpty() &&
-                address.featureName != address.subThoroughfare -> address.featureName
-        !street.isNullOrEmpty() -> {
-            if (!detail.isNullOrEmpty()) "$street $detail" else street
+    val name =
+        if(!address.featureName.isNullOrEmpty() && address.featureName != address.subThoroughfare) {
+            address.featureName
+        } else {
+            null
         }
-        !district.isNullOrEmpty() -> district
-        !city.isNullOrEmpty() -> city
-        !region.isNullOrEmpty() -> region
-        else -> country
-    }
 
     // 전체 주소 생성
-    val formattedAddress = buildString {
-        append(country)
-        if (!region.isNullOrEmpty()) append(" $region")
-        if (!city.isNullOrEmpty()) append(" $city")
-        if (!district.isNullOrEmpty()) append(" $district")
-        if (!street.isNullOrEmpty()) append(" $street")
-        if (!detail.isNullOrEmpty()) append(" $detail")
-    }
+    val formattedAddress =
+        if(address.maxAddressLineIndex > 0) {
+            address.getAddressLine(0)
+        } else {
+            buildString {
+                append(country)
+                if (!region.isNullOrEmpty()) append(" $region")
+                if (!city.isNullOrEmpty()) append(" $city")
+                if (!district.isNullOrEmpty()) append(" $district")
+                if (!street.isNullOrEmpty()) append(" $street")
+                if (!detail.isNullOrEmpty()) append(" $detail")
+            }
+        }
 
     // 고유 식별자 생성 (위도/경도 기반)
     val placeId = "geo:${latLng.latitude},${latLng.longitude}"

@@ -45,6 +45,7 @@
                     android:id="@+id/ibtn_new_memory_ok"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:onClick="@{() -> vm.onNewClick()}"
                     android:src="@drawable/ic_check"
                     android:background="@null"
                     android:scaleType="fitCenter"/>
@@ -55,7 +56,7 @@
                    android:layout_height="0dp"
                    android:id="@+id/img_new_memory_photo"
                    app:uri="@{vm.photoUri}"
-                   app:layout_constraintDimensionRatio="16:9"
+                   app:layout_constraintDimensionRatio="4:3"
                    app:layout_constraintTop_toBottomOf="@id/ll_new_memory_a_bar_container"
                    app:layout_constraintStart_toStartOf="parent"
                    app:layout_constraintEnd_toEndOf="parent"/>

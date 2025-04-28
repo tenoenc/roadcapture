@@ -1,6 +1,7 @@
 [versions]
 activity = "1.9.3"
 agp = "8.6.0-alpha07"
+mapsUtils = "2.3.0"
 appcompat = "1.7.0"
 camera = "1.2.3"
 cameraCamera2 = "1.2.3"
@@ -52,6 +53,7 @@ ucrop = "2.2.8"
 
 [libraries]
 adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "converterMoshi" }
+android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "mapsUtils" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "cameraCamera2" }

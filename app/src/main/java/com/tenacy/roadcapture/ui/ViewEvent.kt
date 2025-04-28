@@ -30,12 +30,15 @@ sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()
     data object ResetCamera: TripViewEvent()
     data object Capture: TripViewEvent()
+    data object StopTraveling: TripViewEvent()
 }
 
-sealed class CameraViewEvent {
+sealed class CameraViewEvent: ViewEvent {
     data class PhotoTaken(val uri: Uri) : CameraViewEvent()
     data class PhotoSelected(val uri: Uri) : CameraViewEvent()
     data object PhotoCancelled : CameraViewEvent()
 }
 
-sealed class NewMemoryViewEvent
+sealed class NewMemoryViewEvent: ViewEvent {
+    data class ResultBack(val memoryId: Long) : NewMemoryViewEvent()
+}

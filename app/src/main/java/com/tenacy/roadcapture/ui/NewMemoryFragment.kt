@@ -8,10 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
-import com.tenacy.roadcapture.util.launchOnLifecycle
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -82,7 +84,7 @@ class NewMemoryFragment: BaseFragment() {
     }
 
     private fun observeViewEvents() {
-        launchOnLifecycle {
+        repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
                     (event as? NewMemoryViewEvent)?.let { handleViewEvents(it) }
@@ -92,8 +94,13 @@ class NewMemoryFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: NewMemoryViewEvent) {
-//        when (event) {
-//        }
+        when (event) {
+            is NewMemoryViewEvent.ResultBack -> {
+                val destinationId = R.id.tripFragment
+                findNavController().getBackStackEntry(destinationId).savedStateHandle.set(TripFragment.KEY_MEMORY_ID, event.memoryId)
+                findNavController().popBackStack()
+            }
+        }
     }
 
     private fun addItemsToLayout(items: List<String>) {
