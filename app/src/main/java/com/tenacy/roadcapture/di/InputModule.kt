@@ -13,6 +13,14 @@ object InputModule {
 
     @Provides
     @Singleton
+    @PlaceNameFilter
+    fun providePlaceNameFilter() = LengthFilter(maxLength = MAX_LENGTH_PLACE_NAME)
+
+    @Provides
+    @Singleton
     @ContentFilter
-    fun provideNameFilter() = LengthFilter(maxLength = 1500)
+    fun provideContentFilter() = LengthFilter(maxLength = MAX_LENGTH_CONTENT)
+
+    const val MAX_LENGTH_PLACE_NAME = 30
+    const val MAX_LENGTH_CONTENT = 1500
 }

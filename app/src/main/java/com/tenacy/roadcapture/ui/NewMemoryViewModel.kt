@@ -7,6 +7,7 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
+import com.tenacy.roadcapture.di.InputModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -23,6 +24,34 @@ class NewMemoryViewModel @Inject constructor(
 
     val tags: List<String>
     val photoUri: Uri
+
+    val placeName = MutableStateFlow("")
+
+    val placeNameLength = placeName.map { it.length }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = 0,
+    )
+
+    private val _placeNameFocus = MutableStateFlow(false)
+
+    private val _placeNameInputAttemptOverflow = MutableStateFlow(false)
+
+    val placeNameState = combine(
+        placeName,
+        _placeNameFocus,
+        _placeNameInputAttemptOverflow,
+    ) { _, hasFocus, overflow ->
+        when {
+            !hasFocus -> EditTextState.Normal
+            overflow -> EditTextState.Error
+            else -> EditTextState.Focused
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000L),
+        initialValue = EditTextState.Normal,
+    )
 
     val content = MutableStateFlow("")
 
@@ -65,16 +94,32 @@ class NewMemoryViewModel @Inject constructor(
         )
     }
 
+    fun setPlaceNameFocus(hasFocus: Boolean) {
+        _placeNameFocus.update { hasFocus }
+    }
+
+    fun onPlaceNameInputAttempt(currentLength: Int) {
+        _placeNameInputAttemptOverflow.update{ currentLength >= InputModule.MAX_LENGTH_PLACE_NAME }
+    }
+
     fun setContentFocus(hasFocus: Boolean) {
         _contentFocus.update { hasFocus }
     }
 
     fun onContentInputAttempt(currentLength: Int) {
-        _contentInputAttemptOverflow.update{ currentLength >= 20 }
+        _contentInputAttemptOverflow.update{ currentLength >= InputModule.MAX_LENGTH_CONTENT }
+    }
+
+    fun onLocationClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
+            viewEvent(NewMemoryViewEvent.Location(placeLocation.formattedAddress))
+        }
     }
 
     fun onNewClick() {
         viewModelScope.launch(Dispatchers.IO) {
+            val currentPlaceName = placeName.value
             val currentContent = content.value
             val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
 
@@ -87,7 +132,8 @@ class NewMemoryViewModel @Inject constructor(
             val locationId = locationDao.insert(locationEntity)
 
             val memoryEntity = MemoryEntity(
-                content = currentContent,
+                placeName = currentPlaceName.takeIf { it.isNotBlank() },
+                content = currentContent.takeIf { it.isNotBlank() },
                 photoUri = photoUri,
                 locationName = placeLocation.name,
                 country = placeLocation.country,

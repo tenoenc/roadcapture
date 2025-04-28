@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <LinearLayout android:id="@+id/ll_b_sheet_trip_before_container"
+    <data>
+
+        <variable name="address" type="String"/>
+    </data>
+
+    <LinearLayout android:id="@+id/ll_b_sheet_location_container"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
@@ -11,38 +17,33 @@
 
         <androidx.cardview.widget.CardView android:layout_width="48dp"
                                            android:layout_height="4dp"
-                                           android:id="@+id/card_b_sheet_trip_before_handle"
+                                           android:id="@+id/card_b_sheet_location_handle"
                                            app:cardElevation="0dp"
                                            app:cardCornerRadius="10dp"
                                            app:cardBackgroundColor="@color/fill_neutral"
                                            android:layout_marginTop="16dp"/>
 
-        <TextView android:layout_width="wrap_content"
+        <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
-                  android:text="앨범 만들기"
-                  android:layout_marginTop="20dp"/>
-
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textAppearance="@style/Body_12_M"
-                  android:textColor="@color/label_neutral"
                   android:textAlignment="center"
-                  android:text="여행 중에 아름다운 추억들을 캡처하고\n앨범을 만들어보세요!"
-                  android:layout_marginTop="4dp"/>
-
+                  android:text="@{address}"
+                  tools:text="경기도 시흥시 정왕동 1163-5"
+                  android:layout_marginHorizontal="20dp"
+                  android:layout_marginTop="20dp"/>
+        
         <ImageView android:layout_width="168dp"
                    android:layout_height="168dp"
-                   android:src="@drawable/album" />
+                   android:src="@drawable/pin" />
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_b_sheet_trip_before_positive"
+                android:id="@+id/btn_b_sheet_location_positive"
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="여행 시작"
+                android:text="주소 복사하기"
                 android:backgroundTint="@color/primary"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
@@ -51,11 +52,11 @@
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_b_sheet_trip_before_negative"
+                android:id="@+id/btn_b_sheet_location_negative"
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="아직 준비되지 않았어요"
+                android:text="닫기"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

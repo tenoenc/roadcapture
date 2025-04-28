@@ -3,12 +3,6 @@ package com.tenacy.roadcapture.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.Paint
-import android.graphics.Path
 import android.location.Criteria
 import android.location.LocationManager
 import android.net.Uri
@@ -56,7 +50,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private val vm: TripViewModel by viewModels()
 
     private lateinit var map: GoogleMap
-    private var routePolyline: Polyline? = null
+    private var routePolylines: MutableList<Polyline> = mutableListOf()
 
     private lateinit var markerRenderer: MarkerClusterRenderer
     private lateinit var clusterManager: ClusterManager<ClusterMarkerItem>
@@ -351,8 +345,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         applyRouteOptimization(routePoints)
     }
 
-    private var routePolylines: MutableList<Polyline> = mutableListOf()
-
     private fun applyRouteOptimization(routePoints: List<LatLng>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
@@ -438,106 +430,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         val b = startB + ((endB - startB) * ratio).toInt()
 
         return (a shl 24) or (r shl 16) or (g shl 8) or b
-    }
-
-    // Bitmap 화살표 생성 함수
-    private fun createArrowBitmap(rotation: Float): Bitmap {
-        // 화살표 크기 설정
-        val width = 24.toPx
-        val height = 24.toPx
-
-        // Bitmap 생성
-        val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-        val canvas = Canvas(bitmap)
-
-        // 화살표 그리기
-        val paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = ContextCompat.getColor(requireContext(), R.color.primary)
-            style = Paint.Style.FILL
-            strokeWidth = 2f.toPx.toFloat()
-        }
-
-        // 화살표 패스 생성
-        val path = Path().apply {
-            // 위쪽 화살표 포인트
-            moveTo(width / 2f, 0f)
-            // 오른쪽 포인트
-            lineTo(width.toFloat(), height / 2f)
-            // 아래 오른쪽 노치
-            lineTo(width * 3 / 4f, height / 2f)
-            // 아래 꼬리
-            lineTo(width * 3 / 4f, height.toFloat())
-            // 아래 왼쪽 꼬리
-            lineTo(width / 4f, height.toFloat())
-            // 아래 왼쪽 노치
-            lineTo(width / 4f, height / 2f)
-            // 왼쪽 포인트
-            lineTo(0f, height / 2f)
-            close()
-        }
-
-        // 회전 매트릭스 설정
-        val matrix = Matrix()
-        matrix.setRotate(rotation, width / 2f, height / 2f)
-        path.transform(matrix)
-
-        // 화살표 그리기
-        canvas.drawPath(path, paint)
-
-        return bitmap
-    }
-
-    // 방향 화살표 추가 함수
-    private fun addDirectionArrows(points: List<LatLng>) {
-        if (points.size < 2) return
-
-        // 경로의 포인트 개수에 따라 화살표 개수 조정
-        val arrowCount = when {
-            points.size > 100 -> 5  // 긴 경로는 화살표 5개
-            points.size > 50 -> 3   // 중간 경로는 화살표 3개
-            points.size > 10 -> 2   // 짧은 경로는 화살표 2개
-            else -> 1               // 아주 짧은 경로는 화살표 1개
-        }
-
-        // 화살표 위치 계산 및 추가
-        for (i in 1..arrowCount) {
-            val index = ((points.size - 1) * i / (arrowCount + 1)).coerceAtMost(points.size - 2)
-            val point = points[index]
-            val nextPoint = points[index + 1]
-
-            // 두 점 사이의 방향 각도 계산
-            val bearing = computeHeading(point, nextPoint)
-
-            // 화살표 마커 추가 (Bitmap 생성 방식 사용)
-            val arrowIcon = createArrowBitmap(bearing.toFloat())
-            val arrowMarker = map.addMarker(
-                MarkerOptions()
-                    .position(point)
-                    .icon(BitmapDescriptorFactory.fromBitmap(arrowIcon))
-                    .anchor(0.5f, 0.5f)
-                    .flat(true)
-            )
-
-            // 화살표 마커도 관리 필요시 리스트에 추가
-            // arrowMarkers.add(arrowMarker)
-        }
-    }
-
-    // 두 좌표 사이의 방향 각도 계산 (북쪽 기준, 시계 방향 각도)
-    private fun computeHeading(from: LatLng, to: LatLng): Double {
-        val fromLat = Math.toRadians(from.latitude)
-        val fromLng = Math.toRadians(from.longitude)
-        val toLat = Math.toRadians(to.latitude)
-        val toLng = Math.toRadians(to.longitude)
-
-        val dLng = toLng - fromLng
-
-        val y = Math.sin(dLng) * Math.cos(toLat)
-        val x = Math.cos(fromLat) * Math.sin(toLat) -
-                Math.sin(fromLat) * Math.cos(toLat) * Math.cos(dLng)
-
-        val bearing = Math.toDegrees(Math.atan2(y, x))
-        return (bearing + 360) % 360
     }
 
     // ===== 11. 마커 처리 메서드 그룹 =====

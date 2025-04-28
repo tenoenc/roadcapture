@@ -3,19 +3,26 @@ package com.tenacy.roadcapture.ui
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
+import com.tenacy.roadcapture.di.PlaceNameFilter
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,8 +37,13 @@ class NewMemoryFragment: BaseFragment() {
     @ContentFilter
     lateinit var contentFilter: LengthFilter
 
+    @Inject
+    @PlaceNameFilter
+    lateinit var placeNameFilter: LengthFilter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
         vm
     }
 
@@ -57,6 +69,20 @@ class NewMemoryFragment: BaseFragment() {
         _binding = null
     }
 
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            LocationBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(LocationBottomSheetFragment.RESULT_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                lifecycleScope.launch(Dispatchers.Main) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(it))
+                }
+            }
+        }
+    }
+
     private fun setupViews() {
         addItemsToLayout(vm.tags)
     }
@@ -66,6 +92,21 @@ class NewMemoryFragment: BaseFragment() {
     }
 
     private fun setListeners() {
+        binding.etNewMemoryPlaceName.apply {
+            filters = arrayOf(placeNameFilter)
+            setOnFocusChangeListener { _, hasFocus ->
+                vm.setPlaceNameFocus(hasFocus)
+            }
+            addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val currentLength = s?.length ?: 0
+                    vm.onPlaceNameInputAttempt(currentLength)
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+        }
         binding.etNewMemoryContent.apply {
             filters = arrayOf(contentFilter)
             setOnFocusChangeListener { _, hasFocus ->
@@ -99,6 +140,14 @@ class NewMemoryFragment: BaseFragment() {
                 val destinationId = R.id.tripFragment
                 findNavController().getBackStackEntry(destinationId).savedStateHandle.set(TripFragment.KEY_MEMORY_ID, event.memoryId)
                 findNavController().popBackStack()
+            }
+            is NewMemoryViewEvent.Location -> {
+                val bottomSheet = LocationBottomSheetFragment.newInstance(
+                    bundle = bundleOf(
+                        LocationBottomSheetFragment.KEY_ADDRESS to event.address,
+                    )
+                )
+                bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
         }
     }

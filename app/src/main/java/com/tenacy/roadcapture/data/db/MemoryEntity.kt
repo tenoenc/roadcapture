@@ -21,8 +21,9 @@ import java.time.LocalDateTime
 data class MemoryEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-    val content: String,
+    val content: String? = null,
     val photoUri: Uri,
+    val placeName: String? = null,
     val locationName: String?,
     val country: String,
     val region: String?,

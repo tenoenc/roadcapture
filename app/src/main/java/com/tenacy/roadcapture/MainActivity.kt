@@ -1,5 +1,8 @@
 package com.tenacy.roadcapture
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
@@ -87,6 +90,12 @@ class MainActivity : AppCompatActivity() {
                     is ToastMessageType.Success -> MyToast.success(this@MainActivity, event.toast.message).show()
                     is ToastMessageType.Warning -> MyToast.warn(this@MainActivity, event.toast.message).show()
                 }
+            }
+
+            is GlobalViewEvent.CopyToClipboard -> {
+                val clipboardManager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipData = ClipData.newPlainText("text", event.text)
+                clipboardManager.setPrimaryClip(clipData)
             }
         }
     }

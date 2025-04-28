@@ -7,6 +7,7 @@ sealed interface ViewEvent
 sealed class GlobalViewEvent: ViewEvent {
     data object GlobalNavigateToLogin: GlobalViewEvent()
     data class Toast(val toast: ToastModel) : GlobalViewEvent()
+    data class CopyToClipboard(val text: String) : GlobalViewEvent()
 }
 
 sealed class LoginViewEvent: ViewEvent {
@@ -41,4 +42,5 @@ sealed class CameraViewEvent: ViewEvent {
 
 sealed class NewMemoryViewEvent: ViewEvent {
     data class ResultBack(val memoryId: Long) : NewMemoryViewEvent()
+    data class Location(val address: String): NewMemoryViewEvent()
 }

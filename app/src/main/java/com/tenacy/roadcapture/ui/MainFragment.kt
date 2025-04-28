@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.mainActivity
@@ -59,6 +60,15 @@ class MainFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToTrip())
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            TripOngoingBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(TripOngoingBottomSheetFragment.RESULT_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                findNavController().navigate(MainFragmentDirections.actionMainToTrip())
+            }
+        }
     }
 
     private fun setupViews() {
@@ -87,8 +97,13 @@ class MainFragment: BaseFragment() {
                 mainActivity.signOut()
             }
             is MainViewEvent.New -> {
-                val bottomSheet = TripBeforeBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, TripBeforeBottomSheetFragment.TAG)
+                if(Album.createdAt > 0L) {
+                    val bottomSheet = TripOngoingBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, TripOngoingBottomSheetFragment.TAG)
+                } else {
+                    val bottomSheet = TripBeforeBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, TripBeforeBottomSheetFragment.TAG)
+                }
             }
         }
     }
