@@ -5,8 +5,8 @@
 
         <variable name="type" type="com.tenacy.roadcapture.ui.ToastMessageType"/>
         <variable name="message" type="String"/>
-        <import type="android.view.View" />
-        <import type="com.tenacy.roadcapture.ui.ToastMessageType" />
+        <import type="android.view.View"/>
+        <import type="com.tenacy.roadcapture.ui.ToastMessageType"/>
     </data>
 
     <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -17,28 +17,31 @@
                                                        android:layout_height="wrap_content"
                                                        app:strokeWidth="0.5dp"
                                                        app:strokeColor="@color/line_normal"
-                                                       app:cardBackgroundColor="@color/fill_assistive"
+                                                       app:cardBackgroundColor="@android:color/transparent"
                                                        app:cardCornerRadius="12dp"
                                                        app:cardElevation="0dp">
 
         <LinearLayout
-                android:id="@+id/cl_toast_container"
+                android:id="@+id/ll_toast_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:background="#B380F0D4"
                 android:paddingVertical="16dp"
-                android:paddingHorizontal="24dp">
+                android:paddingHorizontal="24dp"
+                app:type_backgroundColor="@{type}">
 
             <TextView
                     android:id="@+id/text_toast_content"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="@style/Body_12_M"
+                    android:textAppearance="@style/Body_14_M"
                     android:text="@{message}"
                     tools:text="로그인에 실패했어요\n다시 입력해주세요"
-                    android:textAlignment="textStart"
+                    android:textAlignment="center"
                     android:textColor="@color/label_normal"
+                    app:type_textColor="@{type}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

@@ -2,6 +2,8 @@ package com.tenacy.roadcapture.util
 
 import android.content.res.Resources
 import android.util.TypedValue
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 val Number.toPx
     get() = TypedValue.applyDimension(
@@ -12,3 +14,8 @@ val Number.toPx
 
 val Number.toDp
     get() = this.toFloat() / Resources.getSystem().displayMetrics.density
+
+fun LocalDateTime.toTimestamp(): Long =
+    this.atZone(ZoneId.systemDefault())
+        .toInstant()
+        .toEpochMilli()

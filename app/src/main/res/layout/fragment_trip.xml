@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.TripViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_trip_container"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
+
+        <fragment android:layout_width="0dp"
+                  android:layout_height="0dp"
+                  android:id="@+id/map"
+                  android:name="com.google.android.gms.maps.SupportMapFragment"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                               android:layout_height="wrap_content"
+                                                                               android:id="@+id/fab_trip_capture"
+                                                                               android:onClick="@{() -> vm.onCaptureClick()}"
+                                                                               android:layout_marginBottom="20dp"
+                                                                               app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
+                                                                               app:backgroundTint="@color/background_normal"
+                                                                               app:maxImageSize="24dp"
+                                                                               app:fabCustomSize="56dp"
+                                                                               app:srcCompat="@drawable/ic_camera"
+                                                                               app:tint="@color/primary"
+                                                                               app:layout_constraintEnd_toEndOf="parent"
+                                                                               app:layout_constraintBottom_toBottomOf="parent"
+                                                                               app:layout_constraintStart_toStartOf="parent"/>
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                               android:layout_height="wrap_content"
+                                                                               android:id="@+id/fab_trip_location"
+                                                                               android:onClick="@{() -> vm.onResetCameraClick()}"
+                                                                               app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
+                                                                               app:backgroundTint="@color/background_normal"
+                                                                               android:layout_marginStart="20dp"
+                                                                               app:maxImageSize="24dp"
+                                                                               app:fabCustomSize="40dp"
+                                                                               app:srcCompat="@drawable/ic_locate"
+                                                                               app:tint="@color/label_neutral"
+                                                                               app:layout_constraintTop_toTopOf="@id/fab_trip_capture"
+                                                                               app:layout_constraintBottom_toBottomOf="@id/fab_trip_capture"
+                                                                               app:layout_constraintStart_toStartOf="parent"/>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                               android:layout_height="wrap_content"
+                                                                               android:id="@+id/fab_trip_compass"
+                                                                               android:onClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                               android:layout_marginStart="20dp"
+                                                                               android:layout_marginBottom="12dp"
+                                                                               app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
+                                                                               app:backgroundTint="@color/background_normal"
+                                                                               app:maxImageSize="24dp"
+                                                                               app:fabCustomSize="40dp"
+                                                                               app:srcCompat="@drawable/ic_compass"
+                                                                               app:tint="@color/label_neutral"
+                                                                               app:layout_constraintBottom_toTopOf="@id/fab_trip_location"
+                                                                               app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

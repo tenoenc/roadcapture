@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="name" type="String"/>
+    </data>
+
+    <com.google.android.material.card.MaterialCardView android:id="@+id/card_i_tag_container"
+                                                       android:layout_width="wrap_content"
+                                                       android:layout_height="wrap_content"
+                                                       app:strokeWidth="0dp"
+                                                       app:contentPaddingTop="4dp"
+                                                       app:contentPaddingBottom="4dp"
+                                                       app:contentPaddingLeft="8dp"
+                                                       app:contentPaddingRight="8dp"
+                                                       app:cardCornerRadius="8dp"
+                                                       app:cardBackgroundColor="@color/fill_assistive"
+                                                       app:cardElevation="0dp">
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textColor="@color/label_normal"
+                  android:text="@{name}"
+                  tools:text="대한민국" />
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

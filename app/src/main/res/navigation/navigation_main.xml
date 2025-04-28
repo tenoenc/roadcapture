@@ -7,7 +7,7 @@
               android:label="LoginFragment"
               tools:layout="@layout/fragment_login">
         <deepLink
-                app:uri="roadcapturenaverauthcallbackscheme://authorities/{authority}?firebaseToken={firebaseToken}&amp;name={name}&amp;profileImage={profileImage}" />
+                app:uri="roadcapturenaverauthcallbackscheme://authorities/{authority}?firebaseToken={firebaseToken}&amp;name={name}&amp;profileImage={profileImage}"/>
         <action android:id="@+id/action_login_to_main"
                 app:popUpTo="@id/loginFragment"
                 app:popUpToInclusive="true"
@@ -15,5 +15,28 @@
     </fragment>
     <fragment android:id="@+id/mainFragment" android:name="com.tenacy.roadcapture.ui.MainFragment"
               android:label="MainFragment"
-              tools:layout="@layout/fragment_main"/>
+              tools:layout="@layout/fragment_main">
+        <action android:id="@+id/action_main_to_trip" app:destination="@id/tripFragment"/>
+    </fragment>
+    <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
+              android:label="TripFragment"
+              tools:layout="@layout/fragment_trip">
+        <action android:id="@+id/action_trip_to_camera" app:destination="@id/cameraFragment"/>
+    </fragment>
+    <fragment android:id="@+id/cameraFragment" android:name="com.tenacy.roadcapture.ui.CameraFragment"
+              android:label="CameraFragment"
+              tools:layout="@layout/fragment_camera">
+        <action android:id="@+id/action_camera_to_newMemory"
+                app:destination="@id/newMemoryFragment"
+                app:popUpTo="@id/tripFragment"/>
+        <argument android:name="placeLocation" app:argType="com.tenacy.roadcapture.ui.TripFragment$PlaceLocation" />
+    </fragment>
+    <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
+              android:label="NewMemoryFragment"
+              tools:layout="@layout/fragment_new_memory">
+
+        <argument android:name="placeLocation" app:argType="com.tenacy.roadcapture.ui.TripFragment$PlaceLocation" />
+        <argument android:name="photoUri" app:argType="android.net.Uri" />
+
+    </fragment>
 </navigation>

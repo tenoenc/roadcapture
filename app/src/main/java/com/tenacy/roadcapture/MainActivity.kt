@@ -1,7 +1,6 @@
 package com.tenacy.roadcapture
 
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +10,6 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.tenacy.roadcapture.core.PermissionManager
-import com.tenacy.roadcapture.data.pref.User
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.MyToast
 import com.tenacy.roadcapture.ui.ToastMessageType
@@ -22,15 +19,11 @@ import com.tenacy.roadcapture.util.navController
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private val vm: GlobalViewModel by viewModels()
-
-    @Inject
-    lateinit var permissionManager: PermissionManager
+    val vm: GlobalViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,19 +45,19 @@ class MainActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        when (requestCode) {
-            PermissionManager.PERMISSIONS_REQUEST_CODE -> {
-                if (!grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                    MyToast.warn(this, "일부 기능이 제한될 수 있습니다.").show()
-                }
-            }
-
-            PermissionManager.RECORD_PERMISSION_REQUEST_CODE -> {
-                if (!(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    MyToast.warn(this, "음성 관련 기능이 제한됩니다.").show()
-                }
-            }
-        }
+//        when (requestCode) {
+//            PermissionManager.PERMISSIONS_REQUEST_CODE -> {
+//                if (!grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//                    MyToast.warn(this, "일부 기능이 제한될 수 있습니다.").show()
+//                }
+//            }
+//
+//            PermissionManager.RECORD_PERMISSION_REQUEST_CODE -> {
+//                if (!(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+//                    MyToast.warn(this, "음성 관련 기능이 제한됩니다.").show()
+//                }
+//            }
+//        }
     }
 
     private fun setupObservers() {
@@ -100,7 +93,6 @@ class MainActivity : AppCompatActivity() {
 
     fun signOut() {
         Firebase.auth.signOut()
-        User.clear()
         val navOptions = NavOptions.Builder().setPopUpTo(
             R.id.mainFragment,
             true

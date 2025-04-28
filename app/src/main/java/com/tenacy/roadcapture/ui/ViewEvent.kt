@@ -1,6 +1,6 @@
 package com.tenacy.roadcapture.ui
 
-import com.airbnb.lottie.L
+import android.net.Uri
 
 sealed interface ViewEvent
 
@@ -25,3 +25,17 @@ sealed class MainViewEvent: ViewEvent {
 sealed class HomeViewEvent: ViewEvent
 
 sealed class MyAlbumViewEvent: ViewEvent
+
+sealed class TripViewEvent: ViewEvent {
+    data object ResetCameraPosition: TripViewEvent()
+    data object ResetCamera: TripViewEvent()
+    data object Capture: TripViewEvent()
+}
+
+sealed class CameraViewEvent {
+    data class PhotoTaken(val uri: Uri) : CameraViewEvent()
+    data class PhotoSelected(val uri: Uri) : CameraViewEvent()
+    data object PhotoCancelled : CameraViewEvent()
+}
+
+sealed class NewMemoryViewEvent

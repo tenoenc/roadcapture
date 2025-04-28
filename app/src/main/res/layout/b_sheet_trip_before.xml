@@ -19,7 +19,7 @@
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:textAppearance="@style/Title_20"
+                  android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
                   android:text="앨범 만들기"
                   android:layout_marginTop="20dp"/>
@@ -29,14 +29,14 @@
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"
                   android:textAlignment="center"
-                  android:text="여행 중에 아름다운 추억들을 캡처하고 앨범을 만들어보세요!\n앨범에서 한 눈에 여행의 모든 추억을 확인할 수 있어요."
+                  android:text="여행 중에 아름다운 추억들을 캡처하고\n앨범을 만들어보세요!"
                   android:layout_marginTop="4dp"/>
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_b_sheet_trip_before_positive"
                 style="@style/Button"
-                android:textAppearance="@style/Body_15_SB"
+                android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
                 android:text="여행 시작"
                 android:backgroundTint="@color/primary"
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/btn_b_sheet_trip_before_negative"
                 style="@style/Button"
-                android:textAppearance="@style/Body_15_SB"
+                android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
                 android:text="아직 준비되지 않았어요"
                 android:backgroundTint="@color/fill_alternative"

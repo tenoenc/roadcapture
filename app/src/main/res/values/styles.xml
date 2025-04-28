@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="EditBox">
+        <item name="android:importantForAutofill">no</item>
+        <item name="android:background">@drawable/input_focused</item>
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
     <style name="Button">
         <item name="android:paddingHorizontal">12dp</item>
         <item name="android:paddingVertical">12dp</item>

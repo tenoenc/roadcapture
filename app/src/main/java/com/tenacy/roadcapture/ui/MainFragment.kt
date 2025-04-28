@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -57,6 +56,7 @@ class MainFragment: BaseFragment() {
         ) { _, bundle ->
             bundle.getString(TripBeforeBottomSheetFragment.RESULT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+                findNavController().navigate(MainFragmentDirections.actionMainToTrip())
             }
         }
     }

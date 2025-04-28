@@ -10,7 +10,6 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.auth.Loginable
-import com.tenacy.roadcapture.data.pref.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -85,7 +84,6 @@ class LoginViewModel @Inject constructor(
                 auth.signOut()
             }
             .collect {
-                User.provider = provider
                 viewEvent(LoginViewEvent.NavigateToMain)
             }
     }

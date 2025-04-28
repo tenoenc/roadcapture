@@ -1,11 +1,15 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Parcelable
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.ToastBinding
@@ -44,6 +48,25 @@ object MyToast {
     }
 }
 
+@BindingAdapter("type_backgroundColor")
+fun View.setTypedBackgroundColor(type: ToastMessageType?) {
+    if(type == null) return
+    when(type) {
+        is ToastMessageType.Info -> setBackgroundColor(Color.parseColor("#B3FCFEFF"))
+        is ToastMessageType.Warning -> setBackgroundColor(Color.parseColor("#B3FF7A5C"))
+        is ToastMessageType.Success -> setBackgroundColor(Color.parseColor("#B380F0D4"))
+    }
+}
+
+@BindingAdapter("type_textColor")
+fun TextView.setTypedTextColor(type: ToastMessageType?) {
+    if(type == null) return
+    when(type) {
+        is ToastMessageType.Info -> setTextColor(ContextCompat.getColor(context, R.color.label_normal))
+        is ToastMessageType.Warning -> setTextColor(ContextCompat.getColor(context, R.color.background_normal))
+        is ToastMessageType.Success -> setTextColor(ContextCompat.getColor(context, R.color.label_normal))
+    }
+}
 
 @Parcelize
 data class ToastModel(

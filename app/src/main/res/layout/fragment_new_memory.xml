@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.NewMemoryViewModel"/>
+
+        <import type="com.tenacy.roadcapture.ui.EditTextState" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_new_memory_container"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent"
+                                                       android:background="@color/background_normal">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_new_memory_a_bar_container"
+                      android:orientation="horizontal"
+                      android:paddingHorizontal="16dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                    android:id="@+id/ibtn_a_bar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+            <TextView android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:textAppearance="@style/Title_18"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="center"
+                      android:text="추억 생성"/>
+
+            <ImageButton
+                    android:id="@+id/ibtn_new_memory_ok"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_check"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <ImageView android:layout_width="0dp"
+                   android:layout_height="0dp"
+                   android:id="@+id/img_new_memory_photo"
+                   app:uri="@{vm.photoUri}"
+                   app:layout_constraintDimensionRatio="16:9"
+                   app:layout_constraintTop_toBottomOf="@id/ll_new_memory_a_bar_container"
+                   app:layout_constraintStart_toStartOf="parent"
+                   app:layout_constraintEnd_toEndOf="parent"/>
+
+        <HorizontalScrollView android:id="@+id/hs_new_memory_tags"
+                              android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:clipToPadding="false"
+                              android:paddingHorizontal="20dp"
+                              android:paddingVertical="10dp"
+                              android:scrollbars="none"
+                              app:layout_constraintStart_toStartOf="parent"
+                              app:layout_constraintEnd_toEndOf="parent"
+                              app:layout_constraintTop_toBottomOf="@id/img_new_memory_photo">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/ll_new_memory_tags"
+                          android:minHeight="24dp"
+                          android:gravity="center"
+                          android:orientation="horizontal">
+
+                <ImageButton android:layout_width="24dp"
+                             android:layout_height="24dp"
+                             android:src="@drawable/ic_circle_pin"
+                             android:background="@android:color/transparent"
+                             android:scaleType="fitCenter"/>
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+        <EditText android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/et_new_memory_content"
+                  android:gravity="start"
+                  style="@style/EditBox"
+                  android:text="@={vm.content}"
+                  tools:text="홍길동"
+                  app:state="@{vm.contentState}"
+                  android:minHeight="112dp"
+                  android:maxHeight="224dp"
+                  android:textAppearance="@style/Body_14_M"
+                  android:textColor="@color/label_normal"
+                  android:textAlignment="textStart"
+                  android:background="@drawable/input_normal"
+                  android:paddingVertical="12dp"
+                  android:paddingHorizontal="16dp"
+                  android:layout_marginHorizontal="20dp"
+                  app:layout_constraintTop_toBottomOf="@id/hs_new_memory_tags"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_new_memory_content_count"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textAlignment="textEnd"
+                  android:textColor="@{vm.contentState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
+                  tools:textColor="@color/label_assistive"
+                  android:text="@{vm.contentLength + ` / 1500`}"
+                  tools:text="32 / 1500"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginEnd="8dp"
+                  app:layout_constraintTop_toBottomOf="@id/et_new_memory_content"
+                  app:layout_constraintEnd_toEndOf="@id/et_new_memory_content"/>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

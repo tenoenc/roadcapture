@@ -9,7 +9,7 @@ open class BaseViewModel : ViewModel() {
     val viewEvent: SharedFlow<Event<ViewEvent>?>
         get() = _viewEvent.asSharedFlow()
 
-    protected suspend fun viewEvent(content: ViewEvent) {
+    suspend fun viewEvent(content: ViewEvent) {
         _viewEvent.emit(Event(content))
     }
 }
