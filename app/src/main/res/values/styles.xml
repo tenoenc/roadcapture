@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="Button">
+        <item name="android:paddingHorizontal">12dp</item>
+        <item name="android:paddingVertical">12dp</item>
+        <item name="android:insetTop">0dp</item>
+        <item name="android:insetBottom">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:minWidth">0dp</item>
+    </style>
+
+    <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.App.BottomSheet</item>
+        <!-- 다이얼로그 배경을 투명하게 설정 -->
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowSoftInputMode">adjustResize</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="Widget.App.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="shapeAppearance">@style/ShapeAppearance.App.LargeComponent</item>
+        <item name="backgroundTint">@color/background_normal</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">28dp</item>
+    </style>
+
     <style name="Body_10_M">
         <item name="android:fontFamily">@font/pretendardjp_medium</item>
         <item name="android:letterSpacing">-0.01</item>
@@ -85,6 +114,14 @@
         <item name="android:lineHeight">22dp</item>
         <item name="android:textSize">15sp</item>
     </style>
+
+    <style name="Body_15_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">22dp</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
 
     <style name="Body_16_M">
         <item name="android:fontFamily">@font/pretendardjp_medium</item>

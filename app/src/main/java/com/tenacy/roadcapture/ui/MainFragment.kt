@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
@@ -24,6 +25,7 @@ class MainFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
         vm
     }
 
@@ -46,6 +48,17 @@ class MainFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            TripBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(TripBeforeBottomSheetFragment.RESULT_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+            }
+        }
     }
 
     private fun setupViews() {
@@ -74,7 +87,8 @@ class MainFragment: BaseFragment() {
                 mainActivity.signOut()
             }
             is MainViewEvent.New -> {
-                Log.d("TAG", "New Button Clicked!")
+                val bottomSheet = TripBeforeBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, TripBeforeBottomSheetFragment.TAG)
             }
         }
     }
