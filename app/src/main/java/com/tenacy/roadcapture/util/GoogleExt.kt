@@ -83,7 +83,7 @@ private fun createPlaceLocationFromAddress(address: Address, latLng: LatLng): Pl
 
     // 전체 주소 생성
     val formattedAddress =
-        if(address.maxAddressLineIndex > 0) {
+        if(address.maxAddressLineIndex >= 0) {
             address.getAddressLine(0)
         } else {
             buildString {

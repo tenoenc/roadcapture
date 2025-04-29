@@ -1,6 +1,8 @@
 package com.tenacy.roadcapture.ui
 
 import android.net.Uri
+import com.google.android.gms.maps.model.LatLng
+import com.tenacy.roadcapture.data.db.MemoryWithLocation
 
 sealed interface ViewEvent
 
@@ -51,4 +53,10 @@ sealed class NewMemoryViewEvent: ViewEvent {
     data class ShowLocation(val address: String): NewMemoryViewEvent()
 }
 
-sealed class MemoryViewerViewEvent: ViewEvent
+sealed class MemoryViewerViewEvent: ViewEvent {
+    data class ShowLocation(val address: String): MemoryViewerViewEvent()
+    data object MoveToPrevPage: MemoryViewerViewEvent()
+    data object MoveToNextPage: MemoryViewerViewEvent()
+    data class ShowInfo(val memory: MemoryWithLocation): MemoryViewerViewEvent()
+    data class ResultBack(val coordinates: LatLng): MemoryViewerViewEvent()
+}

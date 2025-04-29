@@ -1,12 +1,125 @@
 package com.tenacy.roadcapture.ui
 
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
+import com.google.android.gms.maps.model.LatLng
+import com.tenacy.roadcapture.data.db.MemoryDao
+import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MemoryViewerViewModel @Inject constructor(
-
+    private val savedStateHandle: SavedStateHandle,
+    private val memoryDao: MemoryDao,
 ) : BaseViewModel() {
 
+    private val _currentMemoryIndex = MutableStateFlow(0)
+    val currentMemoryIndex = _currentMemoryIndex.asStateFlow()
+
+    private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
+
+    val totalPageCount = _memories.map { it.size }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
+
+    private val _viewRange = MutableStateFlow<ViewRange?>(null)
+    val viewRange = _viewRange.asStateFlow()
+
+    private val currentMemory = combine(_memories, _currentMemoryIndex) { memories, currentPage ->
+        if(memories.isEmpty()) return@combine null
+        memories[currentPage]
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+
+    val tags = currentMemory.mapNotNull { currentMemory ->
+        currentMemory?.memory?.let {
+            listOfNotNull(
+                it.country,
+                it.locationName,
+                it.region,
+                it.city,
+                it.district,
+                it.street,
+            )
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
+
+    val placeName = currentMemory.map { currentMemory ->
+        currentMemory?.memory?.placeName ?: ""
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
+    val photoUris = _memories.map { memories -> memories.map { it.memory.photoUri } }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
+
+    val content = currentMemory.map { currentMemory ->
+        currentMemory?.memory?.content ?: ""
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
+    init {
+        fetchData()
+    }
+
+    fun updateCurrentMemoryIndex(index: Int) {
+        _currentMemoryIndex.update { index }
+    }
+
+    private fun fetchData() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val argument: TripFragment.ClusterMarkerItems = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).clusterMarkerItems
+            val viewRange = argument.viewRange
+            val memories = when(viewRange) {
+                ViewRange.AROUND -> {
+                    _currentMemoryIndex.emit(0)
+                    val ids = argument.items!!.map { it.id }
+                    memoryDao.selectByLocationIds(ids)
+                }
+                else -> {
+                    val tempMemories = memoryDao.selectAll()
+                    val selectedMemoryId = argument.selectedMemoryId ?: argument.items!![0].id
+                    val currentMemoryIndex = tempMemories.indexOfFirst { memoryWithLocation ->  memoryWithLocation.location.id == selectedMemoryId }
+                    _currentMemoryIndex.emit(currentMemoryIndex)
+                    tempMemories
+                }
+            }
+            _memories.emit(memories)
+            _viewRange.emit(viewRange)
+        }
+    }
+
+    fun onLocationClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentMemory = currentMemory.value ?: return@launch
+            viewEvent(MemoryViewerViewEvent.ShowLocation(currentMemory.memory.formattedAddress))
+        }
+    }
+
+    fun onPrevPageClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(MemoryViewerViewEvent.MoveToPrevPage)
+        }
+    }
+
+    fun onNextPageClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(MemoryViewerViewEvent.MoveToNextPage)
+        }
+    }
+
+    fun onInfoClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentMemory = currentMemory.value ?: return@launch
+            viewEvent(MemoryViewerViewEvent.ShowInfo(currentMemory))
+        }
+    }
+
+    fun onBackClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val currentMemory = currentMemory.value ?: return@launch
+            val coordinates = LatLng(currentMemory.location.latitude, currentMemory.location.longitude)
+            viewEvent(MemoryViewerViewEvent.ResultBack(coordinates))
+        }
+    }
 
 }

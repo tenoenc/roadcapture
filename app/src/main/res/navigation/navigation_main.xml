@@ -43,5 +43,9 @@
     </fragment>
     <fragment android:id="@+id/memoryViewerFragment" android:name="com.tenacy.roadcapture.ui.MemoryViewerFragment"
               android:label="MemoryViewerFragment"
-              tools:layout="@layout/fragment_memory_viewer"/>
+              tools:layout="@layout/fragment_memory_viewer">
+
+        <argument android:name="clusterMarkerItems" app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems" />
+
+    </fragment>
 </navigation>

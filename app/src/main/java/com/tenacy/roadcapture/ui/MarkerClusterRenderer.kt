@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.net.Uri
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,14 +25,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 class ClusterMarkerItem(
     val id: Long,
     private val position: LatLng,
     private val title: String,
     private val snippet: String,
     val photoUri: Uri
-) : ClusterItem {
+) : ClusterItem, Parcelable {
     override fun getPosition(): LatLng = position
     override fun getTitle(): String = title
     override fun getSnippet(): String = snippet

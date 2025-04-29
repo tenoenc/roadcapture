@@ -13,13 +13,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.CameraUpdateFactory.zoomIn
-import com.google.android.gms.maps.CameraUpdateFactory.zoomOut
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -97,6 +96,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     // ===== 3. 라이프사이클 메서드 그룹 =====
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
         vm
     }
 
@@ -126,7 +126,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
     override fun onClusterItemClick(item: ClusterMarkerItem): Boolean {
         try {
-            showImageDetailDialog(item)
+            navigateToMemoryViewer(item)
             return true // 이벤트 소비
         } catch (e: Exception) {
             Log.e("TripFragment", "마커 클릭 처리 오류", e)
@@ -135,6 +135,18 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     // ===== 5. 초기 설정 메서드 그룹 =====
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            RangeSelectingBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<ClusterMarkerItems>(RangeSelectingBottomSheetFragment.RESULTS)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(it))
+            }
+        }
+    }
+
     private fun setupViews() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
@@ -151,7 +163,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         map.uiSettings.isCompassEnabled = false
         map.isMyLocationEnabled = true
 
-        moveCameraToCurrentLocation(zoom = 30f)
+        moveCameraTo(zoom = 30f)
 
         setupLocationUpdates()
     }
@@ -180,7 +192,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             // 최대 줌 레벨에 근접했는지 확인 (Google Maps의 최대 줌은 21.0f)
             if (currentZoom >= 20.0f) {  // 거의 최대 줌 상태로 간주
                 // 최대 줌 상태에서 클러스터를 클릭한 경우 -> 특별 처리
-                showClusterItemsGallery(cluster.items.toList())
+                showRangeSelectingDialog(cluster.items.toList())
                 return@setOnClusterClickListener true
             }
 
@@ -286,6 +298,13 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                     vm.fetchData()
                 }
         }
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            findNavController().currentBackStackEntry?.savedStateHandle
+                ?.getStateFlow<LatLng?>(KEY_COORDINATES, null)?.collect { coordinates ->
+                    if (coordinates == null) return@collect
+                    moveCameraTo(latLng = coordinates)
+                }
+        }
     }
 
     private fun observeViewEvents() {
@@ -305,7 +324,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                 resetCameraPosition()
             }
             is TripViewEvent.ResetCamera -> {
-                moveCameraToCurrentLocation()
+                moveCameraTo()
             }
             is TripViewEvent.Capture -> {
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -340,20 +359,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         }
     }
 
-    // 클러스터 내 이미지들을 갤러리 형태로 보여주는 함수
-    private fun showClusterItemsGallery(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
-            // 사용자에게 정보 표시
-            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                ToastModel("이 위치에 ${items.size}개의 사진이 있습니다", ToastMessageType.Info)
-            ))
-
-            // 여기서 바텀시트 또는 다이얼로그로 해당 위치의 모든 사진을 표시
-            // 예: showImageGalleryBottomSheet(items)
-            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer())
-        }
-    }
-
     // ===== 9. 지도 컨트롤 메서드 그룹 =====
     @SuppressLint("MissingPermission")
     private fun getCurrentLocation(): LatLng? {
@@ -368,10 +373,9 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveCameraToCurrentLocation(zoom: Float = map.cameraPosition.zoom) {
-        val latLng = getCurrentLocation()
-        if (latLng != null) {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
+    private fun moveCameraTo(latLng: LatLng? = null, zoom: Float = map.cameraPosition.zoom) {
+        (latLng ?: getCurrentLocation())?.let {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, zoom))
         }
     }
 
@@ -539,11 +543,21 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         }
     }
 
-    private fun showImageDetailDialog(item: ClusterMarkerItem) {
+    private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
         lifecycleScope.launch {
-            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                ToastModel("사진 ID: ${item.id} 클릭됨", ToastMessageType.Info)
-            ))
+            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewRange = ViewRange.WHOLE)
+            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(clusterMarkerItems))
+        }
+    }
+
+    private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
+        lifecycleScope.launch {
+            val bottomSheet = RangeSelectingBottomSheetFragment.newInstance(
+                bundle = bundleOf(
+                    RangeSelectingBottomSheetFragment.KEY_PARAMS to RangeSelectingBottomSheetFragment.Params(items = items),
+                )
+            )
+            bottomSheet.show(childFragmentManager, RangeSelectingBottomSheetFragment.TAG)
         }
     }
 
@@ -598,7 +612,15 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         val coordinates: LatLng           // 좌표
     ): Parcelable
 
+    @Parcelize
+    data class ClusterMarkerItems(
+        val selectedMemoryId: Long? = null,
+        val items: List<ClusterMarkerItem>? = null,
+        val viewRange: ViewRange,
+    ): Parcelable
+
     companion object {
         const val KEY_MEMORY_ID = "memory_id"
+        const val KEY_COORDINATES = "coordinates"
     }
 }

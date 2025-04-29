@@ -17,6 +17,25 @@
         <item name="android:minWidth">0dp</item>
     </style>
 
+    <style name="Chip.Choice.Range" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="ensureMinTouchTargetSize">false</item>
+        <item name="chipStrokeWidth">2dp</item>
+        <item name="chipCornerRadius">12dp</item>
+        <item name="chipMinHeight">0dp</item>
+        <item name="chipStartPadding">0dp</item>
+        <item name="chipEndPadding">0dp</item>
+        <item name="textStartPadding">0dp</item>
+        <item name="textEndPadding">0dp</item>
+        <item name="checkedIconVisible">false</item>
+        <item name="chipBackgroundColor">@color/chip_choice_range_background</item>
+        <item name="chipStrokeColor">@color/chip_choice_range_stroke</item>
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:textAppearance">@style/Body_14_M</item>
+        <item name="android:paddingVertical">11dp</item>
+        <item name="android:textColor">@color/label_normal</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
     <style name="ThemeOverlay.App.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.App.BottomSheet</item>
         <!-- 다이얼로그 배경을 투명하게 설정 -->
