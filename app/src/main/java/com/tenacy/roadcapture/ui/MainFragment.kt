@@ -96,7 +96,7 @@ class MainFragment: BaseFragment() {
             is MainViewEvent.Logout -> {
                 mainActivity.signOut()
             }
-            is MainViewEvent.New -> {
+            is MainViewEvent.ShowTripBefore -> {
                 if(Album.createdAt > 0L) {
                     val bottomSheet = TripOngoingBottomSheetFragment.newInstance()
                     bottomSheet.show(childFragmentManager, TripOngoingBottomSheetFragment.TAG)

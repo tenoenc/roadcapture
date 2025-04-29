@@ -20,7 +20,7 @@ sealed class LoginViewEvent: ViewEvent {
 
 sealed class MainViewEvent: ViewEvent {
     data object Logout: MainViewEvent()
-    data object New: MainViewEvent()
+    data object ShowTripBefore: MainViewEvent()
 }
 
 sealed class HomeViewEvent: ViewEvent
@@ -31,7 +31,13 @@ sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()
     data object ResetCamera: TripViewEvent()
     data object Capture: TripViewEvent()
-    data object StopTraveling: TripViewEvent()
+    data object Back: TripViewEvent()
+    data object ShowGuide: TripViewEvent()
+    data object ShowSubscription: TripViewEvent()
+    data object ZoomIn: TripViewEvent()
+    data object ZoomOut: TripViewEvent()
+    data object ShowNextBefore: TripViewEvent()
+    data object ShowDeleteBefore: TripViewEvent()
 }
 
 sealed class CameraViewEvent: ViewEvent {
@@ -42,5 +48,5 @@ sealed class CameraViewEvent: ViewEvent {
 
 sealed class NewMemoryViewEvent: ViewEvent {
     data class ResultBack(val memoryId: Long) : NewMemoryViewEvent()
-    data class Location(val address: String): NewMemoryViewEvent()
+    data class ShowLocation(val address: String): NewMemoryViewEvent()
 }

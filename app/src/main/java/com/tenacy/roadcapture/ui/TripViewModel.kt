@@ -30,6 +30,9 @@ class TripViewModel @Inject constructor(
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
+    val memoryCountText = _memories.map { "추억 ${it.size} / 10" }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+
     val markers = combine(_locations, _memories) { locations, memories ->
         val memoryByLocationId = memories.associateBy { it.location.id }
 
@@ -96,7 +99,7 @@ class TripViewModel @Inject constructor(
             locationDao.clear()
             _durationText.update { null }
 
-            viewEvent(TripViewEvent.StopTraveling)
+            viewEvent(TripViewEvent.Back)
         }
     }
 
@@ -151,6 +154,42 @@ class TripViewModel @Inject constructor(
     fun onCaptureClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(TripViewEvent.Capture)
+        }
+    }
+
+    fun onZoomInClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ZoomIn)
+        }
+    }
+
+    fun onZoomOutClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ZoomOut)
+        }
+    }
+
+    fun onDurationClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ShowGuide)
+        }
+    }
+
+    fun onMemoryCountClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ShowSubscription)
+        }
+    }
+
+    fun onCheckClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ShowNextBefore)
+        }
+    }
+
+    fun onDeleteClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.ShowDeleteBefore)
         }
     }
 

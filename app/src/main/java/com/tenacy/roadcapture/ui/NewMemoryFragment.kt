@@ -141,7 +141,7 @@ class NewMemoryFragment: BaseFragment() {
                 findNavController().getBackStackEntry(destinationId).savedStateHandle.set(TripFragment.KEY_MEMORY_ID, event.memoryId)
                 findNavController().popBackStack()
             }
-            is NewMemoryViewEvent.Location -> {
+            is NewMemoryViewEvent.ShowLocation -> {
                 val bottomSheet = LocationBottomSheetFragment.newInstance(
                     bundle = bundleOf(
                         LocationBottomSheetFragment.KEY_ADDRESS to event.address,

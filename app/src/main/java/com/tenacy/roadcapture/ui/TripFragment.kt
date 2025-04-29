@@ -18,6 +18,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.CameraUpdateFactory.zoomIn
+import com.google.android.gms.maps.CameraUpdateFactory.zoomOut
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
@@ -290,13 +292,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun handleViewEvents(event: TripViewEvent) {
         when (event) {
             is TripViewEvent.ResetCameraPosition -> {
-                // 북쪽 방향으로 맵 회전
-                val cameraPosition = CameraPosition.Builder()
-                    .target(map.cameraPosition.target)
-                    .zoom(map.cameraPosition.zoom)
-                    .bearing(0f)
-                    .build()
-                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                resetCameraPosition()
             }
             is TripViewEvent.ResetCamera -> {
                 moveCameraToCurrentLocation()
@@ -310,8 +306,26 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                     }
                 }
             }
-            is TripViewEvent.StopTraveling -> {
+            is TripViewEvent.Back -> {
                 findNavController().popBackStack()
+            }
+            is TripViewEvent.ZoomIn -> {
+                zoomIn()
+            }
+            is TripViewEvent.ZoomOut -> {
+                zoomOut()
+            }
+            is TripViewEvent.ShowGuide -> {
+
+            }
+            is TripViewEvent.ShowSubscription -> {
+
+            }
+            is TripViewEvent.ShowNextBefore -> {
+
+            }
+            is TripViewEvent.ShowDeleteBefore -> {
+
             }
         }
     }
@@ -335,6 +349,30 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         if (latLng != null) {
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom))
         }
+    }
+
+    private fun resetCameraPosition() {
+        // 북쪽 방향으로 맵 회전
+        val cameraPosition = CameraPosition.Builder()
+            .target(map.cameraPosition.target)
+            .zoom(map.cameraPosition.zoom)
+            .bearing(0f)
+            .build()
+        map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+    }
+
+    private fun zoomOut() {
+        // 현재 줌 레벨에서 1단계 축소
+        val currentZoom = map.cameraPosition.zoom
+        val newZoom = (currentZoom - 1.0f).coerceAtLeast(2.0f) // 최소 줌 레벨 (2.0f)로 제한
+        map.animateCamera(CameraUpdateFactory.zoomTo(newZoom))
+    }
+
+    private fun zoomIn() {
+        // 현재 줌 레벨에서 1단계 확대
+        val currentZoom = map.cameraPosition.zoom
+        val newZoom = (currentZoom + 1.0f).coerceAtMost(21.0f) // 최대 줌 레벨 (21.0f)로 제한
+        map.animateCamera(CameraUpdateFactory.zoomTo(newZoom))
     }
 
     // ===== 10. 경로 처리 메서드 그룹 =====

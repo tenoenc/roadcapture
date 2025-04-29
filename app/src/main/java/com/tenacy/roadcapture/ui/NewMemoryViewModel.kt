@@ -113,7 +113,7 @@ class NewMemoryViewModel @Inject constructor(
     fun onLocationClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
-            viewEvent(NewMemoryViewEvent.Location(placeLocation.formattedAddress))
+            viewEvent(NewMemoryViewEvent.ShowLocation(placeLocation.formattedAddress))
         }
     }
 
