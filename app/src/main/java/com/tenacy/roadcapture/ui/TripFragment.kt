@@ -350,6 +350,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
             // 여기서 바텀시트 또는 다이얼로그로 해당 위치의 모든 사진을 표시
             // 예: showImageGalleryBottomSheet(items)
+            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer())
         }
     }
 

@@ -50,3 +50,5 @@ sealed class NewMemoryViewEvent: ViewEvent {
     data class ResultBack(val memoryId: Long) : NewMemoryViewEvent()
     data class ShowLocation(val address: String): NewMemoryViewEvent()
 }
+
+sealed class MemoryViewerViewEvent: ViewEvent
