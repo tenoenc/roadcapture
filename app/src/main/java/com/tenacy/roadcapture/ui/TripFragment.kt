@@ -174,7 +174,17 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
         // 클러스터 클릭 리스너 설정
         clusterManager.setOnClusterClickListener { cluster ->
-            // 클러스터를 클릭했을 때 확대
+            // 현재 줌 레벨 확인
+            val currentZoom = map.cameraPosition.zoom
+
+            // 최대 줌 레벨에 근접했는지 확인 (Google Maps의 최대 줌은 21.0f)
+            if (currentZoom >= 20.0f) {  // 거의 최대 줌 상태로 간주
+                // 최대 줌 상태에서 클러스터를 클릭한 경우 -> 특별 처리
+                showClusterItemsGallery(cluster.items.toList())
+                return@setOnClusterClickListener true
+            }
+
+            // 최대 줌이 아닌 상태에서는 기존처럼 확대 계속 진행
             val builder = LatLngBounds.Builder()
             for (item in cluster.items) {
                 builder.include(item.position)
@@ -327,6 +337,19 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.ShowDeleteBefore -> {
 
             }
+        }
+    }
+
+    // 클러스터 내 이미지들을 갤러리 형태로 보여주는 함수
+    private fun showClusterItemsGallery(items: List<ClusterMarkerItem>) {
+        lifecycleScope.launch {
+            // 사용자에게 정보 표시
+            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
+                ToastModel("이 위치에 ${items.size}개의 사진이 있습니다", ToastMessageType.Info)
+            ))
+
+            // 여기서 바텀시트 또는 다이얼로그로 해당 위치의 모든 사진을 표시
+            // 예: showImageGalleryBottomSheet(items)
         }
     }
 
