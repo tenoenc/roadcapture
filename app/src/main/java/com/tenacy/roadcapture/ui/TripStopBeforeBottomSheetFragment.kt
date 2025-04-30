@@ -9,13 +9,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetDeleteBeforeBinding
-import com.tenacy.roadcapture.databinding.BSheetTripBeforeBinding
+import com.tenacy.roadcapture.databinding.BSheetAlbumDeletingBeforeBinding
 import com.tenacy.roadcapture.util.SpannableUtils
 
-class DeleteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
+class TripStopBeforeBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetDeleteBeforeBinding? = null
+    private var _binding: BSheetAlbumDeletingBeforeBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -25,7 +24,7 @@ class DeleteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetDeleteBeforeBinding.inflate(inflater, container, false).apply {
+        return BSheetAlbumDeletingBeforeBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -42,7 +41,7 @@ class DeleteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
         val fullText = "앨범을 삭제하면 추억들을 ${spanText}\n정말 삭제하시겠어요?"
         SpannableUtils.setClickableText(
             requireContext(),
-            binding.txtBSheetDeleteBeforeDescription,
+            binding.txtBSheetTripStopBeforeDescription,
             fullText,
             listOf(
                 SpannableUtils.ClickablePart(
@@ -54,14 +53,14 @@ class DeleteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetDeleteBeforePositive.setOnClickListener {
+        binding.btnBSheetTripStopBeforePositive.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(RESULT_EVENT_CLICK_POSITIVE to System.currentTimeMillis().toString())
             )
             dismiss()
         }
-        binding.btnBSheetDeleteBeforeNegative.setOnClickListener {
+        binding.btnBSheetTripStopBeforeNegative.setOnClickListener {
             dismiss()
         }
     }
@@ -73,13 +72,13 @@ class DeleteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
 
     companion object {
 
-        const val TAG = "DeleteBeforeBottomSheetFragment"
+        const val TAG = "TripStopBeforeBottomSheetFragment"
 
         const val REQUEST_KEY = "delete_before"
         const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
 
-        fun newInstance(bundle: Bundle? = null): DeleteBeforeBottomSheetFragment {
-            return DeleteBeforeBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): TripStopBeforeBottomSheetFragment {
+            return TripStopBeforeBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

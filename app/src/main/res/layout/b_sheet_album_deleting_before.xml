@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout android:id="@+id/ll_b_sheet_delete_before_container"
+    <LinearLayout android:id="@+id/ll_b_sheet_trip_stop_before_container"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
@@ -11,7 +11,7 @@
 
         <androidx.cardview.widget.CardView android:layout_width="48dp"
                                            android:layout_height="4dp"
-                                           android:id="@+id/card_b_sheet_delete_before_handle"
+                                           android:id="@+id/card_b_sheet_trip_stop_before_handle"
                                            app:cardElevation="0dp"
                                            app:cardCornerRadius="10dp"
                                            app:cardBackgroundColor="@color/fill_neutral"
@@ -26,7 +26,7 @@
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:id="@+id/txt_b_sheet_delete_before_description"
+                  android:id="@+id/txt_b_sheet_trip_stop_before_description"
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"
                   android:textAlignment="center"
@@ -39,7 +39,7 @@
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_b_sheet_delete_before_negative"
+                android:id="@+id/btn_b_sheet_trip_stop_before_negative"
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
@@ -52,7 +52,7 @@
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_b_sheet_delete_before_positive"
+                android:id="@+id/btn_b_sheet_trip_stop_before_positive"
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/background_normal"

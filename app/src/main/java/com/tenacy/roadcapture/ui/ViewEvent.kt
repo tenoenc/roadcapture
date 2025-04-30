@@ -38,8 +38,8 @@ sealed class TripViewEvent: ViewEvent {
     data object ShowSubscription: TripViewEvent()
     data object ZoomIn: TripViewEvent()
     data object ZoomOut: TripViewEvent()
-    data object ShowNextBefore: TripViewEvent()
-    data object ShowDeleteBefore: TripViewEvent()
+    data object ShowTripAfter: TripViewEvent()
+    data object ShowTripStopBefore: TripViewEvent()
 }
 
 sealed class CameraViewEvent: ViewEvent {
@@ -60,3 +60,5 @@ sealed class MemoryViewerViewEvent: ViewEvent {
     data class ShowInfo(val memory: MemoryWithLocation): MemoryViewerViewEvent()
     data class ResultBack(val coordinates: LatLng): MemoryViewerViewEvent()
 }
+
+sealed class NewAlbumViewEvent: ViewEvent

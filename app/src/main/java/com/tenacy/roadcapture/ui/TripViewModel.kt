@@ -183,13 +183,13 @@ class TripViewModel @Inject constructor(
 
     fun onCheckClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ShowNextBefore)
+            viewEvent(TripViewEvent.ShowTripAfter)
         }
     }
 
     fun onDeleteClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ShowDeleteBefore)
+            viewEvent(TripViewEvent.ShowTripStopBefore)
         }
     }
 

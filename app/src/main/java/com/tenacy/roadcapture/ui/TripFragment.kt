@@ -170,10 +170,19 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             }
         }
         childFragmentManager.setFragmentResultListener(
-            DeleteBeforeBottomSheetFragment.REQUEST_KEY,
+            TripAfterBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(DeleteBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getString(TripAfterBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                findNavController().navigate(TripFragmentDirections.actionTripToNewAlbum())
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            TripStopBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(TripStopBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 lifecycleScope.launch {
                     vm.stopTraveling()
@@ -389,11 +398,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.ShowSubscription -> {
                 showSubscriptionDialog()
             }
-            is TripViewEvent.ShowNextBefore -> {
-
+            is TripViewEvent.ShowTripAfter -> {
+                showTripAfterDialog()
             }
-            is TripViewEvent.ShowDeleteBefore -> {
-                showDeleteBeforeDialog()
+            is TripViewEvent.ShowTripStopBefore -> {
+                showTripStopBeforeDialog()
             }
         }
     }
@@ -426,9 +435,14 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
     }
 
-    private fun showDeleteBeforeDialog() {
-        val bottomSheet = DeleteBeforeBottomSheetFragment.newInstance()
-        bottomSheet.show(childFragmentManager, DeleteBeforeBottomSheetFragment.TAG)
+    private fun showTripAfterDialog() {
+        val bottomSheet = TripAfterBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, TripAfterBottomSheetFragment.TAG)
+    }
+
+    private fun showTripStopBeforeDialog() {
+        val bottomSheet = TripStopBeforeBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, TripStopBeforeBottomSheetFragment.TAG)
     }
 
     // ===== 9. 지도 컨트롤 메서드 그룹 =====

@@ -24,6 +24,7 @@
         <action android:id="@+id/action_trip_to_camera" app:destination="@id/cameraFragment"/>
         <action android:id="@+id/action_trip_to_memoryViewer"
                 app:destination="@id/memoryViewerFragment"/>
+        <action android:id="@+id/action_trip_to_newAlbum" app:destination="@id/newAlbumFragment"/>
     </fragment>
     <fragment android:id="@+id/cameraFragment" android:name="com.tenacy.roadcapture.ui.CameraFragment"
               android:label="CameraFragment"
@@ -48,4 +49,7 @@
         <argument android:name="clusterMarkerItems" app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems" />
 
     </fragment>
+    <fragment android:id="@+id/newAlbumFragment" android:name="com.tenacy.roadcapture.ui.NewAlbumFragment"
+              android:label="NewAlbumFragment"
+    tools:layout="@layout/fragment_new_album"/>
 </navigation>
