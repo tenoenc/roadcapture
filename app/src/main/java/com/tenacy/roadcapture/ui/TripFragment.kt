@@ -85,7 +85,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             setupObservers()
             setupClusterManager()
 
-            if(isInitialGuideShown) {
+            if(!isInitialGuideShown) {
                 showGuideDialog()
                 isInitialGuideShown = true
             }
@@ -167,6 +167,18 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         ) { _, bundle ->
             bundle.getString(SubscriptionBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            DeleteBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(DeleteBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                lifecycleScope.launch {
+                    vm.stopTraveling()
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제했어요", ToastMessageType.Success)))
+                }
             }
         }
     }
@@ -353,7 +365,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.Capture -> {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val location = getCurrentLocation()
-                    val placeLocation = requireContext().extractLocationData(location) ?: return@launch
+                    val placeLocation = requireContext().extractLocationData(location) ?: kotlin.run {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보가 없기 때문에 사진을 찍을 수 없습니다", ToastMessageType.Warning)))
+                        return@launch
+                    }
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(TripFragmentDirections.actionTripToCamera(placeLocation))
                     }
@@ -378,7 +393,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
             }
             is TripViewEvent.ShowDeleteBefore -> {
-
+                showDeleteBeforeDialog()
             }
         }
     }
@@ -409,6 +424,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun showSubscriptionDialog() {
         val bottomSheet = SubscriptionBottomSheetFragment.newInstance()
         bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
+    }
+
+    private fun showDeleteBeforeDialog() {
+        val bottomSheet = DeleteBeforeBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, DeleteBeforeBottomSheetFragment.TAG)
     }
 
     // ===== 9. 지도 컨트롤 메서드 그룹 =====

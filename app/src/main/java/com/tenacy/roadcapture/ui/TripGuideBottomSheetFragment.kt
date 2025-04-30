@@ -42,7 +42,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
 
     private fun setupViews() {
         val spanText1 = "자동으로 삭제"
-        val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요\n단, 여행 기간이 한 달이 넘어가면 앨범은 ${spanText1}돼요"
+        val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범은 ${spanText1}돼요."
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -58,7 +58,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
 
         val spanText2_1 = "10개"
         val spanText2_2 = "여기"
-        val spanFullText2 = "무료 플랜에서는 추억을 ${spanText2_1}개까지만 만들 수 있어요\n더 많은 추억을 만들기 원하시면 ${spanText2_2}를 클릭해주세요"
+        val spanFullText2 = "무료 플랜에서는 추억을 ${spanText2_1}개까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 ${spanText2_2}를 클릭해주세요."
 
         SpannableUtils.setClickableText(
             requireContext(),

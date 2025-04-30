@@ -102,7 +102,7 @@
                                   android:layout_height="wrap_content"
                                   android:textAppearance="@style/Body_12_M"
                                   android:textColor="@color/label_neutral"
-                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있습니다. (지도 제외)"
+                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있어요. (지도 제외)"
                                   android:layout_marginStart="8dp"/>
 
 

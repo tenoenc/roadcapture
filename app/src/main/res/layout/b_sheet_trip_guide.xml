@@ -63,7 +63,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="사진을 찍어 추억을 만들 수 있어요"
+                              android:text="사진을 찍어 추억을 만들 수 있어요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -84,7 +84,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="앱을 종료해도 여행은 끝나지 않아요\n단, 여행 기간이 한 달이 넘어가면 앨범은 자동으로 삭제돼요"
+                              android:text="앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범은 자동으로 삭제돼요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -104,7 +104,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="작성중인 앨범 외 다른 앨범은 만들 수 없어요"
+                              android:text="작성중인 앨범 외 다른 앨범은 만들 수 없어요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -125,7 +125,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_2"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="무료 플랜에서는 추억을 10개까지만 만들 수 있어요\n더 많은 추억을 만들기 원하시면 여기를 클릭해주세요"
+                              android:text="무료 플랜에서는 추억을 10개까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 여기를 클릭해주세요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -153,7 +153,7 @@
                               android:layout_marginEnd="10dp"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="우측에 보이는 모양의 아이콘을 지도에서 눌러 앨범을 완성시켜주세요"
+                              android:text="우측에 보이는 모양의 아이콘을 지도에서 눌러 앨범을 완성시켜주세요."
                               android:layout_marginStart="8dp"/>
 
                     <ImageView android:layout_width="23dp"
