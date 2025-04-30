@@ -36,6 +36,7 @@ data class MemoryEntity(
     val createdAt: LocalDateTime,
 ): Parcelable
 
+@Parcelize
 data class MemoryWithLocation(
     @Embedded val memory: MemoryEntity,
     @Relation(
@@ -43,4 +44,4 @@ data class MemoryWithLocation(
         entityColumn = "id",
     )
     val location: LocationEntity,
-)
+): Parcelable

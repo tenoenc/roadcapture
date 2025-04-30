@@ -9,7 +9,7 @@ import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.ui.TripFragment.Marker
-import com.tenacy.roadcapture.util.toDurationFormattedText
+import com.tenacy.roadcapture.util.getDurationFormattedText
 import com.tenacy.roadcapture.util.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -88,8 +88,7 @@ class TripViewModel @Inject constructor(
     }
 
     fun updateDurationText() {
-        val duration = LocalDateTime.now().toTimestamp() - Album.createdAt
-        _durationText.update { duration.toDurationFormattedText() }
+        _durationText.update { getDurationFormattedText(Album.createdAt, LocalDateTime.now().toTimestamp()) }
     }
 
     fun stopTraveling() {

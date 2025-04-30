@@ -63,11 +63,6 @@ class MemoryViewerFragment: BaseFragment() {
         _binding = null
     }
 
-    override fun onClick(v: View?) {
-
-        super.onClick(v)
-    }
-
     private fun setupFragmentResultListeners() {
         childFragmentManager.setFragmentResultListener(
             LocationBottomSheetFragment.REQUEST_KEY,
@@ -133,7 +128,12 @@ class MemoryViewerFragment: BaseFragment() {
                 binding.vpMemoryViewerPhoto.currentItem += 1
             }
             is MemoryViewerViewEvent.ShowInfo -> {
-
+                val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
+                    bundle = bundleOf(
+                        MemoryInfoBottomSheetFragment.KEY_MEMORY to event.memory,
+                    )
+                )
+                bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
             }
             is MemoryViewerViewEvent.ResultBack -> {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(TripFragment.KEY_COORDINATES, event.coordinates)
