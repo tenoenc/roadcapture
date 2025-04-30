@@ -56,7 +56,9 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private lateinit var markerRenderer: MarkerClusterRenderer
     private lateinit var clusterManager: ClusterManager<ClusterMarkerItem>
     private val clusterItems = mutableMapOf<Long, ClusterMarkerItem>()
+
     private var isClusterManagerInitialized = false
+    private var isInitialGuideShown = false
 
     // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
@@ -82,6 +84,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             setupMaps()
             setupObservers()
             setupClusterManager()
+
+            if(isInitialGuideShown) {
+                showGuideDialog()
+                isInitialGuideShown = true
+            }
         }
 
         override fun onPermissionDenied(p0: MutableList<String>?) {
@@ -150,6 +157,15 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             this
         ) { _, bundle ->
             bundle.getString(TripGuideBottomSheetFragment.RESULT_EVENT_SHOW_SUBSCRIPTION)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                showSubscriptionDialog()
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            SubscriptionBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(SubscriptionBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
             }
         }
@@ -353,11 +369,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                 zoomOut()
             }
             is TripViewEvent.ShowGuide -> {
-                val bottomSheet = TripGuideBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, TripGuideBottomSheetFragment.TAG)
+                showGuideDialog()
             }
             is TripViewEvent.ShowSubscription -> {
-
+                showSubscriptionDialog()
             }
             is TripViewEvent.ShowNextBefore -> {
 
@@ -366,6 +381,34 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
             }
         }
+    }
+
+    private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
+        lifecycleScope.launch {
+            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewRange = ViewRange.WHOLE)
+            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(clusterMarkerItems))
+        }
+    }
+
+    private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
+        lifecycleScope.launch {
+            val bottomSheet = RangeSelectingBottomSheetFragment.newInstance(
+                bundle = bundleOf(
+                    RangeSelectingBottomSheetFragment.KEY_PARAMS to RangeSelectingBottomSheetFragment.Params(items = items),
+                )
+            )
+            bottomSheet.show(childFragmentManager, RangeSelectingBottomSheetFragment.TAG)
+        }
+    }
+
+    private fun showGuideDialog() {
+        val bottomSheet = TripGuideBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, TripGuideBottomSheetFragment.TAG)
+    }
+
+    private fun showSubscriptionDialog() {
+        val bottomSheet = SubscriptionBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
     }
 
     // ===== 9. 지도 컨트롤 메서드 그룹 =====
@@ -549,24 +592,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             clusterItems[markerId] = clusterItem
         } catch (e: Exception) {
             Log.e("TripFragment", "Error creating photo cluster item", e)
-        }
-    }
-
-    private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
-        lifecycleScope.launch {
-            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewRange = ViewRange.WHOLE)
-            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(clusterMarkerItems))
-        }
-    }
-
-    private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
-            val bottomSheet = RangeSelectingBottomSheetFragment.newInstance(
-                bundle = bundleOf(
-                    RangeSelectingBottomSheetFragment.KEY_PARAMS to RangeSelectingBottomSheetFragment.Params(items = items),
-                )
-            )
-            bottomSheet.show(childFragmentManager, RangeSelectingBottomSheetFragment.TAG)
         }
     }
 

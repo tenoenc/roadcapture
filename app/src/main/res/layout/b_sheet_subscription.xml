@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.tenacy.roadcapture.ui.ViewRange"/>
+    </data>
+
+    <LinearLayout android:id="@+id/ll_b_sheet_subscription_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:paddingHorizontal="20dp"
+                  android:paddingBottom="20dp"
+                  app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.cardview.widget.CardView android:layout_width="48dp"
+                                           android:layout_height="4dp"
+                                           android:id="@+id/card_b_sheet_subscription_handle"
+                                           app:cardElevation="0dp"
+                                           app:cardCornerRadius="10dp"
+                                           app:cardBackgroundColor="@color/fill_neutral"
+                                           android:layout_gravity="center"
+                                           android:layout_marginTop="16dp"/>
+
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                                               android:layout_height="0dp"
+                                               android:layout_weight="1"
+                                               android:id="@+id/ns_b_sheet_subscription"
+                                               android:layout_marginTop="8dp"
+                                               android:clipToPadding="false"
+                                               android:paddingBottom="24dp">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:gravity="center">
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:text="정기구독 혜택"
+                          android:layout_marginTop="20dp"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_neutral"
+                          android:textAlignment="center"
+                          android:text="구독하고 더 많은 혜택을 누려보세요!"
+                          android:layout_marginTop="4dp"/>
+
+                <ImageView android:layout_width="168dp"
+                           android:layout_height="152dp"
+                           android:src="@drawable/crown"
+                           android:scaleType="centerCrop"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_15_M"
+                              android:textColor="@color/label_normal"
+                              android:text="앨범 당 최대 100개의 추억 생성"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <LinearLayout android:layout_width="0dp"
+                                  android:layout_height="wrap_content"
+                                  android:layout_weight="1"
+                                  android:orientation="vertical">
+
+                        <TextView android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:textAppearance="@style/Body_15_M"
+                                  android:textColor="@color/label_normal"
+                                  android:text="앨범 링크(웹 페이지) 생성"
+                                  android:layout_marginStart="8dp"/>
+
+                        <TextView android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:textAppearance="@style/Body_12_M"
+                                  android:textColor="@color/label_neutral"
+                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있습니다. (지도 제외)"
+                                  android:layout_marginStart="8dp"/>
+
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_15_M"
+                              android:textColor="@color/label_normal"
+                              android:text="광고 제거"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_b_sheet_subscription_positive"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="정기구독 결제하기"
+                android:backgroundTint="#FFD700"
+                app:cornerRadius="12dp"
+                android:padding="12dp"/>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_b_sheet_subscription_negative"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="닫기"
+                android:backgroundTint="@color/fill_alternative"
+                app:cornerRadius="12dp"
+                android:layout_marginTop="12dp"
+                android:padding="12dp"/>
+
+    </LinearLayout>
+
+</layout>
