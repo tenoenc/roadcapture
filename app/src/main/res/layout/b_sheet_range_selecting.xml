@@ -26,6 +26,7 @@
                   android:layout_height="wrap_content"
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
+                  android:textAlignment="center"
                   android:text="범위 선택"
                   android:layout_marginTop="20dp"/>
 

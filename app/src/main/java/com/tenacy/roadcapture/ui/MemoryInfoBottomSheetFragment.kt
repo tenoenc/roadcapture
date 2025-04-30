@@ -8,12 +8,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.databinding.BSheetMemoryInfoBinding
-import com.tenacy.roadcapture.util.formatWithPattern
-import com.tenacy.roadcapture.util.getDurationHour
-import com.tenacy.roadcapture.util.getDurationMinute
-import com.tenacy.roadcapture.util.toTimestamp
+import com.tenacy.roadcapture.util.*
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
 
@@ -77,14 +73,9 @@ class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
     private fun getDurationFormattedText(): String? {
         return memoryWithLocation?.let {
             val currentTimeStamp = LocalDateTime.now().toTimestamp()
-            val hour = getDurationHour(it.memory.createdAt.toTimestamp(), currentTimeStamp)
-            val minute = getDurationMinute(it.memory.createdAt.toTimestamp(), currentTimeStamp)
+            val (unit, value) = getFormattedDuration(it.memory.createdAt.toTimestamp(), currentTimeStamp)
 
-            when {
-                hour != null -> "${hour}시간 전에 남긴 추억이에요"
-                minute != null -> "${minute}분 전에 남긴 추억이에요"
-                else -> "방금 전에 남긴 추억이에요"
-            }
+            "${if(value == -1) "방금" else value}${unit} 전에 남긴 추억이에요"
         }
     }
 
@@ -105,7 +96,7 @@ class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
 
         const val KEY_MEMORY = "memory"
 
-        const val REQUEST_KEY = "trip_after"
+        const val REQUEST_KEY = "memory_info"
         const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
 
         fun newInstance(bundle: Bundle? = null): MemoryInfoBottomSheetFragment {
