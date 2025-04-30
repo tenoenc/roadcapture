@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.tenacy.roadcapture.ui.ViewRange"/>
+    </data>
+
+    <LinearLayout android:id="@+id/ll_b_sheet_trip_guide_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:paddingHorizontal="20dp"
+                  android:paddingBottom="20dp"
+                  app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.cardview.widget.CardView android:layout_width="48dp"
+                                           android:layout_height="4dp"
+                                           android:id="@+id/card_b_sheet_trip_guide_handle"
+                                           app:cardElevation="0dp"
+                                           app:cardCornerRadius="10dp"
+                                           app:cardBackgroundColor="@color/fill_neutral"
+                                           android:layout_gravity="center"
+                                           android:layout_marginTop="16dp"/>
+
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                                               android:layout_height="0dp"
+                                               android:layout_weight="1"
+                                               android:id="@+id/ns_b_sheet_trip_guide"
+                                               android:layout_marginTop="8dp"
+                                               android:clipToPadding="false"
+                                               android:paddingBottom="24dp">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:gravity="center">
+
+                <ImageView android:layout_width="168dp"
+                           android:layout_height="152dp"
+                           android:src="@drawable/info"
+                           android:scaleType="centerCrop"/>
+
+                <TextView android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:text="여행 중에"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="사진을 찍어 추억을 만들 수 있어요"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:id="@+id/txt_b_sheet_trip_guide_span_1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="앱을 종료해도 여행은 끝나지 않아요\n단, 여행 기간이 한 달이 넘어가면 앨범은 자동으로 삭제돼요"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="작성중인 앨범 외 다른 앨범은 만들 수 없어요"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:id="@+id/txt_b_sheet_trip_guide_span_2"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="무료 플랜에서는 추억을 10개까지만 만들 수 있어요\n더 많은 추억을 만들기 원하시면 여기를 클릭해주세요"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:text="여행이 끝나면"
+                          android:layout_marginTop="24dp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:layout_marginEnd="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="우측에 보이는 모양의 아이콘을 지도에서 눌러 앨범을 완성시켜주세요"
+                              android:layout_marginStart="8dp"/>
+
+                    <ImageView android:layout_width="23dp"
+                               android:layout_height="24dp"
+                               android:src="@drawable/ic_circle_check_2"
+                               android:layout_gravity="center"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_b_sheet_trip_guide_cancel"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="닫기"
+                android:backgroundTint="@color/fill_alternative"
+                app:cornerRadius="12dp"
+                android:padding="12dp"/>
+
+    </LinearLayout>
+
+</layout>

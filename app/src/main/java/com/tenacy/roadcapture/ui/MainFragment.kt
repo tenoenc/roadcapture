@@ -55,7 +55,7 @@ class MainFragment: BaseFragment() {
             TripBeforeBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(TripBeforeBottomSheetFragment.RESULT_POSITIVE)?.let {
+            bundle.getString(TripBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 findNavController().navigate(MainFragmentDirections.actionMainToTrip())
             }
@@ -64,7 +64,7 @@ class MainFragment: BaseFragment() {
             TripOngoingBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(TripOngoingBottomSheetFragment.RESULT_POSITIVE)?.let {
+            bundle.getString(TripOngoingBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 findNavController().navigate(MainFragmentDirections.actionMainToTrip())
             }

@@ -140,9 +140,17 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             RangeSelectingBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<ClusterMarkerItems>(RangeSelectingBottomSheetFragment.RESULTS)?.let {
+            bundle.getParcelable<ClusterMarkerItems>(RangeSelectingBottomSheetFragment.RESULT_ITEMS)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(it))
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            TripGuideBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(TripGuideBottomSheetFragment.RESULT_EVENT_SHOW_SUBSCRIPTION)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
             }
         }
     }
@@ -345,7 +353,8 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                 zoomOut()
             }
             is TripViewEvent.ShowGuide -> {
-
+                val bottomSheet = TripGuideBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, TripGuideBottomSheetFragment.TAG)
             }
             is TripViewEvent.ShowSubscription -> {
 

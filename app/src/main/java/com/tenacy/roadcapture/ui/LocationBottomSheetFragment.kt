@@ -9,8 +9,6 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetLocationBinding
-import com.tenacy.roadcapture.databinding.BSheetTripBeforeBinding
-import com.tenacy.roadcapture.databinding.BSheetTripOngoingBinding
 
 class LocationBottomSheetFragment: BottomSheetDialogFragment() {
 
@@ -53,7 +51,7 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
         binding.btnBSheetLocationPositive.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_POSITIVE to address)
+                bundleOf(RESULT_EVENT_CLICK_POSITIVE to address)
             )
             dismiss()
         }
@@ -74,7 +72,7 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
         const val KEY_ADDRESS = "address"
 
         const val REQUEST_KEY = "location"
-        const val RESULT_POSITIVE = "positive"
+        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
 
         fun newInstance(bundle: Bundle? = null): LocationBottomSheetFragment {
             return LocationBottomSheetFragment().apply {

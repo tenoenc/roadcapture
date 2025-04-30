@@ -73,7 +73,7 @@ class MemoryViewerFragment: BaseFragment() {
             LocationBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(LocationBottomSheetFragment.RESULT_POSITIVE)?.let {
+            bundle.getString(LocationBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 lifecycleScope.launch(Dispatchers.Main) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(it))

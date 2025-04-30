@@ -37,7 +37,7 @@ class TripBeforeBottomSheetFragment: BottomSheetDialogFragment() {
         binding.btnBSheetTripBeforePositive.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_POSITIVE to System.currentTimeMillis().toString())
+                bundleOf(RESULT_EVENT_CLICK_POSITIVE to System.currentTimeMillis().toString())
             )
             dismiss()
         }
@@ -56,7 +56,7 @@ class TripBeforeBottomSheetFragment: BottomSheetDialogFragment() {
         const val TAG = "TripBeforeBottomSheetFragment"
 
         const val REQUEST_KEY = "trip_before"
-        const val RESULT_POSITIVE = "positive"
+        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
 
         fun newInstance(bundle: Bundle? = null): TripBeforeBottomSheetFragment {
             return TripBeforeBottomSheetFragment().apply {

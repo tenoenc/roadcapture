@@ -57,7 +57,7 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
-                    RESULTS to TripFragment.ClusterMarkerItems(
+                    RESULT_ITEMS to TripFragment.ClusterMarkerItems(
                         selectedMemoryId = selectedMemoryId,
                         items = items,
                         viewRange = viewRange,
@@ -86,7 +86,7 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
         const val KEY_PARAMS = "params"
 
         const val REQUEST_KEY = "range_selecting"
-        const val RESULTS = "results"
+        const val RESULT_ITEMS = "items"
 
         fun newInstance(bundle: Bundle? = null): RangeSelectingBottomSheetFragment {
             return RangeSelectingBottomSheetFragment().apply {
