@@ -55,13 +55,6 @@ class TripViewModel @Inject constructor(
 
     init {
         fetchData()
-        observeData()
-    }
-
-    private fun observeData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _lastLocation.collect(Album::saveLastLocation)
-        }
     }
 
     fun fetchData() {

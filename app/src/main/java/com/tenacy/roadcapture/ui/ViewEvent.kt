@@ -27,6 +27,10 @@ sealed class MainViewEvent: ViewEvent {
 
 sealed class HomeViewEvent: ViewEvent
 
+sealed class SearchViewEvent: ViewEvent
+
+sealed class AlbumMarkedViewEvent: ViewEvent
+
 sealed class MyAlbumViewEvent: ViewEvent
 
 sealed class TripViewEvent: ViewEvent {

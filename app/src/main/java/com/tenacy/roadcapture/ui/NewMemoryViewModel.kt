@@ -123,7 +123,6 @@ class NewMemoryViewModel @Inject constructor(
             )
 
             val locationId = locationDao.insert(locationEntity)
-            Album.saveLastLocation(address.coordinates)
 
             val memoryEntity = MemoryEntity(
                 placeName = currentPlaceName.takeIf { it.isNotBlank() },

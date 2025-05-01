@@ -26,12 +26,16 @@ class CustomBottomNavigation @JvmOverloads constructor(
     // 네비게이션 아이템 ID를 뷰 ID에 매핑
     private val navigationMap = mapOf(
         R.id.homeFragment to R.id.bn_home,
+        R.id.searchFragment to R.id.bn_search,
+        R.id.albumMarkedFragment to R.id.bn_album_marked,
         R.id.myAlbumFragment to R.id.bn_my_album
     )
 
     // 뷰 ID를 네비게이션 아이템 ID에 매핑
     private val viewMap = mapOf(
         R.id.bn_home to R.id.homeFragment,
+        R.id.bn_search to R.id.searchFragment,
+        R.id.bn_album_marked to R.id.albumMarkedFragment,
         R.id.bn_my_album to R.id.myAlbumFragment
     )
 
@@ -49,14 +53,24 @@ class CustomBottomNavigation @JvmOverloads constructor(
             navigateTo(R.id.homeFragment)
         }
 
-        // 앨범 버튼 클릭 리스너
-        binding.bnMyAlbum.setOnClickListener {
-            navigateTo(R.id.myAlbumFragment)
+        // 검색 버튼 클릭 리스너
+        binding.bnSearch.setOnClickListener {
+            navigateTo(R.id.searchFragment)
         }
-
+        
         // 새 아이템 버튼 클릭 리스너
         binding.bnNew.setOnClickListener {
             onNewItemClickListener?.invoke()
+        }
+        
+        // 북마크 버튼 클릭 리스너
+        binding.bnAlbumMarked.setOnClickListener {
+            navigateTo(R.id.albumMarkedFragment)
+        }
+        
+        // 앨범 버튼 클릭 리스너
+        binding.bnMyAlbum.setOnClickListener {
+            navigateTo(R.id.myAlbumFragment)
         }
     }
 
@@ -107,6 +121,8 @@ class CustomBottomNavigation @JvmOverloads constructor(
         navigationMap[destinationId]?.let { viewId ->
             when (viewId) {
                 R.id.bn_home -> updateHomeSelection(true)
+                R.id.bn_search -> updateSearchSelection(true)
+                R.id.bn_album_marked -> updateAlbumMarkedSelection(true)
                 R.id.bn_my_album -> updateAlbumSelection(true)
             }
         }
@@ -119,6 +135,8 @@ class CustomBottomNavigation @JvmOverloads constructor(
      */
     private fun resetAllSelections() {
         updateHomeSelection(false)
+        updateSearchSelection(false)
+        updateAlbumMarkedSelection(false)
         updateAlbumSelection(false)
     }
 
@@ -127,9 +145,26 @@ class CustomBottomNavigation @JvmOverloads constructor(
      */
     private fun updateHomeSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_home_selected else R.drawable.ic_home
-//        val textColor = if (isSelected) R.color.label_selected else R.color.label_normal
 
         binding.bnHome.findViewById<ImageView>(R.id.img_bn_home)?.setImageResource(iconResource)
+    }
+
+    /**
+     * 검색 메뉴 선택 상태 업데이트
+     */
+    private fun updateSearchSelection(isSelected: Boolean) {
+        val iconResource = if (isSelected) R.drawable.ic_search_selected else R.drawable.ic_search
+
+        binding.bnSearch.findViewById<ImageView>(R.id.img_bn_search)?.setImageResource(iconResource)
+    }
+
+    /**
+     * 북마크 메뉴 선택 상태 업데이트
+     */
+    private fun updateAlbumMarkedSelection(isSelected: Boolean) {
+        val iconResource = if (isSelected) R.drawable.ic_book_marked_selected else R.drawable.ic_book_marked
+
+        binding.bnAlbumMarked.findViewById<ImageView>(R.id.img_bn_album_marked)?.setImageResource(iconResource)
     }
 
     /**

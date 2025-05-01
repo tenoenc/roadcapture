@@ -8,69 +8,127 @@
             android:paddingTop="2dp"
             android:paddingBottom="4dp">
 
-        <LinearLayout android:layout_width="wrap_content"
+        <LinearLayout android:layout_width="match_parent"
                       android:layout_height="wrap_content"
-                      android:id="@+id/bn_home"
-                      android:orientation="vertical"
-                      android:gravity="center"
-                      android:paddingHorizontal="56dp"
-                      app:layout_constraintHorizontal_chainStyle="spread_inside"
-                      app:layout_constraintStart_toStartOf="parent"
-                      app:layout_constraintEnd_toStartOf="@id/bn_new"
-                      app:layout_constraintTop_toTopOf="parent"
-                      app:layout_constraintBottom_toBottomOf="parent">
+                      android:orientation="horizontal">
 
-            <ImageView android:layout_width="24dp"
-                       android:layout_height="24dp"
-                       android:id="@+id/img_bn_home"
-                       android:src="@drawable/ic_home"/>
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:id="@+id/bn_home"
+                          android:orientation="vertical"
+                          android:gravity="center"
+                          android:layout_marginHorizontal="4dp">
 
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/txt_bn_home"
-                      android:includeFontPadding="false"
-                      android:textAppearance="@style/Body_10_M"
-                      android:textColor="@color/label_normal"
-                      android:text="홈"
-                      android:layout_marginTop="2dp"/>
+                <ImageView android:layout_width="24dp"
+                           android:layout_height="24dp"
+                           android:id="@+id/img_bn_home"
+                           android:src="@drawable/ic_home"/>
 
-        </LinearLayout>
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_bn_home"
+                          android:includeFontPadding="false"
+                          android:textAppearance="@style/Body_10_M"
+                          android:textColor="@color/label_normal"
+                          android:text="홈"
+                          android:layout_marginTop="2dp"/>
 
-        <ImageButton android:layout_width="33dp"
-                     android:layout_height="33dp"
-                     android:id="@+id/bn_new"
-                     android:src="@drawable/ic_circle_plus"
-                     android:background="@null"
-                     android:scaleType="fitCenter"
-                     app:layout_constraintStart_toEndOf="@id/bn_home"
-                     app:layout_constraintEnd_toStartOf="@id/bn_my_album"
-                     app:layout_constraintTop_toTopOf="parent"
-                     app:layout_constraintBottom_toBottomOf="parent"/>
+            </LinearLayout>
 
-        <LinearLayout android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/bn_my_album"
-                      android:orientation="vertical"
-                      android:gravity="center"
-                      android:paddingHorizontal="56dp"
-                      app:layout_constraintStart_toEndOf="@id/bn_new"
-                      app:layout_constraintEnd_toEndOf="parent"
-                      app:layout_constraintTop_toTopOf="parent"
-                      app:layout_constraintBottom_toBottomOf="parent">
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:id="@+id/bn_search"
+                          android:orientation="vertical"
+                          android:gravity="center"
+                          android:layout_marginHorizontal="4dp">
 
-            <ImageView android:layout_width="24dp"
-                       android:layout_height="24dp"
-                       android:id="@+id/img_bn_my_album"
-                       android:src="@drawable/ic_book"/>
+                <ImageView android:layout_width="24dp"
+                           android:layout_height="24dp"
+                           android:id="@+id/img_bn_search"
+                           android:src="@drawable/ic_search"/>
 
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/txt_bn_my_album"
-                      android:includeFontPadding="false"
-                      android:textAppearance="@style/Body_10_M"
-                      android:textColor="@color/label_normal"
-                      android:text="내 앨범"
-                      android:layout_marginTop="2dp"/>
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_bn_search"
+                          android:includeFontPadding="false"
+                          android:textAppearance="@style/Body_10_M"
+                          android:textColor="@color/label_normal"
+                          android:text="검색"
+                          android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content"
+                                                               android:layout_height="match_parent"
+                                                               android:layout_weight="1"
+                                                               android:layout_marginHorizontal="4dp">
+
+                <ImageButton android:layout_width="wrap_content"
+                             android:layout_height="0dp"
+                             android:layout_weight="1"
+                             app:layout_constraintHeight_max="40dp"
+                             android:id="@+id/bn_new"
+                             android:src="@drawable/ic_circle_plus"
+                             android:background="@null"
+                             android:scaleType="fitCenter"
+                             android:paddingHorizontal="4dp"
+                             app:layout_constraintDimensionRatio="1:1"
+                             app:layout_constraintStart_toStartOf="parent"
+                             app:layout_constraintEnd_toEndOf="parent"
+                             app:layout_constraintBottom_toBottomOf="parent"
+                             app:layout_constraintTop_toTopOf="parent"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:id="@+id/bn_album_marked"
+                          android:orientation="vertical"
+                          android:gravity="center"
+                          android:layout_marginHorizontal="4dp">
+
+                <ImageView android:layout_width="24dp"
+                           android:layout_height="24dp"
+                           android:id="@+id/img_bn_album_marked"
+                           android:src="@drawable/ic_book_marked"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_bn_album_marked"
+                          android:includeFontPadding="false"
+                          android:textAppearance="@style/Body_10_M"
+                          android:textColor="@color/label_normal"
+                          android:text="북마크"
+                          android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_weight="1"
+                          android:id="@+id/bn_my_album"
+                          android:orientation="vertical"
+                          android:gravity="center"
+                          android:layout_marginHorizontal="4dp">
+
+                <ImageView android:layout_width="24dp"
+                           android:layout_height="24dp"
+                           android:id="@+id/img_bn_my_album"
+                           android:src="@drawable/ic_book"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_bn_my_album"
+                          android:includeFontPadding="false"
+                          android:textAppearance="@style/Body_10_M"
+                          android:textColor="@color/label_normal"
+                          android:text="내 앨범"
+                          android:layout_marginTop="2dp"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
