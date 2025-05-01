@@ -84,7 +84,7 @@ class NewMemoryFragment: BaseFragment() {
     }
 
     private fun setupViews() {
-        addItemsToLayout(vm.tags)
+        addItemsToLayout(vm.addressTags)
     }
 
     private fun setupObservers() {
@@ -138,7 +138,10 @@ class NewMemoryFragment: BaseFragment() {
         when (event) {
             is NewMemoryViewEvent.ResultBack -> {
                 val destinationId = R.id.tripFragment
-                findNavController().getBackStackEntry(destinationId).savedStateHandle.set(TripFragment.KEY_MEMORY_ID, event.memoryId)
+                findNavController().getBackStackEntry(destinationId).savedStateHandle[TripFragment.KEY_NEW_MEMORY] = bundleOf(
+                    TripFragment.RESULT_MEMORY_ID to event.memoryId,
+                    TripFragment.RESULT_COORDINATES to event.coordinates,
+                )
                 findNavController().popBackStack()
             }
             is NewMemoryViewEvent.ShowLocation -> {

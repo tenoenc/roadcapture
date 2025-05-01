@@ -25,8 +25,8 @@ class MemoryViewerViewModel @Inject constructor(
     val totalPageCount = _memories.map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
 
-    private val _viewRange = MutableStateFlow<ViewRange?>(null)
-    val viewRange = _viewRange.asStateFlow()
+    private val _viewScope = MutableStateFlow<ViewScope?>(null)
+    val viewScope = _viewScope.asStateFlow()
 
     private val currentMemory = combine(_memories, _currentMemoryIndex) { memories, currentPage ->
         if(memories.isEmpty()) return@combine null
@@ -34,16 +34,7 @@ class MemoryViewerViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     val tags = currentMemory.mapNotNull { currentMemory ->
-        currentMemory?.memory?.let {
-            listOfNotNull(
-                it.country,
-                it.locationName,
-                it.region,
-                it.city,
-                it.district,
-                it.street,
-            )
-        }
+        currentMemory?.memory?.addressTags
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
     val placeName = currentMemory.map { currentMemory ->
@@ -68,9 +59,9 @@ class MemoryViewerViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val argument: TripFragment.ClusterMarkerItems = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).clusterMarkerItems
-            val viewRange = argument.viewRange
-            val memories = when(viewRange) {
-                ViewRange.AROUND -> {
+            val viewScope = argument.viewScope
+            val memories = when(viewScope) {
+                ViewScope.AROUND -> {
                     _currentMemoryIndex.emit(0)
                     val ids = argument.items!!.map { it.id }
                     memoryDao.selectByLocationIds(ids)
@@ -84,7 +75,7 @@ class MemoryViewerViewModel @Inject constructor(
                 }
             }
             _memories.emit(memories)
-            _viewRange.emit(viewRange)
+            _viewScope.emit(viewScope)
         }
     }
 

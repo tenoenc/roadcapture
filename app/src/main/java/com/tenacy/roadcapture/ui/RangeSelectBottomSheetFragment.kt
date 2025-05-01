@@ -10,12 +10,12 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetRangeSelectingBinding
+import com.tenacy.roadcapture.databinding.BSheetRangeSelectBinding
 import kotlinx.parcelize.Parcelize
 
-class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
+class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetRangeSelectingBinding? = null
+    private var _binding: BSheetRangeSelectBinding? = null
     private val binding get() = _binding!!
 
     private var items: List<ClusterMarkerItem>? = null
@@ -26,7 +26,7 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.getParcelable<Params>(KEY_PARAMS)?.let { params ->
-            this@RangeSelectingBottomSheetFragment.items = params.items
+            this@RangeSelectBottomSheetFragment.items = params.items
         }
     }
 
@@ -35,7 +35,7 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetRangeSelectingBinding.inflate(inflater, container, false).apply {
+        return BSheetRangeSelectBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -43,24 +43,24 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.chipBSheetRangeSelectingAround.tag = ViewRange.AROUND.name
-        binding.chipBSheetRangeSelectingWhole.tag = ViewRange.WHOLE.name
+        binding.chipBSheetRangeSelectAround.tag = ViewScope.AROUND.name
+        binding.chipBSheetRangeSelectWhole.tag = ViewScope.WHOLE.name
         setupListeners()
     }
 
     private fun setupListeners() {
-        binding.btnBSheetRangeSelectingPositive.setOnClickListener {
-            val checkedChipId = binding.cgBSheetRangeSelecting.checkedChipId
-            val checkedChip = binding.cgBSheetRangeSelecting.findViewById<Chip>(checkedChipId)
+        binding.btnBSheetRangeSelectPositive.setOnClickListener {
+            val checkedChipId = binding.cgBSheetRangeSelect.checkedChipId
+            val checkedChip = binding.cgBSheetRangeSelect.findViewById<Chip>(checkedChipId)
             val tag = checkedChip.tag as String
-            val viewRange = ViewRange.valueOf(tag)
+            val viewScope = ViewScope.valueOf(tag)
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
                     RESULT_ITEMS to TripFragment.ClusterMarkerItems(
                         selectedMemoryId = selectedMemoryId,
                         items = items,
-                        viewRange = viewRange,
+                        viewScope = viewScope,
                     )
                 )
             )
@@ -81,15 +81,15 @@ class RangeSelectingBottomSheetFragment: BottomSheetDialogFragment() {
 
     companion object {
 
-        const val TAG = "RangeSelectingBottomSheetFragment"
+        const val TAG = "RangeSelectBottomSheetFragment"
 
         const val KEY_PARAMS = "params"
 
-        const val REQUEST_KEY = "range_selecting"
+        const val REQUEST_KEY = "range_select"
         const val RESULT_ITEMS = "items"
 
-        fun newInstance(bundle: Bundle? = null): RangeSelectingBottomSheetFragment {
-            return RangeSelectingBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): RangeSelectBottomSheetFragment {
+            return RangeSelectBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

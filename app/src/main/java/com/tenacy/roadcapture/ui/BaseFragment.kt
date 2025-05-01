@@ -32,7 +32,7 @@ abstract class BaseFragment : Fragment(), View.OnClickListener {
     }
 
     private fun setClickListenerRecursively(view: View) {
-        if(view.id == R.id.ibtn_a_bar_back && !view.hasOnClickListeners()) {
+        if(view.id == R.id.ibtn_a_bar_back) {
             view.setOnClickListener(this)
         }
 

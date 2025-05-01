@@ -25,14 +25,13 @@ private val storageRef = storage.reference
  * @param userId 사용자 UID
  * @return 복사된 이미지의 다운로드 URL
  */
-suspend fun setDefaultProfileImage(userId: String): String = withContext(Dispatchers.IO) {
+suspend fun setDefaultProfileImage(storagePath: String): String = withContext(Dispatchers.IO) {
     try {
         // 1. 기본 이미지 참조
         val defaultImageRef = storageRef.child(DEFAULT_PROFILE_PATH)
 
         // 2. 새 사용자 이미지 경로 생성
-        val userImagePath = "images/$userId/profile.jpg"
-        val userImageRef = storageRef.child(userImagePath)
+        val userImageRef = storageRef.child(storagePath)
 
         // 3. 이미지 복사 (기본 이미지 → 사용자 이미지)
         return@withContext copyImage(defaultImageRef, userImageRef)
@@ -60,7 +59,7 @@ private suspend fun copyImage(sourceRef: StorageReference, destinationRef: Stora
     return destinationRef.downloadUrl.await().toString()
 }
 
-suspend fun uploadImageIfExists(uri: Uri?) = uri?.let {
+fun uploadImageIfExists(uri: Uri?) = uri?.let {
     val storageRef = storage.reference
     val riversRef = storageRef.child("images/${user!!.uid}/${it.lastPathSegment}")
     val uploadTask = riversRef.putFile(it)
@@ -68,5 +67,5 @@ suspend fun uploadImageIfExists(uri: Uri?) = uri?.let {
         .continueWith { task ->
             task.exception ?: throw task.exception!!
             riversRef.downloadUrl
-        }.await()
+        }
 }

@@ -1,6 +1,8 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.ContentValues
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -22,6 +24,7 @@ import com.tenacy.roadcapture.databinding.FragmentCameraBinding
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.ExecutorService
@@ -49,12 +52,15 @@ class CameraFragment : BaseFragment() {
             result.data?.let { intent ->
                 val resultUri = UCrop.getOutput(intent)
                 if (resultUri != null) {
-                    // 크롭된 이미지 URI 저장
-                    capturedImageUri = resultUri
-                    vm.setCapturedImageUri(resultUri)
+                    // 크롭된 이미지 압축
+                    val compressedUri = compressImage(resultUri)
 
-                    // 크롭된 이미지로 미리보기 업데이트
-                    binding.imagePreview.setImageURI(resultUri)
+                    // 압축된 이미지 URI 저장
+                    capturedImageUri = compressedUri
+                    vm.setCapturedImageUri(compressedUri)
+
+                    // 압축된 이미지로 미리보기 업데이트
+                    binding.imagePreview.setImageURI(compressedUri)
                     showCapturePreviewUI()
                 }
             }
@@ -118,8 +124,8 @@ class CameraFragment : BaseFragment() {
         binding.btnUsePhoto.setOnClickListener {
             // 사진 사용하기 선택
             capturedImageUri?.let { uri ->
-                val placeLocation: TripFragment.PlaceLocation = args.placeLocation
-                findNavController().navigate(CameraFragmentDirections.actionCameraToNewMemory(placeLocation, uri))
+                val address: TripFragment.Address = args.address
+                findNavController().navigate(CameraFragmentDirections.actionCameraToNewMemory(address, uri))
             }
         }
 
@@ -264,6 +270,36 @@ class CameraFragment : BaseFragment() {
         // 카메라 UI 다시 표시
         binding.previewView.visibility = View.VISIBLE
         binding.cameraControlsLayout.visibility = View.VISIBLE
+    }
+
+    private fun compressImage(sourceUri: Uri): Uri {
+        val fileName = "compressed_${System.currentTimeMillis()}.jpg"
+        val compressedFile = File(requireContext().cacheDir, fileName)
+
+        try {
+            // 이미지를 비트맵으로 로드
+            val inputStream = requireContext().contentResolver.openInputStream(sourceUri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+
+            // 비트맵 압축 (JPEG 포맷, 10% 품질로 압축)
+            val outputStream = FileOutputStream(compressedFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 30, outputStream) // 10%로 압축
+            outputStream.flush()
+            outputStream.close()
+
+            // 압축된 파일 크기 로그 출력 (디버깅용)
+            val originalSize = requireContext().contentResolver.openFileDescriptor(sourceUri, "r")?.statSize ?: 0
+            val compressedSize = compressedFile.length()
+            Log.d(TAG, "원본 크기: $originalSize 바이트, 압축 크기: $compressedSize 바이트, 압축률: ${compressedSize.toFloat() / originalSize.toFloat() * 100}%")
+
+            // 압축된 파일의 URI 반환
+            return Uri.fromFile(compressedFile)
+        } catch (e: Exception) {
+            Log.e(TAG, "이미지 압축 실패: ${e.message}", e)
+            // 압축 실패 시 원본 URI 반환
+            return sourceUri
+        }
     }
 
     companion object {

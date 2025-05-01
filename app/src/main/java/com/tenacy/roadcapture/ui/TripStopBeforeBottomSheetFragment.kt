@@ -9,12 +9,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetAlbumDeletingBeforeBinding
+import com.tenacy.roadcapture.databinding.BSheetTripStopBeforeBinding
 import com.tenacy.roadcapture.util.SpannableUtils
 
-class TripStopBeforeBottomSheetFragment: BottomSheetDialogFragment() {
+class TripStopBeforeBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private var _binding: BSheetAlbumDeletingBeforeBinding? = null
+    private var _binding: BSheetTripStopBeforeBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -24,7 +24,7 @@ class TripStopBeforeBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetAlbumDeletingBeforeBinding.inflate(inflater, container, false).apply {
+        return BSheetTripStopBeforeBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }

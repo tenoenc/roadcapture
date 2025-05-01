@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -12,7 +11,6 @@ import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -67,12 +65,13 @@ class LoginViewModel @Inject constructor(
             val ref = db.collection("users").document(user!!.uid)
             val docSnapshot = ref.get().await()
             if (!docSnapshot.exists()) {
+                val photoPath = "images/${user!!.uid}/profile.jpg"
                 userToUpdate["uid"] = user!!.uid
                 userToUpdate["displayName"] = user!!.displayName
                 userToUpdate["provider"] = provider
                 userToUpdate["createdAt"] = FieldValue.serverTimestamp()
-                userToUpdate["photoURL"] = setDefaultProfileImage(user!!.uid)
-                userToUpdate["photoName"] = FirebaseConstants.PROFILE_NAME
+                userToUpdate["photoUrl"] = setDefaultProfileImage(photoPath)
+                userToUpdate["photoName"] = photoPath
                 ref.set(userToUpdate).await()
             } else {
                 ref.set(userToUpdate, SetOptions.merge()).await()

@@ -7,7 +7,7 @@
 
         <variable name="vm" type="com.tenacy.roadcapture.ui.MemoryViewerViewModel"/>
         <import type="android.view.View"/>
-        <import type="com.tenacy.roadcapture.ui.ViewRange"/>
+        <import type="com.tenacy.roadcapture.ui.ViewScope"/>
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
@@ -109,7 +109,7 @@
                                   android:textAppearance="@style/Body_12_M"
                                   android:textColor="@color/label_neutral"
                                   android:textAlignment="center"
-                                  android:visibility="@{vm.viewRange == ViewRange.WHOLE ? View.GONE : View.VISIBLE}"
+                                  android:visibility="@{vm.viewScope == ViewScope.WHOLE ? View.GONE : View.VISIBLE}"
                                   android:text="@{`근처에 ` + vm.totalPageCount + `개의 추억이 있어요`}"
                                   tools:text="근처에 3개의 추억이 있어요"/>
 

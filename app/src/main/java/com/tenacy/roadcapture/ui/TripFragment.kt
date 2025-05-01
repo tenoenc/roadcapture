@@ -31,10 +31,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
-import com.tenacy.roadcapture.util.extractLocationData
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -144,10 +141,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     // ===== 5. 초기 설정 메서드 그룹 =====
     private fun setupFragmentResultListeners() {
         childFragmentManager.setFragmentResultListener(
-            RangeSelectingBottomSheetFragment.REQUEST_KEY,
+            RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<ClusterMarkerItems>(RangeSelectingBottomSheetFragment.RESULT_ITEMS)?.let {
+            bundle.getParcelable<ClusterMarkerItems>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(it))
             }
@@ -280,10 +277,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun setupLocationUpdates() {
         repeatOnLifecycle {
             while(isActive) {
+                delay(1 * 1000)
                 getCurrentLocation()?.let { latLng ->
-                    vm.saveCurrentLocation(latLng)
+                    vm.saveLocation(latLng)
                 }
-                delay(10 * 1000)
+                delay(9 * 1000)
             }
         }
         repeatOnLifecycle {
@@ -338,8 +336,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun observeSavedState() {
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             findNavController().currentBackStackEntry?.savedStateHandle
-                ?.getStateFlow<Long?>(KEY_MEMORY_ID, null)?.collect { memoryId ->
-                    if (memoryId == null) return@collect
+                ?.getStateFlow<Bundle?>(KEY_NEW_MEMORY, null)?.collect { bundle ->
+                    if (bundle == null) return@collect
+                    val memoryId = bundle.getString(RESULT_MEMORY_ID)
+                    val coordinates = bundle.getParcelable<LatLng>(RESULT_COORDINATES)
+                    coordinates?.let { vm.saveLocation(it, false) }
                     vm.fetchData()
                 }
         }
@@ -374,12 +375,33 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.Capture -> {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val location = getCurrentLocation()
-                    val placeLocation = requireContext().extractLocationData(location) ?: kotlin.run {
+                    if(location == null) {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보가 없기 때문에 사진을 찍을 수 없습니다", ToastMessageType.Warning)))
                         return@launch
                     }
+
+                    val excludePatterns = listOf("ISO", "country_code")
+                    val nominatimReverseResponse = RetrofitInstance.nominatimApi.reverse(
+                        lat = location.latitude,
+                        lon = location.longitude,
+                    )
+                    val address = Address(
+                        country = nominatimReverseResponse.address?.country,
+                        formattedAddress = nominatimReverseResponse.displayName,
+                        components = nominatimReverseResponse.address?.otherFields?.entries
+                            ?.filter { (key, value) ->
+                                !excludePatterns.any { pattern -> key.contains(pattern, ignoreCase = true) }
+                                        && (!value.containsDigit() || value.containsLetter())
+                            }
+                            ?.map { it.value }
+                            ?.toList()
+                            ?.distinct()
+                            ?.reversed() ?: emptyList(),
+                        coordinates = location,
+                    )
+
                     withContext(Dispatchers.Main) {
-                        findNavController().navigate(TripFragmentDirections.actionTripToCamera(placeLocation))
+                        findNavController().navigate(TripFragmentDirections.actionTripToCamera(address))
                     }
                 }
             }
@@ -398,10 +420,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.ShowSubscription -> {
                 showSubscriptionDialog()
             }
-            is TripViewEvent.ShowTripAfter -> {
+            is TripViewEvent.ShowAfter -> {
                 showTripAfterDialog()
             }
-            is TripViewEvent.ShowTripStopBefore -> {
+            is TripViewEvent.ShowStopBefore -> {
                 showTripStopBeforeDialog()
             }
         }
@@ -409,19 +431,19 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
     private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
         lifecycleScope.launch {
-            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewRange = ViewRange.WHOLE)
+            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewScope = ViewScope.WHOLE)
             findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(clusterMarkerItems))
         }
     }
 
     private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
         lifecycleScope.launch {
-            val bottomSheet = RangeSelectingBottomSheetFragment.newInstance(
+            val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
-                    RangeSelectingBottomSheetFragment.KEY_PARAMS to RangeSelectingBottomSheetFragment.Params(items = items),
+                    RangeSelectBottomSheetFragment.KEY_PARAMS to RangeSelectBottomSheetFragment.Params(items = items),
                 )
             )
-            bottomSheet.show(childFragmentManager, RangeSelectingBottomSheetFragment.TAG)
+            bottomSheet.show(childFragmentManager, RangeSelectBottomSheetFragment.TAG)
         }
     }
 
@@ -667,28 +689,24 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     @Parcelize
-    data class PlaceLocation(
-        val placeId: String,
-        val name: String?,                 // 장소/명소 이름
-        val country: String,              // 국가
-        val region: String?,              // 지역/주/도
-        val city: String?,                // 도시
-        val district: String?,            // 구역/동네
-        val street: String?,              // 거리/도로
-        val detail: String?,              // 상세주소
-        val formattedAddress: String,     // 형식화된 전체 주소
-        val coordinates: LatLng           // 좌표
+    data class Address(
+        val country: String?,
+        val formattedAddress: String?,
+        val components: List<String>,
+        val coordinates: LatLng
     ): Parcelable
 
     @Parcelize
     data class ClusterMarkerItems(
         val selectedMemoryId: Long? = null,
         val items: List<ClusterMarkerItem>? = null,
-        val viewRange: ViewRange,
+        val viewScope: ViewScope,
     ): Parcelable
 
     companion object {
-        const val KEY_MEMORY_ID = "memory_id"
+        const val KEY_NEW_MEMORY = "new_memory"
+        const val RESULT_MEMORY_ID = "memory_id"
+        const val RESULT_COORDINATES = "coordinates"
         const val KEY_COORDINATES = "coordinates"
     }
 }

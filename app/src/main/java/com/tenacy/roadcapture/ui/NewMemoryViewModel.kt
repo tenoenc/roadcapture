@@ -7,6 +7,7 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
+import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.di.InputModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,8 +23,8 @@ class NewMemoryViewModel @Inject constructor(
     private val locationDao: LocationDao,
 ) : BaseViewModel() {
 
-    val tags: List<String>
-    val photoUri: Uri
+    val addressTags: List<String>
+    val photoUri: Uri = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
 
     val placeName = MutableStateFlow("")
 
@@ -82,16 +83,8 @@ class NewMemoryViewModel @Inject constructor(
     )
 
     init {
-        photoUri = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
-        val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
-        tags = listOfNotNull(
-            placeLocation.country,
-            placeLocation.name,
-            placeLocation.region,
-            placeLocation.city,
-            placeLocation.district,
-            placeLocation.street,
-        )
+        val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
+        addressTags = listOfNotNull(address.country) + address.components
     }
 
     fun setPlaceNameFocus(hasFocus: Boolean) {
@@ -112,8 +105,8 @@ class NewMemoryViewModel @Inject constructor(
 
     fun onLocationClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
-            viewEvent(NewMemoryViewEvent.ShowLocation(placeLocation.formattedAddress))
+            val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
+            address.formattedAddress?.let { viewEvent(NewMemoryViewEvent.ShowLocation(it)) }
         }
     }
 
@@ -121,35 +114,30 @@ class NewMemoryViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val currentPlaceName = placeName.value
             val currentContent = content.value
-            val placeLocation: TripFragment.PlaceLocation = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).placeLocation
+            val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
 
             val locationEntity = LocationEntity(
-                latitude = placeLocation.coordinates.latitude,
-                longitude = placeLocation.coordinates.longitude,
+                latitude = address.coordinates.latitude,
+                longitude = address.coordinates.longitude,
                 createdAt = LocalDateTime.now(),
             )
 
             val locationId = locationDao.insert(locationEntity)
+            Album.saveLastLocation(address.coordinates)
 
             val memoryEntity = MemoryEntity(
                 placeName = currentPlaceName.takeIf { it.isNotBlank() },
                 content = currentContent.takeIf { it.isNotBlank() },
                 photoUri = photoUri,
-                locationName = placeLocation.name,
-                country = placeLocation.country,
-                region = placeLocation.region,
-                city = placeLocation.city,
-                district = placeLocation.district,
-                street = placeLocation.street,
-                details = placeLocation.detail,
-                formattedAddress = placeLocation.formattedAddress,
+                addressTags = addressTags,
+                formattedAddress = address.formattedAddress ?: "",
                 locationId = locationId,
                 createdAt = LocalDateTime.now(),
             )
 
             val memoryId = memoryDao.insert(memoryEntity)
 
-            viewEvent(NewMemoryViewEvent.ResultBack(memoryId))
+            viewEvent(NewMemoryViewEvent.ResultBack(memoryId, address.coordinates))
         }
     }
 }

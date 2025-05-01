@@ -1,5 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-enum class ViewRange {
+enum class ViewScope {
     WHOLE, AROUND
 }

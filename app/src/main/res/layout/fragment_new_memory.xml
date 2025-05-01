@@ -9,6 +9,7 @@
 
         <import type="com.tenacy.roadcapture.ui.EditTextState" />
         <import type="com.tenacy.roadcapture.di.InputModule" />
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_new_memory_container"
@@ -43,7 +44,7 @@
                       android:text="추억 생성"/>
 
             <ImageButton
-                    android:id="@+id/ibtn_new_memory_ok"
+                    android:id="@+id/ibtn_new_memory_complete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> vm.onNewClick()}"
@@ -65,6 +66,7 @@
         <HorizontalScrollView android:id="@+id/hs_new_memory_tags"
                               android:layout_width="0dp"
                               android:layout_height="wrap_content"
+                              android:visibility="@{vm.addressTags.empty ? View.GONE : View.VISIBLE}"
                               android:clickable="true"
                               android:clipToPadding="false"
                               android:paddingHorizontal="20dp"
@@ -110,6 +112,7 @@
                   android:paddingVertical="12dp"
                   android:paddingHorizontal="16dp"
                   android:layout_marginHorizontal="20dp"
+                  app:layout_goneMarginTop="10dp"
                   app:layout_constraintTop_toBottomOf="@id/hs_new_memory_tags"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>

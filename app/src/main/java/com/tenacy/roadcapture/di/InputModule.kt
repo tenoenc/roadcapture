@@ -13,6 +13,11 @@ object InputModule {
 
     @Provides
     @Singleton
+    @AlbumTitleFilter
+    fun provideAlbumTitleFilter() = LengthFilter(maxLength = MAX_LENGTH_ALBUM_TITLE)
+
+    @Provides
+    @Singleton
     @PlaceNameFilter
     fun providePlaceNameFilter() = LengthFilter(maxLength = MAX_LENGTH_PLACE_NAME)
 
@@ -21,6 +26,7 @@ object InputModule {
     @ContentFilter
     fun provideContentFilter() = LengthFilter(maxLength = MAX_LENGTH_CONTENT)
 
+    const val MAX_LENGTH_ALBUM_TITLE = 50
     const val MAX_LENGTH_PLACE_NAME = 30
     const val MAX_LENGTH_CONTENT = 1500
 }

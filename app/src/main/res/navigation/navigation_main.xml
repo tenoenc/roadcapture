@@ -32,13 +32,13 @@
         <action android:id="@+id/action_camera_to_newMemory"
                 app:destination="@id/newMemoryFragment"
                 app:popUpTo="@id/tripFragment"/>
-        <argument android:name="placeLocation" app:argType="com.tenacy.roadcapture.ui.TripFragment$PlaceLocation"/>
+        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.TripFragment$Address"/>
     </fragment>
     <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
               android:label="NewMemoryFragment"
               tools:layout="@layout/fragment_new_memory">
 
-        <argument android:name="placeLocation" app:argType="com.tenacy.roadcapture.ui.TripFragment$PlaceLocation"/>
+        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.TripFragment$Address"/>
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
 
     </fragment>

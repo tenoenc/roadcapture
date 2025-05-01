@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +9,12 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetTripAfterBinding
+import com.tenacy.roadcapture.databinding.BSheetAlbumCompleteBeforeBinding
+import kotlinx.parcelize.Parcelize
 
-class TripAfterBottomSheetFragment: BottomSheetDialogFragment() {
+class AlbumCompeteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetTripAfterBinding? = null
+    private var _binding: BSheetAlbumCompleteBeforeBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -22,7 +24,7 @@ class TripAfterBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetTripAfterBinding.inflate(inflater, container, false).apply {
+        return BSheetAlbumCompleteBeforeBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -34,14 +36,14 @@ class TripAfterBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetTripAfterPositive.setOnClickListener {
+        binding.btnBSheetAlbumCompleteBeforePositive.setOnClickListener {
+            val isPublic = binding.chipBSheetAlbumCompleteBeforePublic.isChecked
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_POSITIVE to System.currentTimeMillis().toString())
+                bundleOf(
+                    RESULT_PUBLIC to isPublic
+                )
             )
-            dismiss()
-        }
-        binding.btnBSheetTripAfterNegative.setOnClickListener {
             dismiss()
         }
     }
@@ -51,15 +53,21 @@ class TripAfterBottomSheetFragment: BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    data class Params(
+        val selectedMemoryId: Long? = null,
+        val items: List<ClusterMarkerItem>? = null,
+    ): Parcelable
+
     companion object {
 
-        const val TAG = "TripAfterBottomSheetFragment"
+        const val TAG = "AlbumCompeteBeforeBottomSheetFragment"
 
-        const val REQUEST_KEY = "trip_after"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val REQUEST_KEY = "album_complete_before"
+        const val RESULT_PUBLIC = "public"
 
-        fun newInstance(bundle: Bundle? = null): TripAfterBottomSheetFragment {
-            return TripAfterBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): AlbumCompeteBeforeBottomSheetFragment {
+            return AlbumCompeteBeforeBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

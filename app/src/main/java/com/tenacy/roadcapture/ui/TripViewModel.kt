@@ -51,7 +51,7 @@ class TripViewModel @Inject constructor(
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    private val _lastSavedLocation = MutableStateFlow<LatLng?>(null)
+    private val _lastLocation = MutableStateFlow<LatLng?>(null)
 
     init {
         fetchData()
@@ -60,7 +60,7 @@ class TripViewModel @Inject constructor(
 
     private fun observeData() {
         viewModelScope.launch(Dispatchers.IO) {
-            _lastSavedLocation.collect(Album::saveLastLocation)
+            _lastLocation.collect(Album::saveLastLocation)
         }
     }
 
@@ -72,7 +72,7 @@ class TripViewModel @Inject constructor(
             if (locations.isNotEmpty()) {
                 val last = locations.maxByOrNull { it.createdAt }
                 last?.let {
-                    _lastSavedLocation.emit(LatLng(it.latitude, it.longitude))
+                    _lastLocation.emit(LatLng(it.latitude, it.longitude))
                 }
             }
             _memories.emit(memories)
@@ -102,28 +102,29 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    fun saveCurrentLocation(latLng: LatLng) {
+    fun saveLocation(latLng: LatLng, insertable: Boolean = true) {
         viewModelScope.launch(Dispatchers.IO) {
             if (shouldSaveLocation(latLng)) {
-                val locationEntity = LocationEntity(
-                    latitude = latLng.latitude,
-                    longitude = latLng.longitude,
-                    createdAt = LocalDateTime.now()
-                )
+                if(insertable) {
+                    val locationEntity = LocationEntity(
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude,
+                        createdAt = LocalDateTime.now()
+                    )
 
-                val locationId = locationDao.insert(locationEntity)
+                    val locationId = locationDao.insert(locationEntity)
 
-                _locations.update {
-                    it.toMutableList().apply { add(locationEntity.copy(id = locationId)) }
+                    _locations.update {
+                        it.toMutableList().apply { add(locationEntity.copy(id = locationId)) }
+                    }
                 }
-
-                _lastSavedLocation.update { latLng }
+                _lastLocation.update { latLng }
             }
         }
     }
 
     private fun shouldSaveLocation(currentLatLng: LatLng): Boolean {
-        val lastSavedLocation = _lastSavedLocation.value ?: return true
+        val lastSavedLocation = _lastLocation.value ?: return true
 
         val lastLat = lastSavedLocation.latitude
         val lastLng = lastSavedLocation.longitude
@@ -182,13 +183,13 @@ class TripViewModel @Inject constructor(
 
     fun onCheckClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ShowTripAfter)
+            viewEvent(TripViewEvent.ShowAfter)
         }
     }
 
     fun onDeleteClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ShowTripStopBefore)
+            viewEvent(TripViewEvent.ShowStopBefore)
         }
     }
 

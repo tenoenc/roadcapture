@@ -4,10 +4,10 @@
 
     <data>
 
-        <import type="com.tenacy.roadcapture.ui.ViewRange" />
+        <import type="com.tenacy.roadcapture.ui.ViewScope" />
     </data>
 
-    <LinearLayout android:id="@+id/ll_b_sheet_range_selecting_container"
+    <LinearLayout android:id="@+id/ll_b_sheet_range_select_container"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:orientation="vertical"
@@ -16,7 +16,7 @@
 
         <androidx.cardview.widget.CardView android:layout_width="48dp"
                                            android:layout_height="4dp"
-                                           android:id="@+id/card_b_sheet_range_selecting_handle"
+                                           android:id="@+id/card_b_sheet_range_select_handle"
                                            app:cardElevation="0dp"
                                            app:cardCornerRadius="10dp"
                                            app:cardBackgroundColor="@color/fill_neutral"
@@ -44,22 +44,22 @@
 
         <com.google.android.material.chip.ChipGroup android:layout_width="match_parent"
                                                     android:layout_height="wrap_content"
-                                                    android:id="@+id/cg_b_sheet_range_selecting"
+                                                    android:id="@+id/cg_b_sheet_range_select"
                                                     android:paddingHorizontal="20dp"
                                                     app:chipSpacingHorizontal="4dp"
                                                     app:singleSelection="true"
                                                     app:selectionRequired="true"
-                                                    app:checkedChip="@id/chip_b_sheet_range_selecting_around">
+                                                    app:checkedChip="@id/chip_b_sheet_range_select_around">
 
             <com.google.android.material.chip.Chip android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
-                                                   android:id="@+id/chip_b_sheet_range_selecting_around"
+                                                   android:id="@+id/chip_b_sheet_range_select_around"
                                                    style="@style/Chip.Choice.Range"
                                                    android:text="이 근처만"/>
 
             <com.google.android.material.chip.Chip android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
-                                                   android:id="@+id/chip_b_sheet_range_selecting_whole"
+                                                   android:id="@+id/chip_b_sheet_range_select_whole"
                                                    style="@style/Chip.Choice.Range"
                                                    android:text="전체"/>
 
@@ -68,7 +68,7 @@
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/btn_b_sheet_range_selecting_positive"
+                android:id="@+id/btn_b_sheet_range_select_positive"
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
