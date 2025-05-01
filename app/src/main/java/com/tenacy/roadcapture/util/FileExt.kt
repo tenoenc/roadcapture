@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.util
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -23,3 +24,5 @@ fun Context.clearCacheDirectory() {
         }
     }
 }
+
+val Context.fileProviderAuthority get() = "${packageName}.fileprovider"

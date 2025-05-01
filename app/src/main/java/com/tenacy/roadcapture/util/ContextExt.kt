@@ -9,9 +9,16 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.lang.Exception
+
+val Fragment.viewLifeCycleOwnerOrNull get() = try {
+    viewLifecycleOwner
+} catch (exception: IllegalStateException) {
+    null
+}
 
 fun Fragment.repeatOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
-    viewLifecycleOwner.lifecycleScope.launch(dispatcher) {
+    viewLifeCycleOwnerOrNull?.lifecycleScope?.launch(dispatcher) {
         viewLifecycleOwner.repeatOnLifecycle(lifecycleState) {
             block()
         }

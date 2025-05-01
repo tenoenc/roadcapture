@@ -45,12 +45,6 @@ sealed class TripViewEvent: ViewEvent {
     data object ShowStopBefore: TripViewEvent()
 }
 
-sealed class CameraViewEvent: ViewEvent {
-    data class PhotoTaken(val uri: Uri) : CameraViewEvent()
-    data class PhotoSelected(val uri: Uri) : CameraViewEvent()
-    data object PhotoCancelled : CameraViewEvent()
-}
-
 sealed class NewMemoryViewEvent: ViewEvent {
     data class ResultBack(val memoryId: Long, val coordinates: LatLng) : NewMemoryViewEvent()
     data class ShowLocation(val address: String): NewMemoryViewEvent()

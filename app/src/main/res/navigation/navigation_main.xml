@@ -21,18 +21,13 @@
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
               tools:layout="@layout/fragment_trip">
-        <action android:id="@+id/action_trip_to_camera" app:destination="@id/cameraFragment"/>
         <action android:id="@+id/action_trip_to_modifiableMemoryViewer"
                 app:destination="@id/modifiableMemoryViewerFragment"/>
         <action android:id="@+id/action_trip_to_newAlbum" app:destination="@id/newAlbumFragment"/>
-    </fragment>
-    <fragment android:id="@+id/cameraFragment" android:name="com.tenacy.roadcapture.ui.CameraFragment"
-              android:label="CameraFragment"
-              tools:layout="@layout/fragment_camera">
-        <action android:id="@+id/action_camera_to_newMemory"
-                app:destination="@id/newMemoryFragment"
-                app:popUpTo="@id/tripFragment"/>
-        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.TripFragment$Address"/>
+        <action android:id="@+id/action_trip_to_loading"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:destination="@id/loadingFragment"/>
     </fragment>
     <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
               android:label="NewMemoryFragment"
@@ -57,5 +52,16 @@
               tools:layout="@layout/fragment_modifiable_memory_viewer">
         <argument android:name="clusterMarkerItems"
                   app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
+    </fragment>
+    <fragment android:id="@+id/loadingFragment" android:name="com.tenacy.roadcapture.ui.LoadingFragment"
+              android:label="LoadingFragment"
+              tools:layout="@layout/fragment_loading">
+        <argument android:name="photoUri" app:argType="android.net.Uri"/>
+        <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng" />
+        <action android:id="@+id/action_loading_to_newMemory"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popUpTo="@id/tripFragment"
+                app:destination="@id/newMemoryFragment"/>
     </fragment>
 </navigation>

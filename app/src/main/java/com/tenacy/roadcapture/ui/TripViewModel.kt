@@ -4,6 +4,7 @@ import android.content.Context
 import android.location.Location
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Polyline
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
@@ -27,6 +28,11 @@ class TripViewModel @Inject constructor(
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
 ) : BaseViewModel() {
+
+    var initialGuideShown = false
+
+    private val routePolylines = mutableListOf<Polyline>()
+    private val clusterItems = mutableMapOf<Long, ClusterMarkerItem>()
 
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
     private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
@@ -135,6 +141,29 @@ class TripViewModel @Inject constructor(
         )
 
         return results[0] >= MIN_DISTANCE_TO_SAVE
+    }
+
+    fun clearRoutePolylines() {
+        routePolylines.forEach { it.remove() }
+        routePolylines.clear()
+    }
+
+    fun addRoutePolyline(polyline: Polyline) {
+        routePolylines.add(polyline)
+    }
+
+    fun getMarkerIds() = clusterItems.keys.toSet()
+
+    fun containsMarkerId(markerId: Long) = markerId in clusterItems
+
+    fun getClusterItem(markerId: Long) = clusterItems[markerId]
+
+    fun addClusterItem(markerId: Long, clusterItem: ClusterMarkerItem) {
+        clusterItems[markerId] = clusterItem
+    }
+
+    fun removeClusterItem(markerId: Long) {
+        clusterItems.remove(markerId)
     }
 
     fun onResetCameraPositionClick() {

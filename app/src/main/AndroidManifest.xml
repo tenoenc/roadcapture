@@ -26,6 +26,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
+            android:screenOrientation="portrait"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -77,7 +78,7 @@
 
         <provider
                 android:name="androidx.core.content.FileProvider"
-                android:authorities="${applicationId}.provider"
+                android:authorities="com.tenacy.roadcapture.fileprovider"
                 android:exported="false"
                 android:grantUriPermissions="true">
             <meta-data
