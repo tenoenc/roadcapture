@@ -5,7 +5,7 @@
 
     <data>
 
-        <variable name="vm" type="com.tenacy.roadcapture.ui.MemoryViewerViewModel"/>
+        <variable name="vm" type="com.tenacy.roadcapture.ui.ModifiableMemoryViewerViewModel"/>
         <import type="android.view.View"/>
         <import type="com.tenacy.roadcapture.ui.ViewScope"/>
     </data>
@@ -21,7 +21,7 @@
             <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:id="@+id/ll_memory_viewer_a_bar_container"
+                    android:id="@+id/ll_modifiable_memory_viewer_a_bar_container"
                     android:orientation="horizontal"
                     android:paddingHorizontal="16dp"
                     android:paddingVertical="8dp"
@@ -47,11 +47,11 @@
                         tools:text="한담해안산책로"/>
 
                 <ImageButton
-                        android:id="@+id/ibtn_memory_viewer_info"
+                        android:id="@+id/ibtn_modifiable_memory_viewer_more"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="@{() -> vm.onMoreClick()}"
-                        android:src="@drawable/ic_circle_info"
+                        android:src="@drawable/ic_more_vertical"
                         android:background="@null"
                         android:scaleType="fitCenter"/>
             </LinearLayout>
@@ -64,7 +64,7 @@
                 <androidx.viewpager2.widget.ViewPager2
                         android:layout_width="0dp"
                         android:layout_height="0dp"
-                        android:id="@+id/vp_memory_viewer_photo"
+                        android:id="@+id/vp_modifiable_memory_viewer_photo"
                         app:layout_constraintDimensionRatio="4:3"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +134,7 @@
 
                 </LinearLayout>
 
-                <HorizontalScrollView android:id="@+id/hs_memory_viewer_tags"
+                <HorizontalScrollView android:id="@+id/hs_modifiable_memory_viewer_tags"
                                       android:layout_width="match_parent"
                                       android:layout_height="wrap_content"
                                       android:clickable="true"
@@ -146,7 +146,7 @@
 
                     <LinearLayout android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
-                                  android:id="@+id/ll_memory_viewer_tags"
+                                  android:id="@+id/ll_modifiable_memory_viewer_tags"
                                   android:onClick="@{() -> vm.onLocationClick()}"
                                   android:minHeight="24dp"
                                   android:gravity="center"
@@ -167,7 +167,7 @@
 
             <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
                                                    android:layout_height="match_parent"
-                                                   android:id="@+id/ns_memory_viewer_content"
+                                                   android:id="@+id/ns_modifiable_memory_viewer_content"
                                                    android:clipToPadding="false"
                                                    android:paddingHorizontal="20dp"
                                                    android:paddingBottom="40dp"

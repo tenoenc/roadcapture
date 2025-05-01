@@ -28,7 +28,7 @@ class MemoryViewerViewModel @Inject constructor(
     private val _viewScope = MutableStateFlow<ViewScope?>(null)
     val viewScope = _viewScope.asStateFlow()
 
-    private val currentMemory = combine(_memories, _currentMemoryIndex) { memories, currentPage ->
+    val currentMemory = combine(_memories, _currentMemoryIndex) { memories, currentPage ->
         if(memories.isEmpty()) return@combine null
         memories[currentPage]
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
@@ -98,10 +98,9 @@ class MemoryViewerViewModel @Inject constructor(
         }
     }
 
-    fun onInfoClick() {
+    fun onMoreClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val currentMemory = currentMemory.value ?: return@launch
-            viewEvent(MemoryViewerViewEvent.ShowInfo(currentMemory))
+            viewEvent(MemoryViewerViewEvent.ShowInfo)
         }
     }
 

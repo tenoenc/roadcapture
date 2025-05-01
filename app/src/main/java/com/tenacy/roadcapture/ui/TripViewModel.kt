@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.location.Location
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
@@ -9,9 +10,11 @@ import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.ui.TripFragment.Marker
+import com.tenacy.roadcapture.util.clearCacheDirectory
 import com.tenacy.roadcapture.util.getDurationFormattedText
 import com.tenacy.roadcapture.util.toTimestamp
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -20,6 +23,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TripViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
 ) : BaseViewModel() {
@@ -90,6 +94,7 @@ class TripViewModel @Inject constructor(
             memoryDao.clear()
             locationDao.clear()
             _durationText.update { null }
+            context.clearCacheDirectory()
 
             viewEvent(TripViewEvent.Back)
         }

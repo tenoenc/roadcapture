@@ -11,7 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
-import com.tenacy.roadcapture.databinding.FragmentMemoryViewerBinding
+import com.tenacy.roadcapture.databinding.FragmentModifiableMemoryViewerBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -21,15 +21,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class MemoryViewerFragment: BaseFragment() {
+class ModifiableMemoryViewerFragment: BaseFragment() {
 
     override val onBackPressed: () -> Unit
         get() = vm::onBackClick
 
-    private var _binding: FragmentMemoryViewerBinding? = null
+    private var _binding: FragmentModifiableMemoryViewerBinding? = null
     val binding get() = _binding!!
 
-    private val vm: MemoryViewerViewModel by viewModels()
+    private val vm: ModifiableMemoryViewerViewModel by viewModels()
 
     private val onPageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -44,7 +44,7 @@ class MemoryViewerFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentMemoryViewerBinding.inflate(inflater, container, false)
+        _binding = FragmentModifiableMemoryViewerBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -75,6 +75,23 @@ class MemoryViewerFragment: BaseFragment() {
                 }
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            MemoryMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getString(MemoryMoreBottomSheetFragment.RESULT_EVENT_CLICK_INFO)?.let {
+                val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
+                    bundle = bundleOf(
+                        MemoryInfoBottomSheetFragment.KEY_MEMORY to vm.currentMemory.value,
+                    )
+                )
+                bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
+            }
+            bundle.getString(MemoryMoreBottomSheetFragment.RESULT_EVENT_CLICK_DELETE)?.let {
+                vm.deleteCurrentMemory()
+            }
+        }
+
     }
 
     private fun setupObservers() {
@@ -86,9 +103,9 @@ class MemoryViewerFragment: BaseFragment() {
     private fun observePhotoUri() {
         repeatOnLifecycle {
             vm.photoUris.collect {
-                binding.vpMemoryViewerPhoto.registerOnPageChangeCallback(onPageChangeCallback)
-                binding.vpMemoryViewerPhoto.adapter = PhotoSliderAdapter(it)
-                binding.vpMemoryViewerPhoto.setCurrentItem(vm.currentMemoryIndex.value, false)
+                binding.vpModifiableMemoryViewerPhoto.registerOnPageChangeCallback(onPageChangeCallback)
+                binding.vpModifiableMemoryViewerPhoto.adapter = PhotoSliderAdapter(it)
+                binding.vpModifiableMemoryViewerPhoto.setCurrentItem(vm.currentMemoryIndex.value, false)
             }
         }
     }
@@ -105,15 +122,15 @@ class MemoryViewerFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it?.getContentIfNotHandled()?.let { event ->
-                    (event as? MemoryViewerViewEvent)?.let { handleViewEvents(it) }
+                    (event as? ModifiableMemoryViewerViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: MemoryViewerViewEvent) {
+    private fun handleViewEvents(event: ModifiableMemoryViewerViewEvent) {
         when (event) {
-            is MemoryViewerViewEvent.ShowLocation -> {
+            is ModifiableMemoryViewerViewEvent.ShowLocation -> {
                 val bottomSheet = LocationBottomSheetFragment.newInstance(
                     bundle = bundleOf(
                         LocationBottomSheetFragment.KEY_ADDRESS to event.address,
@@ -121,21 +138,17 @@ class MemoryViewerFragment: BaseFragment() {
                 )
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
-            is MemoryViewerViewEvent.MoveToPrevPage -> {
-                binding.vpMemoryViewerPhoto.currentItem -= 1
+            is ModifiableMemoryViewerViewEvent.MoveToPrevPage -> {
+                binding.vpModifiableMemoryViewerPhoto.currentItem -= 1
             }
-            is MemoryViewerViewEvent.MoveToNextPage -> {
-                binding.vpMemoryViewerPhoto.currentItem += 1
+            is ModifiableMemoryViewerViewEvent.MoveToNextPage -> {
+                binding.vpModifiableMemoryViewerPhoto.currentItem += 1
             }
-            is MemoryViewerViewEvent.ShowInfo -> {
-                val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
-                    bundle = bundleOf(
-                        MemoryInfoBottomSheetFragment.KEY_MEMORY to vm.currentMemory.value,
-                    )
-                )
-                bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
+            is ModifiableMemoryViewerViewEvent.ShowMore -> {
+                val bottomSheet = MemoryMoreBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, MemoryMoreBottomSheetFragment.TAG)
             }
-            is MemoryViewerViewEvent.ResultBack -> {
+            is ModifiableMemoryViewerViewEvent.ResultBack -> {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(
                     TripFragment.KEY_MODIFIABLE_MEMORY_VIEWER,
                     bundleOf(
@@ -148,7 +161,7 @@ class MemoryViewerFragment: BaseFragment() {
     }
 
     private fun addItemsToLayout(items: List<String>) {
-        val linearLayout = binding.llMemoryViewerTags
+        val linearLayout = binding.llModifiableMemoryViewerTags
         linearLayout.removeViewsInLayout(1, linearLayout.childCount - 1)
 
         // 인플레이터 준비

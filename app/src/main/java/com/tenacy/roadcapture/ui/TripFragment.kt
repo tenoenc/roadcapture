@@ -146,7 +146,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         ) { _, bundle ->
             bundle.getParcelable<ClusterMarkerItems>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
-                findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(it))
+                findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(it))
             }
         }
         childFragmentManager.setFragmentResultListener(
@@ -346,9 +346,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         }
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             findNavController().currentBackStackEntry?.savedStateHandle
-                ?.getStateFlow<LatLng?>(KEY_COORDINATES, null)?.collect { coordinates ->
-                    if (coordinates == null) return@collect
-                    moveCameraTo(latLng = coordinates)
+                ?.getStateFlow<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER, null)?.collect { bundle ->
+                    if (bundle == null) return@collect
+                    val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                    coordinates?.let { moveCameraTo(latLng = it) }
                 }
         }
     }
@@ -432,7 +433,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
         lifecycleScope.launch {
             val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewScope = ViewScope.WHOLE)
-            findNavController().navigate(TripFragmentDirections.actionTripToMemoryViewer(clusterMarkerItems))
+            findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(clusterMarkerItems))
         }
     }
 
@@ -707,6 +708,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         const val KEY_NEW_MEMORY = "new_memory"
         const val RESULT_MEMORY_ID = "memory_id"
         const val RESULT_COORDINATES = "coordinates"
-        const val KEY_COORDINATES = "coordinates"
+        const val KEY_MODIFIABLE_MEMORY_VIEWER = "modifiable_memory_viewer"
     }
 }

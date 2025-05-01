@@ -17,6 +17,10 @@ interface MemoryDao {
     @Query("SELECT * FROM memories WHERE locationId IN (:locationIds) ORDER BY createdAt ASC")
     fun selectByLocationIds(locationIds: List<Long>): List<MemoryWithLocation>
 
+
+    @Query("DELETE FROM memories WHERE id = :id")
+    fun deleteById(id: Long): Int
+
     @Query("DELETE FROM memories")
     fun clear()
 }

@@ -10,10 +10,7 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.di.InputModule
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.storage
-import com.tenacy.roadcapture.util.toLocalDateTime
-import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
@@ -203,7 +200,7 @@ class NewAlbumViewModel @Inject constructor(
                 Album.clear()
                 memoryDao.clear()
                 locationDao.clear()
-                clearCacheDirectory()
+                context.clearCacheDirectory()
 
                 // 8. 완료
                 send(AlbumSaveState.Completed)
@@ -219,27 +216,6 @@ class NewAlbumViewModel @Inject constructor(
                     // 로그 출력 (디버깅용)
                     Log.d("AlbumSave", "현재 상태: $state")
                 }
-        }
-    }
-
-    private fun clearCacheDirectory() {
-        viewModelScope.launch(Dispatchers.IO) {
-            try {
-                // 메인 캐시 디렉터리에서 "cropped"로 시작하는 jpg 파일들 삭제
-                val cacheDir = context.cacheDir
-                if (cacheDir.exists() && cacheDir.isDirectory) {
-                    cacheDir.listFiles()?.forEach { file ->
-                        if (file.isFile &&
-                            (file.name.startsWith("cropped") || file.name.startsWith("compressed")) &&
-                            file.name.endsWith(".jpg", ignoreCase = true)
-                        ) {
-                            file.delete()
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.e("AlbumSave", "캐시 디렉터리 초기화 실패: ${e.message}", e)
-            }
         }
     }
 

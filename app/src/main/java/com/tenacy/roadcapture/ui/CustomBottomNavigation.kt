@@ -3,14 +3,12 @@ package com.tenacy.roadcapture.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.ViewOutlineProvider
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.CustomBottomNavigationBinding
-import com.tenacy.roadcapture.util.toPx
 
 class CustomBottomNavigation @JvmOverloads constructor(
     context: Context,

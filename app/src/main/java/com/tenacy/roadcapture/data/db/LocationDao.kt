@@ -17,6 +17,9 @@ interface LocationDao {
     @Query("SELECT * FROM locations ORDER BY createdAt ASC")
     fun selectAll(): List<LocationEntity>
 
+    @Query("DELETE FROM locations WHERE id = :id")
+    fun deleteById(id: Long): Int
+
     @Query("DELETE FROM locations")
     fun clear()
 }

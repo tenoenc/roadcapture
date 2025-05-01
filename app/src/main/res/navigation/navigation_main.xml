@@ -22,8 +22,8 @@
               android:label="TripFragment"
               tools:layout="@layout/fragment_trip">
         <action android:id="@+id/action_trip_to_camera" app:destination="@id/cameraFragment"/>
-        <action android:id="@+id/action_trip_to_memoryViewer"
-                app:destination="@id/memoryViewerFragment"/>
+        <action android:id="@+id/action_trip_to_modifiableMemoryViewer"
+                app:destination="@id/modifiableMemoryViewerFragment"/>
         <action android:id="@+id/action_trip_to_newAlbum" app:destination="@id/newAlbumFragment"/>
     </fragment>
     <fragment android:id="@+id/cameraFragment" android:name="com.tenacy.roadcapture.ui.CameraFragment"
@@ -45,11 +45,17 @@
     <fragment android:id="@+id/memoryViewerFragment" android:name="com.tenacy.roadcapture.ui.MemoryViewerFragment"
               android:label="MemoryViewerFragment"
               tools:layout="@layout/fragment_memory_viewer">
-
-        <argument android:name="clusterMarkerItems" app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems" />
-
+        <argument android:name="clusterMarkerItems"
+                  app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
     </fragment>
     <fragment android:id="@+id/newAlbumFragment" android:name="com.tenacy.roadcapture.ui.NewAlbumFragment"
               android:label="NewAlbumFragment"
-    tools:layout="@layout/fragment_new_album"/>
+              tools:layout="@layout/fragment_new_album"/>
+    <fragment android:id="@+id/modifiableMemoryViewerFragment"
+              android:name="com.tenacy.roadcapture.ui.ModifiableMemoryViewerFragment"
+              android:label="ModifiableMemoryViewerFragment"
+              tools:layout="@layout/fragment_modifiable_memory_viewer">
+        <argument android:name="clusterMarkerItems"
+                  app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
+    </fragment>
 </navigation>

@@ -32,7 +32,7 @@ fun getDurationMinutes(timestamp1: Long, timestamp2: Long): Int? {
     val minutes = TimeUnit.MILLISECONDS.toMinutes(durationMillis).toInt()
 
     // 60분 미만인 경우에만 반환
-    return if (minutes < 60) minutes else null
+    return if (minutes in 1..59) minutes else null
 }
 
 /**
@@ -46,7 +46,7 @@ fun getDurationHours(timestamp1: Long, timestamp2: Long): Int? {
     val hours = TimeUnit.MILLISECONDS.toHours(durationMillis).toInt()
 
     // 24시간 미만인 경우에만 반환
-    return if (hours < 24) hours else null
+    return if (hours in 1..23) hours else null
 }
 
 /**
@@ -60,7 +60,7 @@ fun getDurationDays(timestamp1: Long, timestamp2: Long): Int? {
     val days = TimeUnit.MILLISECONDS.toDays(durationMillis).toInt()
 
     // 7일 미만인 경우에만 반환
-    return if (days < 7) days else null
+    return if (days in 1..6) days else null
 }
 
 /**
@@ -75,7 +75,7 @@ fun getDurationWeeks(timestamp1: Long, timestamp2: Long): Int? {
     val weeks = (days / 7).toInt()
 
     // 5주 미만인 경우에만 반환
-    return if (weeks < 5) weeks else null
+    return if (weeks in 1..4) weeks else null
 }
 
 /**
@@ -92,7 +92,7 @@ fun getDurationMonths(timestamp1: Long, timestamp2: Long): Int? {
     val months = (days / 30.44).toInt()
 
     // 12개월 미만인 경우에만 반환
-    return if (months < 12) months else null
+    return if (months in 1..11) months else null
 }
 
 /**
