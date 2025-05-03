@@ -115,28 +115,76 @@ fun getDurationYears(timestamp1: Long, timestamp2: Long): Int? {
  * @param timestamp2 종료 타임스탬프 (밀리초)
  * @return 단위와 값을 포함한 Pair (예: Pair("분", 30))
  */
-fun getFormattedDuration(timestamp1: Long, timestamp2: Long): Pair<String, Int> {
+fun getFormattedDuration(timestamp1: Long, timestamp2: Long): Pair<String, String> {
     return when {
         getDurationMinutes(timestamp1, timestamp2) != null -> {
-            Pair("분", getDurationMinutes(timestamp1, timestamp2)!!)
+            Pair(getDurationMinutes(timestamp1, timestamp2)!!.toString(), "분")
         }
         getDurationHours(timestamp1, timestamp2) != null -> {
-            Pair("시간", getDurationHours(timestamp1, timestamp2)!!)
+            Pair(getDurationHours(timestamp1, timestamp2)!!.toString(), "시간")
         }
         getDurationDays(timestamp1, timestamp2) != null -> {
-            Pair("일", getDurationDays(timestamp1, timestamp2)!!)
+            Pair(getDurationDays(timestamp1, timestamp2)!!.toString(), "일")
         }
         getDurationWeeks(timestamp1, timestamp2) != null -> {
-            Pair("주", getDurationWeeks(timestamp1, timestamp2)!!)
+            Pair(getDurationWeeks(timestamp1, timestamp2)!!.toString(), "주")
         }
         getDurationMonths(timestamp1, timestamp2) != null -> {
-            Pair("개월", getDurationMonths(timestamp1, timestamp2)!!)
+            Pair(getDurationMonths(timestamp1, timestamp2)!!.toString(), "개월")
         }
         getDurationYears(timestamp1, timestamp2) != null -> {
-            Pair("년", getDurationYears(timestamp1, timestamp2)!!)
+            Pair(getDurationYears(timestamp1, timestamp2)!!.toString(), "년")
         }
         else -> {
-            Pair("", -1)
+            Pair("방금", "")
         }
+    }
+}
+
+/**
+ * Long 값을 "9.1만", "1.2천"과 같은 형식의 숫자와 단위로 변환하는 확장 함수
+ * @return Pair<Double, String> - 첫 번째 값은 변환된 숫자, 두 번째 값은 단위 문자열
+ */
+fun Long.toReadableUnitText(): Pair<String, String> {
+    return when {
+        this >= 100000000 -> {
+            val value = this / 10000000.0
+            val formatted = if (value == value.toLong().toDouble()) {
+                value.toLong().toDouble()
+            } else {
+                (value * 10).toLong() / 10.0
+            }
+            Pair(formatted.toFormattedDecimalText(), "억")
+        }
+        this >= 10000 -> {
+            val value = this / 10000.0
+            val formatted = if (value == value.toLong().toDouble()) {
+                value.toLong().toDouble()
+            } else {
+                (value * 10).toLong() / 10.0
+            }
+            Pair(formatted.toFormattedDecimalText(), "만")
+        }
+        this >= 1000 -> {
+            val value = this / 1000.0
+            val formatted = if (value == value.toLong().toDouble()) {
+                value.toLong().toDouble()
+            } else {
+                (value * 10).toLong() / 10.0
+            }
+            Pair(formatted.toFormattedDecimalText(), "천")
+        }
+        else -> Pair(this.toDouble().takeIf { it > 0 }?.toInt()?.toString() ?: "없음", "")
+    }
+}
+
+fun Double.toFormattedDecimalText(): String {
+    val intValue = this.toInt()
+    val firstDecimal = ((this - intValue) * 10).toInt()
+
+    return if (firstDecimal > 0) {
+        String.format("%.1f", this)
+    } else {
+        intValue.toString()
     }
 }

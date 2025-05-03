@@ -143,7 +143,8 @@ class UploadProgressViewModel @Inject constructor(
 
                 // 6. 앨범 데이터 생성 및 저장
                 sendWithDelay(AlbumSaveState.SavingToFirestore)
-                val thumbnailUrl = photoUrlMap[memories.firstOrNull()?.memory?.id] ?: ""
+                val (_, thumbnailUrl) = photoUrlMap[memories.firstOrNull()?.memory?.id]!!
+                val userRef = db.collection("users").document(user!!.uid)
 
                 val albumData = hashMapOf(
                     "title" to albumTitle,
@@ -153,7 +154,7 @@ class UploadProgressViewModel @Inject constructor(
                     "viewCount" to 0,
                     "likeCount" to 0,
                     "regionTags" to regionTags,
-                    "userId" to userId,
+                    "userRef" to userRef,
                     "isPublic" to args.isPublic,
                     "locations" to locationsData,
                     "memories" to memoriesData

@@ -73,9 +73,9 @@ class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
     private fun getDurationFormattedText(): String? {
         return memoryWithLocation?.let {
             val currentTimeStamp = LocalDateTime.now().toTimestamp()
-            val (unit, value) = getFormattedDuration(it.memory.createdAt.toTimestamp(), currentTimeStamp)
+            val (value, unit) = getFormattedDuration(it.memory.createdAt.toTimestamp(), currentTimeStamp)
 
-            "${if(value == -1) "방금" else value}${unit} 전에 남긴 추억이에요"
+            "${value}${unit} 전에 남긴 추억이에요"
         }
     }
 

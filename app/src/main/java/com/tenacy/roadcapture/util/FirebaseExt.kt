@@ -1,13 +1,15 @@
 package com.tenacy.roadcapture.util
 
-import android.net.Uri
 import android.util.Log
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -59,13 +61,61 @@ private suspend fun copyImage(sourceRef: StorageReference, destinationRef: Stora
     return destinationRef.downloadUrl.await().toString()
 }
 
-fun uploadImageIfExists(uri: Uri?) = uri?.let {
-    val storageRef = storage.reference
-    val riversRef = storageRef.child("images/${user!!.uid}/${it.lastPathSegment}")
-    val uploadTask = riversRef.putFile(it)
-    uploadTask
-        .continueWith { task ->
-            task.exception ?: throw task.exception!!
-            riversRef.downloadUrl
-        }
+fun DocumentSnapshot.toAlbum(user: FirebaseAlbum.User): FirebaseAlbum {
+    val id = id
+    val title = getString("title") ?: ""
+    val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
+    val endedAt = getTimestamp("endedAt")!!.toDate().toLocalDateTime()
+    val thumbnailUrl = getString("thumbnailUrl") ?: ""
+    val viewCount = getLong("viewCount")?.toInt() ?: 0
+    val likeCount = getLong("likeCount")?.toInt() ?: 0
+    val isPublic = getBoolean("isPublic") ?: false
+
+    // 중첩 리스트 처리
+    @Suppress("UNCHECKED_CAST")
+    val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
+
+    // 복잡한 중첩 객체 변환
+    @Suppress("UNCHECKED_CAST")
+    val locationsData = get("locations") as? List<Map<String, Any>> ?: emptyList()
+    val locations = locationsData.map { locData ->
+        FirebaseAlbum.Location(
+            id = locData["id"] as? String ?: "",
+            latitude = (locData["latitude"] as? Number)?.toDouble() ?: 0.0,
+            longitude = (locData["longitude"] as? Number)?.toDouble() ?: 0.0,
+            createdAt = (locData["createdAt"] as? Timestamp)?.toDate()?.toLocalDateTime()
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    val memoriesData = get("memories") as? List<Map<String, Any>> ?: emptyList()
+    val memories = memoriesData.map { memData ->
+        FirebaseAlbum.Memory(
+            id = memData["id"] as? String ?: "",
+            content = memData["content"] as? String ?: "",
+            photoUrl = memData["photoUrl"] as? String ?: "",
+            photoName = memData["photoName"] as? String ?: "",
+            placeName = memData["placeName"] as? String ?: "",
+            addressTags = memData["addressTags"] as? List<String> ?: emptyList(),
+            formattedAddress = memData["formattedAddress"] as? String ?: "",
+            locationRefId = memData["locationRefId"] as? String ?: "",
+            createdAt = (memData["createdAt"] as? Timestamp)?.toDate()?.toLocalDateTime()
+        )
+    }
+
+    return FirebaseAlbum(
+        id = id,
+        title = title,
+        createdAt = createdAt,
+        endedAt = endedAt,
+        thumbnailUrl = thumbnailUrl,
+        viewCount = viewCount,
+        likeCount = likeCount,
+        regionTags = regionTags,
+        user = user,
+        isPublic = isPublic,
+        locations = locations,
+        memories = memories
+    )
 }
+

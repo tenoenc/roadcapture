@@ -5,6 +5,7 @@ import android.util.TypedValue
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Date
 
 val Number.toPx
     get() = TypedValue.applyDimension(
@@ -26,3 +27,6 @@ fun LocalDateTime.toTimestamp(zoneId: ZoneId = ZoneId.of("UTC")): Long =
     this.atZone(zoneId)
         .toInstant()
         .toEpochMilli()
+
+fun Date.toLocalDateTime(zoneId: ZoneId = ZoneId.of("UTC")): LocalDateTime =
+    LocalDateTime.ofInstant(this.toInstant(), zoneId)

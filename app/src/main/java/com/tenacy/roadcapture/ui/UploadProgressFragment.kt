@@ -3,7 +3,6 @@ package com.tenacy.roadcapture.ui
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -78,13 +77,11 @@ class UploadProgressFragment: BaseFragment() {
                     is AlbumSaveState.Loading -> {}
                     is AlbumSaveState.FetchingData -> {}
                     is AlbumSaveState.CreatingTags -> {
-                        Log.d("AlbumSave", "aa")
                         binding.llUploadProgressContainer.visibility = View.VISIBLE
                         binding.txtUploadProgressStatus.text = "준비하는 중"
                     }
                     is AlbumSaveState.ProcessingLocations -> {}
                     is AlbumSaveState.UploadingImages -> {
-                        Log.d("AlbumSave", "bb")
                         binding.txtUploadProgress.visibility = View.VISIBLE
                         binding.txtUploadProgress.text = "${it.current} / ${it.total}"
                         binding.txtUploadProgressStatus.text = "이미지 업로드 중"
@@ -94,13 +91,11 @@ class UploadProgressFragment: BaseFragment() {
 
                     is AlbumSaveState.ProcessingMemories -> {}
                     is AlbumSaveState.SavingToFirestore -> {
-                        Log.d("AlbumSave", "cc")
                         binding.txtUploadProgressStatus.text = "저장하는 중"
                         binding.txtUploadProgress.visibility = View.GONE
                     }
                     is AlbumSaveState.ClearingLocalData -> {}
                     is AlbumSaveState.Completed -> {
-                        Log.d("AlbumSave", "dd")
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
