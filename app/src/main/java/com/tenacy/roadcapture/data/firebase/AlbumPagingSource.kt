@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.data.firebase
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentReference
@@ -17,19 +18,43 @@ class AlbumPagingSource(
 ): PagingSource<DocumentSnapshot, FirebaseAlbum>() {
 
     companion object {
-        const val PAGE_SIZE = 20
+        const val PAGE_SIZE = 3
+        private const val TAG = "AlbumPagingSource"
     }
 
     override fun getRefreshKey(state: PagingState<DocumentSnapshot, FirebaseAlbum>): DocumentSnapshot? {
-        // 새로고침 키 정의 (일반적으로 가장 최근에 접근한 위치)
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey
-        }
+        Log.d(TAG, "getRefreshKey 호출됨")
+
+        // null을 반환하여 새로고침 시 처음부터 다시 로드하도록 함
+        return null
+
+        // 또는 이전 구현을 사용하지만 초기 상태를 명확히 함
+        // return state.anchorPosition?.let { anchorPosition ->
+        //     state.closestPageToPosition(anchorPosition)?.prevKey
+        // }
     }
 
     override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, FirebaseAlbum> {
         return try {
+            // 로드 타입에 따른 로그 출력
+            when (params) {
+                is LoadParams.Refresh -> {
+                    Log.d(TAG, "REFRESH 로드 요청: key=${params.key}, loadSize=${params.loadSize}")
+                }
+                is LoadParams.Append -> {
+                    Log.d(TAG, "APPEND 로드 요청: key=${params.key}, loadSize=${params.loadSize}")
+                }
+                is LoadParams.Prepend -> {
+                    Log.d(TAG, "PREPEND 로드 요청: key=${params.key}, loadSize=${params.loadSize}")
+                    // Prepend는 지원하지 않으므로 빈 리스트 반환
+                    return LoadResult.Page(
+                        data = emptyList(),
+                        prevKey = null,
+                        nextKey = null
+                    )
+                }
+            }
+
             // 기본 쿼리 생성
             var query = db.collection("albums")
                 .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -44,20 +69,35 @@ class AlbumPagingSource(
             }
 
             // 페이지 크기 제한
-            query = query.limit(params.loadSize.toLong())
+            query = query.limit(PAGE_SIZE.toLong())
 
             // 페이징 키 적용 (다음 페이지 시작 지점)
-            val startAfterDocument = params.key
-            if (startAfterDocument != null) {
-                query = query.startAfter(startAfterDocument)
+            val key = params.key
+            if (key != null) {
+                query = query.startAfter(key)
+                Log.d(TAG, "startAfter 적용: ${key.id}")
+            } else {
+                Log.d(TAG, "처음부터 로드 (startAfter 없음)")
             }
 
             // 쿼리 실행
             val querySnapshot = query.get().await()
             val documents = querySnapshot.documents
+            Log.d(TAG, "쿼리 결과: ${documents.size}개 문서 로드됨")
+
+            // 결과가 비어있는지 확인
+            if (documents.isEmpty()) {
+                Log.d(TAG, "쿼리 결과가 비어있음")
+                return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+            }
 
             // 다음 페이지 키 설정
             val lastDocument = documents.lastOrNull()
+            Log.d(TAG, "마지막 문서 ID: ${lastDocument?.id}")
 
             // 결과 매핑 및 반환
             val userIds = documents.mapNotNull { doc ->
@@ -96,12 +136,19 @@ class AlbumPagingSource(
                 doc.toAlbum(user!!)
             }
 
+            // 앨범 ID 출력
+            albums.forEachIndexed { index, album ->
+                Log.d(TAG, "로드된 앨범[$index]: ID=${album.id}")
+            }
+
+            // 중요: 다음 페이지 키로 마지막 문서 반환
             LoadResult.Page(
                 data = albums,
-                prevKey = null,
-                nextKey = if (albums.size < params.loadSize) null else lastDocument
+                prevKey = null, // 이전 페이지는 지원하지 않음
+                nextKey = lastDocument // 다음 페이지 키는 마지막 문서
             )
         } catch (e: Exception) {
+            Log.e(TAG, "데이터 로드 중 오류 발생: ${e.message}", e)
             LoadResult.Error(e)
         }
     }

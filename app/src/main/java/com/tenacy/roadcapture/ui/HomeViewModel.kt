@@ -1,11 +1,17 @@
 package com.tenacy.roadcapture.ui
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -13,12 +19,33 @@ class HomeViewModel @Inject constructor(
 
 ) : BaseViewModel() {
 
-    val albums = Pager(
+    // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
+    private val pagingSourceFactory = {
+        AlbumPagingSource(isPublicOnly = true)
+    }
+
+    // 페이징 설정 최적화
+    private val pager = Pager(
         config = PagingConfig(
             pageSize = AlbumPagingSource.PAGE_SIZE,
             enablePlaceholders = false,
-            maxSize = 100,
+            maxSize = AlbumPagingSource.PAGE_SIZE * 5,
+            prefetchDistance = AlbumPagingSource.PAGE_SIZE,
+            initialLoadSize = AlbumPagingSource.PAGE_SIZE
         ),
-        pagingSourceFactory = { AlbumPagingSource(isPublicOnly = true) }
-    ).flow.cachedIn(viewModelScope)
+        pagingSourceFactory = pagingSourceFactory
+    )
+
+    // 앨범 데이터 Flow
+    val albums: Flow<PagingData<FirebaseAlbum>> = pager.flow.cachedIn(viewModelScope)
+
+    // 새로고침 상태 관리
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing
+
+    // 새로고침 시작
+    fun setRefreshing(refreshing: Boolean) {
+        _isRefreshing.value = refreshing
+        Log.d("HomeViewModel", "리프레싱 상태 변경: $refreshing")
+    }
 }
