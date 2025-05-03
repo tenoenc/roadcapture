@@ -8,18 +8,18 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.tenacy.roadcapture.databinding.FragmentLoadingBinding
+import com.tenacy.roadcapture.databinding.FragmentAddressLoadingBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoadingFragment: BaseFragment() {
+class AddressLoadingFragment: BaseFragment() {
 
-    private var _binding: FragmentLoadingBinding? = null
+    private var _binding: FragmentAddressLoadingBinding? = null
     val binding get() = _binding!!
 
-    private val vm: LoadingViewModel by viewModels()
+    private val vm: AddressLoadingViewModel by viewModels()
 
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
@@ -39,7 +39,7 @@ class LoadingFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentLoadingBinding.inflate(inflater, container, false)
+        _binding = FragmentAddressLoadingBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -65,7 +65,7 @@ class LoadingFragment: BaseFragment() {
                     is AddressFetchState.Initial -> {}
                     is AddressFetchState.Loading -> {}
                     is AddressFetchState.Completed -> {
-                        findNavController().navigate(LoadingFragmentDirections.actionLoadingToNewMemory(it.address, it.photoUri))
+                        findNavController().navigate(AddressLoadingFragmentDirections.actionLoadingToNewMemory(it.address, it.photoUri))
                     }
                     is AddressFetchState.Error -> {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보를 불러오는 중에\n오류가 발생했어요", ToastMessageType.Warning)))

@@ -27,7 +27,7 @@
         <action android:id="@+id/action_trip_to_loading"
                 app:enterAnim="@anim/from_right"
                 app:exitAnim="@anim/to_left"
-                app:destination="@id/loadingFragment"/>
+                app:destination="@id/addressLoadingFragment"/>
     </fragment>
     <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
               android:label="NewMemoryFragment"
@@ -45,7 +45,12 @@
     </fragment>
     <fragment android:id="@+id/newAlbumFragment" android:name="com.tenacy.roadcapture.ui.NewAlbumFragment"
               android:label="NewAlbumFragment"
-              tools:layout="@layout/fragment_new_album"/>
+              tools:layout="@layout/fragment_new_album">
+        <action android:id="@+id/action_newAlbum_to_uploadProgress"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:destination="@id/uploadProgressFragment"/>
+    </fragment>
     <fragment android:id="@+id/modifiableMemoryViewerFragment"
               android:name="com.tenacy.roadcapture.ui.ModifiableMemoryViewerFragment"
               android:label="ModifiableMemoryViewerFragment"
@@ -53,15 +58,21 @@
         <argument android:name="clusterMarkerItems"
                   app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
     </fragment>
-    <fragment android:id="@+id/loadingFragment" android:name="com.tenacy.roadcapture.ui.LoadingFragment"
-              android:label="LoadingFragment"
-              tools:layout="@layout/fragment_loading">
+    <fragment android:id="@+id/addressLoadingFragment" android:name="com.tenacy.roadcapture.ui.AddressLoadingFragment"
+              android:label="AddressLoadingFragment"
+              tools:layout="@layout/fragment_address_loading">
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
-        <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng" />
+        <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng"/>
         <action android:id="@+id/action_loading_to_newMemory"
                 app:enterAnim="@anim/from_right"
                 app:exitAnim="@anim/to_left"
                 app:popUpTo="@id/tripFragment"
                 app:destination="@id/newMemoryFragment"/>
+    </fragment>
+    <fragment android:id="@+id/uploadProgressFragment" android:name="com.tenacy.roadcapture.ui.UploadProgressFragment"
+              android:label="UploadProgressFragment"
+              tools:layout="@layout/fragment_upload_progress">
+
+        <argument android:name="value" app:argType="com.tenacy.roadcapture.ui.NewAlbumFragment$Arguments" />
     </fragment>
 </navigation>

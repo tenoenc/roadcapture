@@ -4,10 +4,10 @@
 
     <data>
         
-        <variable name="vm" type="com.tenacy.roadcapture.ui.LoadingViewModel"/>
+        <variable name="vm" type="com.tenacy.roadcapture.ui.AddressLoadingViewModel"/>
     </data>
     
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_loading_container"
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_address_loading_container"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
                                                        android:background="@color/background_normal">

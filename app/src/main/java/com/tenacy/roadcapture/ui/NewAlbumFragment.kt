@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -16,6 +17,7 @@ import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -64,7 +66,8 @@ class NewAlbumFragment: BaseFragment() {
         ) { _, bundle ->
             bundle.getBoolean(AlbumCompeteBeforeBottomSheetFragment.RESULT_PUBLIC).let {
                 Log.d("TAG", "Positive Button Clicked!")
-                vm.saveAlbum(it)
+                val title = vm.albumTitle.value
+                findNavController().navigate(NewAlbumFragmentDirections.actionNewAlbumToUploadProgress(Arguments(title, it)))
             }
         }
     }
@@ -88,27 +91,6 @@ class NewAlbumFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
-        repeatOnLifecycle {
-            vm.saveState.collectLatest {
-                when(it) {
-                    is AlbumSaveState.Loading -> {}
-                    is AlbumSaveState.FetchingData -> {}
-                    is AlbumSaveState.CreatingTags -> {}
-                    is AlbumSaveState.ProcessingLocations -> {}
-                    is AlbumSaveState.UploadingImages -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("${it.current} / ${it.total}", ToastMessageType.Info)))
-                    }
-                    is AlbumSaveState.ProcessingMemories -> {}
-                    is AlbumSaveState.SavingToFirestore -> {}
-                    is AlbumSaveState.ClearingLocalData -> {}
-                    is AlbumSaveState.Completed -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 성공적으로 생성했어요", ToastMessageType.Success)))
-                        findNavController().popBackStack(R.id.mainFragment, false)
-                    }
-                    is AlbumSaveState.Error -> {}
-                }
-            }
-        }
         observeViewEvents()
     }
 
@@ -130,4 +112,10 @@ class NewAlbumFragment: BaseFragment() {
             }
         }
     }
+
+    @Parcelize
+    data class Arguments(
+        val title: String,
+        val isPublic: Boolean,
+    ): Parcelable
 }

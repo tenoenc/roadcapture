@@ -20,12 +20,12 @@ import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @HiltViewModel
-class LoadingViewModel @Inject constructor(
+class AddressLoadingViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ): BaseViewModel() {
 
-    private val photoUri: Uri = LoadingFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
-    private val coordinates: LatLng = LoadingFragmentArgs.fromSavedStateHandle(savedStateHandle).coordinates
+    private val photoUri: Uri = AddressLoadingFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
+    private val coordinates: LatLng = AddressLoadingFragmentArgs.fromSavedStateHandle(savedStateHandle).coordinates
 
     private val _fetchState = MutableStateFlow<AddressFetchState>(AddressFetchState.Initial)
     val fetchState: StateFlow<AddressFetchState> = _fetchState
