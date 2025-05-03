@@ -19,6 +19,7 @@ class CustomBottomNavigation @JvmOverloads constructor(
     private val binding: CustomBottomNavigationBinding
     private var navController: NavController? = null
     private var onNewItemClickListener: (() -> Unit)? = null
+    private var onTabSelectedListener: ((Int) -> Unit)? = null
     private var currentSelectedId: Int = R.id.homeFragment
 
     // 네비게이션 아이템 ID를 뷰 ID에 매핑
@@ -27,14 +28,6 @@ class CustomBottomNavigation @JvmOverloads constructor(
         R.id.searchFragment to R.id.bn_search,
         R.id.albumMarkedFragment to R.id.bn_album_marked,
         R.id.myAlbumFragment to R.id.bn_my_album
-    )
-
-    // 뷰 ID를 네비게이션 아이템 ID에 매핑
-    private val viewMap = mapOf(
-        R.id.bn_home to R.id.homeFragment,
-        R.id.bn_search to R.id.searchFragment,
-        R.id.bn_album_marked to R.id.albumMarkedFragment,
-        R.id.bn_my_album to R.id.myAlbumFragment
     )
 
     init {
@@ -55,17 +48,17 @@ class CustomBottomNavigation @JvmOverloads constructor(
         binding.bnSearch.setOnClickListener {
             navigateTo(R.id.searchFragment)
         }
-        
+
         // 새 아이템 버튼 클릭 리스너
         binding.bnNew.setOnClickListener {
             onNewItemClickListener?.invoke()
         }
-        
+
         // 북마크 버튼 클릭 리스너
         binding.bnAlbumMarked.setOnClickListener {
             navigateTo(R.id.albumMarkedFragment)
         }
-        
+
         // 앨범 버튼 클릭 리스너
         binding.bnMyAlbum.setOnClickListener {
             navigateTo(R.id.myAlbumFragment)
@@ -73,18 +66,14 @@ class CustomBottomNavigation @JvmOverloads constructor(
     }
 
     /**
-     * Navigation Component와 연동하는 메서드
+     * 커스텀 네비게이션 처리를 위한 메서드 (NavController 사용하지 않음)
      */
-    fun setupWithNavController(navController: NavController) {
-        this.navController = navController
-
-        // Navigation 목적지 변경 리스너 등록
-        navController.addOnDestinationChangedListener { _, destination, _ ->
-            updateSelection(destination.id)
-        }
+    fun setupWithCustomNavigation(onTabSelected: (Int) -> Unit) {
+        this.onTabSelectedListener = onTabSelected
 
         // 초기 선택 상태 설정
-        updateSelection(navController.currentDestination?.id ?: R.id.homeFragment)
+        updateSelection(R.id.homeFragment)
+        onTabSelectedListener?.invoke(R.id.homeFragment)
     }
 
     /**
@@ -100,12 +89,18 @@ class CustomBottomNavigation @JvmOverloads constructor(
     private fun navigateTo(destinationId: Int) {
         if (currentSelectedId == destinationId) return
 
+        // NavController 사용하는 경우
         navController?.let { controller ->
             // 현재 위치가 목적지와 다를 때만 이동
             if (controller.currentDestination?.id != destinationId) {
                 controller.navigate(destinationId)
             }
+            return
         }
+
+        // 커스텀 네비게이션 사용하는 경우
+        onTabSelectedListener?.invoke(destinationId)
+        updateSelection(destinationId)
     }
 
     /**

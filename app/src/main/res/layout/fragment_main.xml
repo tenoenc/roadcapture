@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
-
     <data>
-
         <variable name="vm" type="com.tenacy.roadcapture.ui.MainViewModel"/>
     </data>
 
@@ -11,28 +9,18 @@
                   android:layout_height="match_parent"
                   android:orientation="vertical">
 
-<!--
-        <Button android:layout_width="wrap_content"
+        <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/viewPager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+        <com.tenacy.roadcapture.ui.CustomBottomNavigation
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="로그아웃"
-                android:onClick="@{() -> vm.onLogoutClick()}"/>
--->
-
-        <androidx.fragment.app.FragmentContainerView android:layout_width="match_parent"
-                                                     android:layout_height="0dp"
-                                                     android:id="@+id/nested_container"
-                                                     android:layout_weight="1"
-                                                     android:name="androidx.navigation.fragment.NavHostFragment"
-                                                     app:defaultNavHost="false"
-                                                     app:navGraph="@navigation/navigation_bottom" />
-
-        <com.tenacy.roadcapture.ui.CustomBottomNavigation android:layout_width="match_parent"
-                                                          android:layout_height="wrap_content"
-                                                          android:id="@+id/bottom_nav"
-                                                          android:outlineProvider="bounds"
-                                                          android:elevation="8dp"
-                                                          app:onNewItemClick="@{() -> vm.onNewClick()}"/>
-
+                android:id="@+id/bottom_nav"
+                android:outlineProvider="bounds"
+                android:elevation="8dp"
+                app:onNewItemClick="@{() -> vm.onNewClick()}"/>
     </LinearLayout>
 </layout>
