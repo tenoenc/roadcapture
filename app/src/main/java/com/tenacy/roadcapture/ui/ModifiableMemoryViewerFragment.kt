@@ -104,7 +104,7 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.photoUris.collect {
                 binding.vpModifiableMemoryViewerPhoto.registerOnPageChangeCallback(onPageChangeCallback)
-                binding.vpModifiableMemoryViewerPhoto.adapter = PhotoSliderAdapter(it)
+                binding.vpModifiableMemoryViewerPhoto.adapter = PhotoSliderAdapter(photoUris = it)
                 binding.vpModifiableMemoryViewerPhoto.setCurrentItem(vm.currentMemoryIndex.value, false)
             }
         }
@@ -121,7 +121,7 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? ModifiableMemoryViewerViewEvent)?.let { handleViewEvents(it) }
                 }
             }

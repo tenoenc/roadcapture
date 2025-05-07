@@ -1,15 +1,19 @@
 package com.tenacy.roadcapture.util
 
 import android.util.Log
-import com.google.firebase.Timestamp
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.WriteBatch
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -75,34 +79,6 @@ fun DocumentSnapshot.toAlbum(user: FirebaseAlbum.User): FirebaseAlbum {
     @Suppress("UNCHECKED_CAST")
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
 
-    // 복잡한 중첩 객체 변환
-    @Suppress("UNCHECKED_CAST")
-    val locationsData = get("locations") as? List<Map<String, Any>> ?: emptyList()
-    val locations = locationsData.map { locData ->
-        FirebaseAlbum.Location(
-            id = locData["id"] as? String ?: "",
-            latitude = (locData["latitude"] as? Number)?.toDouble() ?: 0.0,
-            longitude = (locData["longitude"] as? Number)?.toDouble() ?: 0.0,
-            createdAt = (locData["createdAt"] as? Timestamp)?.toDate()?.toLocalDateTime()
-        )
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    val memoriesData = get("memories") as? List<Map<String, Any>> ?: emptyList()
-    val memories = memoriesData.map { memData ->
-        FirebaseAlbum.Memory(
-            id = memData["id"] as? String ?: "",
-            content = memData["content"] as? String ?: "",
-            photoUrl = memData["photoUrl"] as? String ?: "",
-            photoName = memData["photoName"] as? String ?: "",
-            placeName = memData["placeName"] as? String ?: "",
-            addressTags = memData["addressTags"] as? List<String> ?: emptyList(),
-            formattedAddress = memData["formattedAddress"] as? String ?: "",
-            locationRefId = memData["locationRefId"] as? String ?: "",
-            createdAt = (memData["createdAt"] as? Timestamp)?.toDate()?.toLocalDateTime()
-        )
-    }
-
     return FirebaseAlbum(
         id = id,
         title = title,
@@ -114,8 +90,114 @@ fun DocumentSnapshot.toAlbum(user: FirebaseAlbum.User): FirebaseAlbum {
         regionTags = regionTags,
         user = user,
         isPublic = isPublic,
-        locations = locations,
-        memories = memories
     )
 }
 
+fun DocumentSnapshot.toMemory(): FirebaseMemory {
+    val id = id
+    val content = getString("content") ?: ""
+    val photoUrl = getString("photoUrl") ?: ""
+    val photoName = getString("photoName") ?: ""
+    val placeName = getString("placeName") ?: ""
+    val addressTags = get("addressTags") as? List<String> ?: emptyList()
+    val formattedAddress = getString("formattedAddress") ?: ""
+    val locationRefId = getDocumentReference("locationRef")?.id ?: ""
+    val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
+
+    return FirebaseMemory(
+        id = id,
+        content = content,
+        photoUrl = photoUrl,
+        photoName = photoName,
+        placeName = placeName,
+        addressTags = addressTags,
+        formattedAddress = formattedAddress,
+        locationRefId = locationRefId,
+        createdAt = createdAt,
+    )
+}
+
+fun DocumentSnapshot.toLocation(): FirebaseLocation {
+    val id = id
+    val latitude = getDouble("latitude") ?: 0.0
+    val longitude = getDouble("longitude") ?: 0.0
+    val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
+
+    return FirebaseLocation(
+        id = id,
+        latitude = latitude,
+        longitude = longitude,
+        createdAt = createdAt,
+    )
+}
+
+/**
+ * 배치 작업을 최대 사이즈(500)에 맞게 나누어 실행하는 확장 함수
+ * @param operations 실행할 작업 목록 (각 작업은 BatchOperation 타입)
+ */
+suspend fun FirebaseFirestore.executeInBatches(operations: List<BatchOperation>) {
+    if (operations.isEmpty()) return
+
+    var currentBatch = batch()
+    var operationCount = 0
+    val maxBatchSize = 490 // 안전 마진 확보
+
+    operations.forEach { operation ->
+        // 현재 배치가 가득 차면 커밋하고 새 배치 시작
+        if (operationCount + 1 > maxBatchSize) {
+            currentBatch.commit().await()
+            currentBatch = batch()
+            operationCount = 0
+        }
+
+        // 작업 실행
+        operation.execute(currentBatch)
+        operationCount++
+    }
+
+    // 마지막 배치 커밋 (남은 작업이 있는 경우)
+    if (operationCount > 0) {
+        currentBatch.commit().await()
+    }
+}
+
+/**
+ * 배치 작업 인터페이스
+ */
+interface BatchOperation {
+    fun execute(batch: WriteBatch)
+}
+
+/**
+ * 문서 생성 배치 작업
+ */
+class SetDocumentOperation(
+    private val documentRef: DocumentReference,
+    private val data: Map<String, Any?>
+) : BatchOperation {
+    override fun execute(batch: WriteBatch) {
+        batch.set(documentRef, data)
+    }
+}
+
+/**
+ * 여러 작업을 배치로 나누어 실행하는 확장 함수
+ * @param T 데이터 타입
+ * @param collectionPath 컬렉션 경로
+ * @param items 저장할 데이터 아이템 목록
+ * @param transform 데이터 변환 함수 (선택적)
+ */
+suspend fun <T> FirebaseFirestore.setCollectionInBatches(
+    collectionPath: String,
+    items: List<T>,
+    transform: (T) -> Map<String, Any> = { it as Map<String, Any> }
+): List<DocumentReference> {
+    val documentRefs = items.map { collection(collectionPath).document() }
+
+    val operations = items.mapIndexed { index, item ->
+        SetDocumentOperation(documentRefs[index], transform(item))
+    }
+
+    executeInBatches(operations)
+    return documentRefs
+}

@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetRangeSelectBinding
+import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import kotlinx.parcelize.Parcelize
 
 class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
@@ -19,13 +20,12 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
     private val binding get() = _binding!!
 
     private var items: List<ClusterMarkerItem>? = null
-    private var selectedMemoryId: Long? = null
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<Params>(KEY_PARAMS)?.let { params ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS)?.let { params ->
             this@RangeSelectBottomSheetFragment.items = params.items
         }
     }
@@ -57,9 +57,8 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
-                    RESULT_ITEMS to TripFragment.ClusterMarkerItems(
-                        selectedMemoryId = selectedMemoryId,
-                        items = items,
+                    RESULT_ITEMS to ParamsOut(
+                        items = items ?: emptyList(),
                         viewScope = viewScope,
                     )
                 )
@@ -74,9 +73,14 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     @Parcelize
-    data class Params(
-        val selectedMemoryId: Long? = null,
-        val items: List<ClusterMarkerItem>? = null,
+    data class ParamsIn(
+        val items: List<ClusterMarkerItem>,
+    ): Parcelable
+
+    @Parcelize
+    data class ParamsOut(
+        val items: List<ClusterMarkerItem>,
+        val viewScope: ViewScope,
     ): Parcelable
 
     companion object {

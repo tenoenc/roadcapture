@@ -127,7 +127,7 @@ class NewMemoryFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? NewMemoryViewEvent)?.let { handleViewEvents(it) }
                 }
             }

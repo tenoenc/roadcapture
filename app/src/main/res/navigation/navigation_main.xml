@@ -17,6 +17,7 @@
               android:label="MainFragment"
               tools:layout="@layout/fragment_main">
         <action android:id="@+id/action_main_to_trip" app:destination="@id/tripFragment"/>
+        <action android:id="@+id/action_main_to_album" app:destination="@id/albumFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -40,8 +41,8 @@
     <fragment android:id="@+id/memoryViewerFragment" android:name="com.tenacy.roadcapture.ui.MemoryViewerFragment"
               android:label="MemoryViewerFragment"
               tools:layout="@layout/fragment_memory_viewer">
-        <argument android:name="clusterMarkerItems"
-                  app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
+        <argument android:name="args"
+                  app:argType="com.tenacy.roadcapture.ui.dto.MemoryViewerArguments"/>
     </fragment>
     <fragment android:id="@+id/newAlbumFragment" android:name="com.tenacy.roadcapture.ui.NewAlbumFragment"
               android:label="NewAlbumFragment"
@@ -55,8 +56,8 @@
               android:name="com.tenacy.roadcapture.ui.ModifiableMemoryViewerFragment"
               android:label="ModifiableMemoryViewerFragment"
               tools:layout="@layout/fragment_modifiable_memory_viewer">
-        <argument android:name="clusterMarkerItems"
-                  app:argType="com.tenacy.roadcapture.ui.TripFragment$ClusterMarkerItems"/>
+        <argument android:name="args"
+                  app:argType="com.tenacy.roadcapture.ui.dto.MemoryViewerArguments"/>
     </fragment>
     <fragment android:id="@+id/addressLoadingFragment" android:name="com.tenacy.roadcapture.ui.AddressLoadingFragment"
               android:label="AddressLoadingFragment"
@@ -73,6 +74,14 @@
               android:label="UploadProgressFragment"
               tools:layout="@layout/fragment_upload_progress">
 
-        <argument android:name="value" app:argType="com.tenacy.roadcapture.ui.NewAlbumFragment$Arguments" />
+        <argument android:name="value" app:argType="com.tenacy.roadcapture.ui.NewAlbumFragment$Arguments"/>
+    </fragment>
+    <fragment android:id="@+id/albumFragment" android:name="com.tenacy.roadcapture.ui.AlbumFragment"
+              android:label="AlbumFragment"
+              tools:layout="@layout/fragment_album">
+
+        <argument android:name="value" app:argType="com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum"/>
+        <action android:id="@+id/action_album_to_memoryViewer"
+                app:destination="@id/memoryViewerFragment"/>
     </fragment>
 </navigation>

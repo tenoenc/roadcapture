@@ -47,7 +47,7 @@ class AlbumMarkedFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? AlbumMarkedViewEvent)?.let { handleViewEvents(it) }
                 }
             }

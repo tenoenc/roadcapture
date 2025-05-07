@@ -6,24 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.databinding.BSheetMemoryInfoBinding
-import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
+import com.tenacy.roadcapture.util.formatWithPattern
+import com.tenacy.roadcapture.util.getFormattedDuration
+import com.tenacy.roadcapture.util.toTimestamp
 import java.time.LocalDateTime
 
-class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
+class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     private var _binding: BSheetMemoryInfoBinding? = null
     private val binding get() = _binding!!
 
-    private var memoryWithLocation: MemoryWithLocation? = null
+    private var memory: MemoryViewerArguments.Memory? = null
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<MemoryWithLocation>(KEY_MEMORY)?.let { memoryWithLocation ->
-            this@MemoryInfoBottomSheetFragment.memoryWithLocation = memoryWithLocation
+        arguments?.getParcelable<MemoryViewerArguments.Memory>(KEY_MEMORY)?.let { memory ->
+            this@MemoryInfoBottomSheetFragment.memory = memory
         }
     }
 
@@ -50,19 +52,19 @@ class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun getTitleText(): String? {
-        return memoryWithLocation?.let {
-            val placeName = it.memory.placeName
-            if(placeName != null) return placeName
+        return memory?.let {
+            val placeName = it.placeName
+            if (placeName != null) return placeName
 
             getDurationFormattedText()
         }
     }
 
     private fun getDescriptionText(): String? {
-        return memoryWithLocation?.let {
-            val placeName = it.memory.placeName
-            val formattedText = it.memory.createdAt.formatWithPattern("yyyy-MM-dd HH:mm:ss")
-            if(placeName != null) {
+        return memory?.let {
+            val placeName = it.placeName
+            val formattedText = it.createdAt.formatWithPattern("yyyy-MM-dd HH:mm:ss")
+            if (placeName != null) {
                 "${getDurationFormattedText()}\n(${formattedText})"
             } else {
                 formattedText
@@ -71,9 +73,9 @@ class MemoryInfoBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun getDurationFormattedText(): String? {
-        return memoryWithLocation?.let {
+        return memory?.let {
             val currentTimeStamp = LocalDateTime.now().toTimestamp()
-            val (value, unit) = getFormattedDuration(it.memory.createdAt.toTimestamp(), currentTimeStamp)
+            val (value, unit) = getFormattedDuration(it.createdAt.toTimestamp(), currentTimeStamp)
 
             "${value}${unit} 전에 남긴 추억이에요"
         }

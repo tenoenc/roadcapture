@@ -5,10 +5,12 @@
     <data>
 
         <variable name="uri" type="android.net.Uri"/>
+        <variable name="url" type="String"/>
     </data>
 
     <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:uri="@{uri}" />
+            app:uri="@{uri}"
+            app:url="@{url}"/>
 </layout>

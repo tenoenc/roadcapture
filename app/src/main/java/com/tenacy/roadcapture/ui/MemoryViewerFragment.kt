@@ -85,9 +85,9 @@ class MemoryViewerFragment: BaseFragment() {
 
     private fun observePhotoUri() {
         repeatOnLifecycle {
-            vm.photoUris.collect {
+            vm.photoUrls.collect {
                 binding.vpMemoryViewerPhoto.registerOnPageChangeCallback(onPageChangeCallback)
-                binding.vpMemoryViewerPhoto.adapter = PhotoSliderAdapter(it)
+                binding.vpMemoryViewerPhoto.adapter = PhotoSliderAdapter(photoUrls = it)
                 binding.vpMemoryViewerPhoto.setCurrentItem(vm.currentMemoryIndex.value, false)
             }
         }
@@ -104,7 +104,7 @@ class MemoryViewerFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? MemoryViewerViewEvent)?.let { handleViewEvents(it) }
                 }
             }
@@ -137,9 +137,9 @@ class MemoryViewerFragment: BaseFragment() {
             }
             is MemoryViewerViewEvent.ResultBack -> {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                    TripFragment.KEY_MODIFIABLE_MEMORY_VIEWER,
+                    AlbumFragment.KEY_MEMORY_VIEWER,
                     bundleOf(
-                        TripFragment.RESULT_COORDINATES to event.coordinates
+                        AlbumFragment.RESULT_COORDINATES to event.coordinates
                     )
                 )
                 findNavController().popBackStack()

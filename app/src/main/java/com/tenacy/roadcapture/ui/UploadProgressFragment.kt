@@ -80,7 +80,6 @@ class UploadProgressFragment: BaseFragment() {
                         binding.llUploadProgressContainer.visibility = View.VISIBLE
                         binding.txtUploadProgressStatus.text = "준비하는 중"
                     }
-                    is AlbumSaveState.ProcessingLocations -> {}
                     is AlbumSaveState.UploadingImages -> {
                         binding.txtUploadProgress.visibility = View.VISIBLE
                         binding.txtUploadProgress.text = "${it.current} / ${it.total}"
@@ -88,11 +87,9 @@ class UploadProgressFragment: BaseFragment() {
                         binding.pbUploadProgress.max = it.total * ANIMATION_SMOOTHNESS_FACTOR
                         progressUpdateFlow.emit(it.current * ANIMATION_SMOOTHNESS_FACTOR)
                     }
-
-                    is AlbumSaveState.ProcessingMemories -> {}
                     is AlbumSaveState.SavingToFirestore -> {
-                        binding.txtUploadProgressStatus.text = "저장하는 중"
                         binding.txtUploadProgress.visibility = View.GONE
+                        binding.txtUploadProgressStatus.text = "앨범 저장하는 중"
                     }
                     is AlbumSaveState.ClearingLocalData -> {}
                     is AlbumSaveState.Completed -> {

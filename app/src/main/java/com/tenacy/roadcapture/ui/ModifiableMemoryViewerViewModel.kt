@@ -4,10 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.state
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
-import com.tenacy.roadcapture.data.db.MemoryWithLocation
+import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -23,13 +22,13 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 
     // 통합 상태 객체 정의
     data class ViewerState(
-        val memories: List<MemoryWithLocation> = emptyList(),
+        val memories: List<MemoryViewerArguments.Memory> = emptyList(),
         val currentIndex: Int = 0,
         val viewScope: ViewScope? = null
     ) {
         val totalPageCount: Int = memories.size
-        val currentMemory: MemoryWithLocation? = memories.getOrNull(currentIndex)
-        val photoUris: List<Uri> = memories.map { it.memory.photoUri }
+        val currentMemory: MemoryViewerArguments.Memory? = memories.getOrNull(currentIndex)
+        val photoUris: List<Uri> = memories.mapNotNull { it.photoUri }
     }
 
     private val _state = MutableStateFlow(ViewerState())
@@ -47,16 +46,16 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
     val currentMemory = _state.map { it.currentMemory }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
-    val tags = _state.mapNotNull { it.currentMemory?.memory?.addressTags }
+    val tags = _state.mapNotNull { it.currentMemory?.addressTags }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
-    val placeName = _state.map { it.currentMemory?.memory?.placeName ?: "" }
+    val placeName = _state.map { it.currentMemory?.placeName ?: "" }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     val photoUris = _state.map { it.photoUris }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
-    val content = _state.map { it.currentMemory?.memory?.content ?: "" }
+    val content = _state.map { it.currentMemory?.content ?: "" }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     init {
@@ -72,35 +71,21 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val argument: TripFragment.ClusterMarkerItems = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).clusterMarkerItems
+            val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
             val viewScope = argument.viewScope
+            val memories = argument.memories
 
-            when(viewScope) {
-                ViewScope.AROUND -> {
-                    val ids = argument.items!!.map { it.id }
-                    val memories = memoryDao.selectByLocationIds(ids)
-                    _state.update {
-                        it.copy(
-                            memories = memories,
-                            currentIndex = 0,
-                            viewScope = viewScope
-                        )
-                    }
-                }
-                else -> {
-                    val memories = memoryDao.selectAll()
-                    val selectedMemoryId = argument.selectedMemoryId ?: argument.items!![0].id
-                    val currentMemoryIndex = memories.indexOfFirst { memoryWithLocation ->
-                        memoryWithLocation.location.id == selectedMemoryId
-                    }
-                    _state.update {
-                        it.copy(
-                            memories = memories,
-                            currentIndex = currentMemoryIndex,
-                            viewScope = viewScope
-                        )
-                    }
-                }
+            val currentMemoryIndex = if(viewScope == ViewScope.WHOLE) {
+                val selectedMemoryId = argument.selectedMemoryId ?: argument.memories[0].id
+                argument.memories.indexOfFirst { memory ->  memory.id == selectedMemoryId }
+            } else 0
+
+            _state.update {
+                it.copy(
+                    memories = memories,
+                    currentIndex = currentMemoryIndex,
+                    viewScope = viewScope
+                )
             }
         }
     }
@@ -110,27 +95,27 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
             val currentState = _state.value
             val currentMemory = currentState.currentMemory ?: return@launch
 
-            memoryDao.deleteById(currentMemory.memory.id)
-            locationDao.deleteById(currentMemory.location.id)
+            memoryDao.deleteById(currentMemory.id.toLong())
+            locationDao.deleteById(currentMemory.id.toLong())
 
             if(currentState.totalPageCount > 1) {
                 // 메모리가 1개 이상 남아있는 경우
                 val newIndex = (currentState.currentIndex - 1).coerceAtLeast(0)
 
-                val argument: TripFragment.ClusterMarkerItems = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).clusterMarkerItems
+                val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
                 val viewScope = argument.viewScope
 
                 val memories = when(viewScope) {
                     ViewScope.AROUND -> {
-                        val ids = argument.items!!.map { it.id }.filterNot { it == currentMemory.location.id }
-                        memoryDao.selectByLocationIds(ids)
+                        val ids = argument.memories.map { it.id.toLong() }.filterNot { it == currentMemory.id.toLong() }
+                        memoryDao.selectByIds(ids)
                     }
                     else -> memoryDao.selectAll()
                 }
 
                 _state.update {
                     it.copy(
-                        memories = memories,
+                        memories = memories.map(MemoryViewerArguments.Memory::of),
                         currentIndex = newIndex,
                         viewScope = if(memories.size == 1) ViewScope.WHOLE else viewScope,
                     )
@@ -146,7 +131,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
     fun onLocationClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentMemory = _state.value.currentMemory ?: return@launch
-            viewEvent(ModifiableMemoryViewerViewEvent.ShowLocation(currentMemory.memory.formattedAddress))
+            viewEvent(ModifiableMemoryViewerViewEvent.ShowLocation(currentMemory.formattedAddress))
         }
     }
 
@@ -171,7 +156,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
     fun onBackClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentMemory = _state.value.currentMemory ?: return@launch
-            val coordinates = LatLng(currentMemory.location.latitude, currentMemory.location.longitude)
+            val coordinates = LatLng(currentMemory.coordinates.latitude, currentMemory.coordinates.longitude)
             viewEvent(ModifiableMemoryViewerViewEvent.ResultBack(coordinates))
         }
     }

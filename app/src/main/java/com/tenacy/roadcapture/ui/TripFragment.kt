@@ -35,9 +35,9 @@ import com.google.maps.android.clustering.ClusterManager
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.db.LocationEntity
-import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
+import com.tenacy.roadcapture.ui.dto.Marker
+import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.fileProviderAuthority
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -151,7 +151,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
     override fun onClusterItemClick(item: ClusterMarkerItem): Boolean {
         try {
-            navigateToMemoryViewer(item)
+            navigateToModifiableMemoryViewer(item)
             return true // 이벤트 소비
         } catch (e: Exception) {
             Log.e("TripFragment", "마커 클릭 처리 오류", e)
@@ -165,9 +165,13 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<ClusterMarkerItems>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
+            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
-                findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(it))
+                if(it.viewScope == ViewScope.AROUND) {
+                    navigateToModifiableMemoryViewer(it.items)
+                } else {
+                    it.items.getOrNull(0)?.let { navigateToModifiableMemoryViewer(it) }
+                }
             }
         }
         childFragmentManager.setFragmentResultListener(
@@ -226,8 +230,6 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         map.uiSettings.isMyLocationButtonEnabled = false
         map.uiSettings.isCompassEnabled = false
         map.isMyLocationEnabled = true
-
-        moveCameraTo(zoom = 30f)
 
         setupLocationUpdates()
     }
@@ -370,7 +372,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                 ?.getStateFlow<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER, null)?.collect { bundle ->
                     if (bundle == null) return@collect
                     val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
-                    coordinates?.let { moveCameraTo(latLng = it) }
+                    vm.viewEvent(TripViewEvent.SetCamera(coordinates))
                 }
         }
     }
@@ -378,7 +380,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? TripViewEvent)?.let { handleViewEvents(it) }
                 }
             }
@@ -405,8 +407,8 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.ResetCameraPosition -> {
                 resetCameraPosition()
             }
-            is TripViewEvent.ResetCamera -> {
-                moveCameraTo()
+            is TripViewEvent.SetCamera -> {
+                moveCameraTo(latLng = event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
             }
             is TripViewEvent.Capture -> {
                 lifecycleScope.launch(Dispatchers.IO) {
@@ -442,10 +444,27 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         }
     }
 
-    private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
+    private fun navigateToModifiableMemoryViewer(item: ClusterMarkerItem) {
         lifecycleScope.launch {
-            val clusterMarkerItems = ClusterMarkerItems(selectedMemoryId = item.id, viewScope = ViewScope.WHOLE)
-            findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(clusterMarkerItems))
+            val memories = vm.getMemories()
+            val selectedMemoryId = vm.getMemoryIdBy(item)
+            val memoryViewerArguments = MemoryViewerArguments(
+                selectedMemoryId = selectedMemoryId,
+                viewScope = ViewScope.WHOLE,
+                memories = memories.map(MemoryViewerArguments.Memory::of),
+            )
+            findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(memoryViewerArguments))
+        }
+    }
+
+    private fun navigateToModifiableMemoryViewer(items: List<ClusterMarkerItem>) {
+        lifecycleScope.launch {
+            val memories = vm.getMemoriesIn(items)
+            val memoryViewerArguments = MemoryViewerArguments(
+                viewScope = ViewScope.AROUND,
+                memories = memories.map(MemoryViewerArguments.Memory::of),
+            )
+            findNavController().navigate(TripFragmentDirections.actionTripToModifiableMemoryViewer(memoryViewerArguments))
         }
     }
 
@@ -453,7 +472,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         lifecycleScope.launch {
             val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
-                    RangeSelectBottomSheetFragment.KEY_PARAMS to RangeSelectBottomSheetFragment.Params(items = items),
+                    RangeSelectBottomSheetFragment.KEY_PARAMS to RangeSelectBottomSheetFragment.ParamsIn(items = items),
                 )
             )
             bottomSheet.show(childFragmentManager, RangeSelectBottomSheetFragment.TAG)
@@ -623,7 +642,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         if (!::map.isInitialized || !::clusterManager.isInitialized) return
 
         val currentMarkerIds = vm.getMarkerIds()
-        val updatedItems = mutableSetOf<Long>()
+        val updatedItems = mutableSetOf<String>()
 
         // Process markers with photos
         for (location in markers) {
@@ -650,10 +669,10 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         clusterManager.cluster()
     }
 
-    private fun createPhotoClusterItem(markerId: Long, position: LatLng, photoUri: Uri) {
+    private fun createPhotoClusterItem(markerId: String, position: LatLng, photoUri: Uri? = null, photoUrl: String = "") {
         try {
             // Create cluster item
-            val clusterItem = ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri)
+            val clusterItem = ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
             // Add to cluster manager
             clusterManager.addItem(clusterItem)
@@ -814,54 +833,11 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
     // ===== 13. 데이터 클래스 및 상수 정의 그룹 =====
     @Parcelize
-    data class Marker(
-        val id: Long,
-        val latitude: Double,
-        val longitude: Double,
-        val createdAt: LocalDateTime,
-        val photo: Photo? = null,
-    ): Parcelable {
-
-        @Parcelize
-        data class Photo(
-            val id: Long,
-            val photoUri: Uri,
-        ): Parcelable
-
-        companion object {
-            fun of(dto: MemoryWithLocation) = Marker(
-                dto.location.id,
-                dto.location.latitude,
-                dto.location.longitude,
-                dto.location.createdAt,
-                Photo(
-                    dto.memory.id,
-                    dto.memory.photoUri,
-                )
-            )
-
-            fun of(dto: LocationEntity) = Marker(
-                dto.id,
-                dto.latitude,
-                dto.longitude,
-                dto.createdAt,
-            )
-        }
-    }
-
-    @Parcelize
     data class Address(
         val country: String?,
         val formattedAddress: String?,
         val components: List<String>,
         val coordinates: LatLng
-    ): Parcelable
-
-    @Parcelize
-    data class ClusterMarkerItems(
-        val selectedMemoryId: Long? = null,
-        val items: List<ClusterMarkerItem>? = null,
-        val viewScope: ViewScope,
     ): Parcelable
 
     companion object {

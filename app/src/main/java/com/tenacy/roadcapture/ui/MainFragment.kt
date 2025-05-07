@@ -138,7 +138,7 @@ class MainFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? MainViewEvent)?.let { handleViewEvents(it) }
                 }
             }

@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.AlbumViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_album_container"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
+
+        <fragment android:layout_width="0dp"
+                  android:layout_height="0dp"
+                  android:id="@+id/map"
+                  android:name="com.google.android.gms.maps.SupportMapFragment"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:background="@drawable/ol_gradient"
+                      android:orientation="horizontal"
+                      android:gravity="center"
+                      android:paddingHorizontal="20dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent">
+
+            <ImageButton android:layout_width="24dp"
+                         android:layout_height="24dp"
+                         android:background="@null"
+                         android:src="@drawable/ic_arrow_left"
+                         android:scaleType="fitCenter"/>
+
+            <TextView android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:layout_marginHorizontal="4dp"
+                      android:textAppearance="@style/Title_16"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="center"
+                      android:maxLines="1"
+                      android:ellipsize="end"
+                      tools:text="제주도 여행기: 섬 속의 천국"/>
+
+            <ImageButton android:layout_width="24dp"
+                         android:layout_height="24dp"
+                         android:background="@null"
+                         android:src="@drawable/ic_circle_info"
+                         android:scaleType="fitCenter"
+                         app:layout_constraintEnd_toEndOf="parent"
+                         app:layout_constraintTop_toTopOf="parent"/>
+
+        </LinearLayout>
+
+        <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/card_album_zoom"
+                                                           android:clickable="true"
+                                                           android:layout_marginBottom="20dp"
+                                                           android:layout_marginStart="20dp"
+                                                           app:contentPadding="0dp"
+                                                           app:strokeWidth="0dp"
+                                                           app:cardBackgroundColor="@color/background_normal"
+                                                           app:cardCornerRadius="12dp"
+                                                           app:cardElevation="8dp"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical">
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:onClick="@{() -> vm.onZoomInClick()}"
+                                                                   android:clickable="true"
+                                                                   android:focusable="true"
+                                                                   android:foreground="?attr/selectableItemBackground"
+                                                                   app:strokeWidth="0dp"
+                                                                   app:cardBackgroundColor="@color/background_normal"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp">
+
+                    <ImageButton android:layout_width="40dp"
+                                 android:layout_height="40dp"
+                                 android:clickable="false"
+                                 android:src="@drawable/ic_plus"
+                                 android:scaleType="fitCenter"
+                                 android:background="@null"
+                                 android:layout_gravity="center"
+                                 android:paddingTop="8dp"
+                                 android:paddingBottom="6dp"
+                                 android:paddingHorizontal="8dp"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <View android:layout_width="match_parent"
+                      android:layout_height="1dp"
+                      android:layout_marginHorizontal="8dp"
+                      android:background="@color/line_normal"/>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:onClick="@{() -> vm.onZoomOutClick()}"
+                                                                   android:clickable="true"
+                                                                   android:focusable="true"
+                                                                   android:foreground="?attr/selectableItemBackground"
+                                                                   app:strokeWidth="0dp"
+                                                                   app:cardBackgroundColor="@color/background_normal"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp">
+
+                    <ImageButton android:layout_width="40dp"
+                                 android:layout_height="40dp"
+                                 android:clickable="false"
+                                 android:src="@drawable/ic_minus"
+                                 android:scaleType="fitCenter"
+                                 android:background="@null"
+                                 android:layout_gravity="center"
+                                 android:paddingTop="6dp"
+                                 android:paddingBottom="8dp"
+                                 android:paddingHorizontal="8dp"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
+                                                                               android:layout_height="wrap_content"
+                                                                               android:id="@+id/fab_album_compass"
+                                                                               android:onClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                               android:layout_marginBottom="7dp"
+                                                                               app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
+                                                                               app:backgroundTint="@color/background_normal"
+                                                                               app:maxImageSize="24dp"
+                                                                               app:fabCustomSize="40dp"
+                                                                               app:srcCompat="@drawable/ic_compass"
+                                                                               app:tint="@color/label_neutral"
+                                                                               app:layout_constraintBottom_toTopOf="@id/card_album_zoom"
+                                                                               app:layout_constraintStart_toStartOf="@+id/card_album_zoom"
+                                                                               app:layout_constraintEnd_toEndOf="@+id/card_album_zoom"/>
+
+        <!--
+-->
+
+        <ImageView android:layout_width="36dp"
+                   android:layout_height="36dp"
+                   android:id="@+id/img_album_profile"
+                   android:layout_marginBottom="20dp"
+                   android:layout_marginEnd="20dp"
+                   app:layout_constraintBottom_toBottomOf="parent"
+                   app:layout_constraintEnd_toEndOf="parent"/>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_album_share"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:padding="8dp"
+                      app:layout_constraintStart_toStartOf="@id/img_album_profile"
+                      app:layout_constraintEnd_toEndOf="@id/img_album_profile"
+                      app:layout_constraintBottom_toTopOf="@id/img_album_profile">
+
+            <ImageView android:layout_width="24dp"
+                       android:layout_height="24dp"
+                       android:src="@drawable/ic_share"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="@style/Body_10_M"
+                      android:textColor="@color/label_normal"
+                      android:text="공유"/>
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_album_scrap"
+                      android:orientation="vertical"
+                      android:gravity="center"
+                      android:padding="8dp"
+                      app:layout_constraintStart_toStartOf="@id/ll_album_share"
+                      app:layout_constraintEnd_toEndOf="@id/ll_album_share"
+                      app:layout_constraintBottom_toTopOf="@id/ll_album_share">
+
+            <ImageView android:layout_width="24dp"
+                       android:layout_height="24dp"
+                       android:src="@drawable/ic_bookmark"/>
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="@style/Body_10_M"
+                      android:textColor="@color/label_normal"
+                      tools:text="1.2천"/>
+
+        </LinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

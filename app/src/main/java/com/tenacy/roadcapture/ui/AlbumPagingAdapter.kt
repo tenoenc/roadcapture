@@ -16,7 +16,13 @@ import com.tenacy.roadcapture.util.toReadableUnitText
 import com.tenacy.roadcapture.util.toTimestamp
 import java.time.LocalDateTime
 
-class AlbumPagingAdapter : PagingDataAdapter<FirebaseAlbum, AlbumViewHolder>(AlbumComparator) {
+data class AlbumItem(
+    val value: FirebaseAlbum,
+    val onItemClick: () -> Unit,
+    val onProfileClick: () -> Unit,
+)
+
+class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumComparator) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
         val binding = ItemAlbumBinding.inflate(
@@ -33,33 +39,43 @@ class AlbumPagingAdapter : PagingDataAdapter<FirebaseAlbum, AlbumViewHolder>(Alb
     }
 
     companion object {
-        object AlbumComparator : DiffUtil.ItemCallback<FirebaseAlbum>() {
-            override fun areItemsTheSame(oldItem: FirebaseAlbum, newItem: FirebaseAlbum): Boolean {
-                return oldItem.id == newItem.id
+        object AlbumComparator : DiffUtil.ItemCallback<AlbumItem>() {
+            override fun areItemsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
+                return oldItem.value.id == newItem.value.id
             }
 
-            override fun areContentsTheSame(oldItem: FirebaseAlbum, newItem: FirebaseAlbum): Boolean {
-                Log.d("TAG", "oldItem.regionTags == newItem.regionTags : ${oldItem.regionTags == newItem.regionTags}")
-                return oldItem.user == newItem.user &&
-                        oldItem.viewCount == newItem.viewCount &&
-                        oldItem.title == newItem.title &&
-                        oldItem.regionTags == newItem.regionTags
+            override fun areContentsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
+                Log.d("TAG", "oldItem.regionTags == newItem.regionTags : ${oldItem.value.regionTags == newItem.value.regionTags}")
+                return oldItem.value.user == newItem.value.user &&
+                        oldItem.value.viewCount == newItem.value.viewCount &&
+                        oldItem.value.title == newItem.value.title &&
+                        oldItem.value.regionTags == newItem.value.regionTags
             }
         }
     }
 }
 
 class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(album: FirebaseAlbum) {
-        binding.thumbnailUrl = album.thumbnailUrl
-        binding.profileImageUrl = album.user.photoUrl
-        binding.username = album.user.name
+
+    fun bind(album: AlbumItem) {
         val currentTimeStamp = LocalDateTime.now().toTimestamp()
-        val (duration, durationUnit) = getFormattedDuration(album.endedAt.toTimestamp(), currentTimeStamp)
-        val (viewCount, viewCountUnit) = album.viewCount.toLong().toReadableUnitText()
+        val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
+        val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
+
+        binding.thumbnailUrl = album.value.thumbnailUrl
+        binding.profileImageUrl = album.value.user.photoUrl
+        binding.username = album.value.user.name
         binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
-        binding.title = album.title
-        setItemsToLayout(extractUniqueLocations(album.regionTags))
+        binding.title = album.value.title
+
+        setItemsToLayout(extractUniqueLocations(album.value.regionTags))
+
+        binding.root.setOnClickListener {
+            album.onItemClick()
+        }
+        binding.clIAlbumRow1Profile.setOnClickListener {
+            album.onProfileClick()
+        }
     }
 
     private fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {
@@ -149,7 +165,7 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                if(index > 0) {
+                if (index > 0) {
                     setMargins(8f.toPx, 0, 0, 0)
                 }
             }

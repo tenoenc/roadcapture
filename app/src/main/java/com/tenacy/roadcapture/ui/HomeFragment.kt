@@ -11,6 +11,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.facebook.shimmer.Shimmer
@@ -19,6 +20,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.util.user
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 
@@ -235,7 +237,20 @@ class HomeFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.albums.collect { pagingData ->
                 Log.d("HomeFragment", "새 페이징 데이터 수신")
-                albumAdapter.submitData(pagingData)
+                albumAdapter.submitData(
+                    pagingData.map {
+                        AlbumItem(
+                            value = it,
+                            onItemClick = {
+                                Log.d("HomeFragment", "Item Clicked!")
+                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it))
+                            },
+                            onProfileClick = {
+                                Log.d("HomeFragment", "Profile Clicked!")
+                            },
+                        )
+                    }
+                )
             }
         }
     }
@@ -243,7 +258,7 @@ class HomeFragment: BaseFragment() {
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? HomeViewEvent)?.let { handleViewEvents(it) }
                 }
             }

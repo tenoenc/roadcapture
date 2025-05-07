@@ -34,7 +34,7 @@ sealed class MyAlbumViewEvent: ViewEvent
 
 sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()
-    data object ResetCamera: TripViewEvent()
+    data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null) : TripViewEvent()
     data object Capture: TripViewEvent()
     data object Back: TripViewEvent()
     data object ShowGuide: TripViewEvent()
@@ -69,4 +69,11 @@ sealed class ModifiableMemoryViewerViewEvent: ViewEvent {
 
 sealed class NewAlbumViewEvent: ViewEvent {
     data object ShowCompleteBefore: NewAlbumViewEvent()
+}
+
+sealed class AlbumViewEvent: ViewEvent {
+    data object ResetCameraPosition: AlbumViewEvent()
+    data object ZoomIn: AlbumViewEvent()
+    data object ZoomOut: AlbumViewEvent()
+    data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null): AlbumViewEvent()
 }

@@ -70,7 +70,7 @@ class MainActivity : AppCompatActivity() {
     private fun observeViewEventState() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
-                it?.getContentIfNotHandled()?.let { event ->
+                it.getContentIfNotHandled()?.let { event ->
                     (event as? GlobalViewEvent)?.let { handleViewEvents(it) }
                 }
             }

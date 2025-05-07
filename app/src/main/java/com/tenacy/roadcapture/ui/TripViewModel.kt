@@ -10,7 +10,7 @@ import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
-import com.tenacy.roadcapture.ui.TripFragment.Marker
+import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.clearCacheDirectory
 import com.tenacy.roadcapture.util.getDurationFormattedText
 import com.tenacy.roadcapture.util.toTimestamp
@@ -32,7 +32,7 @@ class TripViewModel @Inject constructor(
     var initialGuideShown = false
 
     private val routePolylines = mutableListOf<Polyline>()
-    private val clusterItems = mutableMapOf<Long, ClusterMarkerItem>()
+    private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
 
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
     private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
@@ -61,7 +61,7 @@ class TripViewModel @Inject constructor(
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    private val _lastLocation = MutableStateFlow<LatLng?>(null)
+    private var _lastLocation: LatLng? = null
 
     init {
         fetchData()
@@ -75,12 +75,28 @@ class TripViewModel @Inject constructor(
             if (locations.isNotEmpty()) {
                 val last = locations.maxByOrNull { it.createdAt }
                 last?.let {
-                    _lastLocation.emit(LatLng(it.latitude, it.longitude))
+                    val coordinates = LatLng(it.latitude, it.longitude)
+                    _lastLocation = coordinates
                 }
             }
+            viewEvent(TripViewEvent.SetCamera(zoom = 30f))
             _memories.emit(memories)
             _locations.emit(locations)
         }
+    }
+
+    fun getMemories() = _memories.value
+
+    fun getMemoriesIn(items: List<ClusterMarkerItem>): List<MemoryWithLocation> {
+        val currentMemories = _memories.value
+        val associateBy = currentMemories.associateBy { it.location.id.toString() }
+        return items.mapNotNull { associateBy[it.id] }
+    }
+
+    fun getMemoryIdBy(item: ClusterMarkerItem): String {
+        val currentMemories = _memories.value
+        val memoryIdsByLocationId = currentMemories.associate { it.location.id.toString() to it.memory.id }
+        return memoryIdsByLocationId[item.id]!!.toString()
     }
 
     fun startTraveling() {
@@ -122,13 +138,13 @@ class TripViewModel @Inject constructor(
                         it.toMutableList().apply { add(locationEntity.copy(id = locationId)) }
                     }
                 }
-                _lastLocation.update { latLng }
+                _lastLocation = latLng
             }
         }
     }
 
     private fun shouldSaveLocation(currentLatLng: LatLng): Boolean {
-        val lastSavedLocation = _lastLocation.value ?: return true
+        val lastSavedLocation = _lastLocation ?: return true
 
         val lastLat = lastSavedLocation.latitude
         val lastLng = lastSavedLocation.longitude
@@ -154,15 +170,15 @@ class TripViewModel @Inject constructor(
 
     fun getMarkerIds() = clusterItems.keys.toSet()
 
-    fun containsMarkerId(markerId: Long) = markerId in clusterItems
+    fun containsMarkerId(markerId: String) = markerId in clusterItems
 
-    fun getClusterItem(markerId: Long) = clusterItems[markerId]
+    fun getClusterItem(markerId: String) = clusterItems[markerId]
 
-    fun addClusterItem(markerId: Long, clusterItem: ClusterMarkerItem) {
+    fun addClusterItem(markerId: String, clusterItem: ClusterMarkerItem) {
         clusterItems[markerId] = clusterItem
     }
 
-    fun removeClusterItem(markerId: Long) {
+    fun removeClusterItem(markerId: String) {
         clusterItems.remove(markerId)
     }
 
@@ -174,7 +190,7 @@ class TripViewModel @Inject constructor(
 
     fun onResetCameraClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ResetCamera)
+            viewEvent(TripViewEvent.SetCamera())
         }
     }
 

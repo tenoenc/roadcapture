@@ -55,6 +55,7 @@ class UploadProgressViewModel @Inject constructor(
                 val startTime = Album.createdAt.toLocalDateTime()
                 val endTime = LocalDateTime.now()
                 val userId = user!!.uid
+                val userRef = db.collection("users").document(userId)
 
                 val albumRef = db.collection("albums").document()
                 val albumId = albumRef.id
@@ -74,18 +75,7 @@ class UploadProgressViewModel @Inject constructor(
                 }
                     .distinct()
 
-                // 3. 위치 데이터 처리
-                sendWithDelay(AlbumSaveState.ProcessingLocations)
-                val locationsData = locations.map { location ->
-                    mapOf(
-                        "id" to location.id.toString(),
-                        "latitude" to location.latitude,
-                        "longitude" to location.longitude,
-                        "createdAt" to Timestamp(location.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
-                    )
-                }
-
-                // 4. 이미지 업로드 (병렬 처리)
+                // 3. 이미지 업로드 (병렬 처리)
                 // 업로드 시작 알림
                 sendWithDelay(AlbumSaveState.UploadingImages(0, memories.size))
 
@@ -95,7 +85,7 @@ class UploadProgressViewModel @Inject constructor(
 
                 val memoryUploadTasks = memories.map { memoryWithLocation ->
                     val memory = memoryWithLocation.memory
-                    val storagePath = "images/$userId/albums/$albumId/${memory.id}-${UUID.randomUUID()}.jpg"
+                    val storagePath = "images/albums/$userId/$albumId/${memory.id}-${UUID.randomUUID()}.jpg"
                     async {
                         try {
                             val downloadUrl = uploadImageToStorage(
@@ -121,30 +111,10 @@ class UploadProgressViewModel @Inject constructor(
                 val uploadResults = memoryUploadTasks.awaitAll()
                 val photoUrlMap = uploadResults.toMap()
 
-                // 5. 메모리 데이터 처리
-                sendWithDelay(AlbumSaveState.ProcessingMemories)
-                val memoriesData = memories.map { memoryWithLocation ->
-                    val memory = memoryWithLocation.memory
-                    val (storagePath, uploadedPhotoUrl) = photoUrlMap[memory.id]
-                        ?: throw IllegalStateException("Missing uploaded URL for memory ${memory.id}")
-
-                    mapOf(
-                        "id" to memory.id.toString(),
-                        "content" to memory.content,
-                        "photoUrl" to uploadedPhotoUrl,
-                        "photoName" to storagePath,
-                        "placeName" to memory.placeName,
-                        "addressTags" to memory.addressTags,
-                        "formattedAddress" to memory.formattedAddress,
-                        "locationRefId" to memory.locationId.toString(),
-                        "createdAt" to Timestamp(memory.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
-                    )
-                }
-
-                // 6. 앨범 데이터 생성 및 저장
+                // 4. 데이터 생성 및 저장 (배치)
                 sendWithDelay(AlbumSaveState.SavingToFirestore)
+
                 val (_, thumbnailUrl) = photoUrlMap[memories.firstOrNull()?.memory?.id]!!
-                val userRef = db.collection("users").document(user!!.uid)
 
                 val albumData = hashMapOf(
                     "title" to albumTitle,
@@ -156,20 +126,66 @@ class UploadProgressViewModel @Inject constructor(
                     "regionTags" to regionTags,
                     "userRef" to userRef,
                     "isPublic" to args.isPublic,
-                    "locations" to locationsData,
-                    "memories" to memoriesData
                 )
 
-                albumRef.set(albumData).await()
+                val locationsData = locations.map { location ->
+                    mapOf(
+                        "id" to location.id.toString(),
+                        "latitude" to location.latitude,
+                        "longitude" to location.longitude,
+                        "albumRef" to albumRef,
+                        "createdAt" to Timestamp(location.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
+                    )
+                }
 
-                // 7. 로컬 데이터 초기화
+                val locationRefByMemoryId = locations.associateBy { it.id }.mapValues { db.collection("locations").document() }
+                val memoriesData = memories.map { memoryWithLocation ->
+                    val memory = memoryWithLocation.memory
+                    val (storagePath, uploadedPhotoUrl) = photoUrlMap[memory.id]
+                        ?: throw IllegalStateException("Missing uploaded URL for memory ${memory.id}")
+
+                    mapOf(
+                        "content" to memory.content,
+                        "photoUrl" to uploadedPhotoUrl,
+                        "photoName" to storagePath,
+                        "placeName" to memory.placeName,
+                        "addressTags" to memory.addressTags,
+                        "formattedAddress" to memory.formattedAddress,
+                        "albumRef" to albumRef,
+                        "locationRef" to locationRefByMemoryId[memoryWithLocation.location.id]!!,
+                        "createdAt" to Timestamp(memory.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
+                    )
+                }
+
+                // 모든 배치 작업 목록 생성
+                val allOperations = mutableListOf<BatchOperation>()
+
+                // 앨범 작업 추가 (가장 중요하므로 첫 번째로 추가)
+                allOperations.add(SetDocumentOperation(albumRef, albumData))
+
+                // 메모리 작업 추가
+                memoriesData.forEach { memoryData ->
+                    val memoryRef = db.collection("memories").document()
+                    allOperations.add(SetDocumentOperation(memoryRef, memoryData))
+                }
+
+                // 위치 작업 추가
+                locationsData.forEach { locationData ->
+                    val locationId = (locationData["id"] as String).toLong()
+                    allOperations.add(SetDocumentOperation(locationRefByMemoryId[locationId]!!, locationData))
+                }
+
+                // 배치 실행
+                db.executeInBatches(allOperations)
+
+                // 5. 로컬 데이터 초기화
                 sendWithDelay(AlbumSaveState.ClearingLocalData)
                 Album.clear()
                 memoryDao.clear()
                 locationDao.clear()
                 context.clearCacheDirectory()
 
-                // 8. 완료
+                // 6. 완료
                 sendWithDelay(AlbumSaveState.Completed)
             }
                 .catch { exception ->
@@ -221,9 +237,7 @@ sealed class AlbumSaveState : Parcelable {
     data object Loading : AlbumSaveState()
     data object FetchingData : AlbumSaveState()
     data object CreatingTags : AlbumSaveState()
-    data object ProcessingLocations : AlbumSaveState()
     data class UploadingImages(val current: Int, val total: Int) : AlbumSaveState()
-    data object ProcessingMemories : AlbumSaveState()
     data object SavingToFirestore : AlbumSaveState()
     data object ClearingLocalData : AlbumSaveState()
     data object Completed : AlbumSaveState()

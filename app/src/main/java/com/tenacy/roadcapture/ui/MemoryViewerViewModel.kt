@@ -3,8 +3,7 @@ package com.tenacy.roadcapture.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.tenacy.roadcapture.data.db.MemoryDao
-import com.tenacy.roadcapture.data.db.MemoryWithLocation
+import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -14,13 +13,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MemoryViewerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val memoryDao: MemoryDao,
 ) : BaseViewModel() {
 
     private val _currentMemoryIndex = MutableStateFlow(0)
     val currentMemoryIndex = _currentMemoryIndex.asStateFlow()
 
-    private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
+    private val _memories = MutableStateFlow<List<MemoryViewerArguments.Memory>>(emptyList())
 
     val totalPageCount = _memories.map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
@@ -34,18 +32,18 @@ class MemoryViewerViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     val tags = currentMemory.mapNotNull { currentMemory ->
-        currentMemory?.memory?.addressTags
+        currentMemory?.addressTags
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
     val placeName = currentMemory.map { currentMemory ->
-        currentMemory?.memory?.placeName ?: ""
+        currentMemory?.placeName ?: ""
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
-    val photoUris = _memories.map { memories -> memories.map { it.memory.photoUri } }
+    val photoUrls = _memories.map { memories -> memories.map { it.photoUrl } }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
     val content = currentMemory.map { currentMemory ->
-        currentMemory?.memory?.content ?: ""
+        currentMemory?.content ?: ""
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     init {
@@ -58,22 +56,21 @@ class MemoryViewerViewModel @Inject constructor(
 
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val argument: TripFragment.ClusterMarkerItems = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).clusterMarkerItems
+            val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
             val viewScope = argument.viewScope
-            val memories = when(viewScope) {
+            val memories = argument.memories
+
+            when(viewScope) {
                 ViewScope.AROUND -> {
                     _currentMemoryIndex.emit(0)
-                    val ids = argument.items!!.map { it.id }
-                    memoryDao.selectByLocationIds(ids)
                 }
                 else -> {
-                    val tempMemories = memoryDao.selectAll()
-                    val selectedMemoryId = argument.selectedMemoryId ?: argument.items!![0].id
-                    val currentMemoryIndex = tempMemories.indexOfFirst { memoryWithLocation ->  memoryWithLocation.location.id == selectedMemoryId }
+                    val selectedMemoryId = argument.selectedMemoryId ?: argument.memories[0].id
+                    val currentMemoryIndex = argument.memories.indexOfFirst { memory ->  memory.id == selectedMemoryId }
                     _currentMemoryIndex.emit(currentMemoryIndex)
-                    tempMemories
                 }
             }
+
             _memories.emit(memories)
             _viewScope.emit(viewScope)
         }
@@ -82,7 +79,7 @@ class MemoryViewerViewModel @Inject constructor(
     fun onLocationClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentMemory = currentMemory.value ?: return@launch
-            viewEvent(MemoryViewerViewEvent.ShowLocation(currentMemory.memory.formattedAddress))
+            viewEvent(MemoryViewerViewEvent.ShowLocation(currentMemory.formattedAddress))
         }
     }
 
@@ -107,7 +104,7 @@ class MemoryViewerViewModel @Inject constructor(
     fun onBackClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentMemory = currentMemory.value ?: return@launch
-            val coordinates = LatLng(currentMemory.location.latitude, currentMemory.location.longitude)
+            val coordinates = LatLng(currentMemory.coordinates.latitude, currentMemory.coordinates.longitude)
             viewEvent(MemoryViewerViewEvent.ResultBack(coordinates))
         }
     }

@@ -1,7 +1,10 @@
 package com.tenacy.roadcapture.data.firebase.dto
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
+@Parcelize
 data class FirebaseAlbum(
     val id: String = "", // Firestore 문서 ID
     val title: String = "",
@@ -13,33 +16,12 @@ data class FirebaseAlbum(
     val regionTags: List<Map<String, String>> = emptyList(),
     val user: User,
     val isPublic: Boolean = false,
-    val locations: List<Location> = emptyList(),
-    val memories: List<Memory> = emptyList()
-) {
-    // 위치 데이터 클래스
-    data class Location(
-        val id: String = "",
-        val latitude: Double = 0.0,
-        val longitude: Double = 0.0,
-        val createdAt: LocalDateTime? = null
-    )
+): Parcelable {
 
-    // 메모리 데이터 클래스
-    data class Memory(
-        val id: String = "",
-        val content: String = "",
-        val photoUrl: String = "",
-        val photoName: String = "",
-        val placeName: String = "",
-        val addressTags: List<String> = emptyList(),
-        val formattedAddress: String = "",
-        val locationRefId: String = "",
-        val createdAt: LocalDateTime? = null
-    )
-
+    @Parcelize
     data class User(
         val id: String = "",
         val name: String = "",
         val photoUrl: String = "",
-    )
+    ): Parcelable
 }

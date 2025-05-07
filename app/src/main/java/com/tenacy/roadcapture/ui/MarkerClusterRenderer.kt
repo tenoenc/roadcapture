@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestBuilder
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.model.*
 import com.google.maps.android.clustering.Cluster
@@ -25,16 +26,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class ClusterMarkerItem(
-    val id: Long,
+    val id: String,
     private val position: LatLng,
     private val title: String,
     private val snippet: String,
-    val photoUri: Uri
+    val photoUri: Uri? = null,
+    val photoUrl: String,
 ) : ClusterItem, Parcelable {
+    @IgnoredOnParcel
+    val photoKey = photoUri?.toString() ?: photoUrl
+
     override fun getPosition(): LatLng = position
     override fun getTitle(): String = title
     override fun getSnippet(): String = snippet
@@ -47,13 +53,13 @@ class MarkerClusterRenderer(
 ) : DefaultClusterRenderer<ClusterMarkerItem>(fragment.requireContext(), map, clusterManager) {
 
     // 마커 비트맵 캐시
-    private val markerBitmapCache = mutableMapOf<Uri, BitmapDescriptor?>()
+    private val markerBitmapCache = mutableMapOf<String, BitmapDescriptor?>()
 
     // 클러스터 비트맵 캐시 (크기별)
     private val clusterBitmapCache = mutableMapOf<Int, BitmapDescriptor>()
 
     // 마커 작업 추적
-    private val markerJobs = mutableMapOf<Long, Job>()
+    private val markerJobs = mutableMapOf<String, Job>()
 
     // 클러스터 마커 관리 (클러스터 ID -> 마커)
     private val clusterMarkers = mutableMapOf<String, Marker>()
@@ -81,7 +87,7 @@ class MarkerClusterRenderer(
 
     override fun onBeforeClusterItemRendered(item: ClusterMarkerItem, markerOptions: MarkerOptions) {
         // 캐시된 비트맵 있는지 확인
-        val cachedBitmap = markerBitmapCache[item.photoUri]
+        val cachedBitmap = markerBitmapCache[item.photoKey]
 
         if (cachedBitmap != null) {
             // 캐시된 비트맵 사용
@@ -95,8 +101,9 @@ class MarkerClusterRenderer(
             if (!markerJobs.containsKey(item.id)) {
                 val job = fragment.lifecycleScope.launch {
                     try {
-                        val icon = createCustomMarkerBitmap(item.photoUri)
-                        markerBitmapCache[item.photoUri] = icon
+                        val requestBuilder = item.photoUri?.let { createRequestBuilder(it) } ?: createRequestBuilder(item.photoUrl)
+                        val icon = createCustomMarkerBitmap(requestBuilder)
+                        markerBitmapCache[item.photoKey] = icon
 
                         // 비트맵 로딩 후 마커 업데이트
                         withContext(Dispatchers.Main) {
@@ -104,7 +111,7 @@ class MarkerClusterRenderer(
                         }
                     } catch (e: Exception) {
                         Log.e("MarkerClusterRenderer", "마커 렌더링 오류", e)
-                        markerBitmapCache[item.photoUri] = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
+                        markerBitmapCache[item.photoKey] = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)
                     } finally {
                         markerJobs.remove(item.id)
                     }
@@ -215,7 +222,7 @@ class MarkerClusterRenderer(
         super.onClusterItemRendered(clusterItem, marker)
 
         // 캐시된 비트맵이 있다면 마커 업데이트
-        markerBitmapCache[clusterItem.photoUri]?.let { bitmap ->
+        markerBitmapCache[clusterItem.photoKey]?.let { bitmap ->
             marker.setIcon(bitmap)
         }
     }
@@ -226,7 +233,17 @@ class MarkerClusterRenderer(
     }
 
     // 커스텀 마커 비트맵 생성
-    private suspend fun createCustomMarkerBitmap(uri: Uri): BitmapDescriptor? {
+    private suspend fun createRequestBuilder(uri: Uri) =
+        Glide.with(fragment.requireContext())
+            .asBitmap()
+            .load(uri)
+
+    private suspend fun createRequestBuilder(url: String) =
+        Glide.with(fragment.requireContext())
+            .asBitmap()
+            .load(url)
+
+    private suspend fun createCustomMarkerBitmap(requestBuilder: RequestBuilder<Bitmap>): BitmapDescriptor? {
         // 커스텀 레이아웃 인플레이트
         val markerBinding = MarkerBinding.inflate(LayoutInflater.from(fragment.requireContext()))
         val markerView = markerBinding.root
@@ -234,9 +251,7 @@ class MarkerClusterRenderer(
         return withContext(Dispatchers.IO) {
             try {
                 // 백그라운드에서 이미지 로드
-                val bitmap = Glide.with(fragment.requireContext())
-                    .asBitmap()
-                    .load(uri)
+                val bitmap = requestBuilder
                     .transform(buildTransformations(100))
                     .submit(240, 240)
                     .get()
