@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
@@ -7,7 +8,6 @@ import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
-import com.tenacy.roadcapture.data.pref.Album.createdAt
 import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.util.getFormattedDuration
@@ -39,7 +39,11 @@ class AlbumPagingAdapter : PagingDataAdapter<FirebaseAlbum, AlbumViewHolder>(Alb
             }
 
             override fun areContentsTheSame(oldItem: FirebaseAlbum, newItem: FirebaseAlbum): Boolean {
-                return oldItem == newItem
+                Log.d("TAG", "oldItem.regionTags == newItem.regionTags : ${oldItem.regionTags == newItem.regionTags}")
+                return oldItem.user == newItem.user &&
+                        oldItem.viewCount == newItem.viewCount &&
+                        oldItem.title == newItem.title &&
+                        oldItem.regionTags == newItem.regionTags
             }
         }
     }
@@ -55,7 +59,7 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         val (viewCount, viewCountUnit) = album.viewCount.toLong().toReadableUnitText()
         binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
         binding.title = album.title
-        addItemsToLayout(extractUniqueLocations(album.regionTags))
+        setItemsToLayout(extractUniqueLocations(album.regionTags))
     }
 
     private fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {
@@ -125,8 +129,10 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         return result
     }
 
-    private fun addItemsToLayout(items: List<String>) {
+    private fun setItemsToLayout(items: List<String>) {
         val linearLayout = binding.llIAlbumTags
+        linearLayout.removeAllViews()
+
         // 인플레이터 준비
         val inflater = LayoutInflater.from(binding.root.context)
 

@@ -46,6 +46,7 @@ rxjava = "3.1.8"
 rxkotlin = "3.0.0"
 secretsGradlePlugin = "2.0.1"
 serializationJson = "1.6.3"
+shimmer = "0.5.0"
 splash = "1.0.1"
 kakaoV2 = "2.20.6"
 tedpermission = "3.4.2"
@@ -122,6 +123,7 @@ rxandroid = { module = "io.reactivex.rxjava3:rxandroid", version.ref = "rxandroi
 rxjava = { module = "io.reactivex.rxjava3:rxjava", version.ref = "rxjava" }
 rxkotlin = { module = "io.reactivex.rxjava3:rxkotlin", version.ref = "rxkotlin" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePlugin" }
+shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 tedpermission-normal = { module = "io.github.ParkSangGwon:tedpermission-normal", version.ref = "tedpermission" }
 tedpermission-coroutine = { module = "io.github.ParkSangGwon:tedpermission-coroutine", version.ref = "tedpermission" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }

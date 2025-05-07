@@ -1,13 +1,21 @@
 package com.tenacy.roadcapture.ui
 
+import android.animation.ValueAnimator
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.paging.LoadState
 import androidx.paging.map
+import com.facebook.shimmer.Shimmer
+import com.facebook.shimmer.ShimmerFrameLayout
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -55,10 +63,19 @@ class HomeFragment: BaseFragment() {
 
     private fun setupViews() {
         // RecyclerView 설정
+        setupRecyclerView()
+
+        setupShimmer()
+
+        // SwipeRefreshLayout 설정
+        setupSwipeRefresh()
+    }
+
+    private fun setupRecyclerView() {
         binding.rvHomeAlbums.adapter = albumAdapter.withLoadStateFooter(
             footer = AlbumLoadStateAdapter()
         )
-        binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 12f.toPx))
+        binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvHomeAlbums.setHasFixedSize(true)
 
         // 어댑터 상태 리스너 추가
@@ -73,9 +90,27 @@ class HomeFragment: BaseFragment() {
             val refreshState = combinedLoadStates.refresh
             Log.d("HomeFragment", "리프레시 상태: $refreshState")
         }
+    }
 
-        // SwipeRefreshLayout 설정
-        setupSwipeRefresh()
+    private fun setupShimmer() {
+        with(binding.shimmerLayout) {
+            // 새로운 Shimmer 객체 생성
+            val shimmer = Shimmer.ColorHighlightBuilder()
+                .setBaseColor(ContextCompat.getColor(requireContext(), R.color.fill_assistive))
+                .setHighlightColor(ContextCompat.getColor(requireContext(), R.color.fill_alternative))
+                .setBaseAlpha(1.0f)
+                .setHighlightAlpha(0.3f)
+                .setDirection(Shimmer.Direction.LEFT_TO_RIGHT)  // 방향 설정
+                .setDuration(1500)  // 애니메이션 지속 시간
+                .setRepeatMode(ValueAnimator.RESTART)  // 반복 모드
+                .setIntensity(0.3f)  // 강도
+                .setDropoff(0.5f)  // 그라데이션 드롭오프
+                .setTilt(20f)  // 기울기 각도
+                .build()
+
+            // 생성한 Shimmer 설정 적용
+            setShimmer(shimmer)
+        }
     }
 
     private fun setupSwipeRefresh() {
@@ -127,6 +162,17 @@ class HomeFragment: BaseFragment() {
             albumAdapter.loadStateFlow.collectLatest { loadStates ->
                 // 새로고침 상태 처리
                 val isRefreshing = loadStates.refresh is LoadState.Loading
+
+                // Shimmer 효과 표시/숨김 처리
+                if (isRefreshing && !binding.swipeRefreshLayout.isRefreshing) {
+                    binding.shimmerLayout.visibility = View.VISIBLE
+                    binding.shimmerLayout.startShimmer()
+                    binding.swipeRefreshLayout.visibility = View.GONE
+                } else {
+                    binding.shimmerLayout.stopShimmer()
+                    binding.shimmerLayout.visibility = View.GONE
+                    binding.swipeRefreshLayout.visibility = View.VISIBLE
+                }
 
                 // 리프레시 완료 감지
                 if (isCurrentlyRefreshing && loadStates.refresh is LoadState.NotLoading) {

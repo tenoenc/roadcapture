@@ -90,6 +90,7 @@ dependencies {
     implementation libs.androidx.core.splashscreen
     implementation libs.flexbox
     implementation libs.lottie
+    implementation libs.shimmer
 //    implementation libs.singledateandtimepicker
 
     /**
