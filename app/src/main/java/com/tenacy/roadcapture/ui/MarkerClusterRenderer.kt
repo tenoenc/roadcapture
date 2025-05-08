@@ -252,7 +252,7 @@ class MarkerClusterRenderer(
             try {
                 // 백그라운드에서 이미지 로드
                 val bitmap = requestBuilder
-                    .transform(buildTransformations(100))
+                    .transform(buildTransformations(radius = 100))
                     .submit(240, 240)
                     .get()
 

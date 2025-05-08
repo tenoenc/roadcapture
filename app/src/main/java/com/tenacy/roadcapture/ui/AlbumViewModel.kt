@@ -13,6 +13,7 @@ import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toLocation
 import com.tenacy.roadcapture.util.toMemory
+import com.tenacy.roadcapture.util.toReadableUnitText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -48,6 +49,19 @@ class AlbumViewModel @Inject constructor(
         locations.sortedBy { it.createdAt }
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+
+    val title: String = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.title
+
+    private val _scrapCount = MutableStateFlow(0L)
+    val scrapCountText = _scrapCount.map {
+        val (value, unit) = it.toReadableUnitText()
+        "${value}${unit}"
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
+    private val _scrapped = MutableStateFlow(false)
+    val scrapped = _scrapped.asStateFlow()
+
+    val profileUrl: String = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.user.photoUrl
 
     init {
         fetchData()
@@ -162,6 +176,33 @@ class AlbumViewModel @Inject constructor(
     fun onZoomOutClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(AlbumViewEvent.ZoomOut)
+        }
+    }
+
+    fun onInfoClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val album = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value
+            val totalMemoryCount = _memories.value.size
+            viewEvent(AlbumViewEvent.ShowInfo(album, totalMemoryCount))
+        }
+    }
+
+    fun onScrapClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AlbumViewEvent.Scrap)
+        }
+    }
+
+    fun onShareClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AlbumViewEvent.Share)
+        }
+    }
+
+    fun onProfileClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val userId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.user.id
+            viewEvent(AlbumViewEvent.NavigateToStudio(userId))
         }
     }
 }

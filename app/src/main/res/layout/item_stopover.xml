@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="country" type="String"/>
+        <variable name="depth1" type="String"/>
+        <variable name="depth2" type="String"/>
+    </data>
+
+    <androidx.cardview.widget.CardView android:id="@+id/card_i_stopover_container"
+                                                       android:layout_width="wrap_content"
+                                                       android:layout_height="wrap_content"
+                                                       app:cardCornerRadius="12dp"
+                                                       app:cardBackgroundColor="#7f80F0D4"
+                                                       app:cardElevation="0dp">
+
+        <com.google.android.flexbox.FlexboxLayout android:layout_width="wrap_content"
+                                                  android:layout_height="wrap_content"
+                                                  android:padding="4dp"
+                                                  app:justifyContent="center"
+                                                  app:flexWrap="wrap">
+
+            <androidx.cardview.widget.CardView android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:layout_margin="4dp"
+                                               app:contentPaddingTop="4dp"
+                                               app:contentPaddingBottom="4dp"
+                                               app:contentPaddingRight="8dp"
+                                               app:contentPaddingLeft="8dp"
+                                               app:cardCornerRadius="8dp"
+                                               app:cardBackgroundColor="@color/fill_assistive"
+                                               app:cardElevation="0dp">
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_normal"
+                          android:maxLines="1"
+                          android:ellipsize="end"
+                          android:text="@{country}"
+                          tools:text="대한민국" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:layout_margin="4dp"
+                                               app:contentPaddingTop="4dp"
+                                               app:contentPaddingBottom="4dp"
+                                               app:contentPaddingRight="8dp"
+                                               app:contentPaddingLeft="8dp"
+                                               app:cardCornerRadius="8dp"
+                                               app:cardBackgroundColor="@color/fill_assistive"
+                                               app:cardElevation="0dp">
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_normal"
+                          android:maxLines="1"
+                          android:ellipsize="end"
+                          android:text="@{depth1}"
+                          tools:text="서울특별시" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView android:layout_width="wrap_content"
+                                               android:layout_height="wrap_content"
+                                               android:layout_margin="4dp"
+                                               app:contentPaddingTop="4dp"
+                                               app:contentPaddingBottom="4dp"
+                                               app:contentPaddingRight="8dp"
+                                               app:contentPaddingLeft="8dp"
+                                               app:cardCornerRadius="8dp"
+                                               app:cardBackgroundColor="@color/fill_assistive"
+                                               app:cardElevation="0dp">
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_normal"
+                          android:maxLines="1"
+                          android:ellipsize="end"
+                          android:text="@{depth2}"
+                          tools:text="중구" />
+
+            </androidx.cardview.widget.CardView>
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</layout>

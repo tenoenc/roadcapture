@@ -6,6 +6,7 @@
     <data>
 
         <variable name="title" type="String"/>
+        <variable name="contentRow2" type="String"/>
     </data>
 
     <LinearLayout android:id="@+id/ll_b_sheet_album_info_container"
@@ -23,12 +24,12 @@
                                            app:cardBackgroundColor="@color/fill_neutral"
                                            android:layout_marginTop="16dp"/>
 
-        <ScrollView android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:layout_marginTop="8dp"
-                    android:clipToPadding="false"
-                    android:paddingBottom="16dp">
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                                               android:layout_height="0dp"
+                                               android:layout_weight="1"
+                                               android:layout_marginTop="8dp"
+                                               android:clipToPadding="false"
+                                               android:paddingBottom="16dp">
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
@@ -46,26 +47,43 @@
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:id="@+id/txt_b_sheet_album_info_description"
+                          android:id="@+id/txt_b_sheet_album_info_row_1"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_neutral"
                           android:textAlignment="center"
                           tools:text="2025년 4월 30일 ~ 2025년 5월 3일"
                           android:layout_marginTop="4dp"/>
 
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_neutral"
+                          android:textAlignment="center"
+                          android:text="@{contentRow2}"
+                          tools:text="5일 12시간 7분 동안 9개의 추억을 남겼어요"
+                          android:layout_marginTop="4dp"/>
+
                 <ImageView android:layout_width="168dp"
                            android:layout_height="168dp"
                            android:src="@drawable/info"/>
 
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_16"
+                          android:textColor="@color/label_normal"
+                          android:text="여행 경로"/>
+
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
                               android:id="@+id/ll_b_sheet_album_info_locations"
+                              android:paddingHorizontal="20dp"
                               android:orientation="vertical"
-                              android:gravity="center" />
+                              android:gravity="center"
+                              android:layout_marginTop="12dp"/>
 
             </LinearLayout>
 
-        </ScrollView>
+        </androidx.core.widget.NestedScrollView>
 
         <Button android:layout_width="match_parent"
                 android:layout_height="wrap_content"

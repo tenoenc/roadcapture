@@ -63,6 +63,12 @@
         <item name="android:textSize">10sp</item>
     </style>
 
+    <style name="Body_10_SB">
+        <item name="android:fontFamily">@font/pretendardjp_semibold</item>
+        <item name="android:letterSpacing">-0.01</item>
+        <item name="android:lineHeight">12dp</item>
+        <item name="android:textSize">10sp</item>
+    </style>
 
     <style name="Body_12_R">
         <item name="android:fontFamily">@font/pretendardjp_regular</item>

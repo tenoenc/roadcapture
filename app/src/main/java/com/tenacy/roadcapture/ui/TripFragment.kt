@@ -38,10 +38,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
-import com.tenacy.roadcapture.util.fileProviderAuthority
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.util.*
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -53,7 +50,7 @@ import java.io.File
 import java.time.LocalDateTime
 
 @AndroidEntryPoint
-class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
+class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
 
     // ===== 1. 속성(Property) 그룹 =====
     private var _binding: FragmentTripBinding? = null
@@ -83,7 +80,14 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             repeatOnLifecycle(lifecycleState = Lifecycle.State.CREATED) {
                 Log.d("TAG", "카메라 권한 거부됨")
                 vm.stopTraveling()
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("카메라 권한이 없어\n앨범을 만들 수 없습니다", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(
+                    GlobalViewEvent.Toast(
+                        ToastModel(
+                            "카메라 권한이 없어\n앨범을 만들 수 없습니다",
+                            ToastMessageType.Warning
+                        )
+                    )
+                )
             }
         }
     }
@@ -98,7 +102,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                 Log.d("TAG", "1")
                 permissionGranted.value = true
 
-                if(!vm.initialGuideShown) {
+                if (!vm.initialGuideShown) {
                     showGuideDialog()
                     vm.initialGuideShown = true
                 }
@@ -109,7 +113,14 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             repeatOnLifecycle(lifecycleState = Lifecycle.State.CREATED) {
                 Log.d("TAG", "위치 권한 거부됨")
                 vm.stopTraveling()
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 권한이 없어\n앨범을 만들 수 없습니다", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(
+                    GlobalViewEvent.Toast(
+                        ToastModel(
+                            "위치 권한이 없어\n앨범을 만들 수 없습니다",
+                            ToastMessageType.Warning
+                        )
+                    )
+                )
             }
         }
     }
@@ -165,14 +176,15 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
-                Log.d("TAG", "Positive Button Clicked!")
-                if(it.viewScope == ViewScope.AROUND) {
-                    navigateToModifiableMemoryViewer(it.items)
-                } else {
-                    it.items.getOrNull(0)?.let { navigateToModifiableMemoryViewer(it) }
+            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    if (it.viewScope == ViewScope.AROUND) {
+                        navigateToModifiableMemoryViewer(it.items)
+                    } else {
+                        it.items.getOrNull(0)?.let { navigateToModifiableMemoryViewer(it) }
+                    }
                 }
-            }
         }
         childFragmentManager.setFragmentResultListener(
             TripGuideBottomSheetFragment.REQUEST_KEY,
@@ -235,7 +247,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     private fun setupClusterManager() {
-        if(isClusterManagerInitialized) return
+        if (isClusterManagerInitialized) return
 
         // 클러스터 매니저 초기화
         clusterManager = ClusterManager(requireContext(), map)
@@ -299,7 +311,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
 
     private fun setupLocationUpdates() {
         repeatOnLifecycle {
-            while(isActive) {
+            while (isActive) {
                 delay(1 * 1000)
                 getCurrentLocation()?.let { latLng ->
                     vm.saveLocation(latLng)
@@ -308,7 +320,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             }
         }
         repeatOnLifecycle {
-            while(isActive) {
+            while (isActive) {
                 vm.updateDurationText()
                 delay(60 * 1000)
             }
@@ -357,23 +369,23 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     private fun observeSavedState() {
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
-            findNavController().currentBackStackEntry?.savedStateHandle
-                ?.getStateFlow<Bundle?>(KEY_NEW_MEMORY, null)?.collect { bundle ->
-                    if (bundle == null) return@collect
-                    val memoryId = bundle.getString(RESULT_MEMORY_ID)
-                    val coordinates = bundle.getParcelable<LatLng>(RESULT_COORDINATES)
-                    coordinates?.let { vm.saveLocation(it, false) }
-                    vm.fetchData()
-                }
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_NEW_MEMORY) { bundle ->
+                if (bundle == null) return@consumeOnce
+                val memoryId = bundle.getString(RESULT_MEMORY_ID)
+                val coordinates = bundle.getParcelable<LatLng>(RESULT_COORDINATES)
+                coordinates?.let { vm.saveLocation(it, false) }
+                vm.fetchData()
+            }
         }
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
-            findNavController().currentBackStackEntry?.savedStateHandle
-                ?.getStateFlow<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER, null)?.collect { bundle ->
-                    if (bundle == null) return@collect
-                    val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
-                    vm.viewEvent(TripViewEvent.SetCamera(coordinates))
-                }
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER) { bundle ->
+                if (bundle == null) return@consumeOnce
+                val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                vm.viewEvent(TripViewEvent.SetCamera(coordinates))
+            }
         }
     }
 
@@ -407,37 +419,53 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
             is TripViewEvent.ResetCameraPosition -> {
                 resetCameraPosition()
             }
+
             is TripViewEvent.SetCamera -> {
                 moveCameraTo(latLng = event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
             }
+
             is TripViewEvent.Capture -> {
                 lifecycleScope.launch(Dispatchers.IO) {
                     val location = getCurrentLocation()
-                    if(location == null) {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보가 없기 때문에 사진을 찍을 수 없습니다", ToastMessageType.Warning)))
+                    if (location == null) {
+                        mainActivity.vm.viewEvent(
+                            GlobalViewEvent.Toast(
+                                ToastModel(
+                                    "위치 정보가 없기 때문에 사진을 찍을 수 없습니다",
+                                    ToastMessageType.Warning
+                                )
+                            )
+                        )
                         return@launch
                     }
                     captureImageWithCameraApp()
                 }
             }
+
             is TripViewEvent.Back -> {
                 findNavController().popBackStack()
             }
+
             is TripViewEvent.ZoomIn -> {
                 zoomIn()
             }
+
             is TripViewEvent.ZoomOut -> {
                 zoomOut()
             }
+
             is TripViewEvent.ShowGuide -> {
                 showGuideDialog()
             }
+
             is TripViewEvent.ShowSubscription -> {
                 showSubscriptionDialog()
             }
+
             is TripViewEvent.ShowAfter -> {
                 showTripAfterDialog()
             }
+
             is TripViewEvent.ShowStopBefore -> {
                 showTripStopBeforeDialog()
             }
@@ -669,10 +697,16 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         clusterManager.cluster()
     }
 
-    private fun createPhotoClusterItem(markerId: String, position: LatLng, photoUri: Uri? = null, photoUrl: String = "") {
+    private fun createPhotoClusterItem(
+        markerId: String,
+        position: LatLng,
+        photoUri: Uri? = null,
+        photoUrl: String = ""
+    ) {
         try {
             // Create cluster item
-            val clusterItem = ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
+            val clusterItem =
+                ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
             // Add to cluster manager
             clusterManager.addItem(clusterItem)
@@ -704,7 +738,14 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                         cameraLauncher.launch(takePictureIntent)
                     } catch (e: Exception) {
                         Log.e("TripFragment", "카메라 앱 실행 오류", e)
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("카메라 앱을 실행할 수 없습니다", ToastMessageType.Warning)))
+                        mainActivity.vm.viewEvent(
+                            GlobalViewEvent.Toast(
+                                ToastModel(
+                                    "카메라 앱을 실행할 수 없습니다",
+                                    ToastMessageType.Warning
+                                )
+                            )
+                        )
                     }
                 }
             } catch (e: Exception) {
@@ -762,7 +803,14 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
                     } catch (e: Exception) {
                         Log.e("TripFragment", "uCrop 시작 오류", e)
                         e.printStackTrace()
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이미지 편집을 시작할 수 없습니다", ToastMessageType.Warning)))
+                        mainActivity.vm.viewEvent(
+                            GlobalViewEvent.Toast(
+                                ToastModel(
+                                    "이미지 편집을 시작할 수 없습니다",
+                                    ToastMessageType.Warning
+                                )
+                            )
+                        )
                     }
                 } ?: run {
                     Log.e("TripFragment", "카메라 결과 처리 오류: 소스 Uri가 null입니다")
@@ -772,58 +820,73 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
     }
 
     // Triple<소스Uri, 대상Uri, 위치> 형태로 데이터 전달
-    private val cropLauncher = registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, LatLng?>, Pair<Uri?, LatLng?>>() {
-        override fun createIntent(context: Context, input: Triple<Uri, Uri, LatLng?>): Intent {
-            val options = UCrop.Options().apply {
-                setCompressionQuality(30)
-                setToolbarTitle("이미지 편집")
-                setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
-                setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
-                setToolbarWidgetColor(ContextCompat.getColor(context, R.color.background_normal))
-                setRootViewBackgroundColor(ContextCompat.getColor(context, R.color.label_normal))
-                // 저장 경로를 캐시 디렉토리로 설정
-                setCacheDir(context.cacheDir)
-            }
-
-            return UCrop.of(input.first, input.second)
-                .withAspectRatio(16f, 9f)
-                .withOptions(options)
-                .getIntent(context)
-        }
-
-        override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri?, LatLng?> {
-            return if (resultCode == Activity.RESULT_OK && intent != null) {
-                val uri = UCrop.getOutput(intent)
-                Pair(uri, getCurrentLocation())
-            } else {
-                if (resultCode == UCrop.RESULT_ERROR && intent != null) {
-                    val error = UCrop.getError(intent)
-                    Log.e("TripFragment", "uCrop 오류", error)
+    private val cropLauncher =
+        registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, LatLng?>, Pair<Uri?, LatLng?>>() {
+            override fun createIntent(context: Context, input: Triple<Uri, Uri, LatLng?>): Intent {
+                val options = UCrop.Options().apply {
+                    setCompressionQuality(30)
+                    setToolbarTitle("이미지 편집")
+                    setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
+                    setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
+                    setToolbarWidgetColor(ContextCompat.getColor(context, R.color.background_normal))
+                    setRootViewBackgroundColor(ContextCompat.getColor(context, R.color.label_normal))
+                    // 저장 경로를 캐시 디렉토리로 설정
+                    setCacheDir(context.cacheDir)
                 }
-                Pair(null, null)
+
+                return UCrop.of(input.first, input.second)
+                    .withAspectRatio(16f, 9f)
+                    .withOptions(options)
+                    .getIntent(context)
+            }
+
+            override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri?, LatLng?> {
+                return if (resultCode == Activity.RESULT_OK && intent != null) {
+                    val uri = UCrop.getOutput(intent)
+                    Pair(uri, getCurrentLocation())
+                } else {
+                    if (resultCode == UCrop.RESULT_ERROR && intent != null) {
+                        val error = UCrop.getError(intent)
+                        Log.e("TripFragment", "uCrop 오류", error)
+                    }
+                    Pair(null, null)
+                }
+            }
+        }) { result ->
+            tempPhotoFile?.delete()
+            tempPhotoFile = null
+            tempPhotoUri = null
+
+            val (resultUri, coordinates) = result
+
+            lifecycleScope.launch(Dispatchers.Main) {
+                if (resultUri == null) {
+                    mainActivity.vm.viewEvent(
+                        GlobalViewEvent.Toast(
+                            ToastModel(
+                                "이미지 편집 중 오류가 발생했습니다",
+                                ToastMessageType.Warning
+                            )
+                        )
+                    )
+                    return@launch
+                }
+
+                if (coordinates == null) {
+                    mainActivity.vm.viewEvent(
+                        GlobalViewEvent.Toast(
+                            ToastModel(
+                                "위치 정보가 없기 때문에 추억을 만들 수 없어요",
+                                ToastMessageType.Warning
+                            )
+                        )
+                    )
+                    return@launch
+                }
+
+                findNavController().navigate(TripFragmentDirections.actionTripToLoading(resultUri, coordinates))
             }
         }
-    }) { result ->
-        tempPhotoFile?.delete()
-        tempPhotoFile = null
-        tempPhotoUri = null
-
-        val (resultUri, coordinates) = result
-
-        lifecycleScope.launch(Dispatchers.Main) {
-            if (resultUri == null) {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이미지 편집 중 오류가 발생했습니다", ToastMessageType.Warning)))
-                return@launch
-            }
-
-            if (coordinates == null) {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보가 없기 때문에 추억을 만들 수 없어요", ToastMessageType.Warning)))
-                return@launch
-            }
-
-            findNavController().navigate(TripFragmentDirections.actionTripToLoading(resultUri, coordinates))
-        }
-    }
 
     // ===== 14. 상태 초기화 메서드 그룹 =====
     private fun resetInitializationState() {
@@ -838,7 +901,7 @@ class TripFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluster
         val formattedAddress: String?,
         val components: List<String>,
         val coordinates: LatLng
-    ): Parcelable
+    ) : Parcelable
 
     companion object {
         const val KEY_NEW_MEMORY = "new_memory"

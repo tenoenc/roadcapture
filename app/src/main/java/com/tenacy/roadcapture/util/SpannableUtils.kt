@@ -18,12 +18,12 @@ import android.widget.TextView
 object SpannableUtils {
 
     /**
-     * 텍스트의 일부에 클릭 리스너를 추가하는 함수
+     * 텍스트의 일부에 클릭 리스너를 추가하는 함수 (동일 텍스트 위치 지정 가능)
      *
      * @param context 컨텍스트
      * @param textView 설정할 TextView
      * @param fullText 전체 텍스트
-     * @param clickableParts 클릭 가능한 부분 목록 (텍스트, 클릭 리스너, 색상)
+     * @param clickableParts 클릭 가능한 부분 목록 (텍스트, 검색 시작 인덱스, 클릭 리스너, 색상)
      */
     fun setClickableText(
         context: Context,
@@ -35,7 +35,10 @@ object SpannableUtils {
 
         // 각 클릭 가능한 부분에 대해 스팬 설정
         for (part in clickableParts) {
-            val startIndex = fullText.indexOf(part.text)
+            // 검색 시작 위치부터 텍스트 검색
+            val fromIndex = part.startIndex.coerceAtLeast(0)
+            val startIndex = fullText.indexOf(part.text, fromIndex)
+
             // 해당 텍스트가 원본에 없으면 다음으로 넘어감
             if (startIndex == -1) continue
 
@@ -62,7 +65,7 @@ object SpannableUtils {
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             )
 
-            // 색상 스팬 추가 (클릭 시에도 텍스트 색상 유지)
+            // 색상 스팬 추가
             spannableString.setSpan(
                 ForegroundColorSpan(part.textColor),
                 startIndex,
@@ -88,33 +91,13 @@ object SpannableUtils {
     }
 
     /**
-     * 클릭 가능한 텍스트 부분에 대한 정보를 담는 데이터 클래스
+     * 클릭 가능한 텍스트 부분에 대한 정보를 담는 데이터 클래스 (검색 시작 위치 포함)
      */
     data class ClickablePart(
         val text: String,
         val textColor: Int,
         val isUnderlined: Boolean = false,
+        val startIndex: Int = 0, // 이 위치부터 text를 검색
         val onClickListener: (Context) -> Unit = {},
     )
-
-    /**
-     * 간단한 사용 예:
-     *
-     * SpannableUtils.setClickableText(
-     *     context,
-     *     textView,
-     *     "이용약관에 동의합니다. 여기를 클릭하세요.",
-     *     listOf(
-     *         SpannableUtils.ClickablePart(
-     *             "여기를 클릭하세요",
-     *             { context ->
-     *                 // 클릭 시 실행될 코드
-     *                 Toast.makeText(context, "클릭됨", Toast.LENGTH_SHORT).show()
-     *             },
-     *             Color.RED,
-     *             true
-     *         )
-     *     )
-     * )
-     */
 }

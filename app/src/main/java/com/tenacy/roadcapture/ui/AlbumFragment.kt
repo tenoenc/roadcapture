@@ -25,6 +25,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentAlbumBinding
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
+import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +36,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
-class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
+class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
 
     private var _binding: FragmentAlbumBinding? = null
     val binding get() = _binding!!
@@ -98,14 +99,15 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)?.let {
-                Log.d("TAG", "Positive Button Clicked!")
-                if(it.viewScope == ViewScope.AROUND) {
-                    navigateToMemoryViewer(it.items)
-                } else {
-                    it.items.getOrNull(0)?.let { navigateToMemoryViewer(it) }
+            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    if (it.viewScope == ViewScope.AROUND) {
+                        navigateToMemoryViewer(it.items)
+                    } else {
+                        it.items.getOrNull(0)?.let { navigateToMemoryViewer(it) }
+                    }
                 }
-            }
         }
     }
 
@@ -129,7 +131,7 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     private fun setupClusterManager() {
-        if(isClusterManagerInitialized) return
+        if (isClusterManagerInitialized) return
 
         // 클러스터 매니저 초기화
         clusterManager = ClusterManager(requireContext(), map)
@@ -206,13 +208,14 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     private fun observeSavedState() {
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
-            findNavController().currentBackStackEntry?.savedStateHandle
-                ?.getStateFlow<Bundle?>(KEY_MEMORY_VIEWER, null)?.collect { bundle ->
-                    if (bundle == null) return@collect
-                    val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
-                    vm.viewEvent(AlbumViewEvent.SetCamera(coordinates))
-                }
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_MEMORY_VIEWER) { bundle ->
+                if (bundle == null) return@consumeOnce
+                val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                vm.viewEvent(AlbumViewEvent.SetCamera(coordinates))
+            }
         }
     }
 
@@ -232,14 +235,42 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             is AlbumViewEvent.ResetCameraPosition -> {
                 resetCameraPosition()
             }
+
             is AlbumViewEvent.ZoomIn -> {
                 zoomIn()
             }
+
             is AlbumViewEvent.ZoomOut -> {
                 zoomOut()
             }
+
             is AlbumViewEvent.SetCamera -> {
                 moveCameraTo(event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
+            }
+
+            is AlbumViewEvent.ShowInfo -> {
+                val bottomSheet = AlbumInfoBottomSheetFragment.newInstance(
+                    bundle = bundleOf(
+                        AlbumInfoBottomSheetFragment.KEY_PARAMS to
+                                AlbumInfoBottomSheetFragment.ParamsIn(
+                                    album = event.album,
+                                    totalMemoryCount = event.totalMemoryCount
+                                ),
+                    )
+                )
+                bottomSheet.show(childFragmentManager, AlbumInfoBottomSheetFragment.TAG)
+            }
+
+            is AlbumViewEvent.Scrap -> {
+
+            }
+
+            is AlbumViewEvent.Share -> {
+
+            }
+
+            is AlbumViewEvent.NavigateToStudio -> {
+
             }
         }
     }
@@ -266,7 +297,12 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             val memories = vm.getMemoriesIn(items)
             val memoryViewerArguments = MemoryViewerArguments(
                 viewScope = ViewScope.AROUND,
-                memories = memories.map { MemoryViewerArguments.Memory.from(it, itemsById[it.locationRefId]!!.position) },
+                memories = memories.map {
+                    MemoryViewerArguments.Memory.from(
+                        it,
+                        itemsById[it.locationRefId]!!.position
+                    )
+                },
             )
             findNavController().navigate(AlbumFragmentDirections.actionAlbumToMemoryViewer(memoryViewerArguments))
         }
@@ -423,7 +459,12 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
                 if (!vm.containsMarkerId(markerId)) {
                     // Create new cluster item for new markers
-                    createPhotoClusterItem(markerId, position, photoUri = location.photo.photoUri, photoUrl = location.photo.photoUrl)
+                    createPhotoClusterItem(
+                        markerId,
+                        position,
+                        photoUri = location.photo.photoUri,
+                        photoUrl = location.photo.photoUrl
+                    )
                 }
             }
         }
@@ -439,10 +480,16 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         clusterManager.cluster()
     }
 
-    private fun createPhotoClusterItem(markerId: String, position: LatLng, photoUri: Uri? = null, photoUrl: String = "") {
+    private fun createPhotoClusterItem(
+        markerId: String,
+        position: LatLng,
+        photoUri: Uri? = null,
+        photoUrl: String = ""
+    ) {
         try {
             // Create cluster item
-            val clusterItem = ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
+            val clusterItem =
+                ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
             // Add to cluster manager
             clusterManager.addItem(clusterItem)
@@ -459,7 +506,7 @@ class AlbumFragment: BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         val formattedAddress: String?,
         val components: List<String>,
         val coordinates: LatLng
-    ): Parcelable
+    ) : Parcelable
 
     companion object {
         const val RESULT_COORDINATES = "coordinates"

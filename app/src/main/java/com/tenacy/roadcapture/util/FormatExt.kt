@@ -1,16 +1,21 @@
 package com.tenacy.roadcapture.util
 
+import android.content.Context
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 fun getDurationFormattedText(timestamp1: Long, timestamp2: Long): String {
     val duration = timestamp2 - timestamp1
-    val hours = duration / (60 * 60 * 1000)
+    val days = duration / (24 * 60 * 60 * 1000)
+    val hours = (duration % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000)
     val minutes = (duration % (60 * 60 * 1000)) / (60 * 1000)
 
     return when {
+        days > 0 -> "${days}일 ${hours}시간 ${minutes}분"
         hours > 0 -> "${hours}시간 ${minutes}분"
         else -> "${minutes}분"
     }
@@ -19,6 +24,102 @@ fun getDurationFormattedText(timestamp1: Long, timestamp2: Long): String {
 fun LocalDateTime.formatWithPattern(pattern: String, zoneId: ZoneId = ZoneId.systemDefault()): String {
     val formatter = DateTimeFormatter.ofPattern(pattern)
     return this.atZone(zoneId).format(formatter)
+}
+
+fun LocalDateTime.formatToLocalizedDate(
+    context: Context,
+    locale: Locale = context.resources.configuration.locales[0],
+    style: FormatStyle = FormatStyle.LONG
+): String {
+    // 로케일별 커스텀 패턴 정의
+    val pattern = when (locale.language) {
+        // 단위 문자를 사용하는 언어
+        Locale.KOREAN.language -> "yyyy년 MM월 dd일"
+        Locale.JAPANESE.language -> "yyyy年 MM月 dd日"
+        Locale.CHINESE.language -> "yyyy年 MM月 dd日"
+        Locale.SIMPLIFIED_CHINESE.language -> "yyyy年 MM月 dd日"
+        Locale.TRADITIONAL_CHINESE.language -> "yyyy年 MM月 dd日"
+
+        // 다른 언어들은 단위 문자 없이 구분 기호만 사용
+        Locale.GERMAN.language -> "dd. MMMM yyyy"
+        Locale.FRENCH.language -> "d MMMM yyyy"
+        Locale.ITALIAN.language -> "d MMMM yyyy"
+        Locale.ENGLISH.language -> "MMMM d, yyyy"
+
+        // 국가 코드 기반 패턴 (단위 문자 사용하지 않음)
+        else -> when (locale.country) {
+            Locale.FRANCE.country -> "dd/MM/yyyy"
+            Locale.GERMANY.country -> "dd.MM.yyyy"
+            Locale.ITALY.country -> "dd/MM/yyyy"
+            Locale.JAPAN.country -> "yyyy/MM/dd"
+            Locale.KOREA.country -> "yyyy. MM. dd"
+            Locale.UK.country -> "dd/MM/yyyy"
+            Locale.US.country -> "MM/dd/yyyy"
+            Locale.CANADA.country -> "yyyy-MM-dd"
+            Locale.CANADA_FRENCH.country -> "yyyy-MM-dd"
+            Locale.CHINA.country -> "yyyy-MM-dd"
+            Locale.PRC.country -> "yyyy-MM-dd"
+            Locale.TAIWAN.country -> "yyyy/MM/dd"
+            else -> null // 패턴이 없으면 시스템 기본 형식 사용
+        }
+    }
+
+    // 커스텀 패턴이 있으면 사용, 없으면 FormatStyle 사용
+    val formatter = if (pattern != null) {
+        DateTimeFormatter.ofPattern(pattern, locale)
+    } else {
+        DateTimeFormatter.ofLocalizedDate(style).withLocale(locale)
+    }
+
+    return this.format(formatter)
+}
+
+fun LocalDateTime.formatToLocalizedDateTime(
+    context: Context,
+    locale: Locale = context.resources.configuration.locales[0],
+    style: FormatStyle = FormatStyle.LONG
+): String {
+    // 로케일별 커스텀 패턴 정의
+    val pattern = when (locale.language) {
+        // 단위 문자를 사용하는 언어
+        Locale.KOREAN.language -> "yyyy년 MM월 dd일 HH시 mm분"
+        Locale.JAPANESE.language -> "yyyy年 MM月 dd日 HH時 mm分"
+        Locale.CHINESE.language -> "yyyy年 MM月 dd日 HH時 mm分"
+        Locale.SIMPLIFIED_CHINESE.language -> "yyyy年 MM月 dd日 HH时 mm分"
+        Locale.TRADITIONAL_CHINESE.language -> "yyyy年 MM月 dd日 HH時 mm分"
+
+        // 다른 언어들은 단위 문자 없이 구분 기호만 사용
+        Locale.GERMAN.language -> "dd. MMMM yyyy HH:mm 'Uhr'"
+        Locale.FRENCH.language -> "d MMMM yyyy HH:mm"
+        Locale.ITALIAN.language -> "d MMMM yyyy HH:mm"
+        Locale.ENGLISH.language -> "MMMM d, yyyy h:mm a"
+
+        // 국가 코드 기반 패턴 (단위 문자 사용하지 않음)
+        else -> when (locale.country) {
+            Locale.FRANCE.country -> "dd/MM/yyyy HH:mm"
+            Locale.GERMANY.country -> "dd.MM.yyyy HH:mm"
+            Locale.ITALY.country -> "dd/MM/yyyy HH:mm"
+            Locale.JAPAN.country -> "yyyy/MM/dd HH:mm"
+            Locale.KOREA.country -> "yyyy. MM. dd HH:mm"
+            Locale.UK.country -> "dd/MM/yyyy HH:mm"
+            Locale.US.country -> "MM/dd/yyyy h:mm a"
+            Locale.CANADA.country -> "yyyy-MM-dd HH:mm"
+            Locale.CANADA_FRENCH.country -> "yyyy-MM-dd HH:mm"
+            Locale.CHINA.country -> "yyyy-MM-dd HH:mm"
+            Locale.PRC.country -> "yyyy-MM-dd HH:mm"
+            Locale.TAIWAN.country -> "yyyy/MM/dd HH:mm"
+            else -> null // 패턴이 없으면 시스템 기본 형식 사용
+        }
+    }
+
+    // 커스텀 패턴이 있으면 사용, 없으면 FormatStyle 사용
+    val formatter = if (pattern != null) {
+        DateTimeFormatter.ofPattern(pattern, locale)
+    } else {
+        DateTimeFormatter.ofLocalizedDateTime(style).withLocale(locale)
+    }
+
+    return this.format(formatter)
 }
 
 /**
