@@ -5,15 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.tenacy.roadcapture.databinding.FragmentSearchBinding
+import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 
-class SearchFragment: BaseFragment() {
+class AppInfoFragment: BaseFragment() {
 
-    private var _binding: FragmentSearchBinding? = null
+    private var _binding: FragmentAppInfoBinding? = null
     val binding get() = _binding!!
 
-    private val vm: SearchViewModel by viewModels()
+    private val vm: AppInfoViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +21,7 @@ class SearchFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentAppInfoBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this

@@ -8,9 +8,6 @@
               android:name="com.tenacy.roadcapture.ui.HomeFragment"
               android:label="HomeFragment"
               tools:layout="@layout/fragment_home"/>
-    <fragment android:id="@+id/searchFragment" android:name="com.tenacy.roadcapture.ui.SearchFragment"
-              android:label="SearchFragment"
-              tools:layout="@layout/fragment_search"/>
     <fragment android:id="@+id/albumMarkedFragment" android:name="com.tenacy.roadcapture.ui.AlbumMarkedFragment"
               android:label="AlbumMarkedFragment"
               tools:layout="@layout/fragment_album_marked"/>
@@ -18,4 +15,7 @@
               android:name="com.tenacy.roadcapture.ui.MyAlbumFragment"
               android:label="MyAlbumFragment"
               tools:layout="@layout/fragment_my_album"/>
+    <fragment android:id="@+id/appInfoFragment" android:name="com.tenacy.roadcapture.ui.AppInfoFragment"
+              android:label="AppInfoFragment"
+              tools:layout="@layout/fragment_app_info"/>
 </navigation>

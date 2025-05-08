@@ -4,17 +4,17 @@
 
     <data>
 
-        <variable name="vm" type="com.tenacy.roadcapture.ui.SearchViewModel"/>
+        <variable name="vm" type="com.tenacy.roadcapture.ui.AppInfoViewModel"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_search_container"
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_app_info_container"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
                                                        android:background="@color/background_normal">
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:text="SearchFragment"
+                  android:text="AppInfoFragment"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"
                   app:layout_constraintTop_toTopOf="parent"

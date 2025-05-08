@@ -35,9 +35,9 @@ class MainFragment: BaseFragment() {
             // 바텀 네비게이션 아이템 선택 상태 업데이트
             val destinationId = when(position) {
                 0 -> R.id.homeFragment
-                1 -> R.id.searchFragment
-                2 -> R.id.albumMarkedFragment
-                3 -> R.id.myAlbumFragment
+                1 -> R.id.albumMarkedFragment
+                2 -> R.id.myAlbumFragment
+                3 -> R.id.appInfoFragment
                 else -> R.id.homeFragment
             }
             binding.bottomNav.selectItem(destinationId)
@@ -119,9 +119,9 @@ class MainFragment: BaseFragment() {
         binding.bottomNav.setupWithCustomNavigation { destinationId ->
             val position = when(destinationId) {
                 R.id.homeFragment -> 0
-                R.id.searchFragment -> 1
-                R.id.albumMarkedFragment -> 2
-                R.id.myAlbumFragment -> 3
+                R.id.albumMarkedFragment -> 1
+                R.id.myAlbumFragment -> 2
+                R.id.appInfoFragment -> 3
                 else -> 0
             }
             binding.viewPager.setCurrentItem(position, false)
@@ -172,9 +172,9 @@ class MainFragment: BaseFragment() {
         override fun createFragment(position: Int): Fragment {
             return when(position) {
                 0 -> HomeFragment()
-                1 -> SearchFragment()
-                2 -> AlbumMarkedFragment()
-                3 -> MyAlbumFragment()
+                1 -> AlbumMarkedFragment()
+                2 -> MyAlbumFragment()
+                3 -> AppInfoFragment()
                 else -> HomeFragment()
             }
         }
