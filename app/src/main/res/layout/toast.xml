@@ -15,7 +15,9 @@
                                                        android:id="@+id/card_toast_container"
                                                        android:layout_width="wrap_content"
                                                        android:layout_height="wrap_content"
-                                                       app:strokeWidth="0.5dp"
+                                                       app:type_strokeColor="@{type}"
+                                                       app:type_strokeWidth="@{type}"
+                                                       app:strokeWidth="1dp"
                                                        app:strokeColor="@color/line_normal"
                                                        app:cardBackgroundColor="@android:color/transparent"
                                                        app:cardCornerRadius="12dp"
@@ -27,10 +29,9 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:background="#B380F0D4"
+                android:background="@color/background_normal"
                 android:paddingVertical="16dp"
-                android:paddingHorizontal="24dp"
-                app:type_backgroundColor="@{type}">
+                android:paddingHorizontal="24dp">
 
             <TextView
                     android:id="@+id/text_toast_content"
@@ -41,7 +42,6 @@
                     tools:text="로그인에 실패했어요\n다시 입력해주세요"
                     android:textAlignment="center"
                     android:textColor="@color/label_normal"
-                    app:type_textColor="@{type}"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"

@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
 import androidx.databinding.DataBindingUtil
+import com.google.android.material.card.MaterialCardView
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.ToastBinding
 import com.tenacy.roadcapture.util.toPx
@@ -48,23 +49,23 @@ object MyToast {
     }
 }
 
-@BindingAdapter("type_backgroundColor")
-fun View.setTypedBackgroundColor(type: ToastMessageType?) {
+@BindingAdapter("type_strokeColor")
+fun MaterialCardView.setTypedStrokeColor(type: ToastMessageType?) {
     if(type == null) return
-    when(type) {
-        is ToastMessageType.Info -> setBackgroundColor(Color.parseColor("#B3FCFEFF"))
-        is ToastMessageType.Warning -> setBackgroundColor(Color.parseColor("#B3FF7A5C"))
-        is ToastMessageType.Success -> setBackgroundColor(Color.parseColor("#B380F0D4"))
+    strokeColor = when(type) {
+        is ToastMessageType.Info -> ContextCompat.getColor(context, R.color.line_normal)
+        is ToastMessageType.Warning -> ContextCompat.getColor(context, R.color.warning)
+        is ToastMessageType.Success -> ContextCompat.getColor(context, R.color.primary)
     }
 }
 
-@BindingAdapter("type_textColor")
-fun TextView.setTypedTextColor(type: ToastMessageType?) {
-    if(type == null) return
-    when(type) {
-        is ToastMessageType.Info -> setTextColor(ContextCompat.getColor(context, R.color.label_normal))
-        is ToastMessageType.Warning -> setTextColor(ContextCompat.getColor(context, R.color.background_normal))
-        is ToastMessageType.Success -> setTextColor(ContextCompat.getColor(context, R.color.label_normal))
+@BindingAdapter("type_strokeWidth")
+fun MaterialCardView.setTypedStrokeWidth(type: ToastMessageType?) {
+    if (type == null) return
+    strokeWidth = when (type) {
+        is ToastMessageType.Info -> 1.toPx
+        is ToastMessageType.Warning -> 1.5f.toPx
+        is ToastMessageType.Success -> 1.5f.toPx
     }
 }
 
