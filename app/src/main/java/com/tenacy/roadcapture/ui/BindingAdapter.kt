@@ -5,9 +5,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
+import android.view.View
+import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
@@ -79,6 +82,20 @@ fun EditText.setState(state: EditTextState?) {
         }
         is EditTextState.Normal -> {
             ContextCompat.getDrawable(context, R.drawable.input_normal)
+        }
+    }
+}
+
+@BindingAdapter("selected")
+fun View.setSelected(selected: Boolean?) {
+    selected?.let { setSelectedIncludingChildren(it) }
+}
+
+fun View.setSelectedIncludingChildren(selected: Boolean) {
+    isSelected = selected
+    if (this is ViewGroup) {
+        children.forEach { child ->
+            child.setSelectedIncludingChildren(selected)
         }
     }
 }

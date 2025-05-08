@@ -66,7 +66,6 @@ class LoginViewModel @Inject constructor(
             val docSnapshot = ref.get().await()
             if (!docSnapshot.exists()) {
                 val photoPath = "images/users/${user!!.uid}/profile.jpg"
-                userToUpdate["uid"] = user!!.uid
                 userToUpdate["displayName"] = user!!.displayName
                 userToUpdate["provider"] = provider
                 userToUpdate["createdAt"] = FieldValue.serverTimestamp()

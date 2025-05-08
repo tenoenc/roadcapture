@@ -261,10 +261,6 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                 bottomSheet.show(childFragmentManager, AlbumInfoBottomSheetFragment.TAG)
             }
 
-            is AlbumViewEvent.Scrap -> {
-
-            }
-
             is AlbumViewEvent.Share -> {
 
             }

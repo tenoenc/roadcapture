@@ -7,22 +7,24 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
+import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toAlbum
+import com.tenacy.roadcapture.util.toUser
+import com.tenacy.roadcapture.util.user
 import kotlinx.coroutines.tasks.await
 
 class AlbumPagingSource(
     private val userRef: DocumentReference? = null,
     private val isPublicOnly: Boolean = false,
-): PagingSource<DocumentSnapshot, FirebaseAlbum>() {
+): PagingSource<DocumentSnapshot, Album>() {
 
     companion object {
         const val PAGE_SIZE = 3
         private const val TAG = "AlbumPagingSource"
     }
 
-    override fun getRefreshKey(state: PagingState<DocumentSnapshot, FirebaseAlbum>): DocumentSnapshot? {
+    override fun getRefreshKey(state: PagingState<DocumentSnapshot, Album>): DocumentSnapshot? {
         Log.d(TAG, "getRefreshKey 호출됨")
 
         // null을 반환하여 새로고침 시 처음부터 다시 로드하도록 함
@@ -34,7 +36,7 @@ class AlbumPagingSource(
         // }
     }
 
-    override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, FirebaseAlbum> {
+    override suspend fun load(params: LoadParams<DocumentSnapshot>): LoadResult<DocumentSnapshot, Album> {
         return try {
             // 로드 타입에 따른 로그 출력
             when (params) {
@@ -81,12 +83,13 @@ class AlbumPagingSource(
             }
 
             // 쿼리 실행
-            val querySnapshot = query.get().await()
-            val documents = querySnapshot.documents
-            Log.d(TAG, "쿼리 결과: ${documents.size}개 문서 로드됨")
+            val albumsSnapshot = query.get().await()
+            val albumDocuments = albumsSnapshot.documents
+            val albumIds = albumDocuments.map { it.id }
+            Log.d(TAG, "쿼리 결과: ${albumDocuments.size}개 문서 로드됨")
 
             // 결과가 비어있는지 확인
-            if (documents.isEmpty()) {
+            if (albumDocuments.isEmpty()) {
                 Log.d(TAG, "쿼리 결과가 비어있음")
                 return LoadResult.Page(
                     data = emptyList(),
@@ -96,44 +99,45 @@ class AlbumPagingSource(
             }
 
             // 다음 페이지 키 설정
-            val lastDocument = documents.lastOrNull()
+            val lastDocument = albumDocuments.lastOrNull()
             Log.d(TAG, "마지막 문서 ID: ${lastDocument?.id}")
 
             // 결과 매핑 및 반환
-            val userIds = documents.mapNotNull { doc ->
+            val userIds = albumDocuments.mapNotNull { doc ->
                 doc.getDocumentReference("userRef")?.id
             }.distinct()
 
-            val usersSnapshot = if (userIds.isNotEmpty()) {
-                // whereIn은 최대 10개 값으로 제한되므로 필요한 경우 여러 쿼리로 분할해야 함
-                val userChunks = userIds.chunked(10) // Firestore의 whereIn은 최대 10개 값으로 제한됨
+            val usersSnapshot = db.collection("users")
+                .whereIn(FieldPath.documentId(), userIds)
+                .get()
+                .await()
+            val userDocuments = usersSnapshot.documents
 
-                // 각 청크마다 쿼리 실행 후 결과 병합
-                val userDocs = userChunks.flatMap { chunk ->
-                    db.collection("users")
-                        .whereIn(FieldPath.documentId(), chunk)
-                        .get()
-                        .await()
-                        .documents
-                }
 
-                userDocs
+            val usersById = userDocuments.associate { doc ->
+                doc.id to doc.toUser()
+            }
+
+            val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
+                // 특정 앨범들에 대한 스크랩 상태만 조회
+                val scrapQuery = db.collection("scraps")
+                    .whereIn("albumRef", albumIds.map { db.collection("albums").document(it) })
+                    .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
+
+                val scrapSnapshot = scrapQuery.get().await()
+                scrapSnapshot.documents.mapNotNull { doc ->
+                    val albumRef = doc.getDocumentReference("albumRef")
+                    albumRef?.id
+                }.toSet()
             } else {
-                emptyList()
+                emptySet()
             }
 
-            val userMap = usersSnapshot.associate { doc ->
-                doc.id to FirebaseAlbum.User(
-                    id = doc.id,
-                    name = doc.getString("displayName") ?: "",
-                    photoUrl = doc.getString("photoUrl") ?: ""
-                )
-            }
-
-            val albums = documents.map { doc ->
+            val albums = albumDocuments.map { doc ->
                 val userRefId = doc.getDocumentReference("userRef")?.id
-                val user = userMap[userRefId]
-                doc.toAlbum(user!!)
+                val user = usersById[userRefId]!!
+                val album = doc.toAlbum()
+                Album.from(album, user, scrapedByAlbumId.contains(album.id))
             }
 
             // 앨범 ID 출력

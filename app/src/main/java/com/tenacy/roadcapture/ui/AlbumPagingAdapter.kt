@@ -1,28 +1,33 @@
 package com.tenacy.roadcapture.ui
 
-import android.util.Log
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
 import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
+import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.getFormattedDuration
 import com.tenacy.roadcapture.util.toPx
 import com.tenacy.roadcapture.util.toReadableUnitText
 import com.tenacy.roadcapture.util.toTimestamp
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
+@Parcelize
 data class AlbumItem(
-    val value: FirebaseAlbum,
+    val value: Album,
     val onItemClick: () -> Unit,
     val onProfileClick: () -> Unit,
-)
+) : Parcelable
 
 class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumComparator) {
+
+    private var recyclerView: RecyclerView? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
         val binding = ItemAlbumBinding.inflate(
@@ -38,6 +43,37 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
         }
     }
 
+    override fun onBindViewHolder(holder: AlbumViewHolder, position: Int, payloads: List<Any>) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            val item = getItem(position)
+            if (item != null) {
+                holder.bind(item, payloads)
+            }
+        }
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+        this@AlbumPagingAdapter.recyclerView = recyclerView
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        this@AlbumPagingAdapter.recyclerView = null
+    }
+
+    fun refreshVisibleItems() {
+        val layoutManager = recyclerView?.layoutManager as? LinearLayoutManager
+        val firstVisible = layoutManager?.findFirstVisibleItemPosition() ?: return
+        val lastVisible = layoutManager.findLastVisibleItemPosition()
+
+        for (position in firstVisible..lastVisible) {
+            notifyItemChanged(position, listOf("time"))
+        }
+    }
+
     companion object {
         object AlbumComparator : DiffUtil.ItemCallback<AlbumItem>() {
             override fun areItemsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
@@ -45,11 +81,36 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
             }
 
             override fun areContentsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
-                Log.d("TAG", "oldItem.regionTags == newItem.regionTags : ${oldItem.value.regionTags == newItem.value.regionTags}")
+//                return oldItem == newItem
                 return oldItem.value.user == newItem.value.user &&
                         oldItem.value.viewCount == newItem.value.viewCount &&
                         oldItem.value.title == newItem.value.title &&
                         oldItem.value.regionTags == newItem.value.regionTags
+            }
+
+            override fun getChangePayload(oldItem: AlbumItem, newItem: AlbumItem): Any? {
+                val payload = mutableListOf<String>()
+
+                if (oldItem.value.thumbnailUrl != newItem.value.thumbnailUrl) {
+                    payload.add("thumbnailUrl")
+                }
+
+                if (oldItem.value.user != newItem.value.user) {
+                    payload.add("uesr")
+                }
+
+                if (oldItem.value.title != newItem.value.title) {
+                    payload.add("title")
+                }
+
+                if (oldItem.value.regionTags != newItem.value.regionTags) {
+                    payload.add("regionTags")
+                }
+
+                // 시간은 항상 변경되므로 페이로드에 포함
+                payload.add("time")
+
+                return if (payload.isEmpty()) null else payload
             }
         }
     }
@@ -64,9 +125,10 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
 
         binding.thumbnailUrl = album.value.thumbnailUrl
         binding.profileImageUrl = album.value.user.photoUrl
-        binding.username = album.value.user.name
+        binding.username = album.value.user.displayName
         binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
         binding.title = album.value.title
+        binding.scraped = album.value.isScraped
 
         setItemsToLayout(extractUniqueLocations(album.value.regionTags))
 
@@ -76,6 +138,47 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         binding.clIAlbumRow1Profile.setOnClickListener {
             album.onProfileClick()
         }
+    }
+
+    fun bind(album: AlbumItem, payloads: List<Any>) {
+        if (payloads.isEmpty()) {
+            bind(album)
+            return
+        }
+
+        payloads.forEach { payload ->
+            if (payload is List<*>) {
+                payload.forEach { change ->
+                    when (change) {
+                        "thumbnailUrl" -> {
+                            binding.thumbnailUrl = album.value.thumbnailUrl
+                        }
+
+                        "uesr" -> {
+                            binding.profileImageUrl = album.value.user.photoUrl
+                            binding.username = album.value.user.displayName
+                        }
+
+                        "title" -> {
+                            binding.title = album.value.title
+                        }
+
+                        "regionTags" -> {
+                            setItemsToLayout(extractUniqueLocations(album.value.regionTags))
+                        }
+
+                        "time" -> updateNumericalText(album)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun updateNumericalText(album: AlbumItem) {
+        val currentTimeStamp = LocalDateTime.now().toTimestamp()
+        val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
+        val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
+        binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
     }
 
     private fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {

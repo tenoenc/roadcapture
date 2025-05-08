@@ -7,7 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
+import com.tenacy.roadcapture.ui.dto.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
     )
 
     // 앨범 데이터 Flow
-    val albums: Flow<PagingData<FirebaseAlbum>> = pager.flow.cachedIn(viewModelScope)
+    val albums: Flow<PagingData<Album>> = pager.flow.cachedIn(viewModelScope)
 
     // 새로고침 상태 관리
     private val _isRefreshing = MutableStateFlow(false)

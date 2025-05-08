@@ -80,7 +80,7 @@
               android:label="AlbumFragment"
               tools:layout="@layout/fragment_album">
 
-        <argument android:name="value" app:argType="com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum"/>
+        <argument android:name="albumId" app:argType="string"/>
         <action android:id="@+id/action_album_to_memoryViewer"
                 app:destination="@id/memoryViewerFragment"/>
     </fragment>

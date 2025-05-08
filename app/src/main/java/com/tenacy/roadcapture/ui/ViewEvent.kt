@@ -1,8 +1,7 @@
 package com.tenacy.roadcapture.ui
 
-import android.net.Uri
 import com.google.android.gms.maps.model.LatLng
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
+import com.tenacy.roadcapture.ui.dto.Album
 
 sealed interface ViewEvent
 
@@ -77,8 +76,7 @@ sealed class AlbumViewEvent: ViewEvent {
     data object ZoomIn: AlbumViewEvent()
     data object ZoomOut: AlbumViewEvent()
     data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null): AlbumViewEvent()
-    data class ShowInfo(val album: FirebaseAlbum, val totalMemoryCount: Int): AlbumViewEvent()
-    data object Scrap: AlbumViewEvent()
+    data class ShowInfo(val album: Album, val totalMemoryCount: Int): AlbumViewEvent()
     data object Share: AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
 }

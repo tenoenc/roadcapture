@@ -6,23 +6,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.facebook.shimmer.Shimmer
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
-import com.tenacy.roadcapture.util.user
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.isActive
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment() {
@@ -71,6 +69,13 @@ class HomeFragment: BaseFragment() {
 
         // SwipeRefreshLayout 설정
         setupSwipeRefresh()
+
+        repeatOnLifecycle {
+            while(currentCoroutineContext().isActive) {
+                albumAdapter.refreshVisibleItems()
+                delay(60_000)
+            }
+        }
     }
 
     private fun setupRecyclerView() {
@@ -243,7 +248,7 @@ class HomeFragment: BaseFragment() {
                             value = it,
                             onItemClick = {
                                 Log.d("HomeFragment", "Item Clicked!")
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it))
+                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id))
                             },
                             onProfileClick = {
                                 Log.d("HomeFragment", "Profile Clicked!")

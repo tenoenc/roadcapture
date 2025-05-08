@@ -10,6 +10,7 @@
         <variable name="username" type="String"/>
         <variable name="numericalText" type="String"/>
         <variable name="title" type="String"/>
+        <variable name="scraped" type="Boolean"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_i_album_container"

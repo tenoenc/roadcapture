@@ -16,9 +16,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
 import com.tenacy.roadcapture.databinding.BSheetAlbumInfoBinding
 import com.tenacy.roadcapture.databinding.ItemStopoverBinding
+import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -156,7 +156,10 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
         return params?.let {
             val durationFormattedText =
                 getDurationFormattedText(it.album.createdAt.toTimestamp(), it.album.endedAt.toTimestamp())
-            "${durationFormattedText} 동안 ${it.totalMemoryCount}개의 추억을 남겼어요"
+            val sb = StringBuilder()
+            sb.append(if(durationFormattedText == "0분") "" else "${durationFormattedText} 동안 ")
+            sb.append("${it.totalMemoryCount}개의 추억을 남겼어요")
+            return sb.toString()
         }
     }
 
@@ -206,7 +209,7 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     @Parcelize
     data class ParamsIn(
-        val album: FirebaseAlbum,
+        val album: Album,
         val totalMemoryCount: Int,
     ): Parcelable
 

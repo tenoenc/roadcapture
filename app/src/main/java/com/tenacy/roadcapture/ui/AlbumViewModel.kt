@@ -6,25 +6,33 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Marker
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.toLocation
-import com.tenacy.roadcapture.util.toMemory
-import com.tenacy.roadcapture.util.toReadableUnitText
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class AlbumViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
+
+    private var scrapJob: Job? = null
+    private var isScrapProcessing = false
+
+    val loaded = MutableStateFlow(false)
 
     private val routePolylines = mutableListOf<Polyline>()
     private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
@@ -50,18 +58,24 @@ class AlbumViewModel @Inject constructor(
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    val title: String = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.title
+    private val _album = MutableStateFlow<Album?>(null)
 
-    private val _scrapCount = MutableStateFlow(0L)
+    val title = _album.mapNotNull { it?.title }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
+    private val _scrapCount = MutableStateFlow(0)
     val scrapCountText = _scrapCount.map {
-        val (value, unit) = it.toReadableUnitText()
+        val (value, unit) = it.toLong().toReadableUnitText()
         "${value}${unit}"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
-    private val _scrapped = MutableStateFlow(false)
-    val scrapped = _scrapped.asStateFlow()
+    private val _scraped = MutableStateFlow(false)
+    val scraped = _scraped.asStateFlow()
 
-    val profileUrl: String = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.user.photoUrl
+    val profileUrl = _album.mapNotNull { it?.user?.photoUrl }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
+    private val albumId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).albumId
 
     init {
         fetchData()
@@ -84,10 +98,20 @@ class AlbumViewModel @Inject constructor(
     }*/
 
     private fun fetchData() {
-        val album = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val albumRef = db.collection("albums").document(album.id)
+                val userRef = db.collection("users").document(user!!.uid)
+                val firebaseUser = userRef.get().await().toUser()
+                val albumRef = db.collection("albums").document(albumId)
+                val firebaseAlbum = albumRef.get().await().toAlbum()
+                val userScrapRef = userRef.collection("scraps").document(albumId)
+                val userScrap = userScrapRef.get().await()
+
+                val album = Album.from(firebaseAlbum, firebaseUser, userScrap.exists())
+                _album.emit(album)
+                _scraped.emit(album.isScraped)
+                _scrapCount.emit(album.scrapCount)
+
                 val memoriesQuerySnapshot = db.collection("memories")
                     .whereEqualTo("albumRef", albumRef)
                     .orderBy("createdAt", Query.Direction.ASCENDING)
@@ -107,13 +131,101 @@ class AlbumViewModel @Inject constructor(
                 emit(memories to locations)
             }
                 .catch { exception ->
-                    Log.e("AlbumViewModel", "에러 발생", exception)
+                    Log.e("AlbumViewModel", "에러", exception)
                 }
                 .collect { (memories, locations) ->
                     locations.getOrNull(0)?.let { viewEvent(AlbumViewEvent.SetCamera(LatLng(it.latitude, it.longitude), zoom = 30f)) }
 
                     _memories.emit(memories)
                     _locations.emit(locations)
+
+                    loaded.emit(true)
+                }
+        }
+    }
+
+    private fun scrap() {
+        if (isScrapProcessing) return
+
+        scrapJob?.cancel()
+
+        scrapJob = viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                isScrapProcessing = true
+
+                val currentUser = auth.currentUser ?: throw Exception("User not logged in")
+                val userId = currentUser.uid
+
+                // 참조 생성
+                val albumRef = db.collection("albums").document(albumId)
+                val userRef = db.collection("users").document(userId)
+                val userScrapRef = userRef.collection("scraps").document(albumId)
+
+                // 트랜잭션 밖에서 먼저 scraps 문서 ID를 찾아두기
+                val scrapToDelete = db.collection("scraps")
+                    .whereEqualTo("userRef", userRef)
+                    .whereEqualTo("albumRef", albumRef)
+                    .limit(1)
+                    .get()
+                    .await()
+                    .documents
+                    .firstOrNull()
+
+                val isScraped = suspendCancellableCoroutine<Boolean> { continuation ->
+                    db.runTransaction { transaction ->
+                        val userScrap = transaction.get(userScrapRef)
+
+                        if (userScrap.exists()) {
+                            // 스크랩 취소
+                            transaction.delete(userScrapRef)
+
+                            // scraps 컬렉션에서 문서 삭제
+                            scrapToDelete?.reference?.let { scrapRef ->
+                                transaction.delete(scrapRef)
+                            }
+
+                            transaction.update(albumRef, "scrapCount", FieldValue.increment(-1))
+
+                            false
+                        } else {
+                            // 스크랩하기
+                            transaction.set(userScrapRef, mapOf("scrapAt" to FieldValue.serverTimestamp()))
+
+                            val newScrapRef = db.collection("scraps").document()
+                            transaction.set(newScrapRef, mapOf(
+                                "albumRef" to albumRef,
+                                "userRef" to userRef,
+                                "createdAt" to FieldValue.serverTimestamp()
+                            ))
+
+                            transaction.update(albumRef, "scrapCount", FieldValue.increment(1))
+
+                            true
+                        }
+                    }.addOnSuccessListener { result ->
+                        continuation.resume(result)
+                    }.addOnFailureListener { exception ->
+                        continuation.resumeWithException(exception)
+                    }
+                }
+
+                emit(isScraped)
+            }.catch { exception ->
+                Log.e("AlbumViewModel", "에러", exception)
+            }.flowOn(Dispatchers.IO)
+                .collectLatest { isScraped ->
+                    _scraped.update {
+                        _scrapCount.update { count ->
+                            if(it != isScraped) {
+                                (count + if(isScraped) 1 else -1).coerceAtLeast(0)
+                            } else {
+                                count
+                            }
+                        }
+                        isScraped
+                    }
+
+                    isScrapProcessing = false
                 }
         }
     }
@@ -163,7 +275,7 @@ class AlbumViewModel @Inject constructor(
 
     fun onResetCameraPositionClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.ResetCameraPosition)
+            viewEvent(AlbumViewEvent.ResetCameraPosition)
         }
     }
 
@@ -181,16 +293,21 @@ class AlbumViewModel @Inject constructor(
 
     fun onInfoClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val album = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value
-            val totalMemoryCount = _memories.value.size
-            viewEvent(AlbumViewEvent.ShowInfo(album, totalMemoryCount))
+            _album.value?.let {
+                val totalMemoryCount = _memories.value.size
+                viewEvent(AlbumViewEvent.ShowInfo(it, totalMemoryCount))
+            }
         }
     }
 
     fun onScrapClick() {
-        viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AlbumViewEvent.Scrap)
+        _scraped.update {
+            _scrapCount.update { count ->
+                count + if(!it) 1 else -1
+            }
+            !it
         }
+        scrap()
     }
 
     fun onShareClick() {
@@ -201,8 +318,10 @@ class AlbumViewModel @Inject constructor(
 
     fun onProfileClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val userId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).value.user.id
-            viewEvent(AlbumViewEvent.NavigateToStudio(userId))
+            _album.value?.let {
+                val userId = it.user.id
+                viewEvent(AlbumViewEvent.NavigateToStudio(userId))
+            }
         }
     }
 }

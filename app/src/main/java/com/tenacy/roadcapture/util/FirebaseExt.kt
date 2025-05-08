@@ -14,6 +14,7 @@ import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseUser
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -65,14 +66,14 @@ private suspend fun copyImage(sourceRef: StorageReference, destinationRef: Stora
     return destinationRef.downloadUrl.await().toString()
 }
 
-fun DocumentSnapshot.toAlbum(user: FirebaseAlbum.User): FirebaseAlbum {
+fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val id = id
     val title = getString("title") ?: ""
     val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
     val endedAt = getTimestamp("endedAt")!!.toDate().toLocalDateTime()
     val thumbnailUrl = getString("thumbnailUrl") ?: ""
     val viewCount = getLong("viewCount")?.toInt() ?: 0
-    val likeCount = getLong("likeCount")?.toInt() ?: 0
+    val scrapCount = getLong("scrapCount")?.toInt() ?: 0
     val isPublic = getBoolean("isPublic") ?: false
 
     // 중첩 리스트 처리
@@ -86,9 +87,8 @@ fun DocumentSnapshot.toAlbum(user: FirebaseAlbum.User): FirebaseAlbum {
         endedAt = endedAt,
         thumbnailUrl = thumbnailUrl,
         viewCount = viewCount,
-        likeCount = likeCount,
+        scrapCount = scrapCount,
         regionTags = regionTags,
-        user = user,
         isPublic = isPublic,
     )
 }
@@ -128,6 +128,26 @@ fun DocumentSnapshot.toLocation(): FirebaseLocation {
         latitude = latitude,
         longitude = longitude,
         createdAt = createdAt,
+    )
+}
+
+fun DocumentSnapshot.toUser(): FirebaseUser {
+    val uid = id
+    val displayName = getString("displayName") ?: ""
+    val photoName = getString("photoName") ?: ""
+    val photoUrl = getString("photoUrl") ?: ""
+    val provider = getString("provider") ?: ""
+    val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
+    val updatedAt = getTimestamp("updatedAt")!!.toDate().toLocalDateTime()
+
+    return FirebaseUser(
+        id = uid,
+        displayName = displayName,
+        photoName = photoName,
+        photoUrl = photoUrl,
+        provider = provider,
+        createdAt = createdAt,
+        updatedAt = updatedAt,
     )
 }
 

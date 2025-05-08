@@ -122,7 +122,7 @@ class UploadProgressViewModel @Inject constructor(
                     "endedAt" to Timestamp(endTime.toEpochSecond(ZoneOffset.UTC), 0),
                     "thumbnailUrl" to thumbnailUrl,
                     "viewCount" to 0,
-                    "likeCount" to 0,
+                    "scrapCount" to 0,
                     "regionTags" to regionTags,
                     "userRef" to userRef,
                     "isPublic" to args.isPublic,
