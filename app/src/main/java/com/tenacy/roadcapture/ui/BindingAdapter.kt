@@ -20,14 +20,15 @@ import com.bumptech.glide.request.RequestOptions
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.util.toPx
 
-@BindingAdapter("url", "bitmap", "uri", "radius", "borderWidth", "borderColor", requireAll = false)
+@BindingAdapter("url", "bitmap", "uri", "radius", "borderWidth", "borderColor", "coverColor", requireAll = false)
 fun ImageView.showImage(
     url: String?,
     bitmap: Bitmap?,
     uri: Uri?,
     radius: Int?,
     borderWidth: Int?,
-    borderColor: Int?
+    borderColor: Int?,
+    coverColor: Int?
 ) {
     if (url == null && bitmap == null && uri == null) return
 
@@ -47,7 +48,7 @@ fun ImageView.showImage(
             }
         }
         .placeholder(shapeDrawable)
-        .transform(buildTransformations(radius, borderWidth, borderColor))
+        .transform(buildTransformations(radius, borderWidth, borderColor, coverColor))
         .dontAnimate()
         .into(this)
 }
@@ -55,17 +56,21 @@ fun ImageView.showImage(
 fun buildTransformations(
     radius: Int? = null,
     borderWidth: Int? = null,
-    borderColor: Int? = null
+    borderColor: Int? = null,
+    coverColor: Int? = null,
 ) = MultiTransformation(
     buildList {
         add(CenterCrop())
         radius?.takeIf { it > 0 }?.let {
-            add(RoundedCorners(it))
+            add(RoundedCorners(it.toPx))
         }
         borderWidth?.takeIf { it > 0 }?.let { width ->
             val color = borderColor ?: R.color.background_normal // 기본 테두리 색상
             // BorderedRoundedTransformation은 직접 만들어야 합니다 - 아래 제공
             add(BorderedRoundedTransformation(radius ?: 0, width.toPx, color))
+        }
+        coverColor?.takeIf { it > 0 }?.let { color ->
+            add(OverlayTransformation(color))
         }
     }
 )

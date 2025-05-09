@@ -7,8 +7,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlgoliaPagingSource
+import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.manager.AlgoliaManager
 import com.tenacy.roadcapture.ui.dto.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,10 +28,10 @@ class SearchViewModel @Inject constructor(
         val shouldLoad: Boolean = false,
     )
 
-    private val albumFilter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
-    val title = when(albumFilter) {
-        AlbumFilter.ALL -> "홈"
-        else -> "북마크"
+    private val filter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
+    val title = when(filter) {
+        SearchFilter.All -> "홈"
+        SearchFilter.Scrap -> "북마크"
     }
 
     val searchQuery = MutableStateFlow("")
@@ -57,7 +57,7 @@ class SearchViewModel @Inject constructor(
                     initialLoadSize = AlgoliaPagingSource.PAGE_SIZE
                 ),
                 pagingSourceFactory = {
-                    AlgoliaPagingSource(algoliaManager, searchQuery, albumFilter)
+                    AlgoliaPagingSource(algoliaManager, searchQuery, filter)
                 }
             ).flow
                 .flowOn(Dispatchers.IO)

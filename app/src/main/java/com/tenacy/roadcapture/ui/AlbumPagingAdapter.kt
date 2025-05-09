@@ -4,11 +4,13 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.databinding.ViewDataBinding
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.tenacy.roadcapture.databinding.ItemAlbumBinding
+import com.tenacy.roadcapture.databinding.ItemMyAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.getFormattedDuration
@@ -19,32 +21,55 @@ import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @Parcelize
-data class AlbumItem(
-    val value: Album,
-    val onItemClick: () -> Unit,
-    val onProfileClick: () -> Unit,
-) : Parcelable
+sealed class AlbumItem(open val value: Album): Parcelable {
+
+    @Parcelize
+    data class General(
+        override val value: Album,
+        val onItemClick: () -> Unit,
+        val onProfileClick: () -> Unit,
+    ) : AlbumItem(value)
+
+    @Parcelize
+    data class User(
+        override val value: Album,
+        val onItemClick: () -> Unit,
+        val onMoreClick: () -> Unit,
+    ) : AlbumItem(value)
+}
 
 
-class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumComparator) {
+class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumItem>>(AlbumComparator) {
 
     private var recyclerView: RecyclerView? = null
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder {
-        val binding = ItemAlbumBinding.inflate(
-            LayoutInflater.from(parent.context), parent, false
-        )
-        return AlbumViewHolder(binding)
-    }
-
-    override fun onBindViewHolder(holder: AlbumViewHolder, position: Int) {
-        val item = getItem(position)
-        if (item != null) {
-            holder.bind(item)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumViewHolder<AlbumItem> {
+        return when(viewType) {
+            VIEW_TYPE_GENERAL -> AlbumViewHolder.General(ItemAlbumBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            ))
+            VIEW_TYPE_USER -> AlbumViewHolder.User(ItemMyAlbumBinding.inflate(
+                LayoutInflater.from(parent.context), parent, false
+            ))
+            else -> throw IllegalStateException("뷰타입이 존재하지 않습니다.")
         }
     }
 
-    override fun onBindViewHolder(holder: AlbumViewHolder, position: Int, payloads: List<Any>) {
+    override fun onBindViewHolder(holder: AlbumViewHolder<AlbumItem>, position: Int) {
+        val item = getItem(position) ?: return
+
+        when {
+            holder is AlbumViewHolder.General && item is AlbumItem.General -> {
+                holder.bind(item)
+            }
+            holder is AlbumViewHolder.User && item is AlbumItem.User -> {
+                holder.bind(item)
+            }
+            else -> throw IllegalStateException("뷰홀더와 아이템의 타입이 일치하지 않습니다.")
+        }
+    }
+
+    override fun onBindViewHolder(holder: AlbumViewHolder<AlbumItem>, position: Int, payloads: List<Any>) {
         if (payloads.isEmpty()) {
             super.onBindViewHolder(holder, position, payloads)
         } else {
@@ -52,6 +77,14 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
             if (item != null) {
                 holder.bind(item, payloads)
             }
+        }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when(getItem(position)) {
+            is AlbumItem.General -> VIEW_TYPE_GENERAL
+            is AlbumItem.User -> VIEW_TYPE_USER
+            else -> VIEW_TYPE_GENERAL
         }
     }
 
@@ -76,6 +109,10 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
     }
 
     companion object {
+
+        const val VIEW_TYPE_GENERAL = 0
+        const val VIEW_TYPE_USER = 1
+
         object AlbumComparator : DiffUtil.ItemCallback<AlbumItem>() {
             override fun areItemsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
                 return oldItem.value.id == newItem.value.id
@@ -98,7 +135,7 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
                 }
 
                 if (oldItem.value.user != newItem.value.user) {
-                    payload.add("uesr")
+                    payload.add("user")
                 }
 
                 if (oldItem.value.title != newItem.value.title) {
@@ -122,65 +159,148 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
     }
 }
 
-class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
+sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(album: AlbumItem) {
-        binding.thumbnailUrl = album.value.thumbnailUrl
-        binding.profileImageUrl = album.value.user.photoUrl
-        binding.username = album.value.user.displayName
-        binding.title = album.value.title
-        binding.scraped = album.value.isScraped
+    abstract fun bind(item: @UnsafeVariance T)
+    abstract fun bind(item: @UnsafeVariance T, payloads: List<Any>)
 
-        updateNumericalText(album)
-        setItemsToLayout(extractUniqueLocations(album.value.regionTags))
+    class General(private val binding: ItemAlbumBinding) : AlbumViewHolder<AlbumItem.General>(binding) {
 
-        binding.root.setOnClickListener {
-            album.onItemClick()
-        }
-        binding.clIAlbumRow1Profile.setOnClickListener {
-            album.onProfileClick()
-        }
-    }
+        override fun bind(item: AlbumItem.General) {
+            binding.thumbnailUrl = item.value.thumbnailUrl
+            binding.profileImageUrl = item.value.user.photoUrl
+            binding.username = item.value.user.displayName
+            binding.title = item.value.title
 
-    fun bind(album: AlbumItem, payloads: List<Any>) {
-        if (payloads.isEmpty()) {
-            bind(album)
-            return
+            binding.txtIAlbumRow1Numeric.text = getNumericalText(item)
+            binding.llIAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
+
+            binding.clIAlbumTouchContainer.setOnClickListener {
+                item.onItemClick()
+            }
+            binding.clIAlbumRow1Profile.setOnClickListener {
+                item.onProfileClick()
+            }
         }
 
-        payloads.forEach { payload ->
-            if (payload is List<*>) {
-                payload.forEach { change ->
-                    when (change) {
-                        "thumbnailUrl" -> {
-                            binding.thumbnailUrl = album.value.thumbnailUrl
-                        }
+        override fun bind(item: AlbumItem.General, payloads: List<Any>) {
+            if (payloads.isEmpty()) {
+                bind(item)
+                return
+            }
 
-                        "uesr" -> {
-                            binding.profileImageUrl = album.value.user.photoUrl
-                            binding.username = album.value.user.displayName
-                        }
+            payloads.forEach { payload ->
+                if (payload is List<*>) {
+                    payload.forEach { change ->
+                        when (change) {
+                            "thumbnailUrl" -> {
+                                binding.thumbnailUrl = item.value.thumbnailUrl
+                            }
 
-                        "title" -> {
-                            binding.title = album.value.title
-                        }
+                            "user" -> {
+                                binding.profileImageUrl = item.value.user.photoUrl
+                                binding.username = item.value.user.displayName
+                            }
 
-                        "regionTags" -> {
-                            setItemsToLayout(extractUniqueLocations(album.value.regionTags))
-                        }
+                            "title" -> {
+                                binding.title = item.value.title
+                            }
 
-                        "time", "scraped" -> updateNumericalText(album)
+                            "regionTags" -> {
+                                binding.llIAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
+                            }
+
+                            "time", "scraped" -> {
+                                binding.txtIAlbumRow1Numeric.text = getNumericalText(item)
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun updateNumericalText(album: AlbumItem) {
+    class User(private val binding: ItemMyAlbumBinding) : AlbumViewHolder<AlbumItem.User>(binding) {
+
+        override fun bind(item: AlbumItem.User) {
+            binding.thumbnailUrl = item.value.thumbnailUrl
+            binding.title = item.value.title
+            binding.numericalText = getNumericalText(item)
+
+            binding.llIMyAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
+
+            binding.cardIMyAlbumTouchContainer.setOnClickListener {
+                item.onItemClick()
+            }
+        }
+
+        override fun bind(item: AlbumItem.User, payloads: List<Any>) {
+            if (payloads.isEmpty()) {
+                bind(item)
+                return
+            }
+
+            payloads.forEach { payload ->
+                if (payload is List<*>) {
+                    payload.forEach { change ->
+                        when (change) {
+                            "thumbnailUrl" -> {
+                                binding.thumbnailUrl = item.value.thumbnailUrl
+                            }
+
+                            "title" -> {
+                                binding.title = item.value.title
+                            }
+
+                            "regionTags" -> {
+                                binding.llIMyAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
+                            }
+
+                            "time", "scraped" -> {
+                                getNumericalText(item)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected fun LinearLayout.setItemsToLayout(items: List<String>) {
+        val linearLayout = this
+        linearLayout.removeAllViews()
+
+        // 인플레이터 준비
+        val inflater = LayoutInflater.from(context)
+
+        // 각 문자열에 대해 반복
+        items.forEachIndexed { index, item ->
+            // 항목 뷰바인딩 인플레이트
+            val itemBinding = ItemTagBinding.inflate(inflater, linearLayout, false)
+
+            // 텍스트 설정
+            itemBinding.name = item
+
+            // 레이아웃 파라미터 설정 (8dp 마진 추가)
+            val layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                if (index > 0) {
+                    setMargins(8f.toPx, 0, 0, 0)
+                }
+            }
+
+            // 레이아웃에 뷰 추가
+            linearLayout.addView(itemBinding.root, layoutParams)
+        }
+    }
+
+    protected fun getNumericalText(album: AlbumItem): String {
         val currentTimeStamp = LocalDateTime.now().toTimestamp()
         val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
         val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
-        binding.numericalText = StringBuilder().let { sb ->
+        return StringBuilder().let { sb ->
             if(album.value.isScraped) {
                 sb.append("스크랩됨 · ")
             }
@@ -189,7 +309,7 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         }
     }
 
-    private fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {
+    protected fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {
         val result = mutableListOf<String>()
         val seenValues = mutableSetOf<String>()
 
@@ -254,35 +374,5 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         }
 
         return result
-    }
-
-    private fun setItemsToLayout(items: List<String>) {
-        val linearLayout = binding.llIAlbumTags
-        linearLayout.removeAllViews()
-
-        // 인플레이터 준비
-        val inflater = LayoutInflater.from(binding.root.context)
-
-        // 각 문자열에 대해 반복
-        items.forEachIndexed { index, item ->
-            // 항목 뷰바인딩 인플레이트
-            val itemBinding = ItemTagBinding.inflate(inflater, linearLayout, false)
-
-            // 텍스트 설정
-            itemBinding.name = item
-
-            // 레이아웃 파라미터 설정 (8dp 마진 추가)
-            val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                if (index > 0) {
-                    setMargins(8f.toPx, 0, 0, 0)
-                }
-            }
-
-            // 레이아웃에 뷰 추가
-            linearLayout.addView(itemBinding.root, layoutParams)
-        }
     }
 }

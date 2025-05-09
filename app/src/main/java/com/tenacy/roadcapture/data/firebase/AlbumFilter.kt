@@ -4,6 +4,11 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-enum class AlbumFilter: Parcelable {
-    ALL, SCRAP
+sealed class AlbumFilter: Parcelable {
+    @Parcelize
+    data object All: AlbumFilter()
+    @Parcelize
+    data object Scrap: AlbumFilter()
+    @Parcelize
+    data class User(val id: String): AlbumFilter()
 }

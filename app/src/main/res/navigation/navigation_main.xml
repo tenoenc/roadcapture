@@ -89,6 +89,6 @@
               android:label="SearchFragment"
               tools:layout="@layout/fragment_search">
         <action android:id="@+id/action_search_to_album" app:destination="@id/albumFragment"/>
-        <argument android:name="albumFilter" app:argType="com.tenacy.roadcapture.data.firebase.AlbumFilter" />
+        <argument android:name="albumFilter" app:argType="com.tenacy.roadcapture.data.firebase.SearchFilter" />
     </fragment>
 </navigation>

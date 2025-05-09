@@ -88,3 +88,6 @@ sealed class AlbumViewEvent: ViewEvent {
 sealed class SearchViewEvent: ViewEvent {
     data class SearchError(val message: String) : SearchViewEvent()
 }
+
+sealed class AlbumTabViewEvent: ViewEvent
+sealed class MemoryTabViewEvent: ViewEvent

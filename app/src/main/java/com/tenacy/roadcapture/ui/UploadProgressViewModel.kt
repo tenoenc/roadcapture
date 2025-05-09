@@ -145,6 +145,7 @@ class UploadProgressViewModel @Inject constructor(
                         "addressTags" to memory.addressTags,
                         "formattedAddress" to memory.formattedAddress,
                         "albumRef" to albumRef,
+                        "userRef" to userRef,
                         "locationRef" to locationRefByMemoryId[memoryWithLocation.location.id]!!,
                         "createdAt" to Timestamp(memory.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
                     )
@@ -159,7 +160,7 @@ class UploadProgressViewModel @Inject constructor(
                     "scrapCount" to 0,
                     "regionTags" to regionTags,
                     "isPublic" to args.isPublic,
-                    "userId" to user!!.uid,
+                    "userRef" to userRef,
                     "userDisplayName" to user!!.displayName,
                     "userPhotoUrl" to user!!.photoUrl,
                     "memoryAddressTags" to memoryAddressTags.toList(),

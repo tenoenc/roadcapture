@@ -127,7 +127,7 @@ class SearchFragment: BaseFragment() {
             vm.pagingData.collectLatest { pagingData ->
                 albumAdapter.submitData(
                     pagingData.map {
-                        AlbumItem(
+                        AlbumItem.General(
                             value = it,
                             onItemClick = {
                                 Log.d("SearchFragment", "Item Clicked!")

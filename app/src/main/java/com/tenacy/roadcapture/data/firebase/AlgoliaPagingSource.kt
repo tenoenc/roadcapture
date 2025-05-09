@@ -9,7 +9,7 @@ import com.tenacy.roadcapture.ui.dto.Album
 class AlgoliaPagingSource(
     private val algoliaManager: AlgoliaManager,
     private val query: String,
-    private val filter: AlbumFilter,
+    private val filter: SearchFilter,
 ) : PagingSource<Int, Album>() {
 
     companion object {

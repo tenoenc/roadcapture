@@ -8,6 +8,7 @@ import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FieldPath
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
+import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.data.firebase.dto.SearchResponse
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.db
@@ -102,19 +103,19 @@ class AlgoliaManager @Inject constructor() {
 
     suspend fun searchAndFetchAlbums(
         query: String,
-        filter: AlbumFilter,
+        filter: SearchFilter,
         page: Int = 0,
         loadSize: Int = 0,
     ): List<Album> {
         return when(filter) {
-            AlbumFilter.ALL -> {
+            is SearchFilter.All -> {
                 val response = searchAlbums(query, page, loadSize)
                 // 로그 추가
                 Log.d("AlgoliaManager", "검색 결과: 총 ${response.nbHits}개, 페이지 ${response.page}/${response.nbPages}")
                 val albumIds = response.hits.map { hit -> hit.getString("objectID") }
                 fetchAlbums(albumIds, loadSize)
             }
-            else -> {
+            is SearchFilter.Scrap -> {
                 val hits = searchAllAlbum(query)
                 val albumIds = hits.map { hit -> hit.getString("objectID") }
                 fetchScrapedAlbums(albumIds, page, loadSize)

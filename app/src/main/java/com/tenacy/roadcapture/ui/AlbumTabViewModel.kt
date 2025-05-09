@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -10,21 +11,22 @@ import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
-
+class AlbumTabViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
+
+    private val params: AlbumTabFragment.ParamsIn? = savedStateHandle.get<AlbumTabFragment.ParamsIn>(AlbumTabFragment.KEY_PARAMS)
+    private val userId: String = params?.userId ?: ""
 
     // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
     private val pagingSourceFactory = {
-        AlbumPagingSource(filter = AlbumFilter.All)
+        AlbumPagingSource(filter = AlbumFilter.User(userId))
     }
 
     // 페이징 설정 최적화
@@ -50,11 +52,5 @@ class HomeViewModel @Inject constructor(
     fun setRefreshing(refreshing: Boolean) {
         _isRefreshing.value = refreshing
         Log.d("HomeViewModel", "리프레싱 상태 변경: $refreshing")
-    }
-
-    fun onSearchClick() {
-        viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(HomeViewEvent.Search)
-        }
     }
 }

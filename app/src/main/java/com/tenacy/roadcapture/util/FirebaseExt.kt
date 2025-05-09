@@ -73,7 +73,7 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val scrapCount = getLong("scrapCount")?.toInt() ?: 0
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
     val isPublic = getBoolean("isPublic") ?: false
-    val userId = getString("userId") ?: ""
+    val userId = getDocumentReference("userRef")?.id ?: ""
     val userDisplayName = getString("userDisplayName") ?: ""
     val userPhotoUrl = getString("userPhotoUrl") ?: ""
 

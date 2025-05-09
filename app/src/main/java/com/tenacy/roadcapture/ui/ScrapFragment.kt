@@ -13,7 +13,7 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.firebase.AlbumFilter
+import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentScrapBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -238,7 +238,7 @@ class ScrapFragment: BaseFragment() {
                 Log.d("ScrapFragment", "새 페이징 데이터 수신")
                 albumAdapter.submitData(
                     pagingData.map {
-                        AlbumItem(
+                        AlbumItem.General(
                             value = it,
                             onItemClick = {
                                 Log.d("ScrapFragment", "Item Clicked!")
@@ -267,7 +267,7 @@ class ScrapFragment: BaseFragment() {
     private fun handleViewEvents(event: ScrapViewEvent) {
         when (event) {
             is ScrapViewEvent.Search -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToSearch(AlbumFilter.SCRAP))
+                findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.Scrap))
             }
         }
     }

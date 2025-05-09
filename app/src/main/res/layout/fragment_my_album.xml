@@ -1,24 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
         <variable name="vm" type="com.tenacy.roadcapture.ui.MyAlbumViewModel"/>
+        <import type="android.view.View" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_my_album_container"
-                                                       android:layout_width="match_parent"
-                                                       android:layout_height="match_parent"
-                                                       android:background="@color/background_normal">
+    <androidx.coordinatorlayout.widget.CoordinatorLayout android:id="@+id/cl_my_album_container"
+                                                         android:layout_width="match_parent"
+                                                         android:layout_height="match_parent"
+                                                         android:visibility="@{vm.isUserVisible ? View.VISIBLE : View.GONE}"
+                                                         tools:visibility="visible"
+                                                         android:background="@color/background_normal">
 
-        <TextView android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:text="MyAlbumFragment"
-                  app:layout_constraintStart_toStartOf="parent"
-                  app:layout_constraintEnd_toEndOf="parent"
-                  app:layout_constraintTop_toTopOf="parent"
-                  app:layout_constraintBottom_toBottomOf="parent"/>
+        <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent"
+                                                         android:layout_height="wrap_content"
+                                                         android:background="@color/background_normal"
+                                                         app:liftOnScroll="false">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                               android:layout_height="match_parent"
+                                                               android:id="@+id/cl_my_album_header"
+                                                               android:orientation="horizontal"
+                                                               android:layout_marginHorizontal="20dp"
+                                                               android:layout_marginTop="20dp"
+                                                               app:layout_scrollFlags="scroll|enterAlways">
+
+                <ImageView android:layout_width="60dp"
+                           android:layout_height="60dp"
+                           android:id="@+id/cl_my_album_hedaer_profile"
+                           tools:src="@drawable/profile_image"
+                           app:url="@{vm.photoUrl}"
+                           app:radius="@{100}"
+                           app:layout_constraintTop_toTopOf="parent"
+                           app:layout_constraintStart_toStartOf="parent"
+                           app:layout_constraintBottom_toBottomOf="parent"/>
+
+                <TextView android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_my_album_header_username"
+                          android:textAppearance="@style/Title_20"
+                          android:textColor="@color/label_normal"
+                          android:text="@{vm.displayName}"
+                          tools:text="purifree"
+                          android:layout_marginStart="10dp"
+                          app:layout_constraintVertical_chainStyle="packed"
+                          app:layout_constraintBottom_toTopOf="@id/txt_my_album_header_description"
+                          app:layout_constraintEnd_toStartOf="@id/ibtn_my_album_header_more"
+                          app:layout_constraintStart_toEndOf="@id/cl_my_album_hedaer_profile"
+                          app:layout_constraintTop_toTopOf="parent"/>
+
+                <ImageButton android:layout_width="24dp"
+                             android:layout_height="24dp"
+                             android:id="@+id/ibtn_my_album_header_more"
+                             android:src="@drawable/ic_more_vertical"
+                             android:background="@null"
+                             android:scaleType="fitCenter"
+                             app:layout_constraintTop_toTopOf="@id/txt_my_album_header_username"
+                             app:layout_constraintBottom_toBottomOf="@id/txt_my_album_header_username"
+                             app:layout_constraintEnd_toEndOf="parent"/>
+
+                <TextView android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_my_album_header_description"
+                          android:textAppearance="@style/Body_10_M"
+                          android:textColor="@color/label_normal"
+                          android:text="@{vm.scrapText}"
+                          tools:text="앨범이 902번 스크랩 되었어요"
+                          app:layout_constraintStart_toStartOf="@id/txt_my_album_header_username"
+                          app:layout_constraintEnd_toStartOf="@id/ibtn_my_album_header_more"
+                          app:layout_constraintTop_toBottomOf="@id/txt_my_album_header_username"
+                          app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <com.google.android.material.tabs.TabLayout android:layout_width="match_parent"
+                                                        android:layout_height="wrap_content"
+                                                        android:id="@+id/tl_my_album"
+                                                        android:background="@color/background_normal"
+                                                        android:paddingHorizontal="10dp"
+                                                        app:tabIndicator="@null"
+                                                        app:tabSelectedTextColor="@color/label_normal"
+                                                        app:tabTextAppearance="@style/Title_16"
+                                                        app:tabTextColor="@color/label_disable"
+                                                        app:layout_scrollFlags="noScroll">
+
+            </com.google.android.material.tabs.TabLayout>
+
+            <View android:layout_width="match_parent"
+                  android:layout_height="1dp"
+                  android:background="@color/line_normal"
+                  app:layout_scrollFlags="noScroll"/>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.viewpager2.widget.ViewPager2 android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:id="@+id/vp_my_album"
+                                               app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

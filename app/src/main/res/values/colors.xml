@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#ffffff</color>
+
     <color name="primary_normal">#80F0D4</color>
     <color name="primary_strong">#70E3CF</color>
     <color name="primary_strong_a50">#7F70E3CF</color>
@@ -19,4 +21,6 @@
     <color name="fill_assistive">#E4F5F0</color>
     <color name="fill_alternative">#CEEAE5</color>
     <color name="fill_neutral">#B3D9D1</color>
+
+    <color name="cover">#33384845</color>
 </resources>
