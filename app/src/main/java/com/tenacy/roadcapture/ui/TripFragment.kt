@@ -835,7 +835,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 }
 
                 return UCrop.of(input.first, input.second)
-                    .withAspectRatio(16f, 9f)
+                    .withAspectRatio(1f, 1f)
                     .withOptions(options)
                     .getIntent(context)
             }
