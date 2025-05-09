@@ -7,7 +7,6 @@ import com.algolia.search.saas.Index
 import com.algolia.search.saas.Query
 import com.google.firebase.firestore.FieldPath
 import com.tenacy.roadcapture.BuildConfig
-import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.data.firebase.dto.SearchResponse
 import com.tenacy.roadcapture.ui.dto.Album
@@ -202,15 +201,26 @@ class AlgoliaManager @Inject constructor() {
 
                 // 스크랩 정보 먼저 확인
                 val scrapedIds = if (chunk.isNotEmpty()) {
-                    val scrapSnapshot = db.collection("scraps")
-                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
-                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
+//                    val scrapSnapshot = db.collection("scraps")
+//                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
+//                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
+//                        .get()
+//                        .await()
+
+//                scrapSnapshot.documents
+//                    .mapNotNull { it.getDocumentReference("albumRef")?.id }
+//                    .toSet()
+
+                    val scrapSnapshot = db.collection("users").document(user!!.uid)
+                        .collection("scraps")
+                        .whereIn(FieldPath.documentId(), chunk)
                         .get()
                         .await()
 
                     scrapSnapshot.documents
-                        .mapNotNull { it.getDocumentReference("albumRef")?.id }
+                        .mapNotNull { it.id }
                         .toSet()
+
                 } else {
                     emptySet()
                 }

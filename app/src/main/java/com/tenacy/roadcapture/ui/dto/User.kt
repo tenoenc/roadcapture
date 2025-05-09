@@ -27,6 +27,7 @@ data class User(
             photoName = user.photoName,
             photoUrl = user.photoUrl,
             provider = user.provider,
+            scrapCount = user.scrapCount,
             createdAt = user.createdAt,
             updatedAt = user.updatedAt,
             albumCount = albumCount,

@@ -183,6 +183,7 @@ class AlbumViewModel @Inject constructor(
                             }
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(-1))
+                            transaction.update(userRef, "scrapCount", FieldValue.increment(-1))
 
                             false
                         } else {
@@ -193,12 +194,11 @@ class AlbumViewModel @Inject constructor(
                             transaction.set(newScrapRef, mapOf(
                                 "albumRef" to albumRef,
                                 "userRef" to userRef,
-                                "albumId" to albumId, // 검색용 필드
-                                "userId" to userId, // 검색용 필드
                                 "createdAt" to FieldValue.serverTimestamp(),
                             ))
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(1))
+                            transaction.update(userRef, "scrapCount", FieldValue.increment(1))
 
                             true
                         }
@@ -213,16 +213,16 @@ class AlbumViewModel @Inject constructor(
             }.catch { exception ->
                 Log.e("AlbumViewModel", "에러", exception)
             }.flowOn(Dispatchers.IO)
-                .collectLatest { isScraped ->
-                    _scraped.update {
+                .collectLatest { nextScraped ->
+                    _scraped.update { currentScraped ->
                         _scrapCount.update { count ->
-                            if(it != isScraped) {
-                                (count + if(isScraped) 1 else -1).coerceAtLeast(0)
+                            if(currentScraped != nextScraped) {
+                                (count + if(nextScraped) 1 else -1).coerceAtLeast(0)
                             } else {
                                 count
                             }
                         }
-                        isScraped
+                        nextScraped
                     }
 
                     isScrapProcessing = false

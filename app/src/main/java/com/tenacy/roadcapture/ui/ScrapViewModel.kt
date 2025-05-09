@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -40,7 +41,9 @@ class ScrapViewModel @Inject constructor(
     )
 
     // 앨범 데이터 Flow
-    val albums: Flow<PagingData<Album>> = pager.flow.cachedIn(viewModelScope)
+    val albums: Flow<PagingData<Album>> = pager.flow
+        .flowOn(Dispatchers.IO)
+        .cachedIn(viewModelScope)
 
     // 새로고침 상태 관리
     private val _isRefreshing = MutableStateFlow(false)

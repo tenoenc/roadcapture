@@ -48,7 +48,7 @@ class MyAlbumViewModel @Inject constructor(
         fetchData()
     }
 
-    private fun fetchData() {
+    fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userId = auth.currentUser!!.uid

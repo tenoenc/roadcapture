@@ -27,6 +27,9 @@ class AlbumTabFragment: BaseFragment() {
     private var _binding: TabAlbumBinding? = null
     val binding get() = _binding!!
 
+    private val pVm: MyAlbumViewModel by viewModels(
+       ownerProducer = { requireParentFragment() }
+    )
     private val vm: AlbumTabViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
@@ -117,6 +120,7 @@ class AlbumTabFragment: BaseFragment() {
         // 어댑터 리프레시 호출
         Log.d("AlbumTabFragment", "어댑터 리프레시 호출")
         albumAdapter.refresh()
+        pVm.fetchData()
     }
 
     private fun setupObservers() {

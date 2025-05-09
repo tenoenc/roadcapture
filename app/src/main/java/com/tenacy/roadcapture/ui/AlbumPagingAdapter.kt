@@ -171,8 +171,8 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
             binding.profileImageUrl = item.value.user.photoUrl
             binding.username = item.value.user.displayName
             binding.title = item.value.title
+            binding.numericalText = getNumericalText(item)
 
-            binding.txtIAlbumRow1Numeric.text = getNumericalText(item)
             binding.llIAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
 
             binding.clIAlbumTouchContainer.setOnClickListener {
@@ -211,7 +211,7 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
                             }
 
                             "time", "scraped" -> {
-                                binding.txtIAlbumRow1Numeric.text = getNumericalText(item)
+                                binding.numericalText = getNumericalText(item)
                             }
                         }
                     }
@@ -257,7 +257,7 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
                             }
 
                             "time", "scraped" -> {
-                                getNumericalText(item)
+                                binding.numericalText = getNumericalText(item)
                             }
                         }
                     }
