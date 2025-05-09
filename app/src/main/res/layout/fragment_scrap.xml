@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.ScrapViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_scrap_container"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent"
+                                                       android:background="@color/background_normal">
+
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="0dp"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/cl_scrap_a_bar"
+                                                           android:minHeight="36dp"
+                                                           android:paddingHorizontal="20dp"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           app:layout_constraintTop_toTopOf="parent"
+                                                           app:layout_constraintStart_toStartOf="parent">
+
+            <!--
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:textAppearance="@style/Title_20"
+                                  android:textColor="@color/label_normal"
+                                  android:text="R_"
+                                  app:layout_constraintStart_toStartOf="parent"
+                                  app:layout_constraintBottom_toBottomOf="parent"
+                                  app:layout_constraintTop_toTopOf="parent"/>
+            -->
+
+            <ImageView android:layout_width="wrap_content"
+                       android:layout_height="20dp"
+                       android:src="@drawable/ic_logo"
+                       android:adjustViewBounds="true"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton android:layout_width="24dp"
+                         android:layout_height="24dp"
+                         android:background="@null"
+                         android:src="@drawable/ic_search"
+                         android:scaleType="fitCenter"
+                         android:onClick="@{() -> vm.onSearchClick()}"
+                         app:layout_constraintTop_toTopOf="parent"
+                         app:layout_constraintBottom_toBottomOf="parent"
+                         app:layout_constraintEnd_toEndOf="parent"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View android:layout_width="wrap_content"
+              android:layout_height="1dp"
+              android:id="@+id/view_scrap_1"
+              android:background="@color/line_normal"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintTop_toBottomOf="@id/cl_scrap_a_bar"/>
+
+        <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_layout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/view_scrap_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <include layout="@layout/item_album_shimmer"/>
+                <include layout="@layout/item_album_shimmer"/>
+                <include layout="@layout/item_album_shimmer"/>
+                <include layout="@layout/item_album_shimmer"/>
+                <include layout="@layout/item_album_shimmer"/>
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/swipe_refresh_layout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintTop_toBottomOf="@id/view_scrap_1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/rv_scrap_albums"
+                    android:clipToPadding="false"
+                    android:paddingBottom="16dp"
+                    tools:listitem="@layout/item_album"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

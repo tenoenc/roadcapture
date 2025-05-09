@@ -86,7 +86,8 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
                 return oldItem.value.user == newItem.value.user &&
                         oldItem.value.viewCount == newItem.value.viewCount &&
                         oldItem.value.title == newItem.value.title &&
-                        oldItem.value.regionTags == newItem.value.regionTags
+                        oldItem.value.regionTags == newItem.value.regionTags &&
+                        oldItem.value.isScraped == newItem.value.isScraped
             }
 
             override fun getChangePayload(oldItem: AlbumItem, newItem: AlbumItem): Any? {
@@ -108,6 +109,10 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
                     payload.add("regionTags")
                 }
 
+                if (oldItem.value.isScraped != newItem.value.isScraped) {
+                    payload.add("scraped")
+                }
+
                 // 시간은 항상 변경되므로 페이로드에 포함
                 payload.add("time")
 
@@ -120,17 +125,13 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumCo
 class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.ViewHolder(binding.root) {
 
     fun bind(album: AlbumItem) {
-        val currentTimeStamp = LocalDateTime.now().toTimestamp()
-        val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
-        val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
-
         binding.thumbnailUrl = album.value.thumbnailUrl
         binding.profileImageUrl = album.value.user.photoUrl
         binding.username = album.value.user.displayName
-        binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
         binding.title = album.value.title
         binding.scraped = album.value.isScraped
 
+        updateNumericalText(album)
         setItemsToLayout(extractUniqueLocations(album.value.regionTags))
 
         binding.root.setOnClickListener {
@@ -168,7 +169,7 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
                             setItemsToLayout(extractUniqueLocations(album.value.regionTags))
                         }
 
-                        "time" -> updateNumericalText(album)
+                        "time", "scraped" -> updateNumericalText(album)
                     }
                 }
             }
@@ -179,7 +180,13 @@ class AlbumViewHolder(private val binding: ItemAlbumBinding) : RecyclerView.View
         val currentTimeStamp = LocalDateTime.now().toTimestamp()
         val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
         val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
-        binding.numericalText = "조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전"
+        binding.numericalText = StringBuilder().let { sb ->
+            if(album.value.isScraped) {
+                sb.append("스크랩됨 · ")
+            }
+            sb.append("조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전")
+            sb.toString()
+        }
     }
 
     private fun extractUniqueLocations(locations: List<Map<String, String>>): List<String> {

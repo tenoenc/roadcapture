@@ -25,7 +25,7 @@ class CustomBottomNavigation @JvmOverloads constructor(
     // 네비게이션 아이템 ID를 뷰 ID에 매핑
     private val navigationMap = mapOf(
         R.id.homeFragment to R.id.bn_home,
-        R.id.albumMarkedFragment to R.id.bn_album_marked,
+        R.id.scrapFragment to R.id.bn_scrap,
         R.id.myAlbumFragment to R.id.bn_my_album,
         R.id.appInfoFragment to R.id.bn_app_info,
     )
@@ -45,8 +45,8 @@ class CustomBottomNavigation @JvmOverloads constructor(
         }
 
         // 북마크 버튼 클릭 리스너
-        binding.bnAlbumMarked.setOnClickListener {
-            navigateTo(R.id.albumMarkedFragment)
+        binding.bnScrap.setOnClickListener {
+            navigateTo(R.id.scrapFragment)
         }
 
         // 새 아이템 버튼 클릭 리스너
@@ -114,7 +114,7 @@ class CustomBottomNavigation @JvmOverloads constructor(
         navigationMap[destinationId]?.let { viewId ->
             when (viewId) {
                 R.id.bn_home -> updateHomeSelection(true)
-                R.id.bn_album_marked -> updateAlbumMarkedSelection(true)
+                R.id.bn_scrap -> updateScrapSelection(true)
                 R.id.bn_my_album -> updateAlbumSelection(true)
                 R.id.bn_app_info -> updateAppInfoSelection(true)
             }
@@ -128,7 +128,7 @@ class CustomBottomNavigation @JvmOverloads constructor(
      */
     private fun resetAllSelections() {
         updateHomeSelection(false)
-        updateAlbumMarkedSelection(false)
+        updateScrapSelection(false)
         updateAlbumSelection(false)
         updateAppInfoSelection(false)
     }
@@ -145,10 +145,10 @@ class CustomBottomNavigation @JvmOverloads constructor(
     /**
      * 북마크 메뉴 선택 상태 업데이트
      */
-    private fun updateAlbumMarkedSelection(isSelected: Boolean) {
+    private fun updateScrapSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_book_marked_selected else R.drawable.ic_book_marked
 
-        binding.bnAlbumMarked.findViewById<ImageView>(R.id.img_bn_album_marked)?.setImageResource(iconResource)
+        binding.bnScrap.findViewById<ImageView>(R.id.img_bn_scrap)?.setImageResource(iconResource)
     }
 
     /**

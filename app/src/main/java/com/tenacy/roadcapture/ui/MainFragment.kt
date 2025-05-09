@@ -13,8 +13,8 @@ import androidx.viewpager2.widget.ViewPager2
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
-import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.mainActivity
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -35,7 +35,7 @@ class MainFragment: BaseFragment() {
             // 바텀 네비게이션 아이템 선택 상태 업데이트
             val destinationId = when(position) {
                 0 -> R.id.homeFragment
-                1 -> R.id.albumMarkedFragment
+                1 -> R.id.scrapFragment
                 2 -> R.id.myAlbumFragment
                 3 -> R.id.appInfoFragment
                 else -> R.id.homeFragment
@@ -119,7 +119,7 @@ class MainFragment: BaseFragment() {
         binding.bottomNav.setupWithCustomNavigation { destinationId ->
             val position = when(destinationId) {
                 R.id.homeFragment -> 0
-                R.id.albumMarkedFragment -> 1
+                R.id.scrapFragment -> 1
                 R.id.myAlbumFragment -> 2
                 R.id.appInfoFragment -> 3
                 else -> 0
@@ -172,7 +172,7 @@ class MainFragment: BaseFragment() {
         override fun createFragment(position: Int): Fragment {
             return when(position) {
                 0 -> HomeFragment()
-                1 -> AlbumMarkedFragment()
+                1 -> ScrapFragment()
                 2 -> MyAlbumFragment()
                 3 -> AppInfoFragment()
                 else -> HomeFragment()

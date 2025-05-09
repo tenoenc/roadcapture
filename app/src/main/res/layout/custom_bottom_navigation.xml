@@ -39,23 +39,23 @@
             <LinearLayout android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:layout_weight="1"
-                          android:id="@+id/bn_album_marked"
+                          android:id="@+id/bn_scrap"
                           android:orientation="vertical"
                           android:gravity="center"
                           android:layout_marginHorizontal="4dp">
 
                 <ImageView android:layout_width="24dp"
                            android:layout_height="24dp"
-                           android:id="@+id/img_bn_album_marked"
+                           android:id="@+id/img_bn_scrap"
                            android:src="@drawable/ic_book_marked"/>
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:id="@+id/txt_bn_album_marked"
+                          android:id="@+id/txt_bn_scrap"
                           android:includeFontPadding="false"
                           android:textAppearance="@style/Body_10_M"
                           android:textColor="@color/label_normal"
-                          android:text="북마크"
+                          android:text="스크랩"
                           android:layout_marginTop="2dp"/>
 
             </LinearLayout>

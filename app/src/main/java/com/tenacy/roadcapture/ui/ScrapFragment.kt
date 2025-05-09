@@ -14,22 +14,20 @@ import androidx.paging.map
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
-import com.tenacy.roadcapture.databinding.FragmentHomeBinding
+import com.tenacy.roadcapture.databinding.FragmentScrapBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
 
-@AndroidEntryPoint
-class HomeFragment: BaseFragment() {
+class ScrapFragment: BaseFragment() {
 
-    private var _binding: FragmentHomeBinding? = null
+    private var _binding: FragmentScrapBinding? = null
     val binding get() = _binding!!
 
-    private val vm: HomeViewModel by viewModels()
+    private val vm: ScrapViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
 
@@ -42,7 +40,7 @@ class HomeFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentScrapBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -69,23 +67,23 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvHomeAlbums.adapter = albumAdapter.withLoadStateFooter(
+        binding.rvScrapAlbums.adapter = albumAdapter.withLoadStateFooter(
             footer = AlbumLoadStateAdapter()
         )
-        binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
-        binding.rvHomeAlbums.setHasFixedSize(true)
+        binding.rvScrapAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
+        binding.rvScrapAlbums.setHasFixedSize(true)
 
         // 어댑터 상태 리스너 추가
         albumAdapter.addLoadStateListener { combinedLoadStates ->
-            Log.d("HomeFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
+            Log.d("ScrapFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
 
             // 추가 페이지 로드 상태 확인
             val appendState = combinedLoadStates.append
-            Log.d("HomeFragment", "어펜드 상태: $appendState")
+            Log.d("ScrapFragment", "어펜드 상태: $appendState")
 
             // 리프레시 상태 확인
             val refreshState = combinedLoadStates.refresh
-            Log.d("HomeFragment", "리프레시 상태: $refreshState")
+            Log.d("ScrapFragment", "리프레시 상태: $refreshState")
         }
 
         repeatOnLifecycle {
@@ -129,7 +127,7 @@ class HomeFragment: BaseFragment() {
 
         // 새로고침 리스너 설정
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.d("HomeFragment", "사용자 제스처로 데이터 새로고침 시작")
+            Log.d("ScrapFragment", "사용자 제스처로 데이터 새로고침 시작")
             refreshData()
         }
     }
@@ -139,7 +137,7 @@ class HomeFragment: BaseFragment() {
         vm.setRefreshing(true)
 
         // 어댑터 리프레시 호출
-        Log.d("HomeFragment", "어댑터 리프레시 호출")
+        Log.d("ScrapFragment", "어댑터 리프레시 호출")
         albumAdapter.refresh()
     }
 
@@ -180,27 +178,27 @@ class HomeFragment: BaseFragment() {
 
                     if(isRefreshComplete && albumAdapter.itemCount > 0) {
                         vm.setRefreshing(false)
-                        Log.d("HomeFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
+                        Log.d("ScrapFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
 
                         // 새로고침 완료 후 맨 위로 스크롤
-                        binding.rvHomeAlbums.scrollToPosition(0)
+                        binding.rvScrapAlbums.scrollToPosition(0)
                     }
                 }
 
                 // 추가 데이터 로딩 상태 (무한 스크롤)
                 when (val append = loadStates.append) {
                     is LoadState.Loading -> {
-                        Log.d("HomeFragment", "추가 데이터 로딩 중...")
+                        Log.d("ScrapFragment", "추가 데이터 로딩 중...")
                     }
                     is LoadState.NotLoading -> {
                         if (append.endOfPaginationReached) {
-                            Log.d("HomeFragment", "모든 데이터 로드 완료 (페이징 끝)")
+                            Log.d("ScrapFragment", "모든 데이터 로드 완료 (페이징 끝)")
                         } else {
-                            Log.d("HomeFragment", "추가 데이터 로드 완료")
+                            Log.d("ScrapFragment", "추가 데이터 로드 완료")
                         }
                     }
                     is LoadState.Error -> {
-                        Log.e("HomeFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
+                        Log.e("ScrapFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
                     }
                 }
 
@@ -210,7 +208,7 @@ class HomeFragment: BaseFragment() {
                         && albumAdapter.itemCount < 1)
 
                 if (isEmptyAfterLoading) {
-                    Log.d("HomeFragment", "데이터가 비어있음")
+                    Log.d("ScrapFragment", "데이터가 비어있음")
                     // 여기에 빈 상태 화면 표시 로직 추가
                 }
 
@@ -224,7 +222,7 @@ class HomeFragment: BaseFragment() {
 
                 errorState?.let {
                     // 에러 상태 처리
-                    Log.e("HomeFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
+                    Log.e("ScrapFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
                     binding.swipeRefreshLayout.isRefreshing = false
                     vm.setRefreshing(false)
                     wasRefreshing = false
@@ -237,17 +235,17 @@ class HomeFragment: BaseFragment() {
         // 페이징 데이터 관찰
         repeatOnLifecycle {
             vm.albums.collectLatest { pagingData ->
-                Log.d("HomeFragment", "새 페이징 데이터 수신")
+                Log.d("ScrapFragment", "새 페이징 데이터 수신")
                 albumAdapter.submitData(
                     pagingData.map {
                         AlbumItem(
                             value = it,
                             onItemClick = {
-                                Log.d("HomeFragment", "Item Clicked!")
+                                Log.d("ScrapFragment", "Item Clicked!")
                                 findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id))
                             },
                             onProfileClick = {
-                                Log.d("HomeFragment", "Profile Clicked!")
+                                Log.d("ScrapFragment", "Profile Clicked!")
                             },
                         )
                     }
@@ -260,16 +258,16 @@ class HomeFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? HomeViewEvent)?.let { handleViewEvents(it) }
+                    (event as? ScrapViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: HomeViewEvent) {
+    private fun handleViewEvents(event: ScrapViewEvent) {
         when (event) {
-            is HomeViewEvent.Search -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToSearch(AlbumFilter.ALL))
+            is ScrapViewEvent.Search -> {
+                findNavController().navigate(MainFragmentDirections.actionMainToSearch(AlbumFilter.SCRAP))
             }
         }
     }

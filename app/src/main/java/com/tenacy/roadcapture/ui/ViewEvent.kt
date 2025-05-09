@@ -30,7 +30,9 @@ sealed class HomeViewEvent: ViewEvent {
 
 sealed class AppInfoViewEvent: ViewEvent
 
-sealed class AlbumMarkedViewEvent: ViewEvent
+sealed class ScrapViewEvent: ViewEvent {
+    data object Search: ScrapViewEvent()
+}
 
 sealed class MyAlbumViewEvent: ViewEvent
 
