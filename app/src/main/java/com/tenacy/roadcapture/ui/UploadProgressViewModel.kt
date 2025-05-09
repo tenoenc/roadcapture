@@ -115,18 +115,8 @@ class UploadProgressViewModel @Inject constructor(
                 sendWithDelay(AlbumSaveState.SavingToFirestore)
 
                 val (_, thumbnailUrl) = photoUrlMap[memories.firstOrNull()?.memory?.id]!!
-
-                val albumData = hashMapOf(
-                    "title" to albumTitle,
-                    "createdAt" to Timestamp(startTime.toEpochSecond(ZoneOffset.UTC), 0),
-                    "endedAt" to Timestamp(endTime.toEpochSecond(ZoneOffset.UTC), 0),
-                    "thumbnailUrl" to thumbnailUrl,
-                    "viewCount" to 0,
-                    "scrapCount" to 0,
-                    "regionTags" to regionTags,
-                    "userRef" to userRef,
-                    "isPublic" to args.isPublic,
-                )
+                val memoryAddressTags = hashSetOf<String>()
+                val memoryPlaceNames = hashSetOf<String>()
 
                 val locationsData = locations.map { location ->
                     mapOf(
@@ -144,6 +134,9 @@ class UploadProgressViewModel @Inject constructor(
                     val (storagePath, uploadedPhotoUrl) = photoUrlMap[memory.id]
                         ?: throw IllegalStateException("Missing uploaded URL for memory ${memory.id}")
 
+                    memoryAddressTags.addAll(memory.addressTags)
+                    memory.placeName?.let(memoryPlaceNames::add)
+
                     mapOf(
                         "content" to memory.content,
                         "photoUrl" to uploadedPhotoUrl,
@@ -156,6 +149,22 @@ class UploadProgressViewModel @Inject constructor(
                         "createdAt" to Timestamp(memory.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
                     )
                 }
+
+                val albumData = hashMapOf(
+                    "title" to albumTitle,
+                    "createdAt" to Timestamp(startTime.toEpochSecond(ZoneOffset.UTC), 0),
+                    "endedAt" to Timestamp(endTime.toEpochSecond(ZoneOffset.UTC), 0),
+                    "thumbnailUrl" to thumbnailUrl,
+                    "viewCount" to 0,
+                    "scrapCount" to 0,
+                    "regionTags" to regionTags,
+                    "isPublic" to args.isPublic,
+                    "userId" to user!!.uid,
+                    "userDisplayName" to user!!.displayName,
+                    "userPhotoUrl" to user!!.photoUrl,
+                    "memoryAddressTags" to memoryAddressTags.toList(),
+                    "memoryPlaceNames" to memoryPlaceNames.toList(),
+                )
 
                 // 모든 배치 작업 목록 생성
                 val allOperations = mutableListOf<BatchOperation>()

@@ -13,12 +13,12 @@
         android:fillType="evenOdd"/>
     <path
         android:pathData="M27,20H17.357L15.858,17.188H27V20Z"
-        android:fillColor="#80F0D4"/>
+        android:fillColor="@color/primary_normal"/>
     <path
         android:pathData="M33,11.048H15.061C15.67,10.243 16.088,9.295 16.309,8.235H33V11.048Z"
-        android:fillColor="#80F0D4"/>
+        android:fillColor="@color/primary_normal"/>
     <path
         android:pathData="M27,2.813H15.722C15.385,2.116 14.938,1.484 14.373,0.939C14,0.579 13.586,0.267 13.135,0H27V2.813Z"
-        android:fillColor="#80F0D4"/>
+        android:fillColor="@color/primary_normal"/>
   </group>
 </vector>

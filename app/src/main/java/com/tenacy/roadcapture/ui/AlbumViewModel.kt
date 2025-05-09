@@ -101,13 +101,12 @@ class AlbumViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userRef = db.collection("users").document(user!!.uid)
-                val firebaseUser = userRef.get().await().toUser()
                 val albumRef = db.collection("albums").document(albumId)
                 val firebaseAlbum = albumRef.get().await().toAlbum()
                 val userScrapRef = userRef.collection("scraps").document(albumId)
                 val userScrap = userScrapRef.get().await()
 
-                val album = Album.from(firebaseAlbum, firebaseUser, userScrap.exists())
+                val album = Album.from(firebaseAlbum, userScrap.exists())
                 _album.emit(album)
                 _scraped.emit(album.isScraped)
                 _scrapCount.emit(album.scrapCount)
@@ -153,8 +152,7 @@ class AlbumViewModel @Inject constructor(
             flow {
                 isScrapProcessing = true
 
-                val currentUser = auth.currentUser ?: throw Exception("User not logged in")
-                val userId = currentUser.uid
+                val userId = user!!.uid
 
                 // 참조 생성
                 val albumRef = db.collection("albums").document(albumId)
@@ -195,7 +193,9 @@ class AlbumViewModel @Inject constructor(
                             transaction.set(newScrapRef, mapOf(
                                 "albumRef" to albumRef,
                                 "userRef" to userRef,
-                                "createdAt" to FieldValue.serverTimestamp()
+                                "albumId" to albumId, // 검색용 필드
+                                "userId" to userId, // 검색용 필드
+                                "createdAt" to FieldValue.serverTimestamp(),
                             ))
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(1))

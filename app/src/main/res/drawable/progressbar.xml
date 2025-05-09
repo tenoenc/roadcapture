@@ -9,7 +9,7 @@
     <item>
         <clip>
             <shape>
-                <solid android:color="@color/primary" /> <!-- 진행 부분 색 -->
+                <solid android:color="@color/primary_strong" /> <!-- 진행 부분 색 -->
                 <corners android:radius="100dp" />
             </shape>
         </clip>

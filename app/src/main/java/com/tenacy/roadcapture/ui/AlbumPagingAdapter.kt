@@ -25,6 +25,7 @@ data class AlbumItem(
     val onProfileClick: () -> Unit,
 ) : Parcelable
 
+
 class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder>(AlbumComparator) {
 
     private var recyclerView: RecyclerView? = null

@@ -102,22 +102,6 @@ class AlbumPagingSource(
             val lastDocument = albumDocuments.lastOrNull()
             Log.d(TAG, "마지막 문서 ID: ${lastDocument?.id}")
 
-            // 결과 매핑 및 반환
-            val userIds = albumDocuments.mapNotNull { doc ->
-                doc.getDocumentReference("userRef")?.id
-            }.distinct()
-
-            val usersSnapshot = db.collection("users")
-                .whereIn(FieldPath.documentId(), userIds)
-                .get()
-                .await()
-            val userDocuments = usersSnapshot.documents
-
-
-            val usersById = userDocuments.associate { doc ->
-                doc.id to doc.toUser()
-            }
-
             val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                 // 특정 앨범들에 대한 스크랩 상태만 조회
                 val scrapQuery = db.collection("scraps")
@@ -134,10 +118,8 @@ class AlbumPagingSource(
             }
 
             val albums = albumDocuments.map { doc ->
-                val userRefId = doc.getDocumentReference("userRef")?.id
-                val user = usersById[userRefId]!!
                 val album = doc.toAlbum()
-                Album.from(album, user, scrapedByAlbumId.contains(album.id))
+                Album.from(album, scrapedByAlbumId.contains(album.id))
             }
 
             // 앨범 ID 출력

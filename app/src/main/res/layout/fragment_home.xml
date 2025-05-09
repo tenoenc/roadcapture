@@ -15,8 +15,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="0dp"
                                                            android:layout_height="wrap_content"
                                                            android:id="@+id/cl_home_a_bar"
+                                                           android:minHeight="36dp"
                                                            android:paddingHorizontal="20dp"
-                                                           android:paddingVertical="4dp"
                                                            app:layout_constraintEnd_toEndOf="parent"
                                                            app:layout_constraintTop_toTopOf="parent"
                                                            app:layout_constraintStart_toStartOf="parent">

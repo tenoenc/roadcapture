@@ -9,11 +9,11 @@
       android:fillType="evenOdd"/>
   <path
       android:pathData="M117,88H77.7L69.5,72H117V88Z"
-      android:fillColor="#80F0D4"/>
+      android:fillColor="#70E3CF"/>
   <path
       android:pathData="M144,52H68.81C72,47.54 73.94,42.11 74.62,36H144V52Z"
-      android:fillColor="#80F0D4"/>
+      android:fillColor="#70E3CF"/>
   <path
       android:pathData="M117,16H73.43C71.97,10.79 69.42,6.18 65.72,2.45C64.85,1.57 63.92,0.76 62.95,0H117V16Z"
-      android:fillColor="#80F0D4"/>
+      android:fillColor="#70E3CF"/>
 </vector>

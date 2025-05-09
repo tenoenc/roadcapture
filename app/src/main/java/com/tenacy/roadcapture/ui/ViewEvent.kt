@@ -83,4 +83,6 @@ sealed class AlbumViewEvent: ViewEvent {
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
 }
 
-sealed class SearchViewEvent: ViewEvent
+sealed class SearchViewEvent: ViewEvent {
+    data class SearchError(val message: String) : SearchViewEvent()
+}

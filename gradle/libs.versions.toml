@@ -1,6 +1,7 @@
 [versions]
 activity = "1.9.3"
 agp = "8.6.0-alpha07"
+algoliasearchAndroid = "3.27.0"
 mapsUtils = "2.3.0"
 appcompat = "1.7.0"
 camera = "1.2.3"
@@ -54,6 +55,7 @@ ucrop = "2.2.8"
 
 [libraries]
 adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "converterMoshi" }
+algoliasearch-android = { module = "com.algolia:algoliasearch-android", version.ref = "algoliasearchAndroid" }
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "mapsUtils" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

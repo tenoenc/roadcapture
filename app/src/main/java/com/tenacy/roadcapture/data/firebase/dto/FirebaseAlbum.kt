@@ -15,4 +15,7 @@ data class FirebaseAlbum(
     val viewCount: Int = 0,
     val regionTags: List<Map<String, String>> = emptyList(),
     val isPublic: Boolean = false,
+    val userId: String = "",
+    val userDisplayName: String = "",
+    val userPhotoUrl: String = "",
 ): Parcelable

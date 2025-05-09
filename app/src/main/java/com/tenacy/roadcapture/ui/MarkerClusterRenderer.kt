@@ -290,7 +290,7 @@ class MarkerClusterRenderer(
         return withContext(Dispatchers.Default) {
             try {
                 // 클러스터 배경 색상
-                val backgroundColor = ContextCompat.getColor(fragment.requireContext(), R.color.primary)
+                val backgroundColor = ContextCompat.getColor(fragment.requireContext(), R.color.primary_normal)
 
                 // 클러스터 마커 크기 (클러스터 크기에 따라 달라질 수 있음)
                 val size = 50.toPx

@@ -21,7 +21,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     // 통합 상태 객체 정의
-    data class ViewerState(
+    data class State(
         val memories: List<MemoryViewerArguments.Memory> = emptyList(),
         val currentIndex: Int = 0,
         val viewScope: ViewScope? = null
@@ -31,7 +31,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
         val photoUris: List<Uri> = memories.mapNotNull { it.photoUri }
     }
 
-    private val _state = MutableStateFlow(ViewerState())
+    private val _state = MutableStateFlow(State())
 
     // 파생 상태들 (UI에 노출할 상태들)
     val currentMemoryIndex = _state.map { it.currentIndex }

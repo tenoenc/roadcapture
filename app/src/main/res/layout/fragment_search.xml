@@ -2,28 +2,30 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
-    
+
     <data>
-        
+
         <variable name="vm" type="com.tenacy.roadcapture.ui.SearchViewModel"/>
     </data>
-    
+
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_search_container"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
                                                        android:background="@color/background_normal">
 
         <LinearLayout android:layout_width="0dp"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/ll_search_a_bar_container"
-                      android:paddingHorizontal="20dp"
-                      android:paddingVertical="4dp"
-                      android:orientation="horizontal"
-                      android:gravity="center_vertical"
-                      android:background="@color/background_normal"
-                      app:layout_constraintTop_toTopOf="parent"
-                      app:layout_constraintEnd_toEndOf="parent"
-                      app:layout_constraintStart_toStartOf="parent">
+                                                           android:layout_height="wrap_content"
+                                                           android:minHeight="36dp"
+                                                           android:id="@+id/cl_search_a_bar_container"
+                                                           android:paddingStart="15dp"
+                                                           android:paddingEnd="20dp"
+                                                           android:paddingVertical="2dp"
+                                                           android:orientation="horizontal"
+                                                           android:gravity="center_vertical"
+                                                           android:background="@color/background_normal"
+                                                           app:layout_constraintTop_toTopOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           app:layout_constraintStart_toStartOf="parent">
 
             <ImageButton
                     android:id="@+id/ibtn_a_bar_back"
@@ -33,10 +35,21 @@
                     android:background="@null"
                     android:scaleType="fitCenter"/>
 
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/txt_search_title"
+                      android:textAppearance="@style/Title_20"
+                      android:textColor="@color/label_normal"
+                      android:text="@{vm.title}"
+                      tools:text="북마크"
+                      android:includeFontPadding="false"
+                      android:layout_marginStart="10dp" />
+
+
             <androidx.cardview.widget.CardView android:layout_width="0dp"
                                                android:layout_height="wrap_content"
-                                               android:id="@+id/card_search_input"
                                                android:layout_weight="1"
+                                               android:id="@+id/card_search_input"
                                                android:layout_marginStart="10dp"
                                                app:cardElevation="0dp"
                                                app:cardBackgroundColor="@color/fill_assistive"
@@ -52,19 +65,23 @@
 
                     <EditText android:layout_width="0dp"
                               android:layout_height="wrap_content"
+                              android:id="@+id/et_search_input"
                               android:layout_weight="1"
                               android:background="@null"
-                              android:textCursorDrawable="@color/label_normal"
+                              android:textCursorDrawable="@drawable/cursor"
                               android:importantForAutofill="no"
                               android:inputType="text"
-                              android:textAppearance="@style/Body_12_M"
+                              android:imeOptions="actionSearch"
+                              android:textAppearance="@style/Body_15_SB"
                               android:textColor="@color/label_normal"
                               android:textAlignment="textStart"
-                              android:hint="제목, 사용자, 지역, 장소"
-                              android:textColorHint="@color/fill_neutral" />
+                              android:text="@={vm.searchQuery}"
+                              android:hint="제목, 사용자, 지역, 장소 검색"
+                              android:textColorHint="@color/fill_neutral"/>
 
                     <ImageButton android:layout_width="16dp"
                                  android:layout_height="16dp"
+                                 android:id="@+id/ibtn_search_input_clear"
                                  android:src="@drawable/ic_x"
                                  android:background="@null"
                                  android:scaleType="fitCenter"
@@ -74,45 +91,48 @@
 
             </androidx.cardview.widget.CardView>
 
-            <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
-                                                               android:layout_height="wrap_content"
-                                                               android:layout_marginStart="10dp"
-                                                               app:cardBackgroundColor="@color/background_normal"
-                                                               app:strokeWidth="1dp"
-                                                               app:strokeColor="@color/label_normal"
-                                                               app:cardCornerRadius="100dp"
-                                                               app:cardElevation="0dp">
-
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:paddingVertical="3dp"
-                          android:paddingHorizontal="12dp"
-                          android:textAppearance="@style/Body_12_M"
-                          android:textColor="@color/label_normal"
-                          tools:text="북마크 - 검색"/>
-
-            </com.google.android.material.card.MaterialCardView>
-
         </LinearLayout>
 
         <View android:layout_width="0dp"
               android:layout_height="1dp"
               android:id="@+id/view_search_1"
               android:background="@color/line_normal"
-              app:layout_constraintTop_toBottomOf="@id/ll_search_a_bar_container"
+              app:layout_constraintTop_toBottomOf="@id/cl_search_a_bar_container"
               app:layout_constraintStart_toStartOf="parent"
               app:layout_constraintEnd_toEndOf="parent"/>
 
         <androidx.recyclerview.widget.RecyclerView android:layout_width="0dp"
                                                    android:layout_height="0dp"
+                                                   android:id="@+id/rv_search_albums"
                                                    android:clipToPadding="false"
                                                    android:paddingBottom="20dp"
-                                                   tools:listitem="@layout/item_album"
                                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                                    app:layout_constraintTop_toBottomOf="@id/view_search_1"
                                                    app:layout_constraintBottom_toBottomOf="parent"
                                                    app:layout_constraintStart_toStartOf="parent"
                                                    app:layout_constraintEnd_toEndOf="parent"/>
+
+        <View android:layout_width="0dp"
+              android:layout_height="0dp"
+              android:id="@+id/view_search_cover"
+              android:visibility="gone"
+              android:background="@color/background_normal"
+              app:layout_constraintTop_toTopOf="@id/rv_search_albums"
+              app:layout_constraintStart_toStartOf="@id/rv_search_albums"
+              app:layout_constraintEnd_toEndOf="@id/rv_search_albums"
+              app:layout_constraintBottom_toBottomOf="@id/rv_search_albums" />
+
+        <com.airbnb.lottie.LottieAnimationView android:layout_width="232dp"
+                                               android:layout_height="116dp"
+                                               android:id="@+id/lottie_search_loading"
+                                               android:visibility="gone"
+                                               app:lottie_autoPlay="true"
+                                               app:lottie_loop="true"
+                                               app:lottie_fileName="page_loading.lottie"
+                                               app:layout_constraintStart_toStartOf="parent"
+                                               app:layout_constraintEnd_toEndOf="parent"
+                                               app:layout_constraintBottom_toBottomOf="parent"
+                                               app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

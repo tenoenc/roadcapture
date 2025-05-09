@@ -175,7 +175,7 @@
                          app:url="@{vm.profileUrl}"
                          app:radius="@{100}"
                          app:borderWidth="@{2}"
-                         app:borderColor="@{@color/primary}"
+                         app:borderColor="@{@color/primary_normal}"
                          app:layout_constraintBottom_toBottomOf="parent"
                          app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -13,6 +13,7 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -33,7 +34,7 @@ class HomeFragment: BaseFragment() {
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
 
     // 현재 리프레시 중인지 추적
-    private var isCurrentlyRefreshing = false
+    private var wasRefreshing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,10 +120,11 @@ class HomeFragment: BaseFragment() {
     private fun setupSwipeRefresh() {
         // 새로고침 색상 설정 (선택 사항)
         binding.swipeRefreshLayout.setColorSchemeResources(
-            android.R.color.holo_blue_bright,
-            android.R.color.holo_green_light,
-            android.R.color.holo_orange_light,
-            android.R.color.holo_red_light
+            R.color.primary_normal,
+//            android.R.color.holo_blue_bright,
+//            android.R.color.holo_green_light,
+//            android.R.color.holo_orange_light,
+//            android.R.color.holo_red_light
         )
 
         // 새로고침 리스너 설정
@@ -134,11 +136,7 @@ class HomeFragment: BaseFragment() {
 
     private fun refreshData() {
         // 새로고침 중임을 표시
-        isCurrentlyRefreshing = true
         vm.setRefreshing(true)
-
-        // 스크롤을 맨 위로 이동
-        binding.rvHomeAlbums.scrollToPosition(0)
 
         // 어댑터 리프레시 호출
         Log.d("HomeFragment", "어댑터 리프레시 호출")
@@ -166,6 +164,10 @@ class HomeFragment: BaseFragment() {
                 // 새로고침 상태 처리
                 val isRefreshing = loadStates.refresh is LoadState.Loading
 
+                // 리프레시 완료 감지 (리프레싱이 true에서 false로 바뀌었을 때)
+                val isRefreshComplete = wasRefreshing && !isRefreshing
+                wasRefreshing = isRefreshing
+
                 // Shimmer 효과 표시/숨김 처리
                 if (isRefreshing && !binding.swipeRefreshLayout.isRefreshing) {
                     binding.shimmerLayout.visibility = View.VISIBLE
@@ -175,16 +177,14 @@ class HomeFragment: BaseFragment() {
                     binding.shimmerLayout.stopShimmer()
                     binding.shimmerLayout.visibility = View.GONE
                     binding.swipeRefreshLayout.visibility = View.VISIBLE
-                }
 
-                // 리프레시 완료 감지
-                if (isCurrentlyRefreshing && loadStates.refresh is LoadState.NotLoading) {
-                    isCurrentlyRefreshing = false
-                    vm.setRefreshing(false)
-                    Log.d("HomeFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
+                    if(isRefreshComplete && albumAdapter.itemCount > 0) {
+                        vm.setRefreshing(false)
+                        Log.d("HomeFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
 
-                    // 새로고침 완료 후 맨 위로 스크롤
-                    binding.rvHomeAlbums.scrollToPosition(0)
+                        // 새로고침 완료 후 맨 위로 스크롤
+                        binding.rvHomeAlbums.scrollToPosition(0)
+                    }
                 }
 
                 // 추가 데이터 로딩 상태 (무한 스크롤)
@@ -204,12 +204,12 @@ class HomeFragment: BaseFragment() {
                     }
                 }
 
-                // 로딩 완료 후 데이터가 없을 때만 빈 상태 화면 표시
-                val isEmpty = (loadStates.source.refresh is LoadState.NotLoading
+                // 로딩 완료 후 데이터가 없을 때
+                val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
                         && loadStates.append.endOfPaginationReached
                         && albumAdapter.itemCount < 1)
 
-                if (isEmpty) {
+                if (isEmptyAfterLoading) {
                     Log.d("HomeFragment", "데이터가 비어있음")
                     // 여기에 빈 상태 화면 표시 로직 추가
                 }
@@ -227,7 +227,7 @@ class HomeFragment: BaseFragment() {
                     Log.e("HomeFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
                     binding.swipeRefreshLayout.isRefreshing = false
                     vm.setRefreshing(false)
-                    isCurrentlyRefreshing = false
+                    wasRefreshing = false
 
                     // 여기에 에러 화면 표시 로직 추가
                 }
@@ -236,7 +236,7 @@ class HomeFragment: BaseFragment() {
 
         // 페이징 데이터 관찰
         repeatOnLifecycle {
-            vm.albums.collect { pagingData ->
+            vm.albums.collectLatest { pagingData ->
                 Log.d("HomeFragment", "새 페이징 데이터 수신")
                 albumAdapter.submitData(
                     pagingData.map {
@@ -267,7 +267,10 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: HomeViewEvent) {
-//        when (event) {
-//        }
+        when (event) {
+            is HomeViewEvent.Search -> {
+                findNavController().navigate(MainFragmentDirections.actionMainToSearch(AlbumFilter.SCRAP))
+            }
+        }
     }
 }

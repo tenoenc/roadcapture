@@ -18,6 +18,7 @@
               tools:layout="@layout/fragment_main">
         <action android:id="@+id/action_main_to_trip" app:destination="@id/tripFragment"/>
         <action android:id="@+id/action_main_to_album" app:destination="@id/albumFragment"/>
+        <action android:id="@+id/action_main_to_search" app:destination="@id/searchFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -83,5 +84,11 @@
         <argument android:name="albumId" app:argType="string"/>
         <action android:id="@+id/action_album_to_memoryViewer"
                 app:destination="@id/memoryViewerFragment"/>
+    </fragment>
+    <fragment android:id="@+id/searchFragment" android:name="com.tenacy.roadcapture.ui.SearchFragment"
+              android:label="SearchFragment"
+              tools:layout="@layout/fragment_search">
+        <action android:id="@+id/action_search_to_album" app:destination="@id/albumFragment"/>
+        <argument android:name="albumFilter" app:argType="com.tenacy.roadcapture.data.firebase.AlbumFilter" />
     </fragment>
 </navigation>

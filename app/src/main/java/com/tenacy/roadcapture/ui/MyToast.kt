@@ -1,12 +1,9 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Parcelable
 import android.view.Gravity
 import android.view.LayoutInflater
-import android.view.View
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.databinding.BindingAdapter
@@ -55,7 +52,7 @@ fun MaterialCardView.setTypedStrokeColor(type: ToastMessageType?) {
     strokeColor = when(type) {
         is ToastMessageType.Info -> ContextCompat.getColor(context, R.color.line_normal)
         is ToastMessageType.Warning -> ContextCompat.getColor(context, R.color.warning)
-        is ToastMessageType.Success -> ContextCompat.getColor(context, R.color.primary)
+        is ToastMessageType.Success -> ContextCompat.getColor(context, R.color.primary_normal)
     }
 }
 

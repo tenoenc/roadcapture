@@ -11,10 +11,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.tenacy.roadcapture.BuildConfig
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseUser
+import com.tenacy.roadcapture.data.firebase.dto.*
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
@@ -22,7 +19,7 @@ import kotlinx.coroutines.withContext
 
 val auth get() = Firebase.auth
 val user get() = auth.currentUser
-val db get() = Firebase.firestore("roadcapture-db")
+val db get() = Firebase.firestore
 val storage get() = Firebase.storage(BuildConfig.STORAGE_BASE_URL)
 private val storageRef = storage.reference
 
@@ -74,11 +71,11 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val thumbnailUrl = getString("thumbnailUrl") ?: ""
     val viewCount = getLong("viewCount")?.toInt() ?: 0
     val scrapCount = getLong("scrapCount")?.toInt() ?: 0
-    val isPublic = getBoolean("isPublic") ?: false
-
-    // 중첩 리스트 처리
-    @Suppress("UNCHECKED_CAST")
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
+    val isPublic = getBoolean("isPublic") ?: false
+    val userId = getString("userId") ?: ""
+    val userDisplayName = getString("userDisplayName") ?: ""
+    val userPhotoUrl = getString("userPhotoUrl") ?: ""
 
     return FirebaseAlbum(
         id = id,
@@ -90,6 +87,9 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
         scrapCount = scrapCount,
         regionTags = regionTags,
         isPublic = isPublic,
+        userId = userId,
+        userDisplayName = userDisplayName,
+        userPhotoUrl = userPhotoUrl,
     )
 }
 

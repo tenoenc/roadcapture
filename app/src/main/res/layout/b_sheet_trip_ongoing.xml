@@ -36,7 +36,7 @@
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
                 android:text="이어서 작성하기"
-                android:backgroundTint="@color/primary"
+                android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
                 android:layout_marginTop="16dp"
