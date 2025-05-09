@@ -14,5 +14,6 @@ data class FirebaseMemory(
     val addressTags: List<String> = emptyList(),
     val formattedAddress: String = "",
     val locationRefId: String = "",
+    val isPublic: Boolean = false,
     val createdAt: LocalDateTime,
 ): Parcelable

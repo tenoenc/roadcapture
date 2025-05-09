@@ -73,6 +73,7 @@ class AlbumTabFragment: BaseFragment() {
             footer = AlbumLoadStateAdapter()
         )
         binding.rvTabAlbum.addItemDecoration(ItemSpacingDecoration(spacing = 12f.toPx))
+        binding.rvTabAlbum.setItemViewCacheSize(3)
         binding.rvTabAlbum.setHasFixedSize(true)
 
         // 어댑터 상태 리스너 추가

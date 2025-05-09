@@ -13,10 +13,7 @@ import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemMyAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.getFormattedDuration
-import com.tenacy.roadcapture.util.toPx
-import com.tenacy.roadcapture.util.toReadableUnitText
-import com.tenacy.roadcapture.util.toTimestamp
+import com.tenacy.roadcapture.util.*
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
@@ -65,7 +62,6 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
             holder is AlbumViewHolder.User && item is AlbumItem.User -> {
                 holder.bind(item)
             }
-            else -> throw IllegalStateException("뷰홀더와 아이템의 타입이 일치하지 않습니다.")
         }
     }
 
@@ -299,12 +295,12 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
     protected fun getNumericalText(album: AlbumItem): String {
         val currentTimeStamp = LocalDateTime.now().toTimestamp()
         val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
-        val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnitText()
+        val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnit()
         return StringBuilder().let { sb ->
             if(album.value.isScraped) {
                 sb.append("스크랩됨 · ")
             }
-            sb.append("조회수 ${viewCount}${viewCountUnit} · ${duration}${durationUnit} 전")
+            sb.append("조회수 ${viewCount.toFormattedDecimalText()}${viewCountUnit} · ${duration}${durationUnit} 전")
             sb.toString()
         }
     }

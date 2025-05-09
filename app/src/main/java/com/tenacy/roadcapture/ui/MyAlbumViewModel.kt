@@ -4,9 +4,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
 import com.tenacy.roadcapture.ui.dto.User
-import com.tenacy.roadcapture.util.auth
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.toUser
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -41,7 +39,8 @@ class MyAlbumViewModel @Inject constructor(
     }
 
     val scrapText = _user.filterNotNull().map {
-        "앨범이 ${it.scrapCount}번 스크랩 되었어요"
+        val (scrapCount, scrapCountUnit) = it.scrapCount.toReadableUnit()
+        "앨범이 ${scrapCount.toFormattedDecimalText(hasZeroText = false)}${scrapCountUnit}번 스크랩 되었어요"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     init {

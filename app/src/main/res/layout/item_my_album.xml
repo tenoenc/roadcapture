@@ -47,7 +47,7 @@
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:textAppearance="@style/Body_10_SB"
+                          android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/white"
                           android:text="@{numericalText}"
                           tools:text="조회수 9.1만 · 방금 전"
@@ -66,8 +66,8 @@
                                                    app:layout_constraintTop_toTopOf="@id/img_i_my_album_thumbnail"
                                                    app:layout_constraintEnd_toEndOf="@id/img_i_my_album_thumbnail">
 
-                    <ImageButton android:layout_width="32dp"
-                                 android:layout_height="32dp"
+                    <ImageButton android:layout_width="36dp"
+                                 android:layout_height="36dp"
                                  android:src="@drawable/ic_more_vertical"
                                  android:tint="@color/white"
                                  android:padding="8dp"

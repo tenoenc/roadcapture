@@ -254,6 +254,10 @@ class AlbumPagingSource(
 
                     val userRef = db.collection("users").document(filter.id)
 
+                    filter.isPublic?.let {
+                        query = query.whereEqualTo("isPublic", it)
+                    }
+
                     query = query.whereEqualTo("userRef", userRef)
 
                     // 페이지 크기 제한

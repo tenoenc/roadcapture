@@ -102,6 +102,7 @@ fun DocumentSnapshot.toMemory(): FirebaseMemory {
     val addressTags = get("addressTags") as? List<String> ?: emptyList()
     val formattedAddress = getString("formattedAddress") ?: ""
     val locationRefId = getDocumentReference("locationRef")?.id ?: ""
+    val isPublic = getBoolean("isPublic") ?: false
     val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
 
     return FirebaseMemory(
@@ -113,6 +114,7 @@ fun DocumentSnapshot.toMemory(): FirebaseMemory {
         addressTags = addressTags,
         formattedAddress = formattedAddress,
         locationRefId = locationRefId,
+        isPublic = isPublic,
         createdAt = createdAt,
     )
 }

@@ -66,7 +66,7 @@
                 <TextView android:layout_width="0dp"
                           android:layout_height="wrap_content"
                           android:id="@+id/txt_my_album_header_description"
-                          android:textAppearance="@style/Body_10_M"
+                          android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
                           android:text="@{vm.scrapText}"
                           tools:text="앨범이 902번 스크랩 되었어요"

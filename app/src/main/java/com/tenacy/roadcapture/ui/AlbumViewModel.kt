@@ -65,8 +65,8 @@ class AlbumViewModel @Inject constructor(
 
     private val _scrapCount = MutableStateFlow(0)
     val scrapCountText = _scrapCount.map {
-        val (value, unit) = it.toLong().toReadableUnitText()
-        "${value}${unit}"
+        val (value, unit) = it.toLong().toReadableUnit()
+        "${value.toFormattedDecimalText()}${unit}"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val _scraped = MutableStateFlow(false)

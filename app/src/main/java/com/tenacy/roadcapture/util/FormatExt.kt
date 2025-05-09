@@ -246,7 +246,7 @@ fun getFormattedDuration(timestamp1: Long, timestamp2: Long): Pair<String, Strin
  * Long 값을 "9.1만", "1.2천"과 같은 형식의 숫자와 단위로 변환하는 확장 함수
  * @return Pair<Double, String> - 첫 번째 값은 변환된 숫자, 두 번째 값은 단위 문자열
  */
-fun Long.toReadableUnitText(): Pair<String, String> {
+fun Long.toReadableUnit(): Pair<Double, String> {
     return when {
         this >= 100000000 -> {
             val value = this / 10000000.0
@@ -255,7 +255,7 @@ fun Long.toReadableUnitText(): Pair<String, String> {
             } else {
                 (value * 10).toLong() / 10.0
             }
-            Pair(formatted.toFormattedDecimalText(), "억")
+            Pair(formatted, "억")
         }
         this >= 10000 -> {
             val value = this / 10000.0
@@ -264,7 +264,7 @@ fun Long.toReadableUnitText(): Pair<String, String> {
             } else {
                 (value * 10).toLong() / 10.0
             }
-            Pair(formatted.toFormattedDecimalText(), "만")
+            Pair(formatted, "만")
         }
         this >= 1000 -> {
             val value = this / 1000.0
@@ -273,19 +273,19 @@ fun Long.toReadableUnitText(): Pair<String, String> {
             } else {
                 (value * 10).toLong() / 10.0
             }
-            Pair(formatted.toFormattedDecimalText(), "천")
+            Pair(formatted, "천")
         }
-        else -> Pair(this.toDouble().takeIf { it > 0 }?.toInt()?.toString() ?: "없음", "")
+        else -> Pair(this.toDouble(), "")
     }
 }
 
-fun Double.toFormattedDecimalText(): String {
+fun Double.toFormattedDecimalText(hasZeroText: Boolean = true): String {
     val intValue = this.toInt()
     val firstDecimal = ((this - intValue) * 10).toInt()
 
     return if (firstDecimal > 0) {
         String.format("%.1f", this)
     } else {
-        intValue.toString()
+        intValue.takeIf { it > 0 || !hasZeroText }?.toInt()?.toString() ?: "없음"
     }
 }

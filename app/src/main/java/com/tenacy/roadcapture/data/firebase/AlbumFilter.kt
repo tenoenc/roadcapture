@@ -10,5 +10,5 @@ sealed class AlbumFilter: Parcelable {
     @Parcelize
     data object Scrap: AlbumFilter()
     @Parcelize
-    data class User(val id: String): AlbumFilter()
+    data class User(val id: String, val isPublic: Boolean? = null): AlbumFilter()
 }

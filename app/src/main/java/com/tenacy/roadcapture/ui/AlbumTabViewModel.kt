@@ -28,7 +28,7 @@ class AlbumTabViewModel @Inject constructor(
 
     // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
     private val pagingSourceFactory = {
-        AlbumPagingSource(filter = AlbumFilter.User(userId))
+        AlbumPagingSource(filter = AlbumFilter.User(id = userId))
     }
 
     // 페이징 설정 최적화

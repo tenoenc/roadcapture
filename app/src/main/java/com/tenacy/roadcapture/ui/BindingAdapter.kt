@@ -14,6 +14,8 @@ import androidx.core.view.children
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -47,6 +49,7 @@ fun ImageView.showImage(
                 else -> request.load(uri)
             }
         }
+        .diskCacheStrategy(DiskCacheStrategy.ALL)
         .placeholder(shapeDrawable)
         .transform(buildTransformations(radius, borderWidth, borderColor, coverColor))
         .dontAnimate()

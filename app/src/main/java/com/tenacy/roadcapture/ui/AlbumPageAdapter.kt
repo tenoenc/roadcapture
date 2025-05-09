@@ -16,7 +16,13 @@ class AlbumPagerAdapter(fragment: Fragment, val userId: String) : FragmentStateA
                     )
                 )
             )
-            1 -> MemoryTabFragment()
+            1 -> MemoryTabFragment.newInstance(
+                bundle = bundleOf(
+                    MemoryTabFragment.KEY_PARAMS to MemoryTabFragment.ParamsIn(
+                        userId = userId
+                    )
+                )
+            )
             else -> throw IllegalArgumentException("Invalid position: $position")
         }
     }
