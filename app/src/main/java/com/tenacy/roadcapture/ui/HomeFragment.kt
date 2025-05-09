@@ -62,20 +62,9 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupViews() {
-        // RecyclerView 설정
         setupRecyclerView()
-
         setupShimmer()
-
-        // SwipeRefreshLayout 설정
         setupSwipeRefresh()
-
-        repeatOnLifecycle {
-            while(currentCoroutineContext().isActive) {
-                albumAdapter.refreshVisibleItems()
-                delay(60_000)
-            }
-        }
     }
 
     private fun setupRecyclerView() {
@@ -96,6 +85,13 @@ class HomeFragment: BaseFragment() {
             // 리프레시 상태 확인
             val refreshState = combinedLoadStates.refresh
             Log.d("HomeFragment", "리프레시 상태: $refreshState")
+        }
+
+        repeatOnLifecycle {
+            while(currentCoroutineContext().isActive) {
+                albumAdapter.refreshVisibleItems()
+                delay(60_000)
+            }
         }
     }
 

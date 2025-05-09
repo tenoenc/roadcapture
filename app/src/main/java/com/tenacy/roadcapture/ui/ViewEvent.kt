@@ -24,9 +24,11 @@ sealed class MainViewEvent: ViewEvent {
     data object ShowTripBefore: MainViewEvent()
 }
 
-sealed class HomeViewEvent: ViewEvent
+sealed class HomeViewEvent: ViewEvent {
+    data object Search: HomeViewEvent()
+}
 
-sealed class SearchViewEvent: ViewEvent
+sealed class AppInfoViewEvent: ViewEvent
 
 sealed class AlbumMarkedViewEvent: ViewEvent
 
@@ -80,3 +82,5 @@ sealed class AlbumViewEvent: ViewEvent {
     data object Share: AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
 }
+
+sealed class SearchViewEvent: ViewEvent

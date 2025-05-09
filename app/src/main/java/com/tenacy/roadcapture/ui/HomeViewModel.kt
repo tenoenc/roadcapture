@@ -9,9 +9,11 @@ import androidx.paging.cachedIn
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,5 +49,11 @@ class HomeViewModel @Inject constructor(
     fun setRefreshing(refreshing: Boolean) {
         _isRefreshing.value = refreshing
         Log.d("HomeViewModel", "리프레싱 상태 변경: $refreshing")
+    }
+
+    fun onSearchClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(HomeViewEvent.Search)
+        }
     }
 }

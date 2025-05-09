@@ -5,15 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
+import com.tenacy.roadcapture.databinding.FragmentSearchBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 
-class AppInfoFragment: BaseFragment() {
+@AndroidEntryPoint
+class SearchFragment: BaseFragment() {
 
-    private var _binding: FragmentAppInfoBinding? = null
+    private var _binding: FragmentSearchBinding? = null
     val binding get() = _binding!!
 
-    private val vm: AppInfoViewModel by viewModels()
+    private val vm: SearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +23,7 @@ class AppInfoFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentAppInfoBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -48,13 +50,13 @@ class AppInfoFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? AppInfoViewEvent)?.let { handleViewEvents(it) }
+                    (event as? SearchViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: AppInfoViewEvent) {
+    private fun handleViewEvents(event: SearchViewEvent) {
 //        when (event) {
 //        }
     }
