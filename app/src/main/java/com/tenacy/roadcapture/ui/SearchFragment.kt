@@ -131,7 +131,7 @@ class SearchFragment: BaseFragment() {
                             value = it,
                             onItemClick = {
                                 Log.d("SearchFragment", "Item Clicked!")
-                                findNavController().navigate(SearchFragmentDirections.actionSearchToAlbum(it.id))
+                                findNavController().navigate(SearchFragmentDirections.actionSearchToAlbum(it.id, it.user.id))
                             },
                             onProfileClick = {
                                 Log.d("SearchFragment", "Item Clicked!")

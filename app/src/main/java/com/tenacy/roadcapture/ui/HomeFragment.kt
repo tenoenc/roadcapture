@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
@@ -15,6 +16,8 @@ import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
+import com.tenacy.roadcapture.util.consumeOnce
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -55,6 +58,12 @@ class HomeFragment: BaseFragment() {
 
         setupViews()
         setupObservers()
+
+        // 로그아웃 테스트용
+        binding.imgLogo.isClickable = true
+        binding.imgLogo.setOnClickListener {
+            mainActivity.signOut()
+        }
     }
 
     override fun onDestroyView() {
@@ -144,9 +153,23 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
+        observeSavedState()
         observePagingData()
         observeViewEvents()
         observeRefreshState()
+    }
+
+    private fun observeSavedState() {
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_ALBUM) { bundle ->
+                if (bundle == null) return@consumeOnce
+                bundle.getLong(RESULT_FORBIDDEN, 0L).takeIf { it > 0 }?.let {
+                    refreshData()
+                }
+            }
+        }
     }
 
     private fun observeRefreshState() {
@@ -178,7 +201,7 @@ class HomeFragment: BaseFragment() {
                     binding.shimmerLayout.visibility = View.GONE
                     binding.swipeRefreshLayout.visibility = View.VISIBLE
 
-                    if(isRefreshComplete && albumAdapter.itemCount > 0) {
+                    if(isRefreshComplete) {
                         vm.setRefreshing(false)
                         Log.d("HomeFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
 
@@ -244,7 +267,7 @@ class HomeFragment: BaseFragment() {
                             value = it,
                             onItemClick = {
                                 Log.d("HomeFragment", "Item Clicked!")
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id))
+                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
                             },
                             onProfileClick = {
                                 Log.d("HomeFragment", "Profile Clicked!")
@@ -272,5 +295,10 @@ class HomeFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
             }
         }
+    }
+
+    companion object {
+        const val KEY_ALBUM = "album"
+        const val RESULT_FORBIDDEN = "result_forbidden"
     }
 }

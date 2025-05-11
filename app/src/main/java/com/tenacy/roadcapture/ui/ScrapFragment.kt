@@ -15,6 +15,7 @@ import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentScrapBinding
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import kotlinx.coroutines.currentCoroutineContext
@@ -176,7 +177,7 @@ class ScrapFragment: BaseFragment() {
                     binding.shimmerLayout.visibility = View.GONE
                     binding.swipeRefreshLayout.visibility = View.VISIBLE
 
-                    if(isRefreshComplete && albumAdapter.itemCount > 0) {
+                    if(isRefreshComplete) {
                         vm.setRefreshing(false)
                         Log.d("ScrapFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
 
@@ -242,7 +243,7 @@ class ScrapFragment: BaseFragment() {
                             value = it,
                             onItemClick = {
                                 Log.d("ScrapFragment", "Item Clicked!")
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id))
+                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
                             },
                             onProfileClick = {
                                 Log.d("ScrapFragment", "Profile Clicked!")

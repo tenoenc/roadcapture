@@ -64,9 +64,11 @@ class MyAlbumFragment: BaseFragment() {
     private fun setupTabLayout() {
         // TabLayout과 ViewPager2 연결
         TabLayoutMediator(binding.tlMyAlbum, binding.vpMyAlbum) { tab, position ->
+            val albumCount = vm.totalCounts.value[MyAlbumViewModel.KEY_ALBUM_COUNT] ?: 0L
+            val memoryCount = vm.totalCounts.value[MyAlbumViewModel.KEY_MEMORY_COUNT] ?: 0L
             when (position) {
-                0 -> tab.text = "앨범"
-                1 -> tab.text = "추억"
+                0 -> tab.text = createTabText("앨범", "${albumCount}개")
+                1 -> tab.text = createTabText("추억", "${memoryCount}개")
             }
         }.attach()
     }

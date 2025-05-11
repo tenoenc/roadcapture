@@ -95,7 +95,7 @@ class MemoryViewerViewModel @Inject constructor(
         }
     }
 
-    fun onMoreClick() {
+    fun onInfoClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(MemoryViewerViewEvent.ShowInfo)
         }

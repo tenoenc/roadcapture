@@ -14,13 +14,14 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MemoryItem(
     val value: Memory,
-    val onItemClick: (String) -> Unit,
+    val onItemClick: () -> Unit,
 ): Parcelable
 
 class MemoryViewHolder(private val binding: ItemMemoryBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind(item: MemoryItem) {
         binding.photoUrl = item.value.photoUrl
+        binding.root.setOnClickListener { item.onItemClick() }
     }
 
     fun bind(item: MemoryItem, payloads: List<Any>) {

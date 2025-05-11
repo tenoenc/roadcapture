@@ -26,6 +26,7 @@ import com.tenacy.roadcapture.databinding.FragmentAlbumBinding
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.consumeOnce
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -267,6 +268,19 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
             is AlbumViewEvent.NavigateToStudio -> {
 
+            }
+
+            is AlbumViewEvent.Forbidden -> {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                        HomeFragment.KEY_ALBUM,
+                        bundleOf(
+                            HomeFragment.RESULT_FORBIDDEN to System.currentTimeMillis()
+                        )
+                    )
+                    findNavController().popBackStack()
+                }
             }
         }
     }

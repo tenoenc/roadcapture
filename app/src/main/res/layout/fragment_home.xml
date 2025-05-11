@@ -34,6 +34,7 @@
 
             <ImageView android:layout_width="wrap_content"
                        android:layout_height="20dp"
+                       android:id="@+id/img_logo"
                        android:src="@drawable/ic_logo"
                        android:adjustViewBounds="true"
                        app:layout_constraintStart_toStartOf="parent"

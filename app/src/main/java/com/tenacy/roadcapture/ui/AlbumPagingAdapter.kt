@@ -13,6 +13,7 @@ import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemMyAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.ui.dto.Memory
 import com.tenacy.roadcapture.util.*
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
@@ -31,7 +32,7 @@ sealed class AlbumItem(open val value: Album): Parcelable {
     data class User(
         override val value: Album,
         val onItemClick: () -> Unit,
-        val onMoreClick: () -> Unit,
+        val onMoreClick: (Album) -> Unit,
     ) : AlbumItem(value)
 }
 
@@ -120,7 +121,8 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
                         oldItem.value.viewCount == newItem.value.viewCount &&
                         oldItem.value.title == newItem.value.title &&
                         oldItem.value.regionTags == newItem.value.regionTags &&
-                        oldItem.value.isScraped == newItem.value.isScraped
+                        oldItem.value.isScraped == newItem.value.isScraped &&
+                        oldItem.value.isPublic == newItem.value.isPublic
             }
 
             override fun getChangePayload(oldItem: AlbumItem, newItem: AlbumItem): Any? {
@@ -144,6 +146,10 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
 
                 if (oldItem.value.isScraped != newItem.value.isScraped) {
                     payload.add("scraped")
+                }
+
+                if (oldItem.value.isPublic != newItem.value.isPublic) {
+                    payload.add("isPublic")
                 }
 
                 // 시간은 항상 변경되므로 페이로드에 포함
@@ -228,6 +234,9 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
             binding.cardIMyAlbumTouchContainer.setOnClickListener {
                 item.onItemClick()
             }
+            binding.ibtnIMyAlbumMore.setOnClickListener {
+                item.onMoreClick(item.value)
+            }
         }
 
         override fun bind(item: AlbumItem.User, payloads: List<Any>) {
@@ -250,6 +259,12 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
 
                             "regionTags" -> {
                                 binding.llIMyAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
+                            }
+
+                            "isPublic" -> {
+                                binding.ibtnIMyAlbumMore.setOnClickListener {
+                                    item.onMoreClick(item.value)
+                                }
                             }
 
                             "time", "scraped" -> {

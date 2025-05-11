@@ -63,6 +63,11 @@ sealed class MemoryViewerViewEvent: ViewEvent {
     data class ResultBack(val coordinates: LatLng): MemoryViewerViewEvent()
 }
 
+sealed class UserMemoryViewerViewEvent: ViewEvent {
+    data class ShowLocation(val address: String): UserMemoryViewerViewEvent()
+    data object ShowMore: UserMemoryViewerViewEvent()
+}
+
 sealed class ModifiableMemoryViewerViewEvent: ViewEvent {
     data class ShowLocation(val address: String): ModifiableMemoryViewerViewEvent()
     data object MoveToPrevPage: ModifiableMemoryViewerViewEvent()
@@ -83,11 +88,16 @@ sealed class AlbumViewEvent: ViewEvent {
     data class ShowInfo(val album: Album, val totalMemoryCount: Int): AlbumViewEvent()
     data object Share: AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
+    data class Forbidden(val message: String): AlbumViewEvent()
 }
 
 sealed class SearchViewEvent: ViewEvent {
     data class SearchError(val message: String) : SearchViewEvent()
 }
 
-sealed class AlbumTabViewEvent: ViewEvent
+sealed class AlbumTabViewEvent: ViewEvent {
+    data object Refresh: AlbumTabViewEvent()
+    data object RefreshAll: AlbumTabViewEvent()
+}
+
 sealed class MemoryTabViewEvent: ViewEvent

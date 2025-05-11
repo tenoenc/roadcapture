@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.UserMemoryViewerViewModel"/>
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout android:layout_width="match_parent"
+                                                         android:layout_height="match_parent"
+                                                         android:background="@color/background_normal">
+
+        <com.google.android.material.appbar.AppBarLayout android:layout_width="match_parent"
+                                                         android:layout_height="wrap_content"
+                                                         android:background="@color/background_normal"
+                                                         app:liftOnScroll="false">
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/ll_user_memory_viewer_a_bar_container"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="8dp"
+                    app:layout_scrollFlags="scroll|enterAlways">
+
+                <ImageButton
+                        android:id="@+id/ibtn_a_bar_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_left"
+                        android:background="@null"
+                        android:scaleType="fitCenter"/>
+
+                <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/Title_18"
+                        android:textColor="@color/label_normal"
+                        android:textAlignment="center"
+                        android:text="@{vm.placeName}"
+                        tools:text="한담해안산책로"/>
+
+                <ImageButton
+                        android:id="@+id/ibtn_user_memory_viewer_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{() -> vm.onMoreClick()}"
+                        android:src="@drawable/ic_more_vertical"
+                        android:background="@null"
+                        android:scaleType="fitCenter"/>
+            </LinearLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_scrollFlags="noScroll">
+
+                <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:id="@+id/img_user_memory_viewer_photo"
+                        app:url="@{vm.photoUrl}"
+                        app:layout_constraintDimensionRatio="1:1"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <HorizontalScrollView android:id="@+id/hs_user_memory_viewer_tags"
+                                  android:layout_width="match_parent"
+                                  android:layout_height="wrap_content"
+                                  android:clickable="true"
+                                  android:clipToPadding="false"
+                                  android:paddingHorizontal="20dp"
+                                  android:paddingVertical="10dp"
+                                  android:scrollbars="none"
+                                  app:layout_scrollFlags="noScroll">
+
+                <LinearLayout android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:id="@+id/ll_user_memory_viewer_tags"
+                              android:onClick="@{() -> vm.onLocationClick()}"
+                              android:minHeight="24dp"
+                              android:gravity="center"
+                              android:orientation="horizontal">
+
+                    <ImageButton android:layout_width="24dp"
+                                 android:layout_height="24dp"
+                                 android:clickable="false"
+                                 android:src="@drawable/ic_circle_pin"
+                                 android:background="@android:color/transparent"
+                                 android:scaleType="fitCenter"/>
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                                               android:layout_height="match_parent"
+                                               android:id="@+id/ns_user_memory_viewer_content"
+                                               android:clipToPadding="false"
+                                               android:paddingHorizontal="20dp"
+                                               android:paddingBottom="40dp"
+                                               app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:textAppearance="@style/Body_14_M"
+                      android:textColor="@color/label_normal"
+                      android:text="@{vm.content}"
+                      tools:text="설레는 마음으로 제주 공항에 도착했습니다. 비행기에서 내려다본 푸른 바다와 섬의 윤곽이 아직도 눈앞에 선명합니다. 공항에서 렌트카를 받아 첫 목적지인 성산일출봉으로 향했습니다.\n\n성산일출봉에 도착하니 웅장한 크레이터가 눈앞에 펼쳐졌습니다. 계단을 따라 정상까지 올라가는 길은 생각보다 가팔랐지만, 정상에서 바라본 전경은 그 모든 수고를 보상해주었습니다. 푸른 바다와 제주의 초록 풍경이 한눈에 들어왔고, 바람이 세차게 불어 더욱 상쾌했습니다.\n\n점심으로는 근처 해녀촌에서 신선한 해산물을 맛보았습니다. 제주 특유의 해산물 맛은 정말 특별했습니다. 특히 전복죽은 바다의 맛이 진하게 느껴져 기억에 남습니다.\n\n오후에는 우도로 향하는 배를 탔습니다. 우도는 제주도 내에서도 또 다른 작은 섬으로, 소가 누워있는 모양을 닮았다고 해서 이름 붙여졌다고 합니다. 우도에서는 전기자전거를 빌려 섬을 한 바퀴 돌았습니다. 검은 돌과 하얀 모래가 대비되는 우도 땅콩 해변에서는 잠시 멈춰 사진도 찍고 파도 소리를 들으며 휴식을 취했습니다.\n\n저녁에는 제주시 근처 숙소에 체크인하고, 근처 올레시장에서 다양한 현지 음식을 맛보았습니다. 특히 흑돼지 고기는 제주도에서 꼭 먹어야 할 음식이라고 해서 시도해봤는데, 정말 맛있었습니다!"/>
+
+        </androidx.core.widget.NestedScrollView>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

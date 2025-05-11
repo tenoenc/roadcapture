@@ -201,25 +201,25 @@ class AlgoliaManager @Inject constructor() {
 
                 // 스크랩 정보 먼저 확인
                 val scrapedIds = if (chunk.isNotEmpty()) {
-//                    val scrapSnapshot = db.collection("scraps")
-//                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
-//                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
-//                        .get()
-//                        .await()
-
-//                scrapSnapshot.documents
-//                    .mapNotNull { it.getDocumentReference("albumRef")?.id }
-//                    .toSet()
-
-                    val scrapSnapshot = db.collection("users").document(user!!.uid)
-                        .collection("scraps")
-                        .whereIn(FieldPath.documentId(), chunk)
+                    val scrapSnapshot = db.collection("scraps")
+                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
+                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
                         .get()
                         .await()
+//
+                scrapSnapshot.documents
+                    .mapNotNull { it.getDocumentReference("albumRef")?.id }
+                    .toSet()
 
-                    scrapSnapshot.documents
-                        .mapNotNull { it.id }
-                        .toSet()
+//                    val scrapSnapshot = db.collection("users").document(user!!.uid)
+//                        .collection("scraps")
+//                        .whereIn(FieldPath.documentId(), chunk)
+//                        .get()
+//                        .await()
+//
+//                    scrapSnapshot.documents
+//                        .mapNotNull { it.id }
+//                        .toSet()
 
                 } else {
                     emptySet()

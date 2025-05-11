@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
@@ -76,6 +77,7 @@ class AlbumViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val albumId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).albumId
+    private val userId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).userId
 
     init {
         fetchData()
@@ -102,7 +104,13 @@ class AlbumViewModel @Inject constructor(
             flow {
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRef = db.collection("albums").document(albumId)
-                val firebaseAlbum = albumRef.get().await().toAlbum()
+                val firebaseAlbum = if(userId == user!!.uid) {
+                    albumRef.get().await().toAlbum()
+                } else {
+                    db.collection("albums")
+                        .whereEqualTo(FieldPath.documentId(), albumId)
+                        .whereEqualTo("isPublic", true).get().await().documents.firstOrNull()?.toAlbum() ?: throw RuntimeException("403")
+                }
                 val userScrapRef = userRef.collection("scraps").document(albumId)
                 val userScrap = userScrapRef.get().await()
 
@@ -131,6 +139,10 @@ class AlbumViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e("AlbumViewModel", "에러", exception)
+                    
+                    if(exception.message == "403") {
+                        viewEvent(AlbumViewEvent.Forbidden("접근할 수 없어요"))
+                    }
                 }
                 .collect { (memories, locations) ->
                     locations.getOrNull(0)?.let { viewEvent(AlbumViewEvent.SetCamera(LatLng(it.latitude, it.longitude), zoom = 30f)) }
@@ -157,7 +169,6 @@ class AlbumViewModel @Inject constructor(
                 // 참조 생성
                 val albumRef = db.collection("albums").document(albumId)
                 val userRef = db.collection("users").document(userId)
-                val userScrapRef = userRef.collection("scraps").document(albumId)
 
                 // 트랜잭션 밖에서 먼저 scraps 문서 ID를 찾아두기
                 val scrapToDelete = db.collection("scraps")
@@ -171,16 +182,10 @@ class AlbumViewModel @Inject constructor(
 
                 val isScraped = suspendCancellableCoroutine<Boolean> { continuation ->
                     db.runTransaction { transaction ->
-                        val userScrap = transaction.get(userScrapRef)
 
-                        if (userScrap.exists()) {
+                        if (scrapToDelete?.exists() == true) {
                             // 스크랩 취소
-                            transaction.delete(userScrapRef)
-
-                            // scraps 컬렉션에서 문서 삭제
-                            scrapToDelete?.reference?.let { scrapRef ->
-                                transaction.delete(scrapRef)
-                            }
+                            transaction.delete(scrapToDelete.reference)
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(-1))
                             transaction.update(userRef, "scrapCount", FieldValue.increment(-1))
@@ -188,8 +193,6 @@ class AlbumViewModel @Inject constructor(
                             false
                         } else {
                             // 스크랩하기
-                            transaction.set(userScrapRef, mapOf("scrapAt" to FieldValue.serverTimestamp()))
-
                             val newScrapRef = db.collection("scraps").document()
                             transaction.set(newScrapRef, mapOf(
                                 "albumRef" to albumRef,

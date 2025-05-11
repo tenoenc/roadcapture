@@ -6,12 +6,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabAlbumBinding
+import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +41,7 @@ class AlbumTabFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
         vm
     }
 
@@ -61,6 +64,20 @@ class AlbumTabFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            MyAlbumMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<Album>(MyAlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_TOGGLE_PUBLIC)?.let {
+                vm.togglePublic(it.id, it.isPublic)
+            }
+            bundle.getParcelable<Album>(MyAlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_DELETE)?.let {
+                vm.deletePublic(it.id, it.user.id)
+            }
+        }
     }
 
     private fun setupViews() {
@@ -101,10 +118,6 @@ class AlbumTabFragment: BaseFragment() {
         // 새로고침 색상 설정 (선택 사항)
         binding.swipeRefreshLayout.setColorSchemeResources(
             R.color.primary_normal,
-//            android.R.color.holo_blue_bright,
-//            android.R.color.holo_green_light,
-//            android.R.color.holo_orange_light,
-//            android.R.color.holo_red_light
         )
 
         // 새로고침 리스너 설정
@@ -125,9 +138,19 @@ class AlbumTabFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
+        observeRefreshAllEvent()
         observeRefreshState()
         observePagingData()
         observeViewEvents()
+    }
+
+    private fun observeRefreshAllEvent() {
+        repeatOnLifecycle {
+            pVm.refreshAllEvent.collect {
+                vm.setRefreshing(true)
+                albumAdapter.refresh()
+            }
+        }
     }
 
     private fun observeRefreshState() {
@@ -155,7 +178,7 @@ class AlbumTabFragment: BaseFragment() {
                 } else {
                     binding.swipeRefreshLayout.visibility = View.VISIBLE
 
-                    if(isRefreshComplete && albumAdapter.itemCount > 0) {
+                    if(isRefreshComplete) {
                         vm.setRefreshing(false)
                         Log.d("AlbumTabFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
 
@@ -221,10 +244,15 @@ class AlbumTabFragment: BaseFragment() {
                             value = it,
                             onItemClick = {
                                 Log.d("AlbumTabFragment", "Item Clicked!")
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id))
+                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
                             },
-                            onMoreClick = {
-
+                            onMoreClick = { album ->
+                                val bottomSheet = MyAlbumMoreBottomSheetFragment.newInstance(
+                                    bundle = bundleOf(
+                                        MyAlbumMoreBottomSheetFragment.PARAMS to MyAlbumMoreBottomSheetFragment.ParamsIn(album)
+                                    )
+                                )
+                                bottomSheet.show(childFragmentManager, MyAlbumMoreBottomSheetFragment.TAG)
                             },
                         )
                     }
@@ -244,8 +272,14 @@ class AlbumTabFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: AlbumTabViewEvent) {
-//        when (event) {
-//        }
+        when (event) {
+            is AlbumTabViewEvent.Refresh -> {
+                refreshData()
+            }
+            is AlbumTabViewEvent.RefreshAll -> {
+                pVm.refreshAll()
+            }
+        }
     }
 
     @Parcelize

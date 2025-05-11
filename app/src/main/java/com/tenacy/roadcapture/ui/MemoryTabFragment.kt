@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.GridLayoutManager
@@ -85,15 +86,15 @@ class MemoryTabFragment: BaseFragment() {
 
         // 어댑터 상태 리스너 추가
         memoryAdapter.addLoadStateListener { combinedLoadStates ->
-            Log.d("AlbumTabFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
+            Log.d("MemoryTabFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
 
             // 추가 페이지 로드 상태 확인
             val appendState = combinedLoadStates.append
-            Log.d("AlbumTabFragment", "어펜드 상태: $appendState")
+            Log.d("MemoryTabFragment", "어펜드 상태: $appendState")
 
             // 리프레시 상태 확인
             val refreshState = combinedLoadStates.refresh
-            Log.d("AlbumTabFragment", "리프레시 상태: $refreshState")
+            Log.d("MemoryTabFragment", "리프레시 상태: $refreshState")
         }
     }
 
@@ -109,7 +110,7 @@ class MemoryTabFragment: BaseFragment() {
 
         // 새로고침 리스너 설정
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.d("AlbumTabFragment", "사용자 제스처로 데이터 새로고침 시작")
+            Log.d("MemoryTabFragment", "사용자 제스처로 데이터 새로고침 시작")
             refreshData()
         }
     }
@@ -119,15 +120,25 @@ class MemoryTabFragment: BaseFragment() {
         vm.setRefreshing(true)
 
         // 어댑터 리프레시 호출
-        Log.d("AlbumTabFragment", "어댑터 리프레시 호출")
+        Log.d("MemoryTabFragment", "어댑터 리프레시 호출")
         memoryAdapter.refresh()
         pVm.fetchData()
     }
 
     private fun setupObservers() {
+        observeRefreshAllEvent()
         observeRefreshState()
         observePagingData()
         observeViewEvents()
+    }
+
+    private fun observeRefreshAllEvent() {
+        repeatOnLifecycle {
+            pVm.refreshAllEvent.collect {
+                vm.setRefreshing(true)
+                memoryAdapter.refresh()
+            }
+        }
     }
 
     private fun observeRefreshState() {
@@ -155,9 +166,9 @@ class MemoryTabFragment: BaseFragment() {
                 } else {
                     binding.swipeRefreshLayout.visibility = View.VISIBLE
 
-                    if(isRefreshComplete && memoryAdapter.itemCount > 0) {
+                    if(isRefreshComplete) {
                         vm.setRefreshing(false)
-                        Log.d("AlbumTabFragment", "데이터 새로고침 완료, 아이템 수: ${memoryAdapter.itemCount}")
+                        Log.d("MemoryTabFragment", "데이터 새로고침 완료, 아이템 수: ${memoryAdapter.itemCount}")
 
                         // 새로고침 완료 후 맨 위로 스크롤
                         binding.rvTabMemory.scrollToPosition(0)
@@ -167,17 +178,17 @@ class MemoryTabFragment: BaseFragment() {
                 // 추가 데이터 로딩 상태 (무한 스크롤)
                 when (val append = loadStates.append) {
                     is LoadState.Loading -> {
-                        Log.d("AlbumTabFragment", "추가 데이터 로딩 중...")
+                        Log.d("MemoryTabFragment", "추가 데이터 로딩 중...")
                     }
                     is LoadState.NotLoading -> {
                         if (append.endOfPaginationReached) {
-                            Log.d("AlbumTabFragment", "모든 데이터 로드 완료 (페이징 끝)")
+                            Log.d("MemoryTabFragment", "모든 데이터 로드 완료 (페이징 끝)")
                         } else {
-                            Log.d("AlbumTabFragment", "추가 데이터 로드 완료")
+                            Log.d("MemoryTabFragment", "추가 데이터 로드 완료")
                         }
                     }
                     is LoadState.Error -> {
-                        Log.e("AlbumTabFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
+                        Log.e("MemoryTabFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
                     }
                 }
 
@@ -187,7 +198,7 @@ class MemoryTabFragment: BaseFragment() {
                         && memoryAdapter.itemCount < 1)
 
                 if (isEmptyAfterLoading) {
-                    Log.d("AlbumTabFragment", "데이터가 비어있음")
+                    Log.d("MemoryTabFragment", "데이터가 비어있음")
                     // 여기에 빈 상태 화면 표시 로직 추가
                 }
 
@@ -201,7 +212,7 @@ class MemoryTabFragment: BaseFragment() {
 
                 errorState?.let {
                     // 에러 상태 처리
-                    Log.e("AlbumTabFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
+                    Log.e("MemoryTabFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
                     binding.swipeRefreshLayout.isRefreshing = false
                     vm.setRefreshing(false)
                     wasRefreshing = false
@@ -214,14 +225,14 @@ class MemoryTabFragment: BaseFragment() {
         // 페이징 데이터 관찰
         repeatOnLifecycle {
             vm.memories.collectLatest { pagingData ->
-                Log.d("AlbumTabFragment", "새 페이징 데이터 수신")
+                Log.d("MemoryTabFragment", "새 페이징 데이터 수신")
                 memoryAdapter.submitData(
                     pagingData.map {
                         MemoryItem(
                             value = it,
                             onItemClick = {
-                                Log.d("AlbumTabFragment", "Item Clicked!")
-
+                                Log.d("MemoryTabFragment", "Item Clicked!")
+                                findNavController().navigate(MainFragmentDirections.actionMainToUserMemoryViewer(it))
                             },
                         )
                     }
@@ -234,13 +245,13 @@ class MemoryTabFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? AlbumTabViewEvent)?.let { handleViewEvents(it) }
+                    (event as? MemoryTabViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: AlbumTabViewEvent) {
+    private fun handleViewEvents(event: MemoryTabViewEvent) {
 //        when (event) {
 //        }
     }

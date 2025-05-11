@@ -71,6 +71,7 @@ class LoginViewModel @Inject constructor(
                 userToUpdate["createdAt"] = FieldValue.serverTimestamp()
                 userToUpdate["photoUrl"] = setDefaultProfileImage(photoPath)
                 userToUpdate["photoName"] = photoPath
+                userToUpdate["scrapCount"] = 0L
                 ref.set(userToUpdate).await()
             } else {
                 ref.set(userToUpdate, SetOptions.merge()).await()

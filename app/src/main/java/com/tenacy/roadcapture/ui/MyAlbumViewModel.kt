@@ -19,6 +19,12 @@ class MyAlbumViewModel @Inject constructor(
 
 ) : BaseViewModel() {
 
+    private val _refreshAllEvent = MutableSharedFlow<Unit>()
+    val refreshAllEvent = _refreshAllEvent.asSharedFlow()
+        .onEach {
+            fetchData()
+        }
+
     private val _user = MutableStateFlow<User?>(null)
 
     val displayName = _user.filterNotNull().map { it.displayName }
@@ -36,7 +42,13 @@ class MyAlbumViewModel @Inject constructor(
             KEY_ALBUM_COUNT to it.albumCount,
             KEY_MEMORY_COUNT to it.memoryCount,
         )
-    }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyMap())
+
+//    val albumCount = totalCounts.filterNotNull().mapNotNull { it[KEY_ALBUM_COUNT] }
+//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
+//
+//    val memoryCount = totalCounts.filterNotNull().mapNotNull { it[KEY_MEMORY_COUNT] }
+//        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
 
     val scrapText = _user.filterNotNull().map {
         val (scrapCount, scrapCountUnit) = it.scrapCount.toReadableUnit()
@@ -80,6 +92,12 @@ class MyAlbumViewModel @Inject constructor(
                 .collect {
                     _user.emit(it)
                 }
+        }
+    }
+
+    fun refreshAll() {
+        viewModelScope.launch {
+            _refreshAllEvent.emit(Unit)
         }
     }
 
