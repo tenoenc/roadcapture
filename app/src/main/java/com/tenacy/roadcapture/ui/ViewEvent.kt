@@ -103,3 +103,7 @@ sealed class AlbumTabViewEvent: ViewEvent {
 }
 
 sealed class MemoryTabViewEvent: ViewEvent
+
+sealed class ModifyUsernameViewEvent: ViewEvent {
+    data class Complete(val username: String): ModifyUsernameViewEvent()
+}

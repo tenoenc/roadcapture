@@ -80,6 +80,7 @@ class MyAlbumFragment: BaseFragment() {
             }
             bundle.getLong(ProfileMoreBottomSheetFragment.RESULT_EVENT_CLICK_MODIFY_NAME, 0L).takeIf { it > 0 }?.let {
                 // 이름 변경 -> 화면 이동
+                findNavController().navigate(MainFragmentDirections.actionMainToModifyUsername())
             }
         }
     }
@@ -119,6 +120,15 @@ class MyAlbumFragment: BaseFragment() {
 
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_PROFILE_UPLOAD_PROGRESS) { bundle ->
+                if (bundle == null) return@consumeOnce
+                bundle.getLong(RESULT_EVENT_REFRESH, 0L).takeIf { it > 0 }?.let {
+                    vm.fetchData()
+                }
+            }
+        }
+
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_USERNAME_SAVING) { bundle ->
                 if (bundle == null) return@consumeOnce
                 bundle.getLong(RESULT_EVENT_REFRESH, 0L).takeIf { it > 0 }?.let {
                     vm.fetchData()
@@ -182,6 +192,7 @@ class MyAlbumFragment: BaseFragment() {
 
     companion object {
         const val KEY_PROFILE_UPLOAD_PROGRESS = "profile_upload_progress"
+        const val KEY_USERNAME_SAVING = "username_saving"
         const val RESULT_EVENT_REFRESH = "event_refresh"
     }
 }

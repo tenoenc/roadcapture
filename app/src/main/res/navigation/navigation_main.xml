@@ -23,6 +23,8 @@
                 app:destination="@id/userMemoryViewerFragment"/>
         <action android:id="@+id/action_main_to_profileUploadProgress"
                 app:destination="@id/profileUploadProgressFragment"/>
+        <action android:id="@+id/action_main_to_modifyUsername"
+                app:destination="@id/modifyUsernameFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -66,7 +68,7 @@
     </fragment>
     <fragment android:id="@+id/addressLoadingFragment" android:name="com.tenacy.roadcapture.ui.AddressLoadingFragment"
               android:label="AddressLoadingFragment"
-              tools:layout="@layout/fragment_address_loading">
+              tools:layout="@layout/fragment_loading">
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
         <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng"/>
         <action android:id="@+id/action_loading_to_newMemory"
@@ -109,6 +111,18 @@
               android:label="ProfileUploadProgressFragment"
               tools:layout="@layout/fragment_upload_progress">
 
-        <argument android:name="uri" app:argType="android.net.Uri" />
+        <argument android:name="uri" app:argType="android.net.Uri"/>
+    </fragment>
+    <fragment android:id="@+id/modifyUsernameFragment" android:name="com.tenacy.roadcapture.ui.ModifyUsernameFragment"
+              android:label="ModifyUsernameFragment"
+              tools:layout="@layout/fragment_modify_username">
+        <action android:id="@+id/action_modifyUsername_to_usernameSaving"
+                app:destination="@id/usernameSavingFragment"/>
+    </fragment>
+    <fragment android:id="@+id/usernameSavingFragment" android:name="com.tenacy.roadcapture.ui.UsernameSavingFragment"
+              android:label="UsernameSavingFragment"
+              tools:layout="@layout/fragment_loading">
+
+        <argument android:name="username" app:argType="string" />
     </fragment>
 </navigation>

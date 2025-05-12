@@ -5,7 +5,7 @@
 
     <data>
 
-        <variable name="vm" type="com.tenacy.roadcapture.ui.NewAlbumViewModel"/>
+        <variable name="vm" type="com.tenacy.roadcapture.ui.ModifyUsernameViewModel"/>
 
         <import type="com.tenacy.roadcapture.ui.EditTextState" />
         <import type="com.tenacy.roadcapture.di.InputModule" />
@@ -18,7 +18,7 @@
 
         <LinearLayout android:layout_width="0dp"
                       android:layout_height="wrap_content"
-                      android:id="@+id/ll_new_album_a_bar_container"
+                      android:id="@+id/ll_modify_username_a_bar_container"
                       android:orientation="horizontal"
                       android:paddingHorizontal="16dp"
                       android:paddingVertical="8dp"
@@ -40,10 +40,10 @@
                       android:textAppearance="@style/Title_18"
                       android:textColor="@color/label_normal"
                       android:textAlignment="center"
-                      android:text="완성하기"/>
+                      android:text="이름 변경"/>
 
             <ImageButton
-                    android:id="@+id/ibtn_new_album_complete"
+                    android:id="@+id/ibtn_modify_username_complete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> vm.onCompleteClick()}"
@@ -55,24 +55,24 @@
 
         <TextView android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:id="@+id/txt_new_album_hint_title"
+                  android:id="@+id/txt_modify_username_hint_value"
                   android:layout_marginTop="80dp"
                   android:textAppearance="@style/Title_20"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="제목을 입력해주세요"
-                  app:layout_constraintTop_toBottomOf="@id/ll_new_album_a_bar_container"
+                  android:text="이름을 입력해주세요"
+                  app:layout_constraintTop_toBottomOf="@id/ll_modify_username_a_bar_container"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>
 
         <EditText android:layout_width="0dp"
                   android:layout_height="wrap_content"
-                  android:id="@+id/et_new_album_title"
+                  android:id="@+id/et_modify_username_value"
                   android:gravity="start"
                   style="@style/EditBox"
-                  android:text="@={vm.albumTitle}"
+                  android:text="@={vm.username}"
                   android:inputType="text"
-                  app:state="@{vm.albumTitleState}"
+                  app:state="@{vm.usernameState}"
                   android:textAppearance="@style/Body_14_M"
                   android:textColor="@color/label_normal"
                   android:textAlignment="textStart"
@@ -81,23 +81,23 @@
                   android:paddingHorizontal="16dp"
                   android:layout_marginHorizontal="20dp"
                   android:layout_marginTop="28dp"
-                  app:layout_constraintTop_toBottomOf="@id/txt_new_album_hint_title"
+                  app:layout_constraintTop_toBottomOf="@id/txt_modify_username_hint_value"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:id="@+id/txt_new_album_place_name_count"
+                  android:id="@+id/txt_modify_username_place_name_count"
                   android:textAppearance="@style/Body_12_M"
                   android:textAlignment="textEnd"
-                  android:textColor="@{vm.albumTitleState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
+                  android:textColor="@{vm.usernameState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
                   tools:textColor="@color/label_assistive"
-                  android:text="@{vm.albumTitleLength + ` / ` + InputModule.MAX_LENGTH_PLACE_NAME}"
-                  tools:text="12 / 50"
+                  android:text="@{vm.usernameLength + ` / ` + InputModule.MAX_LENGTH_PLACE_NAME}"
+                  tools:text="12 / 20"
                   android:layout_marginTop="4dp"
                   android:layout_marginEnd="8dp"
-                  app:layout_constraintTop_toBottomOf="@id/et_new_album_title"
-                  app:layout_constraintEnd_toEndOf="@id/et_new_album_title"/>
+                  app:layout_constraintTop_toBottomOf="@id/et_modify_username_value"
+                  app:layout_constraintEnd_toEndOf="@id/et_modify_username_value"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
