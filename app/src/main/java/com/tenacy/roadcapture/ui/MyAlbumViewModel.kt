@@ -1,22 +1,27 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
+import android.net.Uri
+import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel
 class MyAlbumViewModel @Inject constructor(
-
+    @ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
     private val _refreshAllEvent = MutableSharedFlow<Unit>()
@@ -98,6 +103,12 @@ class MyAlbumViewModel @Inject constructor(
     fun refreshAll() {
         viewModelScope.launch {
             _refreshAllEvent.emit(Unit)
+        }
+    }
+
+    fun onMoreClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(MyAlbumViewEvent.ShowMore)
         }
     }
 

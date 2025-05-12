@@ -23,6 +23,7 @@ googleid = "1.1.1"
 googleServices = "4.4.2"
 gson = "2.10.1"
 hilt = "2.48"
+imagePicker = "3.1.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 kotlin = "1.9.24"
@@ -56,6 +57,7 @@ ucrop = "2.2.8"
 [libraries]
 adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "converterMoshi" }
 algoliasearch-android = { module = "com.algolia:algoliasearch-android", version.ref = "algoliasearchAndroid" }
+android-image-picker = { module = "com.github.esafirm:android-image-picker", version.ref = "imagePicker" }
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "mapsUtils" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }

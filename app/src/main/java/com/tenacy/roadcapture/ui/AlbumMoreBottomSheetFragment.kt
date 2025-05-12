@@ -9,13 +9,13 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetMyAlbumMoreBinding
+import com.tenacy.roadcapture.databinding.BSheetAlbumMoreBinding
 import com.tenacy.roadcapture.ui.dto.Album
 import kotlinx.parcelize.Parcelize
 
-class MyAlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
+class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetMyAlbumMoreBinding? = null
+    private var _binding: BSheetAlbumMoreBinding? = null
     private val binding get() = _binding!!
 
     private var params: ParamsIn? = null
@@ -25,7 +25,7 @@ class MyAlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.getParcelable<ParamsIn>(PARAMS)?.let { params ->
-            this@MyAlbumMoreBottomSheetFragment.params = params
+            this@AlbumMoreBottomSheetFragment.params = params
         }
     }
 
@@ -34,7 +34,7 @@ class MyAlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetMyAlbumMoreBinding.inflate(inflater, container, false).apply {
+        return BSheetAlbumMoreBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -53,14 +53,14 @@ class MyAlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetMyAlbumMoreModify.setOnClickListener {
+        binding.btnBSheetAlbumMoreModify.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(RESULT_EVENT_CLICK_TOGGLE_PUBLIC to params?.album)
             )
             dismiss()
         }
-        binding.btnBSheetMyAlbumMoreDelete.setOnClickListener {
+        binding.btnBSheetAlbumMoreDelete.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(RESULT_EVENT_CLICK_DELETE to params?.album)
@@ -81,16 +81,16 @@ class MyAlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
     companion object {
 
-        const val TAG = "MyAlbumMoreBottomSheetFragment"
+        const val TAG = "AlbumMoreBottomSheetFragment"
 
         const val PARAMS = "params"
 
-        const val REQUEST_KEY = "my_album_more"
+        const val REQUEST_KEY = "album_more"
         const val RESULT_EVENT_CLICK_TOGGLE_PUBLIC = "event_click_toggle_public"
         const val RESULT_EVENT_CLICK_DELETE = "event_click_delete"
 
-        fun newInstance(bundle: Bundle? = null): MyAlbumMoreBottomSheetFragment {
-            return MyAlbumMoreBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): AlbumMoreBottomSheetFragment {
+            return AlbumMoreBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

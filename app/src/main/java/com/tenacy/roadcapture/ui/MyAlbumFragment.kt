@@ -8,9 +8,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
+import com.esafirm.imagepicker.features.ImagePickerConfig
+import com.esafirm.imagepicker.features.ImagePickerLauncher
+import com.esafirm.imagepicker.features.ImagePickerMode
+import com.esafirm.imagepicker.features.registerImagePicker
+import com.esafirm.imagepicker.model.Image
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentMyAlbumBinding
+import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.user
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,8 +31,12 @@ class MyAlbumFragment: BaseFragment() {
 
     private val vm: MyAlbumViewModel by viewModels()
 
+    private lateinit var imagePickerLauncher: ImagePickerLauncher
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
+        setupImagePicker()
         vm
     }
 
@@ -47,6 +59,29 @@ class MyAlbumFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupImagePicker() {
+        imagePickerLauncher = registerImagePicker { result: List<Image> ->
+            result.getOrNull(0)?.let {
+                findNavController().navigate(MainFragmentDirections.actionMainToProfileUploadProgress(it.uri))
+            }
+        }
+    }
+
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            ProfileMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getLong(ProfileMoreBottomSheetFragment.RESULT_EVENT_CLICK_MODIFY_PHOTO, 0L).takeIf { it > 0 }?.let {
+                // 프로필 사진 변경
+                imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
+            }
+            bundle.getLong(ProfileMoreBottomSheetFragment.RESULT_EVENT_CLICK_MODIFY_NAME, 0L).takeIf { it > 0 }?.let {
+                // 이름 변경 -> 화면 이동
+            }
+        }
     }
 
     private fun setupViews() {
@@ -74,8 +109,22 @@ class MyAlbumFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
+        observeSavedState()
         observeUserData()
         observeViewEvents()
+    }
+
+    private fun observeSavedState() {
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_PROFILE_UPLOAD_PROGRESS) { bundle ->
+                if (bundle == null) return@consumeOnce
+                bundle.getLong(RESULT_EVENT_REFRESH, 0L).takeIf { it > 0 }?.let {
+                    vm.fetchData()
+                }
+            }
+        }
     }
 
     private fun observeUserData() {
@@ -99,7 +148,12 @@ class MyAlbumFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: MyAlbumViewEvent) {
-        // 이벤트 처리 로직
+        when(event) {
+            is MyAlbumViewEvent.ShowMore -> {
+                val bottomSheet = ProfileMoreBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, ProfileMoreBottomSheetFragment.TAG)
+            }
+        }
     }
 
     private fun createTabText(mainText: String, countText: String): SpannableString {
@@ -124,5 +178,10 @@ class MyAlbumFragment: BaseFragment() {
             tabLayout.getTabAt(0)?.text = createTabText("앨범", "${albumCount}개")
             tabLayout.getTabAt(1)?.text = createTabText("추억", "${memoryCount}개")
         }
+    }
+
+    companion object {
+        const val KEY_PROFILE_UPLOAD_PROGRESS = "profile_upload_progress"
+        const val RESULT_EVENT_REFRESH = "event_refresh"
     }
 }

@@ -57,6 +57,7 @@
                              android:layout_height="24dp"
                              android:id="@+id/ibtn_my_album_header_more"
                              android:src="@drawable/ic_more_vertical"
+                             android:onClick="@{() -> vm.onMoreClick()}"
                              android:background="@null"
                              android:scaleType="fitCenter"
                              app:layout_constraintTop_toTopOf="@id/txt_my_album_header_username"

@@ -21,6 +21,8 @@
         <action android:id="@+id/action_main_to_search" app:destination="@id/searchFragment"/>
         <action android:id="@+id/action_main_to_userMemoryViewer"
                 app:destination="@id/userMemoryViewerFragment"/>
+        <action android:id="@+id/action_main_to_profileUploadProgress"
+                app:destination="@id/profileUploadProgressFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -53,7 +55,7 @@
         <action android:id="@+id/action_newAlbum_to_uploadProgress"
                 app:enterAnim="@anim/from_right"
                 app:exitAnim="@anim/to_left"
-                app:destination="@id/uploadProgressFragment"/>
+                app:destination="@id/albumUploadProgressFragment"/>
     </fragment>
     <fragment android:id="@+id/modifiableMemoryViewerFragment"
               android:name="com.tenacy.roadcapture.ui.ModifiableMemoryViewerFragment"
@@ -73,8 +75,9 @@
                 app:popUpTo="@id/tripFragment"
                 app:destination="@id/newMemoryFragment"/>
     </fragment>
-    <fragment android:id="@+id/uploadProgressFragment" android:name="com.tenacy.roadcapture.ui.UploadProgressFragment"
-              android:label="UploadProgressFragment"
+    <fragment android:id="@+id/albumUploadProgressFragment"
+              android:name="com.tenacy.roadcapture.ui.AlbumUploadProgressFragment"
+              android:label="AlbumUploadProgressFragment"
               tools:layout="@layout/fragment_upload_progress">
 
         <argument android:name="value" app:argType="com.tenacy.roadcapture.ui.NewAlbumFragment$Arguments"/>
@@ -99,6 +102,13 @@
               android:label="UserMemoryViewerFragment"
               tools:layout="@layout/fragment_user_memory_viewer">
 
-        <argument android:name="memory" app:argType="com.tenacy.roadcapture.ui.dto.Memory" />
+        <argument android:name="memory" app:argType="com.tenacy.roadcapture.ui.dto.Memory"/>
+    </fragment>
+    <fragment android:id="@+id/profileUploadProgressFragment"
+              android:name="com.tenacy.roadcapture.ui.ProfileUploadProgressFragment"
+              android:label="ProfileUploadProgressFragment"
+              tools:layout="@layout/fragment_upload_progress">
+
+        <argument android:name="uri" app:argType="android.net.Uri" />
     </fragment>
 </navigation>

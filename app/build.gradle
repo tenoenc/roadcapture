@@ -224,6 +224,8 @@ dependencies {
     implementation libs.tedpermission.normal
     implementation libs.tedpermission.coroutine
 
+    implementation libs.android.image.picker
+
     /**
      * **********************************************************
      *              Test

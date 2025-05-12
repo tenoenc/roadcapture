@@ -1,5 +1,7 @@
 package com.tenacy.roadcapture.util
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.DocumentReference
@@ -224,4 +226,32 @@ suspend fun <T> FirebaseFirestore.setCollectionInBatches(
 
     executeInBatches(operations)
     return documentRefs
+}
+
+suspend fun Context.uploadImageToStorage(
+    uri: Uri,
+    storagePath: String
+): String = withContext(Dispatchers.IO) {
+    try {
+        // 이미지를 위한 고유 경로 생성
+        val storageRef = storage.reference.child(storagePath)
+
+        // 콘텐츠 URI에서 입력 스트림 열기
+        val inputStream = contentResolver.openInputStream(uri)
+            ?: throw IllegalStateException("Cannot open input stream for URI: $uri")
+
+        // 이미지 업로드
+        val bytes = inputStream.readBytes()
+        inputStream.close()
+
+        val uploadTask = storageRef.putBytes(bytes).await()
+
+        // 다운로드 URL 가져오기
+        val downloadUrl = storageRef.downloadUrl.await().toString()
+
+        // Storage 참조 ID와 URL 반환
+        downloadUrl
+    } catch (e: Exception) {
+        throw Exception("Failed to upload image: ${e.message}", e)
+    }
 }

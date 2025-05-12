@@ -34,7 +34,9 @@ sealed class ScrapViewEvent: ViewEvent {
     data object Search: ScrapViewEvent()
 }
 
-sealed class MyAlbumViewEvent: ViewEvent
+sealed class MyAlbumViewEvent: ViewEvent {
+    data object ShowMore: MyAlbumViewEvent()
+}
 
 sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()

@@ -1,7 +1,6 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
-import android.net.Uri
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -13,8 +12,14 @@ import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
@@ -24,14 +29,14 @@ import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 @HiltViewModel
-class UploadProgressViewModel @Inject constructor(
+class AlbumUploadProgressViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     @ApplicationContext private val context: Context,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
 ) : BaseViewModel() {
 
-    private val args: NewAlbumFragment.Arguments = UploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).value
+    private val args: NewAlbumFragment.Arguments = AlbumUploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).value
 
     private val _saveState = MutableSharedFlow<AlbumSaveState>()
     val saveState = _saveState.asSharedFlow()
@@ -56,6 +61,7 @@ class UploadProgressViewModel @Inject constructor(
                 val endTime = LocalDateTime.now()
                 val userId = user!!.uid
                 val userRef = db.collection("users").document(userId)
+                val user = userRef.get().await().toUser()
 
                 val albumRef = db.collection("albums").document()
                 val albumId = albumRef.id
@@ -88,7 +94,7 @@ class UploadProgressViewModel @Inject constructor(
                     val storagePath = "images/albums/$userId/$albumId/${memory.id}-${UUID.randomUUID()}.jpg"
                     async {
                         try {
-                            val downloadUrl = uploadImageToStorage(
+                            val downloadUrl = context.uploadImageToStorage(
                                 uri = memory.photoUri,
                                 storagePath = storagePath,
                             )
@@ -162,8 +168,8 @@ class UploadProgressViewModel @Inject constructor(
                     "regionTags" to regionTags,
                     "isPublic" to args.isPublic,
                     "userRef" to userRef,
-                    "userDisplayName" to user!!.displayName,
-                    "userPhotoUrl" to user!!.photoUrl,
+                    "userDisplayName" to user.displayName,
+                    "userPhotoUrl" to user.photoUrl,
                     "memoryAddressTags" to memoryAddressTags.toList(),
                     "memoryPlaceNames" to memoryPlaceNames.toList(),
                 )
@@ -212,35 +218,6 @@ class UploadProgressViewModel @Inject constructor(
                 }
         }
     }
-
-    private suspend fun uploadImageToStorage(
-        uri: Uri,
-        storagePath: String
-    ): String = withContext(Dispatchers.IO) {
-        try {
-            // 이미지를 위한 고유 경로 생성
-            val storageRef = storage.reference.child(storagePath)
-
-            // 콘텐츠 URI에서 입력 스트림 열기
-            val inputStream = context.contentResolver.openInputStream(uri)
-                ?: throw IllegalStateException("Cannot open input stream for URI: $uri")
-
-            // 이미지 업로드
-            val bytes = inputStream.readBytes()
-            inputStream.close()
-
-            val uploadTask = storageRef.putBytes(bytes).await()
-
-            // 다운로드 URL 가져오기
-            val downloadUrl = storageRef.downloadUrl.await().toString()
-
-            // Storage 참조 ID와 URL 반환
-            downloadUrl
-        } catch (e: Exception) {
-            throw Exception("Failed to upload image: ${e.message}", e)
-        }
-    }
-
 }
 
 @Parcelize
