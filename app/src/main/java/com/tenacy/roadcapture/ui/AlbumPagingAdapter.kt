@@ -264,6 +264,7 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
                             "isPublic" -> {
                                 binding.ibtnIMyAlbumMore.setOnClickListener {
                                     item.onMoreClick(item.value)
+                                    binding.numericalText = getNumericalText(item)
                                 }
                             }
 
@@ -312,6 +313,9 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
         val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
         val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnit()
         return StringBuilder().let { sb ->
+            if(!album.value.isPublic) {
+                sb.append("비공개 · ")
+            }
             if(album.value.isScraped) {
                 sb.append("스크랩됨 · ")
             }

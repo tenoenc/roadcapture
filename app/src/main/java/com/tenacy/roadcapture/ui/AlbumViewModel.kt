@@ -81,6 +81,7 @@ class AlbumViewModel @Inject constructor(
 
     init {
         fetchData()
+        countView()
     }
 
     /*private fun fetchData() {
@@ -155,6 +156,20 @@ class AlbumViewModel @Inject constructor(
         }
     }
 
+    private fun countView() {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                val albumRef = db.collection("albums").document(albumId)
+                albumRef.update("viewCount", FieldValue.increment(1)).await()
+                emit(Unit)
+            }.catch { exception ->
+                Log.e("AlbumViewModel", "에러", exception)
+            }.collect {
+
+            }
+        }
+    }
+
     private fun scrap() {
         if (isScrapProcessing) return
 
@@ -215,7 +230,7 @@ class AlbumViewModel @Inject constructor(
                 emit(isScraped)
             }.catch { exception ->
                 Log.e("AlbumViewModel", "에러", exception)
-            }.flowOn(Dispatchers.IO)
+            }
                 .collectLatest { nextScraped ->
                     _scraped.update { currentScraped ->
                         _scrapCount.update { count ->

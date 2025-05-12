@@ -92,7 +92,7 @@
                   android:textAlignment="textEnd"
                   android:textColor="@{vm.usernameState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
                   tools:textColor="@color/label_assistive"
-                  android:text="@{vm.usernameLength + ` / ` + InputModule.MAX_LENGTH_PLACE_NAME}"
+                  android:text="@{vm.usernameLength + ` / ` + InputModule.MAX_LENGTH_USERNAME}"
                   tools:text="12 / 20"
                   android:layout_marginTop="4dp"
                   android:layout_marginEnd="8dp"
