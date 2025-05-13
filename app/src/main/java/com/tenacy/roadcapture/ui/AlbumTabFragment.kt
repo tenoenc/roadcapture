@@ -38,7 +38,7 @@ class AlbumTabFragment: BaseFragment() {
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
 
     private val emptyStateAdapter: EmptyStateAdapter by lazy {
-        EmptyStateAdapter(EmptyItem.MyAlbum)
+        EmptyStateAdapter(EmptyItem.MyAlbum(28f.toPx))
     }
 
     // 현재 리프레시 중인지 추적

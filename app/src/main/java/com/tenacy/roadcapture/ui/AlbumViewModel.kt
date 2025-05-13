@@ -106,12 +106,12 @@ class AlbumViewModel @Inject constructor(
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRef = db.collection("albums").document(albumId)
                 val firebaseAlbum = if(userId == user!!.uid) {
-                    albumRef.get().await().toAlbum()
+                    albumRef.get().awaitResult().getOrNull()
                 } else {
                     db.collection("albums")
                         .whereEqualTo(FieldPath.documentId(), albumId)
-                        .whereEqualTo("isPublic", true).get().await().documents.firstOrNull()?.toAlbum() ?: throw RuntimeException("403")
-                }
+                        .whereEqualTo("isPublic", true).get().await().documents.firstOrNull()
+                }?.toAlbum() ?: throw RuntimeException("403")
                 val scrapRef = db.collection("scraps")
                 val isScraped = scrapRef
                     .whereEqualTo("userRef", userRef)

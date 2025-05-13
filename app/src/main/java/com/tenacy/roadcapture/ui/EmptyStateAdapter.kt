@@ -5,11 +5,12 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.tenacy.roadcapture.databinding.*
+import com.tenacy.roadcapture.util.toPx
 
 sealed class EmptyItem {
     data object Scrap: EmptyItem()
     data object Search: EmptyItem()
-    data object MyAlbum: EmptyItem()
+    data class MyAlbum(val paddingTop: Int? = null): EmptyItem()
     data object MyMemory: EmptyItem()
     data object Album: EmptyItem()
     data object Memory: EmptyItem()
@@ -25,8 +26,21 @@ sealed class EmptyViewHolder(binding: ViewDataBinding): RecyclerView.ViewHolder(
     ): EmptyViewHolder(binding)
 
     class MyAlbum(
-        binding: ItemMyAlbumEmptyBinding,
-    ): EmptyViewHolder(binding)
+        private val binding: ItemMyAlbumEmptyBinding,
+    ): EmptyViewHolder(binding) {
+        fun bind(item: EmptyItem.MyAlbum) {
+            item.paddingTop?.let {
+                binding.root.apply {
+                    setPadding(
+                        paddingLeft,
+                        it,
+                        paddingRight,
+                        paddingBottom,
+                    )
+                }
+            }
+        }
+    }
 
     class MyMemory(
         binding: ItemMyMemoryEmptyBinding,
@@ -69,7 +83,9 @@ class EmptyStateAdapter(
     }
 
     override fun onBindViewHolder(holder: EmptyViewHolder, position: Int) {
-
+        if(holder is EmptyViewHolder.MyAlbum && item is EmptyItem.MyAlbum) {
+            holder.bind(item)
+        }
     }
 
     override fun getItemCount(): Int = if (isVisible) 1 else 0
