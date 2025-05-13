@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabMemoryBinding
@@ -31,6 +32,10 @@ class MemoryTabFragment: BaseFragment() {
     private val vm: MemoryTabViewModel by viewModels()
 
     private val memoryAdapter: MemoryPagingAdapter by lazy { MemoryPagingAdapter() }
+
+    private val emptyStateAdapter: EmptyStateAdapter by lazy {
+        EmptyStateAdapter(EmptyItem.MyMemory)
+    }
 
     // 현재 리프레시 중인지 추적
     private var wasRefreshing = false
@@ -70,10 +75,44 @@ class MemoryTabFragment: BaseFragment() {
         binding.rvTabMemory.apply {
             val spanCount = 3
             val layoutManager = GridLayoutManager(requireContext(), spanCount)
-            adapter = memoryAdapter.withLoadStateFooter(
-                footer = AlbumLoadStateAdapter()
+
+            // 메모리 어댑터에 로드 상태 푸터 추가
+            val memoryWithFooter = memoryAdapter.withLoadStateFooter(
+                footer = LoadStateAdapter()
             )
+
+            // ConcatAdapter 생성
+            val concatAdapter = ConcatAdapter(emptyStateAdapter, memoryWithFooter)
+            adapter = concatAdapter
+
+            // 위치 기반 spanSizeLookup 설정
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    // 현재 위치가 어떤 어댑터에 속하는지 계산
+                    var currentPos = 0
+
+                    // EmptyStateAdapter 범위 체크
+                    val emptyCount = emptyStateAdapter.itemCount
+                    if (position < currentPos + emptyCount) {
+                        return spanCount // 빈 상태는 전체 너비
+                    }
+                    currentPos += emptyCount
+
+                    // MemoryAdapter 범위 체크
+                    val memoryCount = memoryAdapter.itemCount
+                    if (position < currentPos + memoryCount) {
+                        return 1 // 메모리 아이템은 1칸
+                    }
+                    currentPos += memoryCount
+
+                    // LoadStateAdapter 범위 (나머지 위치)
+                    return spanCount // 로드 상태는 전체 너비
+                }
+            }
+
             this@apply.layoutManager = layoutManager
+
+            // 그리드 아이템 간격 설정
             addItemDecoration(
                 GridItemSpacingDecoration(
                     spanCount = spanCount,
@@ -102,10 +141,6 @@ class MemoryTabFragment: BaseFragment() {
         // 새로고침 색상 설정 (선택 사항)
         binding.swipeRefreshLayout.setColorSchemeResources(
             R.color.primary_normal,
-//            android.R.color.holo_blue_bright,
-//            android.R.color.holo_green_light,
-//            android.R.color.holo_orange_light,
-//            android.R.color.holo_red_light
         )
 
         // 새로고침 리스너 설정
@@ -197,6 +232,8 @@ class MemoryTabFragment: BaseFragment() {
                         && loadStates.append.endOfPaginationReached
                         && memoryAdapter.itemCount < 1)
 
+                emptyStateAdapter.isVisible = isEmptyAfterLoading
+
                 if (isEmptyAfterLoading) {
                     Log.d("MemoryTabFragment", "데이터가 비어있음")
                     // 여기에 빈 상태 화면 표시 로직 추가
@@ -252,8 +289,7 @@ class MemoryTabFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: MemoryTabViewEvent) {
-//        when (event) {
-//        }
+        // 이벤트 처리 로직 추가 가능
     }
 
     @Parcelize

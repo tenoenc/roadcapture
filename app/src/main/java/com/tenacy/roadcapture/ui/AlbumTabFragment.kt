@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabAlbumBinding
 import com.tenacy.roadcapture.ui.dto.Album
@@ -35,6 +36,10 @@ class AlbumTabFragment: BaseFragment() {
     private val vm: AlbumTabViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+
+    private val emptyStateAdapter: EmptyStateAdapter by lazy {
+        EmptyStateAdapter(EmptyItem.MyAlbum)
+    }
 
     // 현재 리프레시 중인지 추적
     private var wasRefreshing = false
@@ -86,9 +91,14 @@ class AlbumTabFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvTabAlbum.adapter = albumAdapter.withLoadStateFooter(
-            footer = AlbumLoadStateAdapter()
+        val concatAdapter = ConcatAdapter(
+            emptyStateAdapter,
+            albumAdapter.withLoadStateFooter(
+                footer = LoadStateAdapter()
+            ),
         )
+
+        binding.rvTabAlbum.adapter = concatAdapter
         binding.rvTabAlbum.addItemDecoration(ItemSpacingDecoration(spacing = 12f.toPx))
         binding.rvTabAlbum.setItemViewCacheSize(3)
         binding.rvTabAlbum.setHasFixedSize(true)
@@ -208,6 +218,8 @@ class AlbumTabFragment: BaseFragment() {
                 val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
                         && loadStates.append.endOfPaginationReached
                         && albumAdapter.itemCount < 1)
+
+                emptyStateAdapter.isVisible = isEmptyAfterLoading
 
                 if (isEmptyAfterLoading) {
                     Log.d("AlbumTabFragment", "데이터가 비어있음")

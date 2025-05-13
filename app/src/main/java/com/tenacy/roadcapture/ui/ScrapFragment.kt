@@ -11,11 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentScrapBinding
-import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import kotlinx.coroutines.currentCoroutineContext
@@ -31,6 +31,10 @@ class ScrapFragment: BaseFragment() {
     private val vm: ScrapViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+
+    private val emptyStateAdapter: EmptyStateAdapter by lazy {
+        EmptyStateAdapter(EmptyItem.Scrap)
+    }
 
     // 현재 리프레시 중인지 추적
     private var wasRefreshing = false
@@ -68,9 +72,14 @@ class ScrapFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvScrapAlbums.adapter = albumAdapter.withLoadStateFooter(
-            footer = AlbumLoadStateAdapter()
+        val concatAdapter = ConcatAdapter(
+            emptyStateAdapter,
+            albumAdapter.withLoadStateFooter(
+                footer = LoadStateAdapter()
+            ),
         )
+
+        binding.rvScrapAlbums.adapter = concatAdapter
         binding.rvScrapAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvScrapAlbums.setHasFixedSize(true)
 
@@ -207,6 +216,8 @@ class ScrapFragment: BaseFragment() {
                 val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
                         && loadStates.append.endOfPaginationReached
                         && albumAdapter.itemCount < 1)
+
+                emptyStateAdapter.isVisible = isEmptyAfterLoading
 
                 if (isEmptyAfterLoading) {
                     Log.d("ScrapFragment", "데이터가 비어있음")

@@ -65,6 +65,10 @@ class MemoryPagingAdapter: PagingDataAdapter<MemoryItem, MemoryViewHolder>(Memor
         }
     }
 
+    override fun getItemViewType(position: Int): Int {
+        return 1000
+    }
+
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         this@MemoryPagingAdapter.recyclerView = recyclerView

@@ -79,7 +79,7 @@ class HomeFragment: BaseFragment() {
 
     private fun setupRecyclerView() {
         binding.rvHomeAlbums.adapter = albumAdapter.withLoadStateFooter(
-            footer = AlbumLoadStateAdapter()
+            footer = LoadStateAdapter()
         )
         binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvHomeAlbums.setHasFixedSize(true)

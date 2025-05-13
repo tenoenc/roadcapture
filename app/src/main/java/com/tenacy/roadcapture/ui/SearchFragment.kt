@@ -12,6 +12,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -30,6 +31,10 @@ class SearchFragment: BaseFragment() {
     private val vm: SearchViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+
+    private val emptyStateAdapter: EmptyStateAdapter by lazy {
+        EmptyStateAdapter(EmptyItem.Search)
+    }
 
     // 클래스 변수로 추가
     private var wasRefreshing = false
@@ -89,9 +94,14 @@ class SearchFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvSearchAlbums.adapter = albumAdapter.withLoadStateFooter(
-            footer = AlbumLoadStateAdapter()
+        val concatAdapter = ConcatAdapter(
+            emptyStateAdapter,
+            albumAdapter.withLoadStateFooter(
+                footer = LoadStateAdapter()
+            ),
         )
+
+        binding.rvSearchAlbums.adapter = concatAdapter
         binding.rvSearchAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvSearchAlbums.setHasFixedSize(true)
 
@@ -189,6 +199,8 @@ class SearchFragment: BaseFragment() {
                 val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
                         && loadStates.append.endOfPaginationReached
                         && albumAdapter.itemCount < 1)
+
+                emptyStateAdapter.isVisible = isEmptyAfterLoading
 
                 // 로딩 완료 후 데이터가 있을 때 (최초 로딩에만 스크롤 위로)
                 val isNotEmptyAfterInitialLoading = (loadStates.source.refresh is LoadState.NotLoading

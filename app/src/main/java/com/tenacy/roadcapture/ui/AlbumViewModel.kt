@@ -112,10 +112,15 @@ class AlbumViewModel @Inject constructor(
                         .whereEqualTo(FieldPath.documentId(), albumId)
                         .whereEqualTo("isPublic", true).get().await().documents.firstOrNull()?.toAlbum() ?: throw RuntimeException("403")
                 }
-                val userScrapRef = userRef.collection("scraps").document(albumId)
-                val userScrap = userScrapRef.get().await()
+                val scrapRef = db.collection("scraps")
+                val isScraped = scrapRef
+                    .whereEqualTo("userRef", userRef)
+                    .whereEqualTo("albumRef", albumRef)
+                    .limit(1)
+                    .get().await()
+                    .documents.firstOrNull()?.exists() ?: false
 
-                val album = Album.from(firebaseAlbum, userScrap.exists())
+                val album = Album.from(firebaseAlbum, isScraped)
                 _album.emit(album)
                 _scraped.emit(album.isScraped)
                 _scrapCount.emit(album.scrapCount)

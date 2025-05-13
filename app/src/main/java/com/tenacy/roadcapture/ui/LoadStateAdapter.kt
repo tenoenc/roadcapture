@@ -16,7 +16,7 @@ class LoadStateViewHolder(
     }
 }
 
-class AlbumLoadStateAdapter : LoadStateAdapter<LoadStateViewHolder>() {
+class LoadStateAdapter : LoadStateAdapter<LoadStateViewHolder>() {
 
     init {
         setHasStableIds(true)
