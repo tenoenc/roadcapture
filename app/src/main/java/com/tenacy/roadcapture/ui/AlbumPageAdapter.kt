@@ -9,16 +9,16 @@ class AlbumPagerAdapter(fragment: Fragment, val userId: String) : FragmentStateA
 
     override fun createFragment(position: Int): Fragment {
         return when (position) {
-            0 -> AlbumTabFragment.newInstance(
+            0 -> MyAlbumTabFragment.newInstance(
                 bundle = bundleOf(
-                    AlbumTabFragment.KEY_PARAMS to AlbumTabFragment.ParamsIn(
+                    MyAlbumTabFragment.KEY_PARAMS to MyAlbumTabFragment.ParamsIn(
                         userId = userId
                     )
                 )
             )
-            1 -> MemoryTabFragment.newInstance(
+            1 -> MyMemoryTabFragment.newInstance(
                 bundle = bundleOf(
-                    MemoryTabFragment.KEY_PARAMS to MemoryTabFragment.ParamsIn(
+                    MyMemoryTabFragment.KEY_PARAMS to MyMemoryTabFragment.ParamsIn(
                         userId = userId
                     )
                 )

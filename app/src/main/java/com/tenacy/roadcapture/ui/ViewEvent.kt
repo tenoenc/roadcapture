@@ -97,12 +97,12 @@ sealed class SearchViewEvent: ViewEvent {
     data class SearchError(val message: String) : SearchViewEvent()
 }
 
-sealed class AlbumTabViewEvent: ViewEvent {
-    data object Refresh: AlbumTabViewEvent()
-    data object RefreshAll: AlbumTabViewEvent()
+sealed class MyAlbumTabViewEvent: ViewEvent {
+    data object Refresh: MyAlbumTabViewEvent()
+    data object RefreshAll: MyAlbumTabViewEvent()
 }
 
-sealed class MemoryTabViewEvent: ViewEvent
+sealed class MyMemoryTabViewEvent: ViewEvent
 
 sealed class ModifyUsernameViewEvent: ViewEvent {
     data class Complete(val username: String): ModifyUsernameViewEvent()

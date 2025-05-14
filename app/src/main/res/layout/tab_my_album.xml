@@ -4,10 +4,10 @@
 
     <data>
 
-        <variable name="vm" type="com.tenacy.roadcapture.ui.AlbumTabViewModel"/>
+        <variable name="vm" type="com.tenacy.roadcapture.ui.MyAlbumTabViewModel"/>
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_tab_album_container"
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_tab_my_album_container"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent">
 
@@ -22,7 +22,7 @@
 
             <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
-                                                       android:id="@+id/rv_tab_album"
+                                                       android:id="@+id/rv_tab_my_album"
                                                        android:clipToPadding="false"
                                                        android:paddingTop="12dp"
                                                        android:paddingBottom="24dp"

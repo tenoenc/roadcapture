@@ -75,10 +75,11 @@ class ProfileUploadProgressFragment: BaseFragment() {
             vm.saveState.collect {
                 when (it) {
                     is ProfileSaveState.Loading -> {}
-                    is ProfileSaveState.CompressingImage -> {
+                    is ProfileSaveState.FetchingData -> {
                         binding.llUploadProgressContainer.visibility = View.VISIBLE
                         binding.txtUploadProgressStatus.text = "준비하는 중"
                     }
+                    is ProfileSaveState.CompressingImage -> {}
                     is ProfileSaveState.UploadingImage -> {
                         binding.txtUploadProgressStatus.text = "이미지 업로드 중"
                         binding.pbUploadProgress.max = 1 * ANIMATION_SMOOTHNESS_FACTOR

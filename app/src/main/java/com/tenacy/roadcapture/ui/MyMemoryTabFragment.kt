@@ -6,39 +6,35 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.GridLayoutManager
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.TabAlbumBinding
-import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.databinding.TabMyMemoryBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
 import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
-class AlbumTabFragment: BaseFragment() {
+class MyMemoryTabFragment: BaseFragment() {
 
-    private var _binding: TabAlbumBinding? = null
+    private var _binding: TabMyMemoryBinding? = null
     val binding get() = _binding!!
 
     private val pVm: MyAlbumViewModel by viewModels(
-       ownerProducer = { requireParentFragment() }
+        ownerProducer = { requireParentFragment() }
     )
-    private val vm: AlbumTabViewModel by viewModels()
+    private val vm: MyMemoryTabViewModel by viewModels()
 
-    private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+    private val memoryAdapter: MemoryPagingAdapter by lazy { MemoryPagingAdapter() }
 
     private val emptyStateAdapter: EmptyStateAdapter by lazy {
-        EmptyStateAdapter(EmptyItem.MyAlbum(28f.toPx))
+        EmptyStateAdapter(EmptyItem.MyMemory)
     }
 
     // 현재 리프레시 중인지 추적
@@ -46,12 +42,11 @@ class AlbumTabFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setupFragmentResultListeners()
         vm
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = TabAlbumBinding.inflate(inflater, container, false)
+        _binding = TabMyMemoryBinding.inflate(inflater, container, false)
 
         binding.vm = vm
         binding.lifecycleOwner = this
@@ -71,56 +66,74 @@ class AlbumTabFragment: BaseFragment() {
         _binding = null
     }
 
-    private fun setupFragmentResultListeners() {
-        childFragmentManager.setFragmentResultListener(
-            AlbumMoreBottomSheetFragment.REQUEST_KEY,
-            this
-        ) { _, bundle ->
-            bundle.getParcelable<Album>(AlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_TOGGLE_PUBLIC)?.let {
-                vm.togglePublic(it.id, it.isPublic)
-            }
-            bundle.getParcelable<Album>(AlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_DELETE)?.let {
-                vm.deletePublic(it.id, it.user.id)
-            }
-        }
-    }
-
     private fun setupViews() {
         setupRecyclerView()
         setupSwipeRefresh()
     }
 
     private fun setupRecyclerView() {
-        val concatAdapter = ConcatAdapter(
-            emptyStateAdapter,
-            albumAdapter.withLoadStateFooter(
-                footer = LoadStateAdapter()
-            ),
-        )
+        binding.rvTabMyMemory.apply {
+            val spanCount = 3
+            val layoutManager = GridLayoutManager(requireContext(), spanCount)
 
-        binding.rvTabAlbum.adapter = concatAdapter
-        binding.rvTabAlbum.addItemDecoration(ItemSpacingDecoration(spacing = 12f.toPx))
-        binding.rvTabAlbum.setItemViewCacheSize(3)
-        binding.rvTabAlbum.setHasFixedSize(true)
+            // 메모리 어댑터에 로드 상태 푸터 추가
+            val memoryWithFooter = memoryAdapter.withLoadStateFooter(
+                footer = LoadStateAdapter()
+            )
+
+            // ConcatAdapter 생성
+            val concatAdapter = ConcatAdapter(emptyStateAdapter, memoryWithFooter)
+            adapter = concatAdapter
+
+            // 위치 기반 spanSizeLookup 설정
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int): Int {
+                    // 현재 위치가 어떤 어댑터에 속하는지 계산
+                    var currentPos = 0
+
+                    // EmptyStateAdapter 범위 체크
+                    val emptyCount = emptyStateAdapter.itemCount
+                    if (position < currentPos + emptyCount) {
+                        return spanCount // 빈 상태는 전체 너비
+                    }
+                    currentPos += emptyCount
+
+                    // MemoryAdapter 범위 체크
+                    val memoryCount = memoryAdapter.itemCount
+                    if (position < currentPos + memoryCount) {
+                        return 1 // 메모리 아이템은 1칸
+                    }
+                    currentPos += memoryCount
+
+                    // LoadStateAdapter 범위 (나머지 위치)
+                    return spanCount // 로드 상태는 전체 너비
+                }
+            }
+
+            this@apply.layoutManager = layoutManager
+
+            // 그리드 아이템 간격 설정
+            addItemDecoration(
+                GridItemSpacingDecoration(
+                    spanCount = spanCount,
+                    horizontalSpacing = 6.toPx,
+                    verticalSpacing = 6.toPx,
+                )
+            )
+            setHasFixedSize(true)
+        }
 
         // 어댑터 상태 리스너 추가
-        albumAdapter.addLoadStateListener { combinedLoadStates ->
-            Log.d("AlbumTabFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
+        memoryAdapter.addLoadStateListener { combinedLoadStates ->
+            Log.d("MyMemoryTabFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
 
             // 추가 페이지 로드 상태 확인
             val appendState = combinedLoadStates.append
-            Log.d("AlbumTabFragment", "어펜드 상태: $appendState")
+            Log.d("MyMemoryTabFragment", "어펜드 상태: $appendState")
 
             // 리프레시 상태 확인
             val refreshState = combinedLoadStates.refresh
-            Log.d("AlbumTabFragment", "리프레시 상태: $refreshState")
-        }
-
-        repeatOnLifecycle {
-            while(currentCoroutineContext().isActive) {
-                albumAdapter.refreshVisibleItems()
-                delay(60_000)
-            }
+            Log.d("MyMemoryTabFragment", "리프레시 상태: $refreshState")
         }
     }
 
@@ -132,7 +145,7 @@ class AlbumTabFragment: BaseFragment() {
 
         // 새로고침 리스너 설정
         binding.swipeRefreshLayout.setOnRefreshListener {
-            Log.d("AlbumTabFragment", "사용자 제스처로 데이터 새로고침 시작")
+            Log.d("MyMemoryTabFragment", "사용자 제스처로 데이터 새로고침 시작")
             refreshData()
         }
     }
@@ -142,8 +155,8 @@ class AlbumTabFragment: BaseFragment() {
         vm.setRefreshing(true)
 
         // 어댑터 리프레시 호출
-        Log.d("AlbumTabFragment", "어댑터 리프레시 호출")
-        albumAdapter.refresh()
+        Log.d("MyMemoryTabFragment", "어댑터 리프레시 호출")
+        memoryAdapter.refresh()
         pVm.fetchData()
     }
 
@@ -158,7 +171,7 @@ class AlbumTabFragment: BaseFragment() {
         repeatOnLifecycle {
             pVm.refreshAllEvent.collect {
                 vm.setRefreshing(true)
-                albumAdapter.refresh()
+                memoryAdapter.refresh()
             }
         }
     }
@@ -174,7 +187,7 @@ class AlbumTabFragment: BaseFragment() {
     private fun observePagingData() {
         // 로딩 상태 관찰
         repeatOnLifecycle {
-            albumAdapter.loadStateFlow.collectLatest { loadStates ->
+            memoryAdapter.loadStateFlow.collectLatest { loadStates ->
                 // 새로고침 상태 처리
                 val isRefreshing = loadStates.refresh is LoadState.Loading
 
@@ -190,39 +203,39 @@ class AlbumTabFragment: BaseFragment() {
 
                     if(isRefreshComplete) {
                         vm.setRefreshing(false)
-                        Log.d("AlbumTabFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
+                        Log.d("MyMemoryTabFragment", "데이터 새로고침 완료, 아이템 수: ${memoryAdapter.itemCount}")
 
                         // 새로고침 완료 후 맨 위로 스크롤
-                        binding.rvTabAlbum.scrollToPosition(0)
+                        binding.rvTabMyMemory.scrollToPosition(0)
                     }
                 }
 
                 // 추가 데이터 로딩 상태 (무한 스크롤)
                 when (val append = loadStates.append) {
                     is LoadState.Loading -> {
-                        Log.d("AlbumTabFragment", "추가 데이터 로딩 중...")
+                        Log.d("MyMemoryTabFragment", "추가 데이터 로딩 중...")
                     }
                     is LoadState.NotLoading -> {
                         if (append.endOfPaginationReached) {
-                            Log.d("AlbumTabFragment", "모든 데이터 로드 완료 (페이징 끝)")
+                            Log.d("MyMemoryTabFragment", "모든 데이터 로드 완료 (페이징 끝)")
                         } else {
-                            Log.d("AlbumTabFragment", "추가 데이터 로드 완료")
+                            Log.d("MyMemoryTabFragment", "추가 데이터 로드 완료")
                         }
                     }
                     is LoadState.Error -> {
-                        Log.e("AlbumTabFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
+                        Log.e("MyMemoryTabFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
                     }
                 }
 
                 // 로딩 완료 후 데이터가 없을 때
                 val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
                         && loadStates.append.endOfPaginationReached
-                        && albumAdapter.itemCount < 1)
+                        && memoryAdapter.itemCount < 1)
 
                 emptyStateAdapter.isVisible = isEmptyAfterLoading
 
                 if (isEmptyAfterLoading) {
-                    Log.d("AlbumTabFragment", "데이터가 비어있음")
+                    Log.d("MyMemoryTabFragment", "데이터가 비어있음")
                     // 여기에 빈 상태 화면 표시 로직 추가
                 }
 
@@ -236,7 +249,7 @@ class AlbumTabFragment: BaseFragment() {
 
                 errorState?.let {
                     // 에러 상태 처리
-                    Log.e("AlbumTabFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
+                    Log.e("MyMemoryTabFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
                     binding.swipeRefreshLayout.isRefreshing = false
                     vm.setRefreshing(false)
                     wasRefreshing = false
@@ -248,23 +261,15 @@ class AlbumTabFragment: BaseFragment() {
 
         // 페이징 데이터 관찰
         repeatOnLifecycle {
-            vm.albums.collectLatest { pagingData ->
-                Log.d("AlbumTabFragment", "새 페이징 데이터 수신")
-                albumAdapter.submitData(
+            vm.memories.collectLatest { pagingData ->
+                Log.d("MyMemoryTabFragment", "새 페이징 데이터 수신")
+                memoryAdapter.submitData(
                     pagingData.map {
-                        AlbumItem.User(
+                        MemoryItem(
                             value = it,
                             onItemClick = {
-                                Log.d("AlbumTabFragment", "Item Clicked!")
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
-                            },
-                            onMoreClick = { album ->
-                                val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
-                                    bundle = bundleOf(
-                                        AlbumMoreBottomSheetFragment.PARAMS to AlbumMoreBottomSheetFragment.ParamsIn(album)
-                                    )
-                                )
-                                bottomSheet.show(childFragmentManager, AlbumMoreBottomSheetFragment.TAG)
+                                Log.d("MyMemoryTabFragment", "Item Clicked!")
+                                findNavController().navigate(MainFragmentDirections.actionMainToUserMemoryViewer(it))
                             },
                         )
                     }
@@ -277,21 +282,14 @@ class AlbumTabFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? AlbumTabViewEvent)?.let { handleViewEvents(it) }
+                    (event as? MyMemoryTabViewEvent)?.let { handleViewEvents(it) }
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: AlbumTabViewEvent) {
-        when (event) {
-            is AlbumTabViewEvent.Refresh -> {
-                refreshData()
-            }
-            is AlbumTabViewEvent.RefreshAll -> {
-                pVm.refreshAll()
-            }
-        }
+    private fun handleViewEvents(event: MyMemoryTabViewEvent) {
+        // 이벤트 처리 로직 추가 가능
     }
 
     @Parcelize
@@ -302,8 +300,8 @@ class AlbumTabFragment: BaseFragment() {
     companion object {
         const val KEY_PARAMS = "params"
 
-        fun newInstance(bundle: Bundle? = null): AlbumTabFragment {
-            return AlbumTabFragment().apply {
+        fun newInstance(bundle: Bundle? = null): MyMemoryTabFragment {
+            return MyMemoryTabFragment().apply {
                 arguments = bundle
             }
         }

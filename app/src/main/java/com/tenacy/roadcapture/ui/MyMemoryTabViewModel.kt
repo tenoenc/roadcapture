@@ -20,11 +20,11 @@ import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 @HiltViewModel
-class MemoryTabViewModel @Inject constructor(
+class MyMemoryTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
 
-    private val params: MemoryTabFragment.ParamsIn? = savedStateHandle.get<MemoryTabFragment.ParamsIn>(MemoryTabFragment.KEY_PARAMS)
+    private val params: MyMemoryTabFragment.ParamsIn? = savedStateHandle.get<MyMemoryTabFragment.ParamsIn>(MyMemoryTabFragment.KEY_PARAMS)
     private val userId: String = params?.userId ?: ""
 
     // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다

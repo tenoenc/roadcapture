@@ -20,11 +20,11 @@ import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
-class AlbumTabViewModel @Inject constructor(
+class MyAlbumTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
 
-    private val params: AlbumTabFragment.ParamsIn? = savedStateHandle.get<AlbumTabFragment.ParamsIn>(AlbumTabFragment.KEY_PARAMS)
+    private val params: MyAlbumTabFragment.ParamsIn? = savedStateHandle.get<MyAlbumTabFragment.ParamsIn>(MyAlbumTabFragment.KEY_PARAMS)
     private val userId: String = params?.userId ?: ""
 
     // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
@@ -69,7 +69,7 @@ class AlbumTabViewModel @Inject constructor(
                     Log.e("TAG", "에러", exception)
                 }
                 .collect {
-                    viewEvent(AlbumTabViewEvent.Refresh)
+                    viewEvent(MyAlbumTabViewEvent.Refresh)
                 }
         }
     }
@@ -122,7 +122,7 @@ class AlbumTabViewModel @Inject constructor(
                     Log.e("TAG", "에러", exception)
                 }
                 .collect {
-                    viewEvent(AlbumTabViewEvent.RefreshAll)
+                    viewEvent(MyAlbumTabViewEvent.RefreshAll)
                 }
         }
     }

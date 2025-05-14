@@ -41,6 +41,11 @@ class ProfileUploadProgressViewModel @Inject constructor(
                 val userRef = db.collection("users")
                     .document(userId)
 
+                sendWithDelay(ProfileSaveState.FetchingData)
+                val albumRefs = db.collection("albums")
+                    .whereEqualTo("userRef", userRef)
+                    .get().await().documents.map { it.reference }
+
                 sendWithDelay(ProfileSaveState.CompressingImage)
                 val compressedUri = context.compressImage(uri)
 
@@ -50,6 +55,9 @@ class ProfileUploadProgressViewModel @Inject constructor(
 
                 sendWithDelay(ProfileSaveState.SavingToFirestore)
                 db.runTransaction { transaction ->
+                    for (albumRef in albumRefs) {
+                        transaction.update(albumRef, "userPhotoUrl", imageUrl)
+                    }
                     transaction.update(userRef, "photoName", storagePath)
                     transaction.update(userRef, "photoUrl", imageUrl)
                 }.await()
@@ -57,7 +65,8 @@ class ProfileUploadProgressViewModel @Inject constructor(
                 sendWithDelay(ProfileSaveState.Completed)
             }
                 .catch { exception ->
-                    Log.e("MyAlbumViewModel", "에러", exception)
+                    Log.e("ProfileUploadProgressViewModel", "에러", exception)
+                    emit(ProfileSaveState.Error(exception.message ?: "알 수 없는 오류 발생"))
                 }
                 .collect {
                     _saveState.emit(it)
@@ -69,6 +78,7 @@ class ProfileUploadProgressViewModel @Inject constructor(
 @Parcelize
 sealed class ProfileSaveState : Parcelable {
     data object Loading : ProfileSaveState()
+    data object FetchingData : ProfileSaveState()
     data object CompressingImage : ProfileSaveState()
     data object UploadingImage : ProfileSaveState()
     data object SavingToFirestore : ProfileSaveState()
