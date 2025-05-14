@@ -74,10 +74,11 @@ class NewMemoryFragment: BaseFragment() {
             LocationBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(LocationBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getParcelable<LocationBottomSheetFragment.ParamsOut.Positive>(LocationBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+                val address = it.address
                 lifecycleScope.launch(Dispatchers.Main) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(it))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(address))
                 }
             }
         }
@@ -147,7 +148,7 @@ class NewMemoryFragment: BaseFragment() {
             is NewMemoryViewEvent.ShowLocation -> {
                 val bottomSheet = LocationBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        LocationBottomSheetFragment.KEY_ADDRESS to event.address,
+                        LocationBottomSheetFragment.KEY_PARAMS_IN to LocationBottomSheetFragment.ParamsIn(event.address),
                     )
                 )
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)

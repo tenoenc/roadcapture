@@ -176,7 +176,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)
+            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut.View>(RangeSelectBottomSheetFragment.KEY_PARAMS_OUT_VIEW)
                 ?.let {
                     Log.d("TAG", "Positive Button Clicked!")
                     if (it.viewScope == ViewScope.AROUND) {
@@ -190,7 +190,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             TripGuideBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(TripGuideBottomSheetFragment.RESULT_EVENT_SHOW_SUBSCRIPTION)?.let {
+            bundle.getParcelable<TripGuideBottomSheetFragment.ParamsOut.ShowSubscription>(TripGuideBottomSheetFragment.KEY_PARAMS_OUT_SHOW_SUBSCRIPTION)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 showSubscriptionDialog()
             }
@@ -199,15 +199,16 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             SubscriptionBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(SubscriptionBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getParcelable<SubscriptionBottomSheetFragment.ParamsOut.Positive>(SubscriptionBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+                // 정기구독
             }
         }
         childFragmentManager.setFragmentResultListener(
             TripAfterBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(TripAfterBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getParcelable<TripAfterBottomSheetFragment.ParamsOut.Positive>(TripAfterBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 findNavController().navigate(TripFragmentDirections.actionTripToNewAlbum())
             }
@@ -216,7 +217,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             TripStopBeforeBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(TripStopBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getParcelable<TripStopBeforeBottomSheetFragment.ParamsOut.Positive>(TripStopBeforeBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 lifecycleScope.launch {
                     vm.stopTraveling()
@@ -500,7 +501,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         lifecycleScope.launch {
             val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
-                    RangeSelectBottomSheetFragment.KEY_PARAMS to RangeSelectBottomSheetFragment.ParamsIn(items = items),
+                    RangeSelectBottomSheetFragment.KEY_PARAMS_IN to RangeSelectBottomSheetFragment.ParamsIn(items = items),
                 )
             )
             bottomSheet.show(childFragmentManager, RangeSelectBottomSheetFragment.TAG)

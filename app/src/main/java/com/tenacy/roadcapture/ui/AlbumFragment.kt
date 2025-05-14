@@ -100,7 +100,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             RangeSelectBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut>(RangeSelectBottomSheetFragment.RESULT_ITEMS)
+            bundle.getParcelable<RangeSelectBottomSheetFragment.ParamsOut.View>(RangeSelectBottomSheetFragment.KEY_PARAMS_OUT_VIEW)
                 ?.let {
                     Log.d("TAG", "Positive Button Clicked!")
                     if (it.viewScope == ViewScope.AROUND) {
@@ -252,7 +252,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             is AlbumViewEvent.ShowInfo -> {
                 val bottomSheet = AlbumInfoBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        AlbumInfoBottomSheetFragment.KEY_PARAMS to
+                        AlbumInfoBottomSheetFragment.KEY_PARAMS_IN to
                                 AlbumInfoBottomSheetFragment.ParamsIn(
                                     album = event.album,
                                     totalMemoryCount = event.totalMemoryCount
@@ -322,7 +322,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         lifecycleScope.launch {
             val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
-                    RangeSelectBottomSheetFragment.KEY_PARAMS to RangeSelectBottomSheetFragment.ParamsIn(items = items),
+                    RangeSelectBottomSheetFragment.KEY_PARAMS_IN to RangeSelectBottomSheetFragment.ParamsIn(items = items),
                 )
             )
             bottomSheet.show(childFragmentManager, RangeSelectBottomSheetFragment.TAG)

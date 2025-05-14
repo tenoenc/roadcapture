@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetTripGuideBinding
 import com.tenacy.roadcapture.util.SpannableUtils
+import kotlinx.parcelize.Parcelize
 
 class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -76,7 +78,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
                 ) {
                     setFragmentResult(
                         REQUEST_KEY,
-                        bundleOf(RESULT_EVENT_SHOW_SUBSCRIPTION to System.currentTimeMillis().toString())
+                        bundleOf(KEY_PARAMS_OUT_SHOW_SUBSCRIPTION to ParamsOut.ShowSubscription)
                     )
                     dismiss()
                 },
@@ -111,12 +113,18 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data object ShowSubscription: ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "TripGuideBottomSheetFragment"
 
         const val REQUEST_KEY = "trip_guide"
-        const val RESULT_EVENT_SHOW_SUBSCRIPTION = "event_show_subscription"
+        const val KEY_PARAMS_OUT_SHOW_SUBSCRIPTION = "params_out_show_subscription"
 
         fun newInstance(bundle: Bundle? = null): TripGuideBottomSheetFragment {
             return TripGuideBottomSheetFragment().apply {

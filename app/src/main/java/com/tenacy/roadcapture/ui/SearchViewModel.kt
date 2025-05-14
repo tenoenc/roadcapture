@@ -31,7 +31,7 @@ class SearchViewModel @Inject constructor(
     private val filter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
     val title = when(filter) {
         SearchFilter.All -> "홈"
-        SearchFilter.Scrap -> "북마크"
+        SearchFilter.Scrap -> "스크랩"
     }
 
     val searchQuery = MutableStateFlow("")

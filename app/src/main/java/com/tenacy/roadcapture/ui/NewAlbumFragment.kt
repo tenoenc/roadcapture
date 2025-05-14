@@ -10,13 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentNewAlbumBinding
 import com.tenacy.roadcapture.di.AlbumTitleFilter
-import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -64,10 +61,11 @@ class NewAlbumFragment: BaseFragment() {
             AlbumCompeteBeforeBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getBoolean(AlbumCompeteBeforeBottomSheetFragment.RESULT_PUBLIC).let {
+            bundle.getParcelable<AlbumCompeteBeforeBottomSheetFragment.ParamsOut.Public>(AlbumCompeteBeforeBottomSheetFragment.KEY_PARAMS_OUT_PUBLIC).let {
                 Log.d("TAG", "Positive Button Clicked!")
+                val args = it ?: return@setFragmentResultListener
                 val title = vm.albumTitle.value
-                findNavController().navigate(NewAlbumFragmentDirections.actionNewAlbumToUploadProgress(Arguments(title, it)))
+                findNavController().navigate(NewAlbumFragmentDirections.actionNewAlbumToUploadProgress(Arguments(title, args.isPublic)))
             }
         }
     }

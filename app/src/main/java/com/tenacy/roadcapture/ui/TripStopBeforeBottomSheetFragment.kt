@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetTripStopBeforeBinding
 import com.tenacy.roadcapture.util.SpannableUtils
+import kotlinx.parcelize.Parcelize
 
 class TripStopBeforeBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -56,7 +58,7 @@ class TripStopBeforeBottomSheetFragment : BottomSheetDialogFragment() {
         binding.btnBSheetTripStopBeforePositive.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_POSITIVE to System.currentTimeMillis().toString())
+                bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
             )
             dismiss()
         }
@@ -70,12 +72,18 @@ class TripStopBeforeBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data object Positive: ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "TripStopBeforeBottomSheetFragment"
 
         const val REQUEST_KEY = "delete_before"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val KEY_PARAMS_OUT_POSITIVE = "params_out_positive"
 
         fun newInstance(bundle: Bundle? = null): TripStopBeforeBottomSheetFragment {
             return TripStopBeforeBottomSheetFragment().apply {

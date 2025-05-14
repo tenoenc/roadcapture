@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetSubscriptionBinding
+import kotlinx.parcelize.Parcelize
 
 class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
 
@@ -56,8 +58,8 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
     private fun setupListeners() {
         binding.btnBSheetSubscriptionPositive.setOnClickListener {
             setFragmentResult(
-                TripBeforeBottomSheetFragment.REQUEST_KEY,
-                bundleOf(TripBeforeBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE to System.currentTimeMillis().toString())
+                REQUEST_KEY,
+                bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
             )
             dismiss()
         }
@@ -71,12 +73,18 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data object Positive: ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "SubscriptionBottomSheetFragment"
 
         const val REQUEST_KEY = "subscription"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val KEY_PARAMS_OUT_POSITIVE = "params_out_positive"
 
         fun newInstance(bundle: Bundle? = null): SubscriptionBottomSheetFragment {
             return SubscriptionBottomSheetFragment().apply {

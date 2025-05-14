@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetProfileMoreBinding
+import kotlinx.parcelize.Parcelize
 
 class ProfileMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
@@ -37,14 +39,14 @@ class ProfileMoreBottomSheetFragment: BottomSheetDialogFragment() {
         binding.btnBSheetProfileMoreModifyPhoto.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_MODIFY_PHOTO to System.currentTimeMillis())
+                bundleOf(KEY_PARAMS_OUT_MODIFY_PHOTO to ParamsOut.ModifyPhoto)
             )
             dismiss()
         }
         binding.btnBSheetProfileMoreModifyName.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_MODIFY_NAME to System.currentTimeMillis())
+                bundleOf(KEY_PARAMS_OUT_MODIFY_NAME to ParamsOut.ModifyName)
             )
             dismiss()
         }
@@ -55,13 +57,21 @@ class ProfileMoreBottomSheetFragment: BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data object ModifyPhoto: ParamsOut()
+        @Parcelize
+        data object ModifyName: ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "ProfileMoreBottomSheetFragment"
 
         const val REQUEST_KEY = "profile_more"
-        const val RESULT_EVENT_CLICK_MODIFY_PHOTO = "event_click_modify_photo"
-        const val RESULT_EVENT_CLICK_MODIFY_NAME = "event_click_modify_name"
+        const val KEY_PARAMS_OUT_MODIFY_PHOTO = "params_out_modify_photo"
+        const val KEY_PARAMS_OUT_MODIFY_NAME = "params_out_modify_name"
 
         fun newInstance(bundle: Bundle? = null): ProfileMoreBottomSheetFragment {
             return ProfileMoreBottomSheetFragment().apply {

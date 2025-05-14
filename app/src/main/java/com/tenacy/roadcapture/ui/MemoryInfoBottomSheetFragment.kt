@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.formatWithPattern
 import com.tenacy.roadcapture.util.getFormattedDuration
 import com.tenacy.roadcapture.util.toTimestamp
+import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
@@ -24,7 +26,8 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<MemoryViewerArguments.Memory>(KEY_MEMORY)?.let { memory ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
+            val memory = params.memory
             this@MemoryInfoBottomSheetFragment.memory = memory
         }
     }
@@ -92,14 +95,17 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    data class ParamsIn(
+        val memory: MemoryViewerArguments.Memory
+    ): Parcelable
+
     companion object {
 
         const val TAG = "MemoryInfoBottomSheetFragment"
 
-        const val KEY_MEMORY = "memory"
-
         const val REQUEST_KEY = "memory_info"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val KEY_PARAMS_IN = "params_in"
 
         fun newInstance(bundle: Bundle? = null): MemoryInfoBottomSheetFragment {
             return MemoryInfoBottomSheetFragment().apply {

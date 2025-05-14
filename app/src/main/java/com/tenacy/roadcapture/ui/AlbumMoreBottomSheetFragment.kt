@@ -24,7 +24,7 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<ParamsIn>(PARAMS)?.let { params ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
             this@AlbumMoreBottomSheetFragment.params = params
         }
     }
@@ -54,16 +54,18 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
     private fun setupListeners() {
         binding.btnBSheetAlbumMoreModify.setOnClickListener {
+            val album = params?.album ?: return@setOnClickListener
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_TOGGLE_PUBLIC to params?.album)
+                bundleOf(KEY_PARAMS_OUT_TOGGLE_PUBLIC to ParamsOut.TogglePublic(album))
             )
             dismiss()
         }
         binding.btnBSheetAlbumMoreDelete.setOnClickListener {
+            val album = params?.album ?: return@setOnClickListener
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_DELETE to params?.album)
+                bundleOf(KEY_PARAMS_OUT_DELETE to ParamsOut.Delete(album))
             )
             dismiss()
         }
@@ -79,15 +81,22 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
         val album: Album,
     ): Parcelable
 
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data class TogglePublic(val album: Album): ParamsOut()
+        @Parcelize
+        data class Delete(val album: Album): ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "AlbumMoreBottomSheetFragment"
 
-        const val PARAMS = "params"
-
         const val REQUEST_KEY = "album_more"
-        const val RESULT_EVENT_CLICK_TOGGLE_PUBLIC = "event_click_toggle_public"
-        const val RESULT_EVENT_CLICK_DELETE = "event_click_delete"
+        const val KEY_PARAMS_IN = "params_in"
+        const val KEY_PARAMS_OUT_TOGGLE_PUBLIC = "toggle_public"
+        const val KEY_PARAMS_OUT_DELETE = "delete"
 
         fun newInstance(bundle: Bundle? = null): AlbumMoreBottomSheetFragment {
             return AlbumMoreBottomSheetFragment().apply {

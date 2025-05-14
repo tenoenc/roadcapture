@@ -14,18 +14,18 @@
                                                        android:background="@color/background_normal">
 
         <LinearLayout android:layout_width="0dp"
-                                                           android:layout_height="wrap_content"
-                                                           android:minHeight="36dp"
-                                                           android:id="@+id/cl_search_a_bar_container"
-                                                           android:paddingStart="15dp"
-                                                           android:paddingEnd="20dp"
-                                                           android:paddingVertical="2dp"
-                                                           android:orientation="horizontal"
-                                                           android:gravity="center_vertical"
-                                                           android:background="@color/background_normal"
-                                                           app:layout_constraintTop_toTopOf="parent"
-                                                           app:layout_constraintEnd_toEndOf="parent"
-                                                           app:layout_constraintStart_toStartOf="parent">
+                      android:layout_height="wrap_content"
+                      android:minHeight="36dp"
+                      android:id="@+id/cl_search_a_bar_container"
+                      android:paddingStart="15dp"
+                      android:paddingEnd="20dp"
+                      android:paddingVertical="2dp"
+                      android:orientation="horizontal"
+                      android:gravity="center_vertical"
+                      android:background="@color/background_normal"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintStart_toStartOf="parent">
 
             <ImageButton
                     android:id="@+id/ibtn_a_bar_back"
@@ -41,9 +41,9 @@
                       android:textAppearance="@style/Title_20"
                       android:textColor="@color/label_normal"
                       android:text="@{vm.title}"
-                      tools:text="북마크"
+                      tools:text="스크랩"
                       android:includeFontPadding="false"
-                      android:layout_marginStart="10dp" />
+                      android:layout_marginStart="10dp"/>
 
 
             <androidx.cardview.widget.CardView android:layout_width="0dp"
@@ -120,7 +120,7 @@
               app:layout_constraintTop_toTopOf="@id/rv_search_albums"
               app:layout_constraintStart_toStartOf="@id/rv_search_albums"
               app:layout_constraintEnd_toEndOf="@id/rv_search_albums"
-              app:layout_constraintBottom_toBottomOf="@id/rv_search_albums" />
+              app:layout_constraintBottom_toBottomOf="@id/rv_search_albums"/>
 
         <com.airbnb.lottie.LottieAnimationView android:layout_width="232dp"
                                                android:layout_height="116dp"

@@ -35,7 +35,7 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<ParamsIn>(KEY_PARAMS)?.let { paramsIn ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { paramsIn ->
             this@AlbumInfoBottomSheetFragment.params = paramsIn
         }
     }
@@ -217,10 +217,8 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
         const val TAG = "AlbumInfoBottomSheetFragment"
 
-        const val KEY_PARAMS = "params"
-
         const val REQUEST_KEY = "album_info"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val KEY_PARAMS_IN = "params_in"
 
         fun newInstance(bundle: Bundle? = null): AlbumInfoBottomSheetFragment {
             return AlbumInfoBottomSheetFragment().apply {

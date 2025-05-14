@@ -76,11 +76,13 @@ class MyAlbumTabFragment: BaseFragment() {
             AlbumMoreBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<Album>(AlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_TOGGLE_PUBLIC)?.let {
-                vm.togglePublic(it.id, it.isPublic)
+            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.TogglePublic>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_TOGGLE_PUBLIC)?.let {
+                val album = it.album
+                vm.togglePublic(album.id, album.isPublic)
             }
-            bundle.getParcelable<Album>(AlbumMoreBottomSheetFragment.RESULT_EVENT_CLICK_DELETE)?.let {
-                vm.deletePublic(it.id, it.user.id)
+            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.Delete>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
+                val album = it.album
+                vm.deletePublic(album.id, album.user.id)
             }
         }
     }
@@ -261,7 +263,7 @@ class MyAlbumTabFragment: BaseFragment() {
                             onMoreClick = { album ->
                                 val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
                                     bundle = bundleOf(
-                                        AlbumMoreBottomSheetFragment.PARAMS to AlbumMoreBottomSheetFragment.ParamsIn(album)
+                                        AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(album)
                                     )
                                 )
                                 bottomSheet.show(childFragmentManager, AlbumMoreBottomSheetFragment.TAG)

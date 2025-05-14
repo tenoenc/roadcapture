@@ -68,10 +68,11 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
             LocationBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(LocationBottomSheetFragment.RESULT_EVENT_CLICK_POSITIVE)?.let {
+            bundle.getParcelable<LocationBottomSheetFragment.ParamsOut.Positive>(LocationBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+                val address = it.address
                 lifecycleScope.launch(Dispatchers.Main) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(it))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(address))
                 }
             }
         }
@@ -79,15 +80,16 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
             MemoryMoreBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getString(MemoryMoreBottomSheetFragment.RESULT_EVENT_CLICK_INFO)?.let {
+            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Info>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_INFO)?.let {
+                val memory = vm.currentMemory.value ?: return@let
                 val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        MemoryInfoBottomSheetFragment.KEY_MEMORY to vm.currentMemory.value,
+                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(memory),
                     )
                 )
                 bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
             }
-            bundle.getString(MemoryMoreBottomSheetFragment.RESULT_EVENT_CLICK_DELETE)?.let {
+            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Delete>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 vm.deleteCurrentMemory()
             }
         }
@@ -133,7 +135,7 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
             is ModifiableMemoryViewerViewEvent.ShowLocation -> {
                 val bottomSheet = LocationBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        LocationBottomSheetFragment.KEY_ADDRESS to event.address,
+                        LocationBottomSheetFragment.KEY_PARAMS_IN to LocationBottomSheetFragment.ParamsIn(event.address),
                     )
                 )
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)

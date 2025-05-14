@@ -11,7 +11,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.chip.Chip
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetRangeSelectBinding
-import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import kotlinx.parcelize.Parcelize
 
 class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
@@ -25,7 +24,7 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<ParamsIn>(KEY_PARAMS)?.let { params ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
             this@RangeSelectBottomSheetFragment.items = params.items
         }
     }
@@ -57,7 +56,7 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
-                    RESULT_ITEMS to ParamsOut(
+                    KEY_PARAMS_OUT_VIEW to ParamsOut.View(
                         items = items ?: emptyList(),
                         viewScope = viewScope,
                     )
@@ -78,19 +77,21 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
     ): Parcelable
 
     @Parcelize
-    data class ParamsOut(
-        val items: List<ClusterMarkerItem>,
-        val viewScope: ViewScope,
-    ): Parcelable
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data class View(
+            val items: List<ClusterMarkerItem>,
+            val viewScope: ViewScope,
+        ): ParamsOut()
+    }
 
     companion object {
 
         const val TAG = "RangeSelectBottomSheetFragment"
 
-        const val KEY_PARAMS = "params"
-
         const val REQUEST_KEY = "range_select"
-        const val RESULT_ITEMS = "items"
+        const val KEY_PARAMS_IN = "params_in"
+        const val KEY_PARAMS_OUT_VIEW = "params_out_view"
 
         fun newInstance(bundle: Bundle? = null): RangeSelectBottomSheetFragment {
             return RangeSelectBottomSheetFragment().apply {

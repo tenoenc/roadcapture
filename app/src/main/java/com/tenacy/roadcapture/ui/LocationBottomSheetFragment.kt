@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetLocationBinding
+import kotlinx.parcelize.Parcelize
 
 class LocationBottomSheetFragment: BottomSheetDialogFragment() {
 
@@ -21,7 +23,8 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getString(KEY_ADDRESS)?.let { address ->
+        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
+            val address = params.address
             this@LocationBottomSheetFragment.address = address
         }
     }
@@ -49,9 +52,10 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
 
     private fun setupListeners() {
         binding.btnBSheetLocationPositive.setOnClickListener {
+            val address = address ?: return@setOnClickListener
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(RESULT_EVENT_CLICK_POSITIVE to address)
+                bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive(address))
             )
             dismiss()
         }
@@ -65,14 +69,22 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
         _binding = null
     }
 
+    @Parcelize
+    data class ParamsIn(val address: String) : Parcelable
+
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data class Positive(val address: String) : ParamsOut()
+    }
+
     companion object {
 
         const val TAG = "LocationBottomSheetFragment"
 
-        const val KEY_ADDRESS = "address"
-
         const val REQUEST_KEY = "location"
-        const val RESULT_EVENT_CLICK_POSITIVE = "event_click_positive"
+        const val KEY_PARAMS_IN = "params_in"
+        const val KEY_PARAMS_OUT_POSITIVE = "params_out_positive"
 
         fun newInstance(bundle: Bundle? = null): LocationBottomSheetFragment {
             return LocationBottomSheetFragment().apply {

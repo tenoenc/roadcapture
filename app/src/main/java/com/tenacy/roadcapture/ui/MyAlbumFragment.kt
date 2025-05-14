@@ -74,11 +74,11 @@ class MyAlbumFragment: BaseFragment() {
             ProfileMoreBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getLong(ProfileMoreBottomSheetFragment.RESULT_EVENT_CLICK_MODIFY_PHOTO, 0L).takeIf { it > 0 }?.let {
+            bundle.getParcelable<ProfileMoreBottomSheetFragment.ParamsOut.ModifyPhoto>(ProfileMoreBottomSheetFragment.KEY_PARAMS_OUT_MODIFY_PHOTO)?.let {
                 // 프로필 사진 변경
                 imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
             }
-            bundle.getLong(ProfileMoreBottomSheetFragment.RESULT_EVENT_CLICK_MODIFY_NAME, 0L).takeIf { it > 0 }?.let {
+            bundle.getParcelable<ProfileMoreBottomSheetFragment.ParamsOut.ModifyName>(ProfileMoreBottomSheetFragment.KEY_PARAMS_OUT_MODIFY_NAME)?.let {
                 // 이름 변경 -> 화면 이동
                 findNavController().navigate(MainFragmentDirections.actionMainToModifyUsername())
             }

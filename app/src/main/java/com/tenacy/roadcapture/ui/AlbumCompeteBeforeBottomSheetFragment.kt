@@ -41,7 +41,7 @@ class AlbumCompeteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(
-                    RESULT_PUBLIC to isPublic
+                    KEY_PARAMS_OUT_PUBLIC to ParamsOut.Public(isPublic)
                 )
             )
             dismiss()
@@ -54,17 +54,25 @@ class AlbumCompeteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     @Parcelize
-    data class Params(
+    data class ParamsIn(
         val selectedMemoryId: Long? = null,
         val items: List<ClusterMarkerItem>? = null,
     ): Parcelable
+
+    @Parcelize
+    sealed class ParamsOut: Parcelable {
+        @Parcelize
+        data class Public(
+            val isPublic: Boolean,
+        ): ParamsOut()
+    }
 
     companion object {
 
         const val TAG = "AlbumCompeteBeforeBottomSheetFragment"
 
         const val REQUEST_KEY = "album_complete_before"
-        const val RESULT_PUBLIC = "public"
+        const val KEY_PARAMS_OUT_PUBLIC = "params_out_public"
 
         fun newInstance(bundle: Bundle? = null): AlbumCompeteBeforeBottomSheetFragment {
             return AlbumCompeteBeforeBottomSheetFragment().apply {
