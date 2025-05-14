@@ -49,16 +49,6 @@ class MyAlbumTabViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         .cachedIn(viewModelScope)
 
-    // 새로고침 상태 관리
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing
-
-    // 새로고침 시작
-    fun setRefreshing(refreshing: Boolean) {
-        _isRefreshing.value = refreshing
-        Log.d("HomeViewModel", "리프레싱 상태 변경: $refreshing")
-    }
-
     fun togglePublic(albumId: String, isPublic: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {

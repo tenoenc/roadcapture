@@ -93,9 +93,7 @@ sealed class AlbumViewEvent: ViewEvent {
     data class Forbidden(val message: String): AlbumViewEvent()
 }
 
-sealed class SearchViewEvent: ViewEvent {
-    data class SearchError(val message: String) : SearchViewEvent()
-}
+sealed class SearchViewEvent: ViewEvent
 
 sealed class MyAlbumTabViewEvent: ViewEvent {
     data object Refresh: MyAlbumTabViewEvent()

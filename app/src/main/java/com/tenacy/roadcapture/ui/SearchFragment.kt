@@ -31,38 +31,23 @@ class SearchFragment: BaseFragment() {
     private val vm: SearchViewModel by viewModels()
 
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
-
     private val emptyStateAdapter: EmptyStateAdapter by lazy {
         EmptyStateAdapter(EmptyItem.Search)
     }
 
-    // 클래스 변수로 추가
     private var wasRefreshing = false
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        vm
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
-
         binding.vm = vm
         binding.lifecycleOwner = this
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupViews()
         setupObservers()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun setupViews() {
@@ -79,13 +64,17 @@ class SearchFragment: BaseFragment() {
         // 키보드 엔터 이벤트
         binding.etSearchInput.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                this@SearchFragment.vm.performSearch()
-                hideKeyboard()
+                performSearch()
                 true
             } else {
                 false
             }
         }
+    }
+
+    private fun performSearch() {
+        vm.performSearch()
+        hideKeyboard()
     }
 
     private fun hideKeyboard() {
@@ -105,17 +94,44 @@ class SearchFragment: BaseFragment() {
         binding.rvSearchAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvSearchAlbums.setHasFixedSize(true)
 
-        // 어댑터 상태 리스너 추가
-        albumAdapter.addLoadStateListener { combinedLoadStates ->
-            Log.d("SearchFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
+        // 어댑터 상태 리스너
+        albumAdapter.addLoadStateListener { loadStates ->
+            val isLoading = loadStates.refresh is LoadState.Loading
 
-            // 추가 페이지 로드 상태 확인
-            val appendState = combinedLoadStates.append
-            Log.d("SearchFragment", "어펜드 상태: $appendState")
+            val isRefreshComplete = wasRefreshing && loadStates.refresh is LoadState.NotLoading
+            wasRefreshing = isLoading
 
-            // 리프레시 상태 확인
-            val refreshState = combinedLoadStates.refresh
-            Log.d("SearchFragment", "리프레시 상태: $refreshState")
+            // 로딩 상태 처리
+            if (isLoading) {
+                binding.lottieSearchLoading.visibility = View.VISIBLE
+                binding.viewSearchCover.visibility = View.VISIBLE
+            } else {
+                // 로딩 완료 시
+                binding.lottieSearchLoading.visibility = View.GONE
+                val isEmpty = loadStates.append.endOfPaginationReached && albumAdapter.itemCount < 1
+                emptyStateAdapter.isVisible = isEmpty
+                binding.viewSearchCover.visibility = View.GONE
+
+                // 초기 로딩이나 사용자 리프레시인 경우에만 스크롤
+                if (isRefreshComplete) {
+                    binding.rvSearchAlbums.scrollToPosition(0)
+                }
+            }
+
+            // 에러 처리
+            val errorState = when {
+                loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
+                loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
+                loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
+                else -> null
+            }
+
+            errorState?.let {
+                wasRefreshing = false
+                Log.e("SearchFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
+                binding.lottieSearchLoading.visibility = View.GONE
+                binding.viewSearchCover.visibility = View.GONE
+            }
         }
 
         repeatOnLifecycle {
@@ -127,7 +143,6 @@ class SearchFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
-        observePagingData()
         observeSearchResults()
         observeViewEvents()
     }
@@ -140,93 +155,13 @@ class SearchFragment: BaseFragment() {
                         AlbumItem.General(
                             value = it,
                             onItemClick = {
-                                Log.d("SearchFragment", "Item Clicked!")
                                 findNavController().navigate(SearchFragmentDirections.actionSearchToAlbum(it.id, it.user.id))
                             },
                             onProfileClick = {
-                                Log.d("SearchFragment", "Item Clicked!")
                             },
                         )
                     }
                 )
-            }
-        }
-    }
-
-    private fun observePagingData() {
-        // 로딩 상태 관찰
-        repeatOnLifecycle {
-            albumAdapter.loadStateFlow.collectLatest { loadStates ->
-                // 새로고침 상태 처리
-                val isRefreshing = loadStates.refresh is LoadState.Loading
-
-                // 리프레시 완료 감지 (리프레싱이 true에서 false로 바뀌었을 때)
-                val isRefreshComplete = wasRefreshing && !isRefreshing
-                wasRefreshing = isRefreshing
-
-                // 표시/숨김 처리
-                if(isRefreshing) {
-                    binding.lottieSearchLoading.visibility = View.VISIBLE
-                    binding.viewSearchCover.visibility = View.VISIBLE
-                } else {
-                    binding.lottieSearchLoading.visibility = View.GONE
-
-                    // 리프레시 완료시 스크롤 맨 위로
-                    if (isRefreshComplete && albumAdapter.itemCount > 0) {
-                        binding.rvSearchAlbums.scrollToPosition(0)
-                        Log.d("SearchFragment", "스크롤을 맨 위로 이동")
-                    }
-                }
-
-                // 추가 데이터 로딩 상태 (무한 스크롤)
-                when (val append = loadStates.append) {
-                    is LoadState.Loading -> {
-                        Log.d("SearchFragment", "추가 데이터 로딩 중...")
-                    }
-                    is LoadState.NotLoading -> {
-                        if (append.endOfPaginationReached) {
-                            Log.d("SearchFragment", "모든 데이터 로드 완료 (페이징 끝)")
-                        } else {
-                            Log.d("SearchFragment", "추가 데이터 로드 완료")
-                        }
-                    }
-                    is LoadState.Error -> {
-                        Log.e("SearchFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
-                    }
-                }
-
-                // 로딩 완료 후 데이터가 없을 때
-                val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
-                        && loadStates.append.endOfPaginationReached
-                        && albumAdapter.itemCount < 1)
-
-                emptyStateAdapter.isVisible = isEmptyAfterLoading
-
-                // 로딩 완료 후 데이터가 있을 때 (최초 로딩에만 스크롤 위로)
-                val isNotEmptyAfterInitialLoading = (loadStates.source.refresh is LoadState.NotLoading
-                        && albumAdapter.itemCount >= 1) // 추가 로딩 중이 아닐 때만
-
-                if (isEmptyAfterLoading || isNotEmptyAfterInitialLoading) {
-                    Log.d("SearchFragment", "데이터가 비어있음")
-                    // 여기에 빈 상태 화면 표시 로직 추가
-                    binding.viewSearchCover.visibility = View.GONE
-                }
-
-                // 에러 처리
-                val errorState = when {
-                    loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
-                    loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
-                    loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
-                    else -> null
-                }
-
-                errorState?.let {
-                    // 에러 상태 처리
-                    Log.e("SearchFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
-
-                    // 여기에 에러 화면 표시 로직 추가
-                    wasRefreshing = false
-                }
             }
         }
     }
@@ -242,7 +177,11 @@ class SearchFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: SearchViewEvent) {
-//        when (event) {
-//        }
+        // 필요한 이벤트 처리 로직 구현
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

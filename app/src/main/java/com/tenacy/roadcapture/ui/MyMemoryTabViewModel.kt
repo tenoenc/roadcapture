@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -14,8 +13,6 @@ import com.tenacy.roadcapture.ui.dto.Memory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
@@ -48,14 +45,4 @@ class MyMemoryTabViewModel @Inject constructor(
     val memories: Flow<PagingData<Memory>> = pager.flow
         .flowOn(Dispatchers.IO)
         .cachedIn(viewModelScope)
-
-    // 새로고침 상태 관리
-    private val _isRefreshing = MutableStateFlow(false)
-    val isRefreshing: StateFlow<Boolean> = _isRefreshing
-
-    // 새로고침 시작
-    fun setRefreshing(refreshing: Boolean) {
-        _isRefreshing.value = refreshing
-        Log.d("HomeViewModel", "리프레싱 상태 변경: $refreshing")
-    }
 }

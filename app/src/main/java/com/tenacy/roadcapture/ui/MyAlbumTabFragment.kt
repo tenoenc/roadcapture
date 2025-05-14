@@ -14,7 +14,6 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabMyAlbumBinding
-import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,7 +40,6 @@ class MyAlbumTabFragment: BaseFragment() {
         EmptyStateAdapter(EmptyItem.MyAlbum(28f.toPx))
     }
 
-    // 현재 리프레시 중인지 추적
     private var wasRefreshing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,9 +93,7 @@ class MyAlbumTabFragment: BaseFragment() {
     private fun setupRecyclerView() {
         val concatAdapter = ConcatAdapter(
             emptyStateAdapter,
-            albumAdapter.withLoadStateFooter(
-                footer = LoadStateAdapter()
-            ),
+            albumAdapter.withLoadStateFooter(footer = LoadStateAdapter()),
         )
 
         binding.rvTabMyAlbum.adapter = concatAdapter
@@ -105,17 +101,37 @@ class MyAlbumTabFragment: BaseFragment() {
         binding.rvTabMyAlbum.setItemViewCacheSize(3)
         binding.rvTabMyAlbum.setHasFixedSize(true)
 
-        // 어댑터 상태 리스너 추가
-        albumAdapter.addLoadStateListener { combinedLoadStates ->
-            Log.d("MyAlbumTabFragment", "어댑터 로드 상태 변경: ${combinedLoadStates.source.refresh}")
+        // 로드 상태 리스너 간소화
+        albumAdapter.addLoadStateListener { loadStates ->
+            val isLoading = loadStates.refresh is LoadState.Loading
 
-            // 추가 페이지 로드 상태 확인
-            val appendState = combinedLoadStates.append
-            Log.d("MyAlbumTabFragment", "어펜드 상태: $appendState")
+            val isRefreshComplete = wasRefreshing && loadStates.refresh is LoadState.NotLoading
+            wasRefreshing = isLoading
 
-            // 리프레시 상태 확인
-            val refreshState = combinedLoadStates.refresh
-            Log.d("MyAlbumTabFragment", "리프레시 상태: $refreshState")
+            // 로딩 완료 시
+            if (!isLoading) {
+                val isEmpty = loadStates.append.endOfPaginationReached && albumAdapter.itemCount < 1
+                emptyStateAdapter.isVisible = isEmpty
+
+                // 초기 로딩이나 사용자 리프레시인 경우에만 스크롤
+                if (isRefreshComplete) {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                    binding.rvTabMyAlbum.scrollToPosition(0)
+                }
+            }
+
+            // 오류 처리
+            val errorState = when {
+                loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
+                loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
+                loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
+                else -> null
+            }
+
+            errorState?.let {
+                wasRefreshing = false
+                binding.swipeRefreshLayout.isRefreshing = false
+            }
         }
 
         repeatOnLifecycle {
@@ -140,124 +156,41 @@ class MyAlbumTabFragment: BaseFragment() {
     }
 
     private fun refreshData() {
-        // 새로고침 중임을 표시
-        vm.setRefreshing(true)
-
-        // 어댑터 리프레시 호출
-        Log.d("MyAlbumTabFragment", "어댑터 리프레시 호출")
+        // 데이터 리프레시 로직
         albumAdapter.refresh()
         pVm.fetchData()
     }
 
+    private fun refreshProgrammatically() {
+        // 프로그래매틱 리프레시 시 스와이프 인디케이터 숨김
+        binding.swipeRefreshLayout.isRefreshing = false
+        refreshData()
+    }
+
     private fun setupObservers() {
         observeRefreshAllEvent()
-        observeRefreshState()
         observePagingData()
         observeViewEvents()
     }
 
+
     private fun observeRefreshAllEvent() {
         repeatOnLifecycle {
             pVm.refreshAllEvent.collect {
-                vm.setRefreshing(true)
-                albumAdapter.refresh()
-            }
-        }
-    }
-
-    private fun observeRefreshState() {
-        repeatOnLifecycle {
-            vm.isRefreshing.collect { isRefreshing ->
-                binding.swipeRefreshLayout.isRefreshing = isRefreshing
+                refreshProgrammatically()
             }
         }
     }
 
     private fun observePagingData() {
-        // 로딩 상태 관찰
-        repeatOnLifecycle {
-            albumAdapter.loadStateFlow.collectLatest { loadStates ->
-                // 새로고침 상태 처리
-                val isRefreshing = loadStates.refresh is LoadState.Loading
-
-                // 리프레시 완료 감지 (리프레싱이 true에서 false로 바뀌었을 때)
-                val isRefreshComplete = wasRefreshing && !isRefreshing
-                wasRefreshing = isRefreshing
-
-                // Shimmer 효과 표시/숨김 처리
-                if (isRefreshing && !binding.swipeRefreshLayout.isRefreshing) {
-                    binding.swipeRefreshLayout.visibility = View.GONE
-                } else {
-                    binding.swipeRefreshLayout.visibility = View.VISIBLE
-
-                    if(isRefreshComplete) {
-                        vm.setRefreshing(false)
-                        Log.d("MyAlbumTabFragment", "데이터 새로고침 완료, 아이템 수: ${albumAdapter.itemCount}")
-
-                        // 새로고침 완료 후 맨 위로 스크롤
-                        binding.rvTabMyAlbum.scrollToPosition(0)
-                    }
-                }
-
-                // 추가 데이터 로딩 상태 (무한 스크롤)
-                when (val append = loadStates.append) {
-                    is LoadState.Loading -> {
-                        Log.d("MyAlbumTabFragment", "추가 데이터 로딩 중...")
-                    }
-                    is LoadState.NotLoading -> {
-                        if (append.endOfPaginationReached) {
-                            Log.d("MyAlbumTabFragment", "모든 데이터 로드 완료 (페이징 끝)")
-                        } else {
-                            Log.d("MyAlbumTabFragment", "추가 데이터 로드 완료")
-                        }
-                    }
-                    is LoadState.Error -> {
-                        Log.e("MyAlbumTabFragment", "추가 데이터 로딩 중 오류: ${append.error.message}")
-                    }
-                }
-
-                // 로딩 완료 후 데이터가 없을 때
-                val isEmptyAfterLoading = (loadStates.source.refresh is LoadState.NotLoading
-                        && loadStates.append.endOfPaginationReached
-                        && albumAdapter.itemCount < 1)
-
-                emptyStateAdapter.isVisible = isEmptyAfterLoading
-
-                if (isEmptyAfterLoading) {
-                    Log.d("MyAlbumTabFragment", "데이터가 비어있음")
-                    // 여기에 빈 상태 화면 표시 로직 추가
-                }
-
-                // 에러 처리
-                val errorState = when {
-                    loadStates.append is LoadState.Error -> loadStates.append as LoadState.Error
-                    loadStates.prepend is LoadState.Error -> loadStates.prepend as LoadState.Error
-                    loadStates.refresh is LoadState.Error -> loadStates.refresh as LoadState.Error
-                    else -> null
-                }
-
-                errorState?.let {
-                    // 에러 상태 처리
-                    Log.e("MyAlbumTabFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
-                    binding.swipeRefreshLayout.isRefreshing = false
-                    vm.setRefreshing(false)
-                    wasRefreshing = false
-
-                    // 여기에 에러 화면 표시 로직 추가
-                }
-            }
-        }
-
-        // 페이징 데이터 관찰
+        // 페이징 데이터만 관찰
         repeatOnLifecycle {
             vm.albums.collectLatest { pagingData ->
-                Log.d("MyAlbumTabFragment", "새 페이징 데이터 수신")
                 albumAdapter.submitData(
                     pagingData.map {
                         AlbumItem.User(
                             value = it,
                             onItemClick = {
-                                Log.d("MyAlbumTabFragment", "Item Clicked!")
                                 findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
                             },
                             onMoreClick = { album ->
@@ -288,7 +221,7 @@ class MyAlbumTabFragment: BaseFragment() {
     private fun handleViewEvents(event: MyAlbumTabViewEvent) {
         when (event) {
             is MyAlbumTabViewEvent.Refresh -> {
-                refreshData()
+                refreshProgrammatically()
             }
             is MyAlbumTabViewEvent.RefreshAll -> {
                 pVm.refreshAll()

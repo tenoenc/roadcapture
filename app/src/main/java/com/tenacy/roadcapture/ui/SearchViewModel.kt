@@ -13,7 +13,10 @@ import com.tenacy.roadcapture.manager.AlgoliaManager
 import com.tenacy.roadcapture.ui.dto.Album
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,11 +26,6 @@ class SearchViewModel @Inject constructor(
     private val algoliaManager: AlgoliaManager,
 ) : BaseViewModel() {
 
-    data class State(
-        val pagingDataFlow: Flow<PagingData<Album>> = emptyFlow(),
-        val shouldLoad: Boolean = false,
-    )
-
     private val filter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
     val title = when(filter) {
         SearchFilter.All -> "홈"
@@ -36,7 +34,6 @@ class SearchViewModel @Inject constructor(
 
     val searchQuery = MutableStateFlow("")
 
-    private val _state = MutableStateFlow(State())
     val _pagingData = MutableStateFlow<PagingData<Album>>(PagingData.empty())
     val pagingData = _pagingData.asStateFlow()
 
@@ -63,7 +60,6 @@ class SearchViewModel @Inject constructor(
                 .flowOn(Dispatchers.IO)
                 .catch { exception ->
                     Log.e("SearchViewModel", "Search error", exception)
-                    viewEvent(SearchViewEvent.SearchError(exception.message ?: "검색 중 오류가 발생했습니다"))
                 }
                 .cachedIn(viewModelScope)
                 .collect {

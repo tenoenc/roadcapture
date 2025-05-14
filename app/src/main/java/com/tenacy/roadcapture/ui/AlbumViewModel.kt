@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
@@ -106,12 +107,14 @@ class AlbumViewModel @Inject constructor(
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRef = db.collection("albums").document(albumId)
                 val firebaseAlbum = if(userId == user!!.uid) {
-                    albumRef.get().awaitResult().getOrNull()
+                    albumRef.get().await()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND)
                 } else {
                     db.collection("albums")
                         .whereEqualTo(FieldPath.documentId(), albumId)
-                        .whereEqualTo("isPublic", true).get().await().documents.firstOrNull()
-                }?.toAlbum() ?: throw RuntimeException("403")
+                        .whereEqualTo("isPublic", true)
+                        .get().await().documents
+                        .firstOrNull()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException("접근할 수 없어요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                }
                 val scrapRef = db.collection("scraps")
                 val isScraped = scrapRef
                     .whereEqualTo("userRef", userRef)
@@ -145,9 +148,9 @@ class AlbumViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e("AlbumViewModel", "에러", exception)
-                    
-                    if(exception.message == "403") {
-                        viewEvent(AlbumViewEvent.Forbidden("접근할 수 없어요"))
+
+                    (exception as? FirebaseFirestoreException)?.let { firestoreException ->
+                        viewEvent(AlbumViewEvent.Forbidden(firestoreException.message ?: "예기치 않은 오류가 발생했어요"))
                     }
                 }
                 .collect { (memories, locations) ->
