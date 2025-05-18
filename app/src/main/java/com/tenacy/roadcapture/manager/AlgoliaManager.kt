@@ -33,8 +33,12 @@ class AlgoliaManager @Inject constructor() {
         )
     }
 
-    private val index: Index by lazy {
+    private val albumIndex: Index by lazy {
         client.getIndex("albums")
+    }
+
+    private val scrapIndex: Index by lazy {
+        client.getIndex("scraps")
     }
 
     private suspend fun searchAlbums(
@@ -53,7 +57,35 @@ class AlgoliaManager @Inject constructor() {
             }
 
             suspendCancellableCoroutine { continuation ->
-                index.searchAsync(algoliaQuery, { jsonObject, error ->
+                albumIndex.searchAsync(algoliaQuery, { jsonObject, error ->
+                    if (error != null) {
+                        continuation.resumeWithException(Exception(error.message))
+                    } else {
+                        val response = SearchResponse.fromJson(jsonObject!!)
+                        continuation.resume(response)
+                    }
+                })
+            }
+        }
+    }
+
+    private suspend fun searchScraps(
+        query: String,
+        page: Int = 0,
+        hitsPerPage: Int = 20
+    ): SearchResponse {
+        return withContext(Dispatchers.IO) {
+            val algoliaQuery = Query(query).apply {
+                // 공개 앨범만 필터링
+                filters = "albumPublic:true AND userRef:users/${user!!.uid}"
+
+                // 페이지 설정
+                setPage(page)
+                setHitsPerPage(hitsPerPage)
+            }
+
+            suspendCancellableCoroutine { continuation ->
+                scrapIndex.searchAsync(algoliaQuery, { jsonObject, error ->
                     if (error != null) {
                         continuation.resumeWithException(Exception(error.message))
                     } else {
@@ -79,7 +111,7 @@ class AlgoliaManager @Inject constructor() {
                 }
 
                 val results = suspendCancellableCoroutine { continuation ->
-                    index.searchAsync(algoliaQuery, { jsonObject, error ->
+                    albumIndex.searchAsync(algoliaQuery, { jsonObject, error ->
                         if (error != null) {
                             continuation.resumeWithException(Exception(error.message))
                         } else {
@@ -112,22 +144,23 @@ class AlgoliaManager @Inject constructor() {
                 // 로그 추가
                 Log.d("AlgoliaManager", "검색 결과: 총 ${response.nbHits}개, 페이지 ${response.page}/${response.nbPages}")
                 val albumIds = response.hits.map { hit -> hit.getString("objectID") }
-                fetchAlbums(albumIds, loadSize)
+                fetchAlbums(albumIds)
             }
             is SearchFilter.Scrap -> {
-                val hits = searchAllAlbum(query)
-                val albumIds = hits.map { hit -> hit.getString("objectID") }
-                fetchScrapedAlbums(albumIds, page, loadSize)
+                val response = searchScraps(query, page, loadSize)
+                Log.d("AlgoliaManager", "검색 결과: 총 ${response.nbHits}개, 페이지 ${response.page}/${response.nbPages}")
+                val scrapsId = response.hits.map { hit -> hit.getString("objectID") }
+                fetchScrapedAlbums(scrapsId)
             }
         }
     }
 
-    private suspend fun fetchAlbums(albumIds: List<String>, loadSize: Int): List<Album> {
+    private suspend fun fetchAlbums(albumIds: List<String>): List<Album> {
         return withContext(Dispatchers.IO) {
             if (albumIds.isEmpty()) return@withContext emptyList()
 
             // 최대 10개씩 나누어 처리 (Firestore whereIn 제한)
-            val chunkedAlbumIds = albumIds.take(loadSize).chunked(10)
+            val chunkedAlbumIds = albumIds.chunked(10)
             val allAlbums = mutableListOf<Album>()
 
             for (chunk in chunkedAlbumIds) {
@@ -177,99 +210,31 @@ class AlgoliaManager @Inject constructor() {
         }
     }
 
-    private suspend fun fetchScrapedAlbums(albumIds: List<String>, page: Int, loadSize: Int): List<Album> {
+    private suspend fun fetchScrapedAlbums(scrapIds: List<String>): List<Album> {
         return withContext(Dispatchers.IO) {
-            if (albumIds.isEmpty()) return@withContext emptyList()
+            if (scrapIds.isEmpty()) return@withContext emptyList()
 
-            // 스크랩된 앨범 ID 캐시 (메모리 또는 로컬 DB에 저장)
-            val scrapedAlbumIds = mutableListOf<String>()
-            // 현재까지 처리된 앨범 수
-            var processedAlbums = 0
-            // 현재 페이지에 필요한 스크랩된 앨범 수
-            val neededAlbums = loadSize
-            // 최종 결과
-            val resultAlbums = mutableListOf<Album>()
-            // 시작 인덱스 (이전 페이지에서 처리한 스크랩된 앨범 수)
-            val startScrapedIndex = page * loadSize
+            // 최대 10개씩 나누어 처리 (Firestore whereIn 제한)
+            val chunkedScrapIds = scrapIds.chunked(10)
+            val allAlbums = mutableListOf<Album>()
 
-            // 앨범 ID를 10개씩 나누어 처리
-            val chunkedAlbumIds = albumIds.chunked(10)
-
-            // 각 청크를 순회하며 필요한 개수의 스크랩된 앨범을 찾을 때까지 처리
-            for (chunk in chunkedAlbumIds) {
-                if (resultAlbums.size >= neededAlbums) break
-
-                // 스크랩 정보 먼저 확인
-                val scrapedIds = if (chunk.isNotEmpty()) {
-                    val scrapSnapshot = db.collection("scraps")
-                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
-                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
-                        .get()
-                        .await()
-//
-                scrapSnapshot.documents
-                    .mapNotNull { it.getDocumentReference("albumRef")?.id }
-                    .toSet()
-
-//                    val scrapSnapshot = db.collection("users").document(user!!.uid)
-//                        .collection("scraps")
-//                        .whereIn(FieldPath.documentId(), chunk)
-//                        .get()
-//                        .await()
-//
-//                    scrapSnapshot.documents
-//                        .mapNotNull { it.id }
-//                        .toSet()
-
-                } else {
-                    emptySet()
-                }
-
-                // 스크랩된 앨범이 없으면 다음 청크로
-                if (scrapedIds.isEmpty()) continue
-
-                // 스크랩된 앨범 ID 캐시에 추가
-                scrapedAlbumIds.addAll(scrapedIds)
-
-                // 현재 페이지에 필요한 스크랩된 앨범만 가져오기
-                val scrapedChunkIds = chunk.filter { scrapedIds.contains(it) }
-
-                // 이전 페이지의 스크랩된 앨범은 건너뛰기
-                val skipCount = maxOf(0, startScrapedIndex - processedAlbums)
-                processedAlbums += scrapedChunkIds.size
-
-                // 현재 페이지에 해당하는 스크랩된 앨범만 처리
-                val pageScrapedIds = if (skipCount >= scrapedChunkIds.size) {
-                    emptyList()
-                } else {
-                    scrapedChunkIds.drop(skipCount).take(neededAlbums - resultAlbums.size)
-                }
-
-                if (pageScrapedIds.isEmpty()) continue
-
-                // Firebase에서 필요한 앨범 데이터만 가져오기
-                val albumsSnapshot = db.collection("albums")
-                    .whereIn(FieldPath.documentId(), pageScrapedIds)
+            for (chunk in chunkedScrapIds) {
+                // Firebase에서 앨범 데이터 가져오기
+                val scrapsSnapshot = db.collection("scraps")
+                    .whereIn(FieldPath.documentId(), chunk)
                     .get()
                     .await()
 
-                // 앨범 매핑 및 결과 추가
-                val pageAlbums = albumsSnapshot.documents.mapNotNull { doc ->
-                    val albumId = doc.id
-                    val album = doc.toAlbum()
-                    if (album != null) {
-                        Album.from(album, true) // 스크랩된 앨범만 가져오므로 항상 true
-                    } else {
-                        null
-                    }
-                }
+                val albumIds = scrapsSnapshot.documents.mapNotNull { it.getDocumentReference("albumRef")?.id }
+                val chunkAlbums = db.collection("albums")
+                    .whereIn(FieldPath.documentId(), albumIds)
+                    .get().await()
+                    .map { Album.from(it.toAlbum(), true) }
 
-                resultAlbums.addAll(pageAlbums)
+                allAlbums.addAll(chunkAlbums)
             }
 
-            // 스크랩된 앨범 ID 순서대로 결과 정렬
-            val scrapedIdToIndex = scrapedAlbumIds.withIndex().associate { it.value to it.index }
-            resultAlbums.sortedBy { scrapedIdToIndex[it.id] ?: Int.MAX_VALUE }
+            allAlbums.sortedByDescending { it.createdAt }
         }
     }
 }

@@ -18,4 +18,6 @@ data class FirebaseAlbum(
     val userId: String = "",
     val userDisplayName: String = "",
     val userPhotoUrl: String = "",
+    val memoryAddressTags: List<String> = emptyList(),
+    val memoryPlaceNames: List<String> = emptyList(),
 ): Parcelable

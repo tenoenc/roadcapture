@@ -205,13 +205,15 @@ class AlbumViewModel @Inject constructor(
 
                 val isScraped = suspendCancellableCoroutine<Boolean> { continuation ->
                     db.runTransaction { transaction ->
+                        val album = transaction.get(albumRef).toAlbum()
+                        val albumUserRef = db.collection("users").document(album.userId)
 
                         if (scrapToDelete?.exists() == true) {
                             // 스크랩 취소
                             transaction.delete(scrapToDelete.reference)
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(-1))
-                            transaction.update(userRef, "scrapCount", FieldValue.increment(-1))
+                            transaction.update(albumUserRef, "scrapCount", FieldValue.increment(-1))
 
                             false
                         } else {
@@ -220,11 +222,16 @@ class AlbumViewModel @Inject constructor(
                             transaction.set(newScrapRef, mapOf(
                                 "albumRef" to albumRef,
                                 "userRef" to userRef,
+                                "albumTitle" to album.title,
+                                "albumUserDisplayName" to album.userDisplayName,
+                                "albumMemoryAddressTags" to album.memoryAddressTags,
+                                "albumMemoryPlaceNames" to album.memoryPlaceNames,
+                                "albumPublic" to album.isPublic,
                                 "createdAt" to FieldValue.serverTimestamp(),
                             ))
 
                             transaction.update(albumRef, "scrapCount", FieldValue.increment(1))
-                            transaction.update(userRef, "scrapCount", FieldValue.increment(1))
+                            transaction.update(albumUserRef, "scrapCount", FieldValue.increment(1))
 
                             true
                         }

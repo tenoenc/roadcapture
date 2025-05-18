@@ -161,12 +161,6 @@ class MyAlbumTabFragment: BaseFragment() {
         pVm.fetchData()
     }
 
-    private fun refreshProgrammatically() {
-        // 프로그래매틱 리프레시 시 스와이프 인디케이터 숨김
-        binding.swipeRefreshLayout.isRefreshing = false
-        refreshData()
-    }
-
     private fun setupObservers() {
         observeRefreshAllEvent()
         observePagingData()
@@ -177,7 +171,7 @@ class MyAlbumTabFragment: BaseFragment() {
     private fun observeRefreshAllEvent() {
         repeatOnLifecycle {
             pVm.refreshAllEvent.collect {
-                refreshProgrammatically()
+                refreshData()
             }
         }
     }
@@ -221,7 +215,7 @@ class MyAlbumTabFragment: BaseFragment() {
     private fun handleViewEvents(event: MyAlbumTabViewEvent) {
         when (event) {
             is MyAlbumTabViewEvent.Refresh -> {
-                refreshProgrammatically()
+                refreshData()
             }
             is MyAlbumTabViewEvent.RefreshAll -> {
                 pVm.refreshAll()

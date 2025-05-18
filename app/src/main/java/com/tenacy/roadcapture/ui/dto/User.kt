@@ -16,7 +16,7 @@ data class User(
     val updatedAt: LocalDateTime,
     val albumCount: Long,
     val memoryCount: Long,
-    val scrapCount: Long = 0L,
+    val scrapCount: Long,
 ): Parcelable {
 
     companion object {

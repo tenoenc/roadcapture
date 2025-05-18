@@ -165,12 +165,6 @@ class MyMemoryTabFragment: BaseFragment() {
         pVm.fetchData()
     }
 
-    private fun refreshProgrammatically() {
-        // 프로그래매틱 리프레시 시 스와이프 인디케이터 숨김
-        binding.swipeRefreshLayout.isRefreshing = false
-        refreshData()
-    }
-
     private fun setupObservers() {
         observeRefreshAllEvent()
         observePagingData()
@@ -181,7 +175,7 @@ class MyMemoryTabFragment: BaseFragment() {
         repeatOnLifecycle {
             pVm.refreshAllEvent.collect {
                 // 프로그래매틱 리프레시 호출
-                refreshProgrammatically()
+                refreshData()
             }
         }
     }

@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.ui.dto
 
 import android.os.Parcelable
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
+import com.tenacy.roadcapture.util.user
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
@@ -17,6 +18,8 @@ data class Album(
     val scrapCount: Int = 0,
     val isPublic: Boolean = false,
     val regionTags: List<Map<String, String>> = emptyList(),
+    val memoryAddressTags: List<String> = emptyList(),
+    val memoryPlaceNames: List<String> = emptyList(),
     val user: User,
 ): Parcelable {
     @Parcelize
@@ -42,6 +45,8 @@ data class Album(
             scrapCount = album.scrapCount,
             isPublic = album.isPublic,
             regionTags = album.regionTags,
+            memoryAddressTags = album.memoryAddressTags,
+            memoryPlaceNames = album.memoryPlaceNames,
             user = User(
                 id = album.userId,
                 displayName = album.userDisplayName,

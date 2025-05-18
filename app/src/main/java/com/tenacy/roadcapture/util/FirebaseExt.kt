@@ -78,6 +78,8 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val userId = getDocumentReference("userRef")?.id ?: ""
     val userDisplayName = getString("userDisplayName") ?: ""
     val userPhotoUrl = getString("userPhotoUrl") ?: ""
+    val memoryAddressTags = get("memoryAddressTags") as? List<String> ?: emptyList()
+    val memoryPlaceNames = get("memoryPlaceNames") as? List<String> ?: emptyList()
 
     return FirebaseAlbum(
         id = id,
@@ -92,6 +94,8 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
         userId = userId,
         userDisplayName = userDisplayName,
         userPhotoUrl = userPhotoUrl,
+        memoryAddressTags = memoryAddressTags,
+        memoryPlaceNames = memoryPlaceNames,
     )
 }
 

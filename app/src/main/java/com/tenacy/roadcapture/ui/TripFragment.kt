@@ -825,7 +825,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, LatLng?>, Pair<Uri?, LatLng?>>() {
             override fun createIntent(context: Context, input: Triple<Uri, Uri, LatLng?>): Intent {
                 val options = UCrop.Options().apply {
-                    setCompressionQuality(30)
+                    setCompressionQuality(15)
                     setToolbarTitle("이미지 편집")
                     setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
