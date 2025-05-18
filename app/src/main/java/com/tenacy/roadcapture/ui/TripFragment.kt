@@ -99,7 +99,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 Log.d("TAG", "위치 권한 허용됨")
                 vm.startTraveling()
 
-                Log.d("TAG", "1")
                 permissionGranted.value = true
 
                 if (!vm.initialGuideShown) {
@@ -157,7 +156,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     override fun onMapReady(map: GoogleMap) {
         this@TripFragment.map = map
         mapReady.value = true
-        Log.d("TAG", "2")
     }
 
     override fun onClusterItemClick(item: ClusterMarkerItem): Boolean {
@@ -825,7 +823,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, LatLng?>, Pair<Uri?, LatLng?>>() {
             override fun createIntent(context: Context, input: Triple<Uri, Uri, LatLng?>): Intent {
                 val options = UCrop.Options().apply {
-                    setCompressionQuality(15)
+                    setCompressionQuality(30)
                     setToolbarTitle("이미지 편집")
                     setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
@@ -885,7 +883,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     return@launch
                 }
 
-                findNavController().navigate(TripFragmentDirections.actionTripToLoading(resultUri, coordinates))
+                // 한 번 더 압축
+                val compressedResultUri = requireContext().compressImage(resultUri)
+
+                findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedResultUri, coordinates))
             }
         }
 
