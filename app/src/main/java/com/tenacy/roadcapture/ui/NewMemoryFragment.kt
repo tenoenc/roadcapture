@@ -17,6 +17,7 @@ import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
 import com.tenacy.roadcapture.di.PlaceNameFilter
+import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -152,6 +153,25 @@ class NewMemoryFragment: BaseFragment() {
                     )
                 )
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
+            }
+            is NewMemoryViewEvent.ShowAd -> {
+                binding.ibtnNewMemoryComplete.isEnabled = false
+
+                mainActivity.adManager.showAd(
+                    mainActivity = mainActivity,
+                    onRewarded = {
+                        mainActivity.lifecycleScope.launch(Dispatchers.Main) {
+                            binding.ibtnNewMemoryComplete.isEnabled = true
+
+                            vm.saveMemory()
+                        }
+                    },
+                    onFailed = {
+                        mainActivity.lifecycleScope.launch(Dispatchers.Main) {
+                            binding.ibtnNewMemoryComplete.isEnabled = true
+                        }
+                    }
+                )
             }
         }
     }

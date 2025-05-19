@@ -32,6 +32,7 @@ sealed class AppInfoViewEvent: ViewEvent {
     data object InquireToDeveloper: AppInfoViewEvent()
     data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
     data object Logout: AppInfoViewEvent()
+    data class Donate(val type: String) : AppInfoViewEvent()
 }
 
 sealed class ScrapViewEvent: ViewEvent {
@@ -58,6 +59,7 @@ sealed class TripViewEvent: ViewEvent {
 sealed class NewMemoryViewEvent: ViewEvent {
     data class ResultBack(val memoryId: Long, val coordinates: LatLng) : NewMemoryViewEvent()
     data class ShowLocation(val address: String): NewMemoryViewEvent()
+    data object ShowAd: NewMemoryViewEvent()
 }
 
 

@@ -11,12 +11,13 @@ interface MemoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(entity: MemoryEntity): Long
 
+    @Transaction // 추가
     @Query("SELECT * FROM memories ORDER BY createdAt ASC")
     fun selectAll(): List<MemoryWithLocation>
 
+    @Transaction // 추가
     @Query("SELECT * FROM memories WHERE id IN (:ids) ORDER BY createdAt ASC")
     fun selectByIds(ids: List<Long>): List<MemoryWithLocation>
-
 
     @Query("DELETE FROM memories WHERE id = :id")
     fun deleteById(id: Long): Int

@@ -7,7 +7,6 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
-import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.di.InputModule
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -111,6 +110,12 @@ class NewMemoryViewModel @Inject constructor(
     }
 
     fun onNewClick() {
+        viewModelScope.launch(Dispatchers.Main) {
+            viewEvent(NewMemoryViewEvent.ShowAd)
+        }
+    }
+
+    fun saveMemory() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentPlaceName = placeName.value
             val currentContent = content.value

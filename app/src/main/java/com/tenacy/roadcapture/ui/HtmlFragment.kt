@@ -76,8 +76,8 @@ class HtmlFragment: BaseFragment() {
 
     private suspend fun loadHtmlFromAssets(): String = withContext(Dispatchers.IO) {
         val fileName = when(args.type) {
-            HtmlType.ServiceTermsAndConditions -> "service_terms_conditions.html"
-            HtmlType.PersonalInfoPolicy -> "personal_info_policy.html"
+            HtmlType.ServiceTermsAndConditions -> "terms_of_service.html"
+            HtmlType.PersonalInfoPolicy -> "privacy_policy.html"
         }
         val inputStream = requireContext().assets.open(fileName) // assets 폴더에 있는 HTML 파일 이름
         val reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))

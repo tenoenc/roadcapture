@@ -4,34 +4,34 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.MyToast
 import com.tenacy.roadcapture.ui.ToastMessageType
-import com.tenacy.roadcapture.ui.ToastModel
 import com.tenacy.roadcapture.util.currentFragment
 import com.tenacy.roadcapture.util.navController
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     val vm: GlobalViewModel by viewModels()
+
+    @Inject
+    lateinit var adManager: RewardedAdManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

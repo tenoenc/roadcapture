@@ -32,11 +32,11 @@ class MyMemoryTabViewModel @Inject constructor(
     // 페이징 설정 최적화
     private val pager = Pager(
         config = PagingConfig(
-            pageSize = AlbumPagingSource.PAGE_SIZE,
+            pageSize = MemoryPagingSource.PAGE_SIZE,
             enablePlaceholders = false,
-            maxSize = AlbumPagingSource.PAGE_SIZE * 5,
-            prefetchDistance = AlbumPagingSource.PAGE_SIZE,
-            initialLoadSize = AlbumPagingSource.PAGE_SIZE
+            maxSize = MemoryPagingSource.PAGE_SIZE * 5,
+            prefetchDistance = MemoryPagingSource.PAGE_SIZE,
+            initialLoadSize = MemoryPagingSource.PAGE_SIZE
         ),
         pagingSourceFactory = pagingSourceFactory
     )

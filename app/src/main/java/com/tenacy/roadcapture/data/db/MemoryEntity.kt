@@ -15,6 +15,10 @@ import java.time.LocalDateTime
             childColumns = ["locationId"],
             onDelete = ForeignKey.CASCADE,
         )
+    ],
+    // 인덱스 추가
+    indices = [
+        Index("locationId")
     ]
 )
 @Parcelize

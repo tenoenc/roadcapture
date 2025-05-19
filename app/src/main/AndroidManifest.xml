@@ -94,6 +94,15 @@
                     android:resource="@xml/file_paths" />
         </provider>
 
+        <property
+                android:name="android.adservices.AD_SERVICES_CONFIG"
+                android:resource="@xml/gma_ad_services_config"
+                tools:replace="android:resource" />
+
+        <meta-data
+                android:name="com.google.android.gms.ads.APPLICATION_ID"
+                android:value="${AD_MOB_APP_ID}"/>
+
         <meta-data
                 tools:replace="android:value"
                 android:name="com.google.android.maps.v2.API_KEY"

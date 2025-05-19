@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import androidx.lifecycle.viewModelScope
+import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.util.user
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ class AppInfoViewModel @Inject constructor(
 
 ) : BaseViewModel() {
 
+    val version = BuildConfig.VERSION_NAME
     val profilePhotoUrl = MutableStateFlow(user!!.photoUrl)
     val profileDisplayName = MutableStateFlow(user!!.displayName)
 
@@ -26,6 +28,12 @@ class AppInfoViewModel @Inject constructor(
     fun onServiceTermsAndConditionsClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.ServiceTermsAndConditions))
+        }
+    }
+
+    fun onDonateClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AppInfoViewEvent.Donate("donation_small"))
         }
     }
 

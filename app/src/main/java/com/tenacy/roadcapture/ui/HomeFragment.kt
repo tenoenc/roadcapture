@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
@@ -25,6 +26,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment() {
@@ -34,7 +36,17 @@ class HomeFragment: BaseFragment() {
 
     private val vm: HomeViewModel by viewModels()
 
+    // 기존 방식과 유사하게 lazy 초기화 유지 가능
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+
+    // 광고 어댑터도 lazy로 초기화
+    private val adAdapter by lazy {
+        AdmobContainerAdapter(
+            originalAdapter = albumAdapter,
+            adPosition = 5,
+            adInterval = 10
+        )
+    }
 
     private var wasRefreshing = false
 
@@ -63,11 +75,21 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        binding.rvHomeAlbums.adapter = albumAdapter.withLoadStateFooter(
-            footer = LoadStateAdapter()
-        )
+        // 로드 상태 어댑터 생성
+        val loadStateAdapter = LoadStateAdapter()
+
+        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
+        val finalAdapter = adAdapter.withLoadStateAdapter(loadStateAdapter)
+
+        // 최종 어댑터를 RecyclerView에 설정
+        binding.rvHomeAlbums.adapter = finalAdapter
+
+        // 나머지 설정은 동일하게 유지
         binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvHomeAlbums.setHasFixedSize(true)
+
+        // 뷰홀더 캐시 사이즈 증가
+        binding.rvHomeAlbums.setItemViewCacheSize(5)
 
         // 어댑터 상태 리스너
         albumAdapter.addLoadStateListener { loadStates ->
@@ -107,13 +129,6 @@ class HomeFragment: BaseFragment() {
                 wasRefreshing = false
                 binding.swipeRefreshLayout.isRefreshing = false
                 Log.e("HomeFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
-            }
-        }
-
-        repeatOnLifecycle {
-            while(currentCoroutineContext().isActive) {
-                albumAdapter.refreshVisibleItems()
-                delay(60_000)
             }
         }
     }

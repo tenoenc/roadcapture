@@ -176,6 +176,8 @@ class CustomBottomNavigation @JvmOverloads constructor(
         navigateTo(destinationId)
     }
 
+
+
     companion object {
 
         /**

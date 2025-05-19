@@ -18,8 +18,8 @@ android {
         applicationId "com.tenacy.roadcapture"
         minSdk 26
         targetSdk 35
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.5.0"
 
         multiDexEnabled true
 
@@ -38,12 +38,12 @@ android {
 
     buildTypes {
         release {
-            debuggable false
-            minifyEnabled false
+            debuggable true
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             ndk {
-                debugSymbolLevel 'NONE'
+                debugSymbolLevel 'FULL'
             }
         }
     }
@@ -92,6 +92,14 @@ dependencies {
     implementation libs.lottie
     implementation libs.shimmer
 //    implementation libs.singledateandtimepicker
+
+    /**
+     * **********************************************************
+     *              Google Play
+     * **********************************************************
+     */
+    implementation libs.billing
+    implementation libs.ads
 
     /**
      * **********************************************************

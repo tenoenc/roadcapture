@@ -1,9 +1,11 @@
 [versions]
 activity = "1.9.3"
+ads = "22.6.0"
 agp = "8.6.0-alpha07"
 algoliasearchAndroid = "3.27.0"
 mapsUtils = "2.3.0"
 appcompat = "1.7.0"
+billing = "7.0.0"
 camera = "1.2.3"
 cameraCamera2 = "1.2.3"
 compiler = "4.12.0"
@@ -56,6 +58,7 @@ ucrop = "2.2.8"
 
 [libraries]
 adapter-rxjava3 = { module = "com.squareup.retrofit2:adapter-rxjava3", version.ref = "converterMoshi" }
+ads = { module = "com.google.android.gms:play-services-ads", version.ref = "ads" }
 algoliasearch-android = { module = "com.algolia:algoliasearch-android", version.ref = "algoliasearchAndroid" }
 android-image-picker = { module = "com.github.esafirm:android-image-picker", version.ref = "imagePicker" }
 android-maps-utils = { module = "com.google.maps.android:android-maps-utils", version.ref = "mapsUtils" }
@@ -85,6 +88,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-rxjava3 = { module = "androidx.room:room-rxjava3", version.ref = "room" }
+billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterMoshi" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }

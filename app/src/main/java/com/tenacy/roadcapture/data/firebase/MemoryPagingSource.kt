@@ -15,7 +15,7 @@ class MemoryPagingSource(
 ): PagingSource<DocumentSnapshot, Memory>() {
 
     companion object {
-        const val PAGE_SIZE = 3
+        const val PAGE_SIZE = 10
         private const val TAG = "MemoryPagingSource"
     }
 
@@ -52,6 +52,7 @@ class MemoryPagingSource(
                 }
             }
 
+
             when(filter) {
                 is MemoryFilter.User -> {
                     var query = db.collection("memories")
@@ -62,7 +63,7 @@ class MemoryPagingSource(
                     }
 
                     // 페이지 크기 제한
-                    query = query.limit(AlbumPagingSource.PAGE_SIZE.toLong())
+                    query = query.limit(PAGE_SIZE.toLong())
 
                     // 페이징 키 적용 (다음 페이지 시작 지점)
                     val key = params.key
@@ -98,8 +99,8 @@ class MemoryPagingSource(
                         Memory.of(memory)
                     }
 
-                    memories.forEachIndexed { index, album ->
-                        Log.d(TAG, "로드된 앨범[$index]: ID=${album.id}")
+                    memories.forEachIndexed { index, memory ->
+                        Log.d(TAG, "로드된 추억[$index]: ID=${memory.id}")
                     }
 
                     LoadResult.Page(
