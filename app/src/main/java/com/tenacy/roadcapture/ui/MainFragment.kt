@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
 import android.util.Log
+import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.adapter.FragmentViewHolder
 import androidx.viewpager2.widget.ViewPager2
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.Album
@@ -28,6 +30,8 @@ class MainFragment: BaseFragment() {
     // 메인 페이저 어댑터
     private lateinit var viewPagerAdapter: MainViewPagerAdapter
 
+    private var previousPosition: Int? = null
+
     // ViewPager 페이지 변경 콜백
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -41,6 +45,16 @@ class MainFragment: BaseFragment() {
                 else -> R.id.homeFragment
             }
             binding.bottomNav.selectItem(destinationId)
+
+            // 프래그먼트 찾기
+            val currentFragment = viewPagerAdapter.getFragment(position)
+            val previousFragment = previousPosition?.let { viewPagerAdapter.getFragment(it) }
+
+            // 가시성 콜백 호출
+            (previousFragment as? FragmentVisibilityCallback)?.onBecameInvisible()
+            (currentFragment as? FragmentVisibilityCallback)?.onBecameVisible()
+
+            previousPosition = position
         }
     }
 
@@ -177,6 +191,11 @@ class MainFragment: BaseFragment() {
                 3 -> AppInfoFragment()
                 else -> HomeFragment()
             }
+        }
+
+        fun getFragment(position: Int): Fragment? {
+            val name = "f" + getItemId(position) // FragmentStateAdapter가 내부적으로 사용하는 태그 형식
+            return childFragmentManager.findFragmentByTag(name)
         }
     }
 }

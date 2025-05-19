@@ -8,7 +8,7 @@ import androidx.fragment.app.viewModels
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 
-class AppInfoFragment: BaseFragment() {
+class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
 
     private var _binding: FragmentAppInfoBinding? = null
     val binding get() = _binding!!
@@ -38,6 +38,10 @@ class AppInfoFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onBecameVisible() {
+        vm.refreshStates()
     }
 
     private fun setupObservers() {

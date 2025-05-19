@@ -5,8 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -106,19 +104,13 @@ class AlbumViewModel @Inject constructor(
             flow {
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRef = db.collection("albums").document(albumId)
-                val firebaseAlbum = if (userId == user!!.uid) {
-                    albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
-                        ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND)
-                } else {
-                    db.collection("albums")
-                        .whereEqualTo(FieldPath.documentId(), albumId)
-                        .whereEqualTo("isPublic", true)
-                        .get().await().documents
-                        .firstOrNull()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException(
-                        "접근할 수 없어요",
-                        FirebaseFirestoreException.Code.PERMISSION_DENIED
-                    )
+                val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
+                    ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
+
+                if(userId != user!!.uid && !firebaseAlbum.isPublic) {
+                    throw FirebaseFirestoreException("접근할 수 없어요",FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
+
                 val scrapRef = db.collection("scraps")
                 val isScraped = scrapRef
                     .whereEqualTo("userRef", userRef)

@@ -1,10 +1,12 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
+import android.net.Uri
 import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.UserProfileChangeRequest
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -53,6 +55,12 @@ class ProfileUploadProgressViewModel @Inject constructor(
                 val imageUrl = context.uploadImageToStorage(compressedUri, storagePath)
 
                 sendWithDelay(ProfileSaveState.SavingToFirestore)
+
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setPhotoUri(Uri.parse(imageUrl))
+                    .build()
+
+                user?.updateProfile(profileUpdates)?.await()
 
                 val allOperations = mutableListOf<BatchOperation>()
                 albumRefs.forEach {

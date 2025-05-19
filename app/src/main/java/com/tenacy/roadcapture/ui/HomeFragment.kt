@@ -57,6 +57,11 @@ class HomeFragment: BaseFragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setupViews() {
         setupRecyclerView()
         setupShimmer()
@@ -205,11 +210,6 @@ class HomeFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {

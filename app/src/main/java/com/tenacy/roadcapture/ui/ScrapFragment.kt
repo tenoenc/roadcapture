@@ -52,6 +52,11 @@ class ScrapFragment: BaseFragment() {
         setupObservers()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setupViews() {
         setupRecyclerView()
         setupShimmer()
@@ -196,10 +201,5 @@ class ScrapFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.Scrap))
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

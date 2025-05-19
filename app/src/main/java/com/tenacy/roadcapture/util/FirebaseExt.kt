@@ -349,6 +349,64 @@ suspend fun <T> CollectionReference.whereInAllReferences(
     return whereInAll(field, values).map { it.reference }
 }
 
+/**
+ * Firestore의 whereIn 10개 제한을 우회하는 확장 함수 (복합 조건 지원)
+ *
+ * @param inField whereIn으로 필터링할 필드 이름
+ * @param inValues 해당 필드와 비교할 값 목록
+ * @param queryModifier 추가 쿼리 조건을 적용하는 함수
+ * @return 모든 조건에 맞는 문서를 포함하는 결과 목록
+ */
+suspend fun <T> CollectionReference.whereInWithFilters(
+    inField: String,
+    inValues: List<T>,
+    queryModifier: (Query) -> Query
+): List<DocumentSnapshot> = withContext(Dispatchers.IO) {
+    // 결과를 저장할 목록
+    val allResults = mutableListOf<DocumentSnapshot>()
+
+    // inValues가 비어있으면 빈 목록 반환
+    if (inValues.isEmpty()) {
+        return@withContext allResults
+    }
+
+    // inValues를 10개씩 청크로 나누기 (Firestore whereIn 제한)
+    val chunks = inValues.chunked(10)
+
+    // 각 청크에 대해 별도의 쿼리 실행
+    val queryResults = chunks.map { chunk ->
+        async {
+            val baseQuery = this@whereInWithFilters.whereIn(inField, chunk)
+            val modifiedQuery = queryModifier(baseQuery)
+            modifiedQuery.get().await().documents
+        }
+    }.awaitAll()
+
+    // 모든 결과 병합 (중복 제거)
+    val documentMap = mutableMapOf<String, DocumentSnapshot>()
+
+    queryResults.forEach { documents ->
+        documents.forEach { document ->
+            documentMap[document.id] = document
+        }
+    }
+
+    // Map의 값들을 리스트로 변환
+    allResults.addAll(documentMap.values)
+
+    allResults
+}
+
+/**
+ * 문서 참조를 반환하는 whereInWithFilters 버전
+ */
+suspend fun <T> CollectionReference.whereInWithFiltersReferences(
+    inField: String,
+    inValues: List<T>,
+    queryModifier: (Query) -> Query
+): List<DocumentReference> {
+    return whereInWithFilters(inField, inValues, queryModifier).map { it.reference }
+}
 
 /**
  * 모든 문서 ID를 가져오는 확장 함수

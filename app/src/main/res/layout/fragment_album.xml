@@ -6,7 +6,7 @@
     <data>
 
         <variable name="vm" type="com.tenacy.roadcapture.ui.AlbumViewModel"/>
-        <import type="android.view.View" />
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_album_container"
@@ -179,55 +179,80 @@
                          app:layout_constraintBottom_toBottomOf="parent"
                          app:layout_constraintEnd_toEndOf="parent"/>
 
-            <LinearLayout android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:id="@+id/ll_album_share"
-                          android:onClick="@{() -> vm.onShareClick()}"
-                          android:orientation="vertical"
-                          android:gravity="center"
-                          android:padding="8dp"
-                          android:layout_marginBottom="12dp"
-                          app:layout_constraintStart_toStartOf="@id/fl_album_profile"
-                          app:layout_constraintEnd_toEndOf="@id/fl_album_profile"
-                          app:layout_constraintBottom_toTopOf="@id/fl_album_profile">
+            <androidx.cardview.widget.CardView android:layout_width="0dp"
+                                               android:layout_height="wrap_content"
+                                               android:id="@+id/card_album_share"
+                                               android:layout_marginBottom="12dp"
+                                               app:cardBackgroundColor="@android:color/transparent"
+                                               app:cardCornerRadius="100dp"
+                                               app:cardElevation="0dp"
+                                               app:layout_constraintDimensionRatio="1:1"
+                                               app:layout_constraintStart_toStartOf="@id/fl_album_profile"
+                                               app:layout_constraintEnd_toEndOf="@id/fl_album_profile"
+                                               app:layout_constraintBottom_toTopOf="@id/fl_album_profile">
 
-                <ImageView android:layout_width="24dp"
-                           android:layout_height="24dp"
-                           android:src="@drawable/ic_share"/>
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:onClick="@{() -> vm.onShareClick()}"
+                              android:clickable="true"
+                              android:focusable="true"
+                              android:foreground="?attr/selectableItemBackground"
+                              android:orientation="vertical"
+                              android:gravity="center"
+                              android:padding="8dp"
+                              app:selected="@{vm.scraped}">
 
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:textAppearance="@style/Body_10_SB"
-                          android:textColor="@color/label_normal"
-                          android:text="공유"/>
+                    <ImageView android:layout_width="24dp"
+                               android:layout_height="24dp"
+                               android:src="@drawable/ic_share"/>
 
-            </LinearLayout>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textAppearance="@style/Body_10_SB"
+                              android:textColor="@color/label_normal"
+                              android:text="공유"/>
 
-            <LinearLayout android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:id="@+id/ll_album_scrap"
-                          android:onClick="@{() -> vm.onScrapClick()}"
-                          android:orientation="vertical"
-                          android:gravity="center"
-                          android:padding="8dp"
-                          android:layout_marginBottom="12dp"
-                          app:selected="@{vm.scraped}"
-                          app:layout_constraintStart_toStartOf="@id/ll_album_share"
-                          app:layout_constraintEnd_toEndOf="@id/ll_album_share"
-                          app:layout_constraintBottom_toTopOf="@id/ll_album_share">
+                </LinearLayout>
 
-                <ImageView android:layout_width="24dp"
-                           android:layout_height="24dp"
-                           android:src="@drawable/bookmark"/>
+            </androidx.cardview.widget.CardView>
 
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:textAppearance="@style/Body_10_SB"
-                          android:textColor="@color/label_normal"
-                          android:text="@{vm.scrapCountText}"
-                          tools:text="1.2천"/>
+            <androidx.cardview.widget.CardView android:layout_width="0dp"
+                                               android:layout_height="wrap_content"
+                                               android:id="@+id/card_album_scrap"
+                                               android:layout_marginBottom="12dp"
+                                               app:cardBackgroundColor="@android:color/transparent"
+                                               app:cardCornerRadius="100dp"
+                                               app:cardElevation="0dp"
+                                               app:layout_constraintDimensionRatio="1:1"
+                                               app:layout_constraintStart_toStartOf="@id/card_album_share"
+                                               app:layout_constraintEnd_toEndOf="@id/card_album_share"
+                                               app:layout_constraintBottom_toTopOf="@id/card_album_share">
 
-            </LinearLayout>
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:onClick="@{() -> vm.onScrapClick()}"
+                              android:clickable="true"
+                              android:focusable="true"
+                              android:foreground="?attr/selectableItemBackground"
+                              android:orientation="vertical"
+                              android:gravity="center"
+                              android:padding="8dp"
+                              app:selected="@{vm.scraped}">
+
+                    <ImageView android:layout_width="24dp"
+                               android:layout_height="24dp"
+                               android:src="@drawable/bookmark"/>
+
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textAppearance="@style/Body_10_SB"
+                              android:textColor="@color/label_normal"
+                              android:text="@{vm.scrapCountText}"
+                              tools:text="1.2천"/>
+
+                </LinearLayout>
+
+            </androidx.cardview.widget.CardView>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

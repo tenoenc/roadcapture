@@ -3,12 +3,12 @@ package com.tenacy.roadcapture.data.firebase
 import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.toAlbum
-import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.util.*
 import kotlinx.coroutines.tasks.await
 
 class AlbumPagingSource(
@@ -76,8 +76,7 @@ class AlbumPagingSource(
                     }
 
                     // 쿼리 실행
-                    val albumsSnapshot = query.get().await()
-                    val albumDocuments = albumsSnapshot.documents
+                    val albumDocuments = query.get().await().documents
                     val albumIds = albumDocuments.map { it.id }
                     Log.d(TAG, "쿼리 결과: ${albumDocuments.size}개 문서 로드됨")
 
@@ -97,15 +96,15 @@ class AlbumPagingSource(
 
                     val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                         // 특정 앨범들에 대한 스크랩 상태만 조회
-                        val scrapQuery = db.collection("scraps")
-                            .whereIn("albumRef", albumIds.map { db.collection("albums").document(it) })
-                            .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
+                        val albumRefs = albumIds.map { db.collection("albums").document(it) }
+                        val userRef = db.collection("users").document(user!!.uid)
 
-                        val scrapSnapshot = scrapQuery.get().await()
-                        scrapSnapshot.documents.mapNotNull { doc ->
-                            val albumRef = doc.getDocumentReference("albumRef")
-                            albumRef?.id
-                        }.toSet()
+                        val scrapRefs = db.collection("scraps")
+                            .whereInWithFilters("albumRef", albumRefs) { query ->
+                                query.whereEqualTo("userRef", userRef)
+                            }
+
+                        scrapRefs.mapNotNull { it.getDocumentReference("albumRef")?.id }.toSet()
                     } else {
                         emptySet()
                     }
@@ -129,42 +128,37 @@ class AlbumPagingSource(
                 }
 
                 is AlbumFilter.Scrap -> {
-                    // SCRAP 필터 로직 구현
                     Log.d(TAG, "SCRAP 필터 로드 요청")
 
-                    // 현재 사용자의 스크랩 문서 가져오기
-                    val userDocument = db.collection("users").document(user!!.uid)
+                    // 현재 사용자 참조
+                    val userRef = db.collection("users").document(user!!.uid)
 
-                    // 스크랩 쿼리 기본 설정 (정렬 없이 먼저 가져옴)
+                    // 커서 기반 페이징을 위한 시작점 설정
+                    val startAfterDoc = params.key
+
+                    // 먼저 사용자의 스크랩 목록 가져오기 (createdAt 기준 정렬)
                     var scrapQuery = db.collection("scraps")
-                        .whereEqualTo("userRef", userDocument)
-                        .limit(PAGE_SIZE.toLong() * 3) // 충분한 스크랩을 가져오기 위해 더 큰 limit 설정
+                        .whereEqualTo("userRef", userRef)
+                        .orderBy("createdAt", Query.Direction.DESCENDING)
+                        .limit(PAGE_SIZE.toLong())
 
-                    // 페이징 키 적용
-                    val key = params.key
-                    if (key != null) {
-                        // 여기서 key는 앨범 문서임
-                        // 해당 앨범의 생성 시간을 가져와서 그보다 이전 시간의 앨범들을 조회하도록 수정
-                        val keyAlbumRef = db.collection("albums").document(key.id)
-                        val keyAlbumDoc = keyAlbumRef.get().await()
-                        val keyCreatedAt = keyAlbumDoc.getTimestamp("createdAt")
+                    // 시작점 설정
+                    if (startAfterDoc != null) {
+                        // 앨범 ID로 해당 스크랩 찾기
+                        val scrapDoc = db.collection("scraps")
+                            .whereEqualTo("userRef", userRef)
+                            .whereEqualTo("albumRef", db.collection("albums").document(startAfterDoc.id))
+                            .get().await().documents.firstOrNull()
 
-                        if (keyCreatedAt != null) {
-                            // 쿼리를 직접 앨범에 적용 (나중에 스크랩만 필터링)
-                            Log.d(TAG, "앨범 생성시간 이전 기준 적용: ${keyCreatedAt}")
-                        } else {
-                            Log.d(TAG, "키 문서에서 createdAt을 찾을 수 없음")
+                        if (scrapDoc != null) {
+                            scrapQuery = scrapQuery.startAfter(scrapDoc)
                         }
-                    } else {
-                        Log.d(TAG, "처음부터 로드 (startAfter 없음)")
                     }
 
-                    // 스크랩 쿼리 실행
-                    val scrapsSnapshot = scrapQuery.get().await()
-                    val scrapDocuments = scrapsSnapshot.documents
+                    // 스크랩 문서 가져오기
+                    val scrapDocs = scrapQuery.get().await().documents
 
-                    // 결과가 비어있는지 확인
-                    if (scrapDocuments.isEmpty()) {
+                    if (scrapDocs.isEmpty()) {
                         Log.d(TAG, "스크랩 쿼리 결과가 비어있음")
                         return LoadResult.Page(
                             data = emptyList(),
@@ -173,14 +167,11 @@ class AlbumPagingSource(
                         )
                     }
 
-                    // 스크랩된 앨범 참조 목록 추출
-                    val albumRefs = scrapDocuments.mapNotNull { doc ->
-                        doc.getDocumentReference("albumRef")
-                    }
+                    // 앨범 참조 추출
+                    val albumRefs = scrapDocs.mapNotNull { it.getDocumentReference("albumRef") }
 
-                    // 앨범 참조가 없으면 빈 결과 반환
                     if (albumRefs.isEmpty()) {
-                        Log.d(TAG, "스크랩된 앨범 참조가 없음")
+                        Log.d(TAG, "유효한 앨범 참조가 없음")
                         return LoadResult.Page(
                             data = emptyList(),
                             prevKey = null,
@@ -188,61 +179,45 @@ class AlbumPagingSource(
                         )
                     }
 
-                    // 스크랩된 앨범 ID 집합
-                    val scrapedAlbumIds = albumRefs.map { it.id }.toSet()
+                    // 배치로 앨범 문서 가져오기
+                    val albums = mutableListOf<Album>()
+                    val lastAlbumDoc = albumRefs.chunked(10).fold<List<DocumentReference>, DocumentSnapshot?>(null) { _, chunk ->
+                        // whereIn으로 앨범 문서 가져오기
+                        val albumDocs = db.collection("albums")
+                            .whereIn(FieldPath.documentId(), chunk.map { it.id })
+                            .get().await().documents
 
-                    // 앨범 쿼리 생성 - 스크랩된 앨범들만 가져오되 createdAt 기준으로 정렬
-                    var albumQuery = db.collection("albums")
-                        .orderBy("createdAt", Query.Direction.DESCENDING)
-                        .limit(PAGE_SIZE.toLong())
+                        // 앨범 객체로 변환 (항상 스크랩된 상태)
+                        val batchAlbums = albumDocs.map { doc ->
+                            val album = doc.toAlbum()
+                            Album.from(album, true) // 스크랩된 상태로 설정
+                        }
 
-                    // 시작 지점 설정 (key가 있는 경우)
-                    if (key != null) {
-                        albumQuery = albumQuery.startAfter(key)
+                        albums.addAll(batchAlbums)
+
+                        // 마지막 앨범 문서 반환
+                        albumDocs.lastOrNull()
                     }
 
-                    // 앨범 쿼리 실행
-                    val albumsSnapshot = albumQuery.get().await()
-                    val albumDocuments = albumsSnapshot.documents
+                    // 생성 시간 기준으로 정렬 (최신순)
+                    val sortedAlbums = albums.sortedByDescending { it.createdAt }
 
-                    // 스크랩된 앨범들만 필터링
-                    val filteredAlbumDocs = albumDocuments.filter { doc ->
-                        scrapedAlbumIds.contains(doc.id)
+                    Log.d(TAG, "로드된 스크랩된 앨범: ${sortedAlbums.size}개")
+                    sortedAlbums.forEachIndexed { index, album ->
+                        Log.d(TAG, "스크랩된 앨범[$index]: ID=${album.id}")
                     }
 
-                    // 결과가 비어있으면 다음 페이지 가져오기 시도
-                    if (filteredAlbumDocs.isEmpty() && albumDocuments.isNotEmpty()) {
-                        // 마지막 문서를 키로 사용하여 재귀적으로 다음 페이지 로드
-                        val lastDoc = albumDocuments.last()
-                        val nextParams = LoadParams.Append(lastDoc, PAGE_SIZE, false)
-                        return load(nextParams)
-                    }
-
-                    // 앨범 변환
-                    val albums = filteredAlbumDocs.map { doc ->
-                        val album = doc.toAlbum()
-                        Album.from(album, true) // 스크랩된 앨범
-                    }
-
-                    // 앨범 ID 출력
-                    albums.forEachIndexed { index, album ->
-                        Log.d(TAG, "스크랩된 앨범[$index]: ID=${album.id}, createdAt=${album.createdAt}")
-                    }
-
-                    // 다음 페이지 키 설정
-                    val lastAlbumDoc = if (filteredAlbumDocs.isNotEmpty()) {
-                        filteredAlbumDocs.last()
-                    } else if (albumDocuments.isNotEmpty()) {
-                        albumDocuments.last()
+                    // 결과가 있을 경우 마지막 앨범 문서를 다음 키로 사용
+                    val nextKey = if (sortedAlbums.isNotEmpty()) {
+                        db.collection("albums").document(sortedAlbums.last().id).get().await()
                     } else {
                         null
                     }
 
-                    // 결과 반환
                     LoadResult.Page(
-                        data = albums,
+                        data = sortedAlbums,
                         prevKey = null,
-                        nextKey = lastAlbumDoc
+                        nextKey = nextKey
                     )
                 }
 
@@ -294,15 +269,14 @@ class AlbumPagingSource(
 
                     val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                         // 특정 앨범들에 대한 스크랩 상태만 조회
-                        val scrapQuery = db.collection("scraps")
-                            .whereIn("albumRef", albumIds.map { db.collection("albums").document(it) })
-                            .whereEqualTo("userRef", userRef)
+                        val albumRefs = albumIds.map { db.collection("albums").document(it) }
 
-                        val scrapSnapshot = scrapQuery.get().await()
-                        scrapSnapshot.documents.mapNotNull { doc ->
-                            val albumRef = doc.getDocumentReference("albumRef")
-                            albumRef?.id
-                        }.toSet()
+                        val scrapRefs = db.collection("scraps")
+                            .whereInWithFilters("albumRef", albumRefs) { query ->
+                                query.whereEqualTo("userRef", userRef)
+                            }
+
+                        scrapRefs.mapNotNull { it.getDocumentReference("albumRef")?.id }.toSet()
                     } else {
                         emptySet()
                     }
