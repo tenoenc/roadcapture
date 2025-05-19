@@ -25,6 +25,7 @@
                 app:destination="@id/profileUploadProgressFragment"/>
         <action android:id="@+id/action_main_to_modifyUsername"
                 app:destination="@id/modifyUsernameFragment"/>
+        <action android:id="@+id/action_main_to_html" app:destination="@id/htmlFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -123,6 +124,13 @@
               android:label="UsernameSavingFragment"
               tools:layout="@layout/fragment_loading">
 
-        <argument android:name="username" app:argType="string" />
+        <argument android:name="username" app:argType="string"/>
+    </fragment>
+    <fragment android:id="@+id/htmlFragment" android:name="com.tenacy.roadcapture.ui.HtmlFragment"
+              android:label="HtmlFragment"
+              tools:layout="@layout/fragment_html">
+
+        <argument android:name="type" app:argType="com.tenacy.roadcapture.ui.HtmlType" />
+
     </fragment>
 </navigation>

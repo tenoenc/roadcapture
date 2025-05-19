@@ -28,7 +28,9 @@ sealed class HomeViewEvent: ViewEvent {
     data object Search: HomeViewEvent()
 }
 
-sealed class AppInfoViewEvent: ViewEvent
+sealed class AppInfoViewEvent: ViewEvent {
+    data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
+}
 
 sealed class ScrapViewEvent: ViewEvent {
     data object Search: ScrapViewEvent()
@@ -105,3 +107,5 @@ sealed class MyMemoryTabViewEvent: ViewEvent
 sealed class ModifyUsernameViewEvent: ViewEvent {
     data class Complete(val username: String): ModifyUsernameViewEvent()
 }
+
+sealed class HtmlViewEvent

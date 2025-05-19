@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 
@@ -59,7 +60,10 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
     }
 
     private fun handleViewEvents(event: AppInfoViewEvent) {
-//        when (event) {
-//        }
+        when (event) {
+            is AppInfoViewEvent.NavigateToHtml -> {
+                findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
+            }
+        }
     }
 }

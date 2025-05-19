@@ -199,6 +199,7 @@
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
                               android:orientation="horizontal"
+                              android:onClick="@{() -> vm.onServiceTermsAndConditionsClick()}"
                               android:paddingVertical="20dp"
                               android:layout_marginTop="16dp"
                               android:gravity="center_vertical"
@@ -224,6 +225,7 @@
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
                               android:orientation="horizontal"
+                              android:onClick="@{() -> vm.onPersonalInfoPolicyClick()}"
                               android:paddingVertical="20dp"
                               android:gravity="center_vertical"
                               android:paddingHorizontal="20dp"
@@ -303,6 +305,30 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
+                              android:text="구독 관리"/>
+
+                </LinearLayout>
+
+                <View android:layout_width="match_parent"
+                      android:layout_height="0.5dp"
+                      android:background="@color/line_neutral"
+                      android:layout_marginHorizontal="20dp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:paddingVertical="20dp"
+                              android:gravity="center_vertical"
+                              android:paddingHorizontal="20dp"
+                              android:clickable="true"
+                              android:focusable="true"
+                              android:foreground="?attr/selectableItemBackground">
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
                               android:text="로그아웃"/>
 
                 </LinearLayout>
@@ -328,30 +354,6 @@
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
                               android:text="서비스 탈퇴"/>
-
-                </LinearLayout>
-
-                <View android:layout_width="match_parent"
-                      android:layout_height="0.5dp"
-                      android:background="@color/line_neutral"
-                      android:layout_marginHorizontal="20dp"/>
-
-                <LinearLayout android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="horizontal"
-                              android:paddingVertical="20dp"
-                              android:gravity="center_vertical"
-                              android:paddingHorizontal="20dp"
-                              android:clickable="true"
-                              android:focusable="true"
-                              android:foreground="?attr/selectableItemBackground">
-
-                    <TextView android:layout_width="0dp"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:textAppearance="@style/Body_14_M"
-                              android:textColor="@color/label_normal"
-                              android:text="구독 관리"/>
 
                 </LinearLayout>
 

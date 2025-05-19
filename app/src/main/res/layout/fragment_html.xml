@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="title" type="String"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_html_a_bar_container"
+                      android:orientation="horizontal"
+                      android:paddingHorizontal="16dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                    android:id="@+id/ibtn_a_bar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+            <TextView android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:textAppearance="@style/Title_18"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="center"
+                      android:text="@{title}"
+                      tools:text="서비스 이용약관"/>
+
+            <Space
+                    android:id="@+id/ibtn_html_complete"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_check"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <WebView android:layout_width="0dp"
+                 android:layout_height="0dp"
+                 android:id="@+id/web_html"
+                 app:layout_constraintStart_toStartOf="parent"
+                 app:layout_constraintEnd_toEndOf="parent"
+                 app:layout_constraintTop_toBottomOf="@id/ll_html_a_bar_container"
+                 app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
