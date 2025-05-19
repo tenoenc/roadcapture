@@ -29,7 +29,9 @@ sealed class HomeViewEvent: ViewEvent {
 }
 
 sealed class AppInfoViewEvent: ViewEvent {
+    data object InquireToDeveloper: AppInfoViewEvent()
     data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
+    data object Logout: AppInfoViewEvent()
 }
 
 sealed class ScrapViewEvent: ViewEvent {

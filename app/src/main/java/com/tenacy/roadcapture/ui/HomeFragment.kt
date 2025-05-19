@@ -49,12 +49,6 @@ class HomeFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupObservers()
-
-        // 로그아웃 테스트용
-        binding.imgLogo.isClickable = true
-        binding.imgLogo.setOnClickListener {
-            mainActivity.signOut()
-        }
     }
 
     override fun onDestroyView() {

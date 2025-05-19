@@ -29,9 +29,21 @@ class AppInfoViewModel @Inject constructor(
         }
     }
 
+    fun onInquiryClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AppInfoViewEvent.InquireToDeveloper)
+        }
+    }
+
     fun onPersonalInfoPolicyClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.PersonalInfoPolicy))
+        }
+    }
+
+    fun onLogoutClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AppInfoViewEvent.Logout)
         }
     }
 

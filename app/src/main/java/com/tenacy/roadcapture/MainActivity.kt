@@ -4,11 +4,14 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
@@ -16,11 +19,13 @@ import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.MyToast
 import com.tenacy.roadcapture.ui.ToastMessageType
+import com.tenacy.roadcapture.ui.ToastModel
 import com.tenacy.roadcapture.util.currentFragment
-import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.navController
+import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
@@ -32,7 +37,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupObservers()
-        setupPermissions()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -115,8 +119,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-    private fun setupPermissions() {}
 
     private fun FragmentManager.dismissAllDialogs() {
         fragments.forEach { fragment ->
