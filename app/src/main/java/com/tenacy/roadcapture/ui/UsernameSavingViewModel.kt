@@ -5,8 +5,7 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -45,15 +44,20 @@ class UsernameSavingViewModel @Inject constructor(
 
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRefs = db.collection("albums")
-                    .whereEqualTo("userRef", userRef)
-                    .get().await().documents.map { it.reference }
-                
-                db.runTransaction { transaction ->
-                    for (albumRef in albumRefs) {
-                        transaction.update(albumRef, "userDisplayName", username)
-                    }
-                    transaction.update(userRef, "displayName", username)
-                }.await()
+                    .whereEqualTo("userRef", userRef).getAllReferences()
+
+                val scrapRefs = db.collection("scraps")
+                    .whereInAllReferences("albumRefs", albumRefs)
+
+                val allOperations = mutableListOf<BatchOperation>()
+                albumRefs.forEach {
+                    allOperations.add(UpdateDocumentOperation(it, mapOf("userDisplayName" to username)))
+                }
+                scrapRefs.forEach {
+                    allOperations.add(UpdateDocumentOperation(it, mapOf("albumUserDisplayName" to username)))
+                }
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf("displayName" to username)))
+                db.executeInBatches(allOperations)
 
                 emit(UsernameSaveState.Completed)
             }

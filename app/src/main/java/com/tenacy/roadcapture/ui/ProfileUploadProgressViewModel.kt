@@ -43,8 +43,7 @@ class ProfileUploadProgressViewModel @Inject constructor(
 
                 sendWithDelay(ProfileSaveState.FetchingData)
                 val albumRefs = db.collection("albums")
-                    .whereEqualTo("userRef", userRef)
-                    .get().await().documents.map { it.reference }
+                    .whereEqualTo("userRef", userRef).getAllReferences()
 
                 sendWithDelay(ProfileSaveState.CompressingImage)
                 val compressedUri = context.compressImage(uri)
@@ -54,13 +53,14 @@ class ProfileUploadProgressViewModel @Inject constructor(
                 val imageUrl = context.uploadImageToStorage(compressedUri, storagePath)
 
                 sendWithDelay(ProfileSaveState.SavingToFirestore)
-                db.runTransaction { transaction ->
-                    for (albumRef in albumRefs) {
-                        transaction.update(albumRef, "userPhotoUrl", imageUrl)
-                    }
-                    transaction.update(userRef, "photoName", storagePath)
-                    transaction.update(userRef, "photoUrl", imageUrl)
-                }.await()
+
+                val allOperations = mutableListOf<BatchOperation>()
+                albumRefs.forEach {
+                    allOperations.add(UpdateDocumentOperation(it, mapOf("userPhotoUrl" to imageUrl)))
+                }
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf("photoName" to storagePath)))
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf("photoUrl" to imageUrl)))
+                db.executeInBatches(allOperations)
 
                 sendWithDelay(ProfileSaveState.Completed)
             }

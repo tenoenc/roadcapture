@@ -4,10 +4,7 @@ import android.content.Context
 import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.DocumentReference
-import com.google.firebase.firestore.DocumentSnapshot
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.WriteBatch
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -16,6 +13,8 @@ import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.dto.*
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 
@@ -210,6 +209,23 @@ class SetDocumentOperation(
     }
 }
 
+class UpdateDocumentOperation(
+    private val documentRef: DocumentReference,
+    private val data: Map<String, Any?>
+) : BatchOperation {
+    override fun execute(batch: WriteBatch) {
+        batch.update(documentRef, data)
+    }
+}
+
+class DeleteDocumentOperation(
+    private val documentRef: DocumentReference,
+) : BatchOperation {
+    override fun execute(batch: WriteBatch) {
+        batch.delete(documentRef)
+    }
+}
+
 /**
  * 여러 작업을 배치로 나누어 실행하는 확장 함수
  * @param T 데이터 타입
@@ -230,6 +246,115 @@ suspend fun <T> FirebaseFirestore.setCollectionInBatches(
 
     executeInBatches(operations)
     return documentRefs
+}
+
+/**
+ * Firestore 쿼리 결과를 모두 가져오는 확장 함수
+ * 1000개 제한을 우회하여 모든 결과를 반환
+ */
+suspend fun <T> Query.getAll(
+    transform: (DocumentSnapshot) -> T
+): List<T> = withContext(Dispatchers.IO) {
+    val resultList = mutableListOf<T>()
+    var query = this@getAll
+    var lastDocumentSnapshot: DocumentSnapshot? = null
+    val firestoreLimit = 1000L // Firestore의 고정 제한
+
+    do {
+        // 마지막 문서 이후부터 쿼리 수행
+        if (lastDocumentSnapshot != null) {
+            query = query.startAfter(lastDocumentSnapshot)
+        }
+
+        // 결과 가져오기 (최대 1000개)
+        val querySnapshot = query.limit(firestoreLimit).get().await()
+
+        // 결과가 없으면 종료
+        if (querySnapshot.isEmpty) {
+            break
+        }
+
+        // 결과 변환하여 추가
+        querySnapshot.documents.forEach { document ->
+            resultList.add(transform(document))
+        }
+
+        // 마지막 문서 저장
+        lastDocumentSnapshot = querySnapshot.documents.lastOrNull()
+
+        // 결과가 1000개 미만이면 모든 결과를 가져온 것
+    } while (querySnapshot.size() >= firestoreLimit)
+
+    resultList
+}
+
+/**
+ * 모든 문서 참조를 가져오는 확장 함수
+ */
+suspend fun Query.getAllReferences(): List<DocumentReference> {
+    return getAll { it.reference }
+}
+
+/**
+ * Firestore의 whereIn 10개 제한을 우회하는 확장 함수
+ *
+ * @param field 필터링할 필드 이름
+ * @param values 필드와 비교할 값 목록 (10개 이상도 처리 가능)
+ * @return 모든 조건에 맞는 문서를 포함하는 결과 목록
+ */
+suspend fun <T> CollectionReference.whereInAll(
+    field: String,
+    values: List<T>
+): List<DocumentSnapshot> = withContext(Dispatchers.IO) {
+    // 결과를 저장할 목록
+    val allResults = mutableListOf<DocumentSnapshot>()
+
+    // values가 비어있으면 빈 목록 반환
+    if (values.isEmpty()) {
+        return@withContext allResults
+    }
+
+    // values를 10개씩 청크로 나누기 (Firestore whereIn 제한)
+    val chunks = values.chunked(10)
+
+    // 각 청크에 대해 별도의 쿼리 실행
+    val queryResults = chunks.map { chunk ->
+        async {
+            this@whereInAll.whereIn(field, chunk).get().await().documents
+        }
+    }.awaitAll()
+
+    // 모든 결과 병합 (중복 제거)
+    val documentMap = mutableMapOf<String, DocumentSnapshot>()
+
+    queryResults.forEach { documents ->
+        documents.forEach { document ->
+            documentMap[document.id] = document
+        }
+    }
+
+    // Map의 값들을 리스트로 변환
+    allResults.addAll(documentMap.values)
+
+    allResults
+}
+
+/**
+ * 문서 참조를 반환하는 whereInAll 버전
+ */
+suspend fun <T> CollectionReference.whereInAllReferences(
+    field: String,
+    values: List<T>
+): List<DocumentReference> {
+    return whereInAll(field, values).map { it.reference }
+}
+
+
+/**
+ * 모든 문서 ID를 가져오는 확장 함수
+ */
+suspend fun Query.getAllIds(): List<String> {
+    return getAll { it.id }
 }
 
 suspend fun Context.uploadImageToStorage(

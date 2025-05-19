@@ -106,14 +106,18 @@ class AlbumViewModel @Inject constructor(
             flow {
                 val userRef = db.collection("users").document(user!!.uid)
                 val albumRef = db.collection("albums").document(albumId)
-                val firebaseAlbum = if(userId == user!!.uid) {
-                    albumRef.get().await()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND)
+                val firebaseAlbum = if (userId == user!!.uid) {
+                    albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
+                        ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND)
                 } else {
                     db.collection("albums")
                         .whereEqualTo(FieldPath.documentId(), albumId)
                         .whereEqualTo("isPublic", true)
                         .get().await().documents
-                        .firstOrNull()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException("접근할 수 없어요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                        .firstOrNull()?.takeIf { it.exists() }?.toAlbum() ?: throw FirebaseFirestoreException(
+                        "접근할 수 없어요",
+                        FirebaseFirestoreException.Code.PERMISSION_DENIED
+                    )
                 }
                 val scrapRef = db.collection("scraps")
                 val isScraped = scrapRef
@@ -128,21 +132,13 @@ class AlbumViewModel @Inject constructor(
                 _scraped.emit(album.isScraped)
                 _scrapCount.emit(album.scrapCount)
 
-                val memoriesQuerySnapshot = db.collection("memories")
+                val memories = db.collection("memories")
                     .whereEqualTo("albumRef", albumRef)
-                    .orderBy("createdAt", Query.Direction.ASCENDING)
-                    .get()
-                    .await()
-                val memoryDocuments = memoriesQuerySnapshot.documents
-                val memories = memoryDocuments.map(DocumentSnapshot::toMemory)
+                    .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toMemory() }
 
-                val locationsQuerySnapshot = db.collection("locations")
+                val locations = db.collection("locations")
                     .whereEqualTo("albumRef", albumRef)
-                    .orderBy("createdAt", Query.Direction.ASCENDING)
-                    .get()
-                    .await()
-                val locationDocuments = locationsQuerySnapshot.documents
-                val locations = locationDocuments.map(DocumentSnapshot::toLocation)
+                    .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toLocation() }
 
                 emit(memories to locations)
             }

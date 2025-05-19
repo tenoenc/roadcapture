@@ -11,12 +11,14 @@ import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.db
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,7 +55,17 @@ class MyAlbumTabViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val albumRef = db.collection("albums").document(albumId)
-                emit(albumRef.update("isPublic", !isPublic).await())
+                val scrapRefs = db.collection("scraps")
+                    .whereEqualTo("albumRef", albumRef).getAllReferences()
+
+                val allOperations = mutableListOf<BatchOperation>()
+                scrapRefs.forEach {
+                    allOperations.add(UpdateDocumentOperation(it, mapOf("albumPublic" to !isPublic)))
+                }
+                allOperations.add(UpdateDocumentOperation(albumRef, mapOf("isPublic" to !isPublic)))
+                db.executeInBatches(allOperations)
+
+                emit(Unit)
             }
                 .catch { exception ->
                     Log.e("TAG", "에러", exception)
@@ -73,38 +85,28 @@ class MyAlbumTabViewModel @Inject constructor(
                 val userRef = db.collection("users").document(userId)
 
                 // 관련 문서들의 참조를 모두 가져옵니다
-                val memoryDocs = db.collection("memories")
-                    .whereEqualTo("albumRef", albumRef)
-                    .get().await().documents
+                val memoryRefs = db.collection("memories")
+                    .whereEqualTo("albumRef", albumRef).getAllReferences()
 
-                val locationDocs = db.collection("locations")
-                    .whereEqualTo("albumRef", albumRef)
-                    .get().await().documents
+                val locationRefs = db.collection("locations")
+                    .whereEqualTo("albumRef", albumRef).getAllReferences()
 
-                val scrapDocs = db.collection("scraps")
-                    .whereEqualTo("albumRef", albumRef)
-                    .get().await().documents
+                val scrapRefs = db.collection("scraps")
+                    .whereEqualTo("albumRef", albumRef).getAllReferences()
 
-                // 이제 트랜잭션에서 모든 문서를 삭제합니다
-                db.runTransaction { transaction ->
-                    transaction.update(userRef, "scrapCount", FieldValue.increment(-scrapDocs.size.toLong()))
-
-                    // 앨범 삭제
-                    transaction.delete(albumRef)
-
-                    // 연관된 모든 문서 삭제
-                    memoryDocs.forEach { doc ->
-                        transaction.delete(doc.reference)
-                    }
-
-                    locationDocs.forEach { doc ->
-                        transaction.delete(doc.reference)
-                    }
-
-                    scrapDocs.forEach { doc ->
-                        transaction.delete(doc.reference)
-                    }
-                }.await()
+                val allOperations = mutableListOf<BatchOperation>()
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf("scrapCount" to FieldValue.increment(-scrapRefs.size.toLong()))))
+                allOperations.add(DeleteDocumentOperation(albumRef))
+                memoryRefs.forEach { ref ->
+                    allOperations.add(DeleteDocumentOperation(ref))
+                }
+                locationRefs.forEach { ref ->
+                    allOperations.add(DeleteDocumentOperation(ref))
+                }
+                scrapRefs.forEach { ref ->
+                    allOperations.add(DeleteDocumentOperation(ref))
+                }
+                db.executeInBatches(allOperations)
 
                 emit(Unit)
             }
