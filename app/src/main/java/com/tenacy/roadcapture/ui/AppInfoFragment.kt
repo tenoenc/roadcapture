@@ -174,7 +174,7 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
         if (!::billingClient.isInitialized || !billingClient.isReady) {
             lifecycleScope.launch {
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                    ToastModel("결제 서비스를 초기화 중입니다. 잠시 후 다시 시도해주세요.", ToastMessageType.Warning)
+                    ToastModel("결제 서비스를 초기화 중이에요\n잠시 후 다시 시도해주세요", ToastMessageType.Warning)
                 ))
             }
             setupBillingClient()
@@ -185,7 +185,7 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
         if (productDetails == null) {
             lifecycleScope.launch {
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                    ToastModel("후원 상품 정보를 가져올 수 없습니다.", ToastMessageType.Warning)
+                    ToastModel("후원 상품 정보를 가져올 수 없어요", ToastMessageType.Warning)
                 ))
             }
             queryProductDetails()
@@ -207,7 +207,7 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
         if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
             lifecycleScope.launch {
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                    ToastModel("후원을 시작할 수 없습니다: ${billingResult.debugMessage}", ToastMessageType.Warning)
+                    ToastModel("후원을 시작할 수 없어요: ${billingResult.debugMessage}", ToastMessageType.Warning)
                 ))
             }
         }
@@ -228,7 +228,7 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
             Log.e("Billing", "구매 실패: ${billingResult.debugMessage}")
             lifecycleScope.launch {
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(
-                    ToastModel("후원이 완료되지 않았습니다.", ToastMessageType.Warning)
+                    ToastModel("후원이 완료되지 않았어요", ToastMessageType.Warning)
                 ))
             }
         }

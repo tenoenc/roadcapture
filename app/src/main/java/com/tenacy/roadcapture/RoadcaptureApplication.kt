@@ -10,10 +10,15 @@ import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
+import com.tenacy.roadcapture.manager.NsfwDetector
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 
 @HiltAndroidApp
 class RoadcaptureApplication: Application() {
+
+    @Inject
+    lateinit var nsfwDetector: NsfwDetector
 
     override fun onCreate() {
         super.onCreate()
@@ -28,5 +33,10 @@ class RoadcaptureApplication: Application() {
         FacebookSdk.sdkInitialize(this)
         AppEventsLogger.activateApp(this)
         Kotpref.init(this)
+    }
+
+    override fun onTerminate() {
+        nsfwDetector.close()
+        super.onTerminate()
     }
 }

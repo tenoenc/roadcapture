@@ -36,7 +36,7 @@
         <action android:id="@+id/action_trip_to_loading"
                 app:enterAnim="@anim/from_right"
                 app:exitAnim="@anim/to_left"
-                app:destination="@id/addressLoadingFragment"/>
+                app:destination="@id/newMemoryBeforeFragment"/>
     </fragment>
     <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
               android:label="NewMemoryFragment"
@@ -67,8 +67,8 @@
         <argument android:name="args"
                   app:argType="com.tenacy.roadcapture.ui.dto.MemoryViewerArguments"/>
     </fragment>
-    <fragment android:id="@+id/addressLoadingFragment" android:name="com.tenacy.roadcapture.ui.AddressLoadingFragment"
-              android:label="AddressLoadingFragment"
+    <fragment android:id="@+id/newMemoryBeforeFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryBeforeFragment"
+              android:label="NewMemoryBeforeFragment"
               tools:layout="@layout/fragment_loading">
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
         <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng"/>

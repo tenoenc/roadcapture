@@ -36,6 +36,7 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
+import com.tenacy.roadcapture.manager.NsfwDetector
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.*
@@ -48,6 +49,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.parcelize.Parcelize
 import java.io.File
 import java.time.LocalDateTime
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
@@ -66,6 +68,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     private val mapReady = MutableStateFlow(false)
     private val permissionGranted = MutableStateFlow(false)
+
+    @Inject
+    lateinit var nsfwDetector: NsfwDetector
 
     // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
@@ -856,10 +861,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             tempPhotoFile = null
             tempPhotoUri = null
 
-            val (resultUri, coordinates) = result
+            val (uri, coordinates) = result
 
             lifecycleScope.launch(Dispatchers.Main) {
-                if (resultUri == null) {
+                if (uri == null) {
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
@@ -883,20 +888,57 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     return@launch
                 }
 
-                // 한 번 더 압축
-                val compressedResultUri = requireContext().compressImage(resultUri)
-
-                findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedResultUri, coordinates))
+                withContext(Dispatchers.IO) {
+                    val bitmap = uri.toBitmap(requireContext()) ?: return@withContext
+                    if(nsfwDetector.detectNSFW(bitmap).isNSFW) {
+                        withContext(Dispatchers.Main) {
+                            mainActivity.vm.viewEvent(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "부적절한 컨텐츠를 감지했어요\n다시 촬영해주세요",
+                                        ToastMessageType.Warning
+                                    )
+                                )
+                            )
+                        }
+                    } else {
+                        val compressedUri = requireContext().compressImage(uri)
+                        withContext(Dispatchers.Main) {
+                            findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedUri, coordinates))
+                        }
+                    }
+                    /*detectInappropriateContent(bitmap) { isInappropriate ->
+                        if(isInappropriate) {
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                mainActivity.vm.viewEvent(
+                                    GlobalViewEvent.Toast(
+                                        ToastModel(
+                                            "부적절한 이미지는 사용할 수 없어요",
+                                            ToastMessageType.Warning
+                                        )
+                                    )
+                                )
+                            }
+                        } else {
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                val compressedUri = requireContext().compressImage(uri)
+                                withContext(Dispatchers.Main) {
+                                    findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedUri, coordinates))
+                                }
+                            }
+                        }
+                    }*/
+                }
             }
         }
 
-    // ===== 14. 상태 초기화 메서드 그룹 =====
+    // ===== 13. 상태 초기화 메서드 그룹 =====
     private fun resetInitializationState() {
         mapReady.value = false
         permissionGranted.value = false
     }
 
-    // ===== 13. 데이터 클래스 및 상수 정의 그룹 =====
+    // ===== 14. 데이터 클래스 및 상수 정의 그룹 =====
     @Parcelize
     data class Address(
         val country: String?,

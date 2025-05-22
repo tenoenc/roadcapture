@@ -12,6 +12,7 @@ import androidx.core.content.FileProvider
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
 
 fun Context.clearCacheDirectory() {
@@ -73,15 +74,8 @@ fun Context.compressImage(
         throw IllegalArgumentException("이미지를 디코딩할 수 없습니다")
     }
 
-    // 이미지 회전 처리
-    val rotatedBitmap = when (orientation) {
-        ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
-        ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
-        ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
-        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> flipBitmap(bitmap, true, false)
-        ExifInterface.ORIENTATION_FLIP_VERTICAL -> flipBitmap(bitmap, false, true)
-        else -> bitmap
-    }
+    // 이미지 회전 처리 - 공통 함수 사용
+    val rotatedBitmap = applyExifOrientation(bitmap, orientation)
 
     // ByteArrayOutputStream 생성
     val outputStream = ByteArrayOutputStream()
@@ -119,6 +113,142 @@ private fun flipBitmap(bitmap: Bitmap, horizontal: Boolean, vertical: Boolean): 
     val matrix = Matrix()
     matrix.preScale(if (horizontal) -1f else 1f, if (vertical) -1f else 1f)
     return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+}
+
+// ----- 추가된 함수들 -----
+
+/**
+ * Exif 방향 정보에 따라 이미지 회전/반전 적용 (공통 함수)
+ */
+private fun applyExifOrientation(bitmap: Bitmap, orientation: Int): Bitmap {
+    return when (orientation) {
+        ExifInterface.ORIENTATION_ROTATE_90 -> rotateBitmap(bitmap, 90f)
+        ExifInterface.ORIENTATION_ROTATE_180 -> rotateBitmap(bitmap, 180f)
+        ExifInterface.ORIENTATION_ROTATE_270 -> rotateBitmap(bitmap, 270f)
+        ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> flipBitmap(bitmap, true, false)
+        ExifInterface.ORIENTATION_FLIP_VERTICAL -> flipBitmap(bitmap, false, true)
+        else -> bitmap
+    }
+}
+
+/**
+ * URI를 Bitmap으로 변환하는 확장 함수
+ */
+fun Uri.toBitmap(context: Context): Bitmap? {
+    return try {
+        when {
+            // 콘텐츠 URI인 경우
+            this.scheme.equals("content", ignoreCase = true) -> {
+                val inputStream = context.contentResolver.openInputStream(this)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                // Exif 정보에 따라 이미지 회전 처리
+                correctImageRotation(context, this, bitmap)
+            }
+
+            // 파일 URI인 경우
+            this.scheme.equals("file", ignoreCase = true) -> {
+                val path = this.path
+                if (path != null) {
+                    val bitmap = BitmapFactory.decodeFile(path)
+                    // Exif 정보에 따라 이미지 회전 처리
+                    correctImageRotation(context, this, bitmap)
+                } else null
+            }
+
+            // 기타 URI 처리
+            else -> {
+                val inputStream = context.contentResolver.openInputStream(this)
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+                bitmap
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+/**
+ * Exif 정보를 기반으로 이미지 회전 처리
+ */
+private fun correctImageRotation(context: Context, uri: Uri, bitmap: Bitmap?): Bitmap? {
+    if (bitmap == null) return null
+
+    var inputStream: InputStream? = null
+    try {
+        inputStream = context.contentResolver.openInputStream(uri)
+        if (inputStream != null) {
+            val exif = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                ExifInterface(inputStream)
+            } else {
+                uri.path?.let { ExifInterface(it) } ?: return bitmap
+            }
+
+            val orientation = exif.getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_UNDEFINED
+            )
+
+            // 공통 회전 함수 사용
+            return applyExifOrientation(bitmap, orientation)
+        }
+    } catch (e: IOException) {
+        e.printStackTrace()
+    } finally {
+        try {
+            inputStream?.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+    }
+    return bitmap
+}
+
+/**
+ * 메모리 효율적인 방식으로 URI를 Bitmap으로 변환 (대용량 이미지용)
+ */
+fun Uri.toBitmapEfficiently(context: Context, requiredWidth: Int, requiredHeight: Int): Bitmap? {
+    try {
+        // 이미지 크기 정보 가져오기
+        val options = BitmapFactory.Options().apply {
+            inJustDecodeBounds = true
+        }
+
+        context.contentResolver.openInputStream(this)?.use { inputStream ->
+            BitmapFactory.decodeStream(inputStream, null, options)
+        }
+
+        // 이미지 스케일 계산
+        val (width, height) = options.run { outWidth to outHeight }
+        var inSampleSize = 1
+
+        if (height > requiredHeight || width > requiredWidth) {
+            val halfHeight = height / 2
+            val halfWidth = width / 2
+
+            // 요구 사이즈보다 크지 않은 최대 inSampleSize 값 계산
+            while ((halfHeight / inSampleSize) >= requiredHeight && (halfWidth / inSampleSize) >= requiredWidth) {
+                inSampleSize *= 2
+            }
+        }
+
+        // 실제 디코딩
+        options.apply {
+            inJustDecodeBounds = false
+            this.inSampleSize = inSampleSize
+        }
+
+        return context.contentResolver.openInputStream(this)?.use { inputStream ->
+            val bitmap = BitmapFactory.decodeStream(inputStream, null, options)
+            correctImageRotation(context, this, bitmap)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return null
+    }
 }
 
 val Context.fileProviderAuthority get() = "${packageName}.fileprovider"

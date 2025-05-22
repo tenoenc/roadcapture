@@ -14,12 +14,12 @@ import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class AddressLoadingFragment: BaseFragment() {
+class NewMemoryBeforeFragment: BaseFragment() {
 
     private var _binding: FragmentLoadingBinding? = null
     val binding get() = _binding!!
 
-    private val vm: AddressLoadingViewModel by viewModels()
+    private val vm: NewMemoryBeforeViewModel by viewModels()
 
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
@@ -64,7 +64,7 @@ class AddressLoadingFragment: BaseFragment() {
                     is AddressFetchState.Initial -> {}
                     is AddressFetchState.Loading -> {}
                     is AddressFetchState.Completed -> {
-                        findNavController().navigate(AddressLoadingFragmentDirections.actionLoadingToNewMemory(it.address, it.photoUri))
+                        findNavController().navigate(NewMemoryBeforeFragmentDirections.actionLoadingToNewMemory(it.address, it.photoUri))
                     }
                     is AddressFetchState.Error -> {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보를 불러오는 중에\n오류가 발생했어요", ToastMessageType.Warning)))

@@ -235,6 +235,11 @@ dependencies {
 
     implementation libs.android.image.picker
 
+    implementation libs.object.detection
+    implementation libs.tensorflow.lite
+    implementation libs.tensorflow.lite.support
+    implementation libs.onnxruntime
+
     /**
      * **********************************************************
      *              Test
