@@ -36,7 +36,7 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
-import com.tenacy.roadcapture.manager.NsfwDetector
+import com.tenacy.roadcapture.manager.NSFWDetector
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.*
@@ -70,7 +70,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private val permissionGranted = MutableStateFlow(false)
 
     @Inject
-    lateinit var nsfwDetector: NsfwDetector
+    lateinit var nsfwDetector: NSFWDetector
 
     // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
@@ -907,27 +907,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                             findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedUri, coordinates))
                         }
                     }
-                    /*detectInappropriateContent(bitmap) { isInappropriate ->
-                        if(isInappropriate) {
-                            lifecycleScope.launch(Dispatchers.Main) {
-                                mainActivity.vm.viewEvent(
-                                    GlobalViewEvent.Toast(
-                                        ToastModel(
-                                            "부적절한 이미지는 사용할 수 없어요",
-                                            ToastMessageType.Warning
-                                        )
-                                    )
-                                )
-                            }
-                        } else {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                val compressedUri = requireContext().compressImage(uri)
-                                withContext(Dispatchers.Main) {
-                                    findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedUri, coordinates))
-                                }
-                            }
-                        }
-                    }*/
                 }
             }
         }
@@ -939,14 +918,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     // ===== 14. 데이터 클래스 및 상수 정의 그룹 =====
-    @Parcelize
-    data class Address(
-        val country: String?,
-        val formattedAddress: String?,
-        val components: List<String>,
-        val coordinates: LatLng
-    ) : Parcelable
-
     companion object {
         const val KEY_NEW_MEMORY = "new_memory"
         const val RESULT_MEMORY_ID = "memory_id"

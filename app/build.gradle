@@ -10,6 +10,9 @@ plugins {
     id 'androidx.navigation.safeargs.kotlin'
 }
 
+def Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
 android {
     namespace 'com.tenacy.roadcapture'
     compileSdk 35
@@ -18,8 +21,8 @@ android {
         applicationId "com.tenacy.roadcapture"
         minSdk 26
         targetSdk 35
-        versionCode 2
-        versionName "0.5.0"
+        versionCode 6
+        versionName "0.8.2"
 
         multiDexEnabled true
 
@@ -33,12 +36,27 @@ android {
             }
         }
 
+        ksp {
+            arg("room.schemaLocation", "$projectDir/schemas")
+            arg("room.incremental", "true")
+            arg("room.expandProjection", "true")
+        }
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+
+        release {
+            storeFile file("C:\\Users\\leewo\\roadcapture.jks")
+            storePassword properties.getProperty("STORE_PASSWORD")
+            keyAlias properties.getProperty("KEY_ALIAS")
+            keyPassword properties.getProperty("KEY_PASSOWORD")
+        }
     }
 
     buildTypes {
         release {
-            debuggable true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 

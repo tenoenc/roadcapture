@@ -5,7 +5,7 @@ import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
-import com.tenacy.roadcapture.ui.TripFragment.Address
+import com.tenacy.roadcapture.ui.dto.Address
 import com.tenacy.roadcapture.util.RetrofitInstance
 import com.tenacy.roadcapture.util.containsDigit
 import com.tenacy.roadcapture.util.containsLetter

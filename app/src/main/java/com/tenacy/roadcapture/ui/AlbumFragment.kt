@@ -509,15 +509,6 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         }
     }
 
-    // ===== 13. 데이터 클래스 및 상수 정의 그룹 =====
-    @Parcelize
-    data class Address(
-        val country: String?,
-        val formattedAddress: String?,
-        val components: List<String>,
-        val coordinates: LatLng
-    ) : Parcelable
-
     companion object {
         const val RESULT_COORDINATES = "coordinates"
         const val KEY_MEMORY_VIEWER = "memory_viewer"

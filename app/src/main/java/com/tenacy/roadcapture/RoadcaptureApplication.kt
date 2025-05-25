@@ -10,7 +10,7 @@ import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
-import com.tenacy.roadcapture.manager.NsfwDetector
+import com.tenacy.roadcapture.manager.NSFWDetector
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class RoadcaptureApplication: Application() {
 
     @Inject
-    lateinit var nsfwDetector: NsfwDetector
+    lateinit var nsfwDetector: NSFWDetector
 
     override fun onCreate() {
         super.onCreate()

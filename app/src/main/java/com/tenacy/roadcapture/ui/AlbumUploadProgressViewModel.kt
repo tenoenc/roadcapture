@@ -36,7 +36,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
     private val locationDao: LocationDao,
 ) : BaseViewModel() {
 
-    private val args: NewAlbumFragment.Arguments = AlbumUploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).value
+    private val title = AlbumUploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).title
+    private val isPublic = AlbumUploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).isPublic
 
     private val _saveState = MutableSharedFlow<AlbumSaveState>()
     val saveState = _saveState.asSharedFlow()
@@ -54,7 +55,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 1. 데이터 가져오기
                 sendWithDelay(AlbumSaveState.FetchingData)
-                val albumTitle = args.title
+                val albumTitle = title
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()
                 val startTime = Album.createdAt.toLocalDateTime()
@@ -150,7 +151,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                         "placeName" to memory.placeName,
                         "addressTags" to memory.addressTags,
                         "formattedAddress" to memory.formattedAddress,
-                        "isPublic" to args.isPublic,
+                        "isPublic" to isPublic,
                         "albumRef" to albumRef,
                         "userRef" to userRef,
                         "locationRef" to locationRefByMemoryId[memoryWithLocation.location.id]!!,
@@ -166,7 +167,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                     "viewCount" to 0,
                     "scrapCount" to 0,
                     "regionTags" to regionTags,
-                    "isPublic" to args.isPublic,
+                    "isPublic" to isPublic,
                     "userRef" to userRef,
                     "userDisplayName" to user.displayName,
                     "userPhotoUrl" to user.photoUrl,

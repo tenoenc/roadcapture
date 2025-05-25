@@ -65,7 +65,7 @@ class NewAlbumFragment: BaseFragment() {
                 Log.d("TAG", "Positive Button Clicked!")
                 val args = it ?: return@setFragmentResultListener
                 val title = vm.albumTitle.value
-                findNavController().navigate(NewAlbumFragmentDirections.actionNewAlbumToUploadProgress(Arguments(title, args.isPublic)))
+                findNavController().navigate(NewAlbumFragmentDirections.actionNewAlbumToUploadProgress(title, args.isPublic))
             }
         }
     }
@@ -110,10 +110,4 @@ class NewAlbumFragment: BaseFragment() {
             }
         }
     }
-
-    @Parcelize
-    data class Arguments(
-        val title: String,
-        val isPublic: Boolean,
-    ): Parcelable
 }

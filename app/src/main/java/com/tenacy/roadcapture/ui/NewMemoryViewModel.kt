@@ -8,6 +8,7 @@ import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
 import com.tenacy.roadcapture.di.InputModule
+import com.tenacy.roadcapture.ui.dto.Address
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -82,7 +83,7 @@ class NewMemoryViewModel @Inject constructor(
     )
 
     init {
-        val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
+        val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
         addressTags = listOfNotNull(address.country) + address.components
     }
 
@@ -104,7 +105,7 @@ class NewMemoryViewModel @Inject constructor(
 
     fun onLocationClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
+            val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
             address.formattedAddress?.let { viewEvent(NewMemoryViewEvent.ShowLocation(it)) }
         }
     }
@@ -119,7 +120,7 @@ class NewMemoryViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val currentPlaceName = placeName.value
             val currentContent = content.value
-            val address: TripFragment.Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
+            val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
 
             val locationEntity = LocationEntity(
                 latitude = address.coordinates.latitude,

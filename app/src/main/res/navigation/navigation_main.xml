@@ -42,7 +42,7 @@
               android:label="NewMemoryFragment"
               tools:layout="@layout/fragment_new_memory">
 
-        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.TripFragment$Address"/>
+        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.dto.Address"/>
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
 
     </fragment>
@@ -83,7 +83,8 @@
               android:label="AlbumUploadProgressFragment"
               tools:layout="@layout/fragment_upload_progress">
 
-        <argument android:name="value" app:argType="com.tenacy.roadcapture.ui.NewAlbumFragment$Arguments"/>
+        <argument android:name="title" app:argType="string"/>
+        <argument android:name="isPublic" app:argType="boolean" />
     </fragment>
     <fragment android:id="@+id/albumFragment" android:name="com.tenacy.roadcapture.ui.AlbumFragment"
               android:label="AlbumFragment"
