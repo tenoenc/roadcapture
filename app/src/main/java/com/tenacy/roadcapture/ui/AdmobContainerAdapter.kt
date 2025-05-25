@@ -214,7 +214,13 @@ class AdmobContainerAdapter(
 
         val adRequest = AdRequest.Builder().build()
 
-        AdLoader.Builder(context, BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID)
+        val adUnitId = if(BuildConfig.DEBUG) {
+            BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
+        } else {
+            BuildConfig.AD_MOB_APP_HOME_ALBUM_TEST_ID
+        }
+
+        AdLoader.Builder(context, adUnitId)
             .forNativeAd { nativeAd ->
                 // 광고를 캐시에 저장
                 adCache[position] = nativeAd
@@ -232,7 +238,7 @@ class AdmobContainerAdapter(
     }
 
     // 로드 상태 어댑터와 함께 사용하기 위한 메서드
-    fun withLoadStateAdapter(loadStateAdapter: com.tenacy.roadcapture.ui.LoadStateAdapter): RecyclerView.Adapter<*> {
+    fun withLoadStateAdapter(loadStateAdapter: LoadStateAdapter): RecyclerView.Adapter<*> {
         // 원본 어댑터에 로드 상태 리스너 연결
         originalAdapter.addLoadStateListener { loadStates ->
             loadStateAdapter.loadState = loadStates.append
@@ -268,7 +274,13 @@ class AdmobContainerAdapter(
                 // 캐시된 광고가 없으면 로드
                 val adRequest = AdRequest.Builder().build()
 
-                AdLoader.Builder(binding.root.context, BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID)
+                val adUnitId = if(BuildConfig.DEBUG) {
+                    BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
+                } else {
+                    BuildConfig.AD_MOB_APP_HOME_ALBUM_TEST_ID
+                }
+
+                AdLoader.Builder(binding.root.context, adUnitId)
                     .forNativeAd { nativeAd ->
                         // 광고를 캐시에 저장
                         adCache[position] = nativeAd

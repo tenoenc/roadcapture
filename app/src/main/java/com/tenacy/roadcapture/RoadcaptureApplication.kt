@@ -25,6 +25,7 @@ class RoadcaptureApplication: Application() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        nsfwDetector.initialize()
         MobileAds.initialize(this)
         Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
         FirebaseApp.initializeApp(this)

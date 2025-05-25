@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout android:id="@+id/ll_b_sheet_donate_before_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:gravity="center"
+                  app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.cardview.widget.CardView android:layout_width="48dp"
+                                           android:layout_height="4dp"
+                                           android:id="@+id/card_b_sheet_donate_before_handle"
+                                           app:cardElevation="0dp"
+                                           app:cardCornerRadius="10dp"
+                                           app:cardBackgroundColor="@color/fill_neutral"
+                                           android:layout_marginTop="16dp"/>
+
+        <com.google.android.material.button.MaterialButton android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/btn_b_sheet_donate_before_small"
+                                                           style="@style/Button"
+                                                           android:textAppearance="@style/Body_16_SB"
+                                                           android:textColor="@color/label_normal"
+                                                           android:text="커피 한 잔 사주기"
+                                                           android:backgroundTint="@color/background_normal"
+                                                           app:strokeWidth="1dp"
+                                                           app:strokeColor="@color/line_normal"
+                                                           app:cornerRadius="12dp"
+                                                           android:padding="12dp"
+                                                           android:layout_marginTop="20dp"
+                                                           android:layout_marginHorizontal="20dp"/>
+
+        <com.google.android.material.button.MaterialButton android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/btn_b_sheet_donate_before_medium"
+                                                           style="@style/Button"
+                                                           android:textAppearance="@style/Body_16_SB"
+                                                           android:textColor="@color/label_normal"
+                                                           android:text="간식 하나 사주기"
+                                                           android:backgroundTint="@color/background_normal"
+                                                           app:strokeWidth="1dp"
+                                                           app:strokeColor="@color/line_normal"
+                                                           app:cornerRadius="12dp"
+                                                           android:padding="12dp"
+                                                           android:layout_marginTop="12dp"
+                                                           android:layout_marginHorizontal="20dp"/>
+
+
+        <com.google.android.material.button.MaterialButton android:layout_width="match_parent"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/btn_b_sheet_donate_before_large"
+                                                           style="@style/Button"
+                                                           android:textAppearance="@style/Body_16_SB"
+                                                           android:textColor="@color/label_normal"
+                                                           android:text="밥 한 끼 사주기"
+                                                           android:backgroundTint="@color/background_normal"
+                                                           app:strokeWidth="1dp"
+                                                           app:strokeColor="@color/line_normal"
+                                                           app:cornerRadius="12dp"
+                                                           android:padding="12dp"
+                                                           android:layout_marginTop="12dp"
+                                                           android:layout_marginBottom="20dp"
+                                                           android:layout_marginHorizontal="20dp"/>
+
+    </LinearLayout>
+</layout>

@@ -43,6 +43,7 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
 
         // Billing Client 초기화
         setupBillingClient()
+        setupFragmentResultListeners()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -88,6 +89,19 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
         observeViewEvents()
     }
 
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            DonateBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<DonateBeforeBottomSheetFragment.ParamsOut.Donate>(DonateBeforeBottomSheetFragment.KEY_PARAMS_OUT_DONATE)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    launchDonation(it.type)
+                }
+        }
+    }
+
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
@@ -111,7 +125,8 @@ class AppInfoFragment: BaseFragment(), FragmentVisibilityCallback {
             }
             // 새로운 이벤트 타입 추가
             is AppInfoViewEvent.Donate -> {
-                launchDonation(event.type)
+                val bottomSheet = DonateBeforeBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, DonateBeforeBottomSheetFragment.TAG)
             }
         }
     }

@@ -155,21 +155,15 @@ class NewMemoryFragment: BaseFragment() {
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
             is NewMemoryViewEvent.ShowAd -> {
-                binding.ibtnNewMemoryComplete.isEnabled = false
 
                 mainActivity.adManager.showAd(
                     mainActivity = mainActivity,
                     onRewarded = {
                         mainActivity.lifecycleScope.launch(Dispatchers.Main) {
-                            binding.ibtnNewMemoryComplete.isEnabled = true
-
                             vm.saveMemory()
                         }
                     },
                     onFailed = {
-                        mainActivity.lifecycleScope.launch(Dispatchers.Main) {
-                            binding.ibtnNewMemoryComplete.isEnabled = true
-                        }
                     }
                 )
             }
