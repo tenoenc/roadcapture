@@ -92,17 +92,17 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 
     fun deleteCurrentMemory() {
         viewModelScope.launch(Dispatchers.IO) {
+            val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
+
             val currentState = _state.value
             val currentMemory = currentState.currentMemory ?: return@launch
 
-            memoryDao.deleteById(currentMemory.id.toLong())
-            locationDao.deleteById(currentMemory.id.toLong())
+            locationDao.deleteById(currentMemory.locationId.toLong())
 
             if(currentState.totalPageCount > 1) {
                 // 메모리가 1개 이상 남아있는 경우
                 val newIndex = (currentState.currentIndex - 1).coerceAtLeast(0)
 
-                val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
                 val viewScope = argument.viewScope
 
                 val memories = when(viewScope) {
@@ -123,7 +123,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
                 viewEvent(ModifiableMemoryViewerViewEvent.MoveToPrevPage)
             } else {
                 // 더 이상 남은 메모리가 없는 경우
-                viewEvent(ModifiableMemoryViewerViewEvent.ResultBack())
+                viewEvent(ModifiableMemoryViewerViewEvent.ResultBack(deleted = true))
             }
         }
     }
@@ -155,9 +155,12 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 
     fun onBackClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val currentMemory = _state.value.currentMemory ?: return@launch
+            val state = _state.value
+            val currentMemory = state.currentMemory ?: return@launch
             val coordinates = LatLng(currentMemory.coordinates.latitude, currentMemory.coordinates.longitude)
-            viewEvent(ModifiableMemoryViewerViewEvent.ResultBack(coordinates))
+            val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
+            val deleted = state.totalPageCount < argument.memories.size
+            viewEvent(ModifiableMemoryViewerViewEvent.ResultBack(coordinates = coordinates, deleted = deleted))
         }
     }
 }

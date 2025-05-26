@@ -9,6 +9,7 @@ import com.google.firebase.Timestamp
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.Album
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -60,7 +61,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val locations = locationDao.selectAll()
                 val startTime = Album.createdAt.toLocalDateTime()
                 val endTime = LocalDateTime.now()
-                val userId = user!!.uid
+                val userId = UserPref.id
                 val userRef = db.collection("users").document(userId)
                 val user = userRef.get().await().toUser()
 

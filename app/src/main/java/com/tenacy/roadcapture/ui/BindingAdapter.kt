@@ -1,37 +1,41 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.res.ColorStateList
 import android.graphics.Bitmap
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.databinding.BindingAdapter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.MultiTransformation
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.resource.bitmap.BitmapTransitionOptions
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.util.toPx
 
-@BindingAdapter("url", "bitmap", "uri", "radius", "borderWidth", "borderColor", "coverColor", requireAll = false)
+@BindingAdapter("url", "bitmap", "uri", "src", "radius", "borderWidth", "borderColor", "coverColor", requireAll = false)
 fun ImageView.showImage(
     url: String?,
     bitmap: Bitmap?,
     uri: Uri?,
+    src: Int?,
     radius: Int?,
     borderWidth: Int?,
     borderColor: Int?,
     coverColor: Int?
 ) {
+    if(src != null) {
+        setImageResource(src)
+        return
+    }
+
     if (url == null && bitmap == null && uri == null) return
 
     // 둥근 모서리가 있는 drawable 생성
@@ -46,7 +50,7 @@ fun ImageView.showImage(
             when {
                 url != null -> request.load(url)
                 bitmap != null -> request.load(bitmap)
-                else -> request.load(uri)
+                else -> request.load(uri!!)
             }
         }
         .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -77,6 +81,15 @@ fun buildTransformations(
         }
     }
 )
+
+@BindingAdapter("custom_tint")
+fun ImageView.setCustomTint(@ColorInt color: Int) {
+    if(color != 0) {
+        imageTintList = ColorStateList.valueOf(color)
+    } else {
+        imageTintList = null
+    }
+}
 
 @BindingAdapter("state")
 fun EditText.setState(state: EditTextState?) {

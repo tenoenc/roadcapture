@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.util
 
 import android.content.res.Resources
 import android.util.TypedValue
+import com.google.firebase.Timestamp
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -30,3 +31,8 @@ fun LocalDateTime.toTimestamp(zoneId: ZoneId = ZoneId.of("UTC")): Long =
 
 fun Date.toLocalDateTime(zoneId: ZoneId = ZoneId.of("UTC")): LocalDateTime =
     LocalDateTime.ofInstant(this.toInstant(), zoneId)
+
+fun Long.toFirebaseTimestamp(): Timestamp {
+    val instant = Instant.ofEpochMilli(this)
+    return Timestamp(instant.epochSecond, instant.nano)
+}

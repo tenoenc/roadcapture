@@ -22,5 +22,7 @@
     <color name="fill_alternative">#CEEAE5</color>
     <color name="fill_neutral">#B3D9D1</color>
 
+    <color name="special">#FFD700</color>
+
     <color name="cover">#33384845</color>
 </resources>

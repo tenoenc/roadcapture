@@ -18,6 +18,7 @@ data class MemoryViewerArguments(
     @Parcelize
     data class Memory(
         val id: String = "",
+        val locationId: String = "",
         val content: String? = null,
         val photoUri: Uri? = null,
         val photoUrl: String = "",
@@ -30,6 +31,7 @@ data class MemoryViewerArguments(
         companion object {
             fun of(dto: MemoryWithLocation) = Memory(
                 id = dto.memory.id.toString(),
+                locationId = dto.location.id.toString(),
                 content = dto.memory.content,
                 photoUri = dto.memory.photoUri,
                 placeName = dto.memory.placeName,
@@ -40,6 +42,7 @@ data class MemoryViewerArguments(
             )
             fun from(memory: FirebaseMemory, coordinates: LatLng) = Memory(
                 id = memory.id,
+                locationId = memory.locationRefId,
                 content = memory.content.takeIf { it.isNotBlank() },
                 photoUrl = memory.photoUrl,
                 placeName = memory.placeName.takeIf { it.isNotBlank() },

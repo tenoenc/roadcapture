@@ -1,7 +1,9 @@
 package com.tenacy.roadcapture.ui
 
+import android.Manifest
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Base64
 import android.util.Log
@@ -16,6 +18,8 @@ import androidx.navigation.fragment.findNavController
 import com.facebook.CallbackManager
 import com.facebook.login.LoginManager
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.normal.TedPermission
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
@@ -36,13 +40,21 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 @AndroidEntryPoint
-class LoginFragment: BaseFragment() {
+class LoginFragment : BaseFragment() {
 
     private var _binding: FragmentLoginBinding? = null
     val binding get() = _binding!!
 
     private val vm: LoginViewModel by lazy {
         ViewModelProvider(this)[LoginViewModel::class.java]
+    }
+
+    private val permissionListener = object : PermissionListener {
+        override fun onPermissionGranted() {
+        }
+
+        override fun onPermissionDenied(p0: MutableList<String>?) {
+        }
     }
 
     @Inject
@@ -84,12 +96,19 @@ class LoginFragment: BaseFragment() {
         super.onStart()
 
         val authority = arguments?.getString("authority")
-        if(authority == "login-callback") {
+        if (authority == "login-callback") {
             naverOAuthLoginCallback()
         }
 
         auth.currentUser?.let {
             findNavController().navigate(LoginFragmentDirections.actionLoginToMain())
+        } ?: run {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                TedPermission.create()
+                    .setPermissionListener(permissionListener)
+                    .setPermissions(Manifest.permission.POST_NOTIFICATIONS)
+                    .check()
+            }
         }
     }
 
@@ -117,15 +136,19 @@ class LoginFragment: BaseFragment() {
             is LoginViewEvent.NavigateToMain -> {
                 findNavController().navigate(LoginFragmentDirections.actionLoginToMain())
             }
+
             is LoginViewEvent.GoogleLogin -> {
                 googleLogin()
             }
+
             is LoginViewEvent.FacebookLogin -> {
                 facebookLogin()
             }
+
             is LoginViewEvent.KakaoLogin -> {
                 kakaoLogin()
             }
+
             is LoginViewEvent.NaverLogin -> {
                 naverLogin()
             }
@@ -146,7 +169,10 @@ class LoginFragment: BaseFragment() {
         // 16바이트 길이의 임의의 바이트 배열 생성
         val stateString = Base64.encodeToString(ByteArray(16) { Random.nextInt(0, 256).toByte() }, Base64.NO_PADDING)
 
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("$baseUri?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&state=$stateString"))
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("$baseUri?response_type=code&client_id=$clientId&redirect_uri=$redirectUri&state=$stateString")
+        )
         startActivity(intent)
     }
 

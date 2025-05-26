@@ -6,8 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.oAuthCredential
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
+import com.tenacy.roadcapture.data.pref.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
-import com.tenacy.roadcapture.util.ProviderConstants
 import com.tenacy.roadcapture.util.TagConstants
 
 class KakaoOAuthLoginCallback(private val fragment: Fragment): (OAuthToken?, Throwable?) -> Unit {
@@ -52,6 +52,6 @@ class KakaoOAuthLoginCallback(private val fragment: Fragment): (OAuthToken?, Thr
             accessToken = token.accessToken
         }
 
-        viewModel.signInWithCredential(authCredential, ProviderConstants.KAKAO)
+        viewModel.signInWithCredential(authCredential, SocialType.Kakao)
     }
 }

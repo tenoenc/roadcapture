@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +44,7 @@ class UsernameSavingViewModel @Inject constructor(
 
                 user?.updateProfile(profileUpdates)?.await()
 
-                val userRef = db.collection("users").document(user!!.uid)
+                val userRef = db.collection("users").document(UserPref.id)
                 val albumRefs = db.collection("albums")
                     .whereEqualTo("userRef", userRef).getAllReferences()
 
@@ -56,8 +58,13 @@ class UsernameSavingViewModel @Inject constructor(
                 scrapRefs.forEach {
                     allOperations.add(UpdateDocumentOperation(it, mapOf("albumUserDisplayName" to username)))
                 }
-                allOperations.add(UpdateDocumentOperation(userRef, mapOf("displayName" to username)))
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf(
+                    "displayName" to username,
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )))
                 db.executeInBatches(allOperations)
+
+                UserPref.displayName = username
 
                 emit(UsernameSaveState.Completed)
             }

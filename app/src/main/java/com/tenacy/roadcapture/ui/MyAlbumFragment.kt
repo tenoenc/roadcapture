@@ -17,10 +17,10 @@ import com.esafirm.imagepicker.features.registerImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentMyAlbumBinding
 import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.user
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -92,7 +92,7 @@ class MyAlbumFragment: BaseFragment() {
 
     private fun setupViewPager() {
         // 뷰페이저 어댑터 설정
-        val pagerAdapter = AlbumPagerAdapter(this, user!!.uid)
+        val pagerAdapter = AlbumPagerAdapter(this, UserPref.id)
         binding.vpMyAlbum.adapter = pagerAdapter
         binding.vpMyAlbum.isUserInputEnabled = false
     }

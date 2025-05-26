@@ -10,6 +10,7 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.*
@@ -102,12 +103,12 @@ class AlbumViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val userRef = db.collection("users").document(user!!.uid)
+                val userRef = db.collection("users").document(UserPref.id)
                 val albumRef = db.collection("albums").document(albumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
                     ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
 
-                if(userId != user!!.uid && !firebaseAlbum.isPublic) {
+                if(userId != UserPref.id && !firebaseAlbum.isPublic) {
                     throw FirebaseFirestoreException("접근할 수 없어요",FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
@@ -175,7 +176,7 @@ class AlbumViewModel @Inject constructor(
             flow {
                 isScrapProcessing = true
 
-                val userId = user!!.uid
+                val userId = UserPref.id
 
                 // 참조 생성
                 val albumRef = db.collection("albums").document(albumId)

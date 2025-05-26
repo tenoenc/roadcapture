@@ -145,6 +145,8 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
     val photoUrl = getString("photoUrl") ?: ""
     val provider = getString("provider") ?: ""
     val scrapCount = getLong("scrapCount") ?: 0L
+    val isSubscriptionActive = getBoolean("isSubscriptionActive") ?: false
+    val lastSubscribedAt = getTimestamp("lastSubscribedAt")?.toDate()?.toLocalDateTime()
     val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
     val updatedAt = getTimestamp("updatedAt")!!.toDate().toLocalDateTime()
 
@@ -155,6 +157,8 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
         photoUrl = photoUrl,
         provider = provider,
         scrapCount = scrapCount,
+        isSubscriptionActive = isSubscriptionActive,
+        lastSubscribedAt = lastSubscribedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )
@@ -442,3 +446,4 @@ suspend fun Context.uploadImageToStorage(
         throw Exception("Failed to upload image: ${e.message}", e)
     }
 }
+

@@ -7,6 +7,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.*
 import kotlinx.coroutines.tasks.await
@@ -97,7 +98,7 @@ class AlbumPagingSource(
                     val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                         // 특정 앨범들에 대한 스크랩 상태만 조회
                         val albumRefs = albumIds.map { db.collection("albums").document(it) }
-                        val userRef = db.collection("users").document(user!!.uid)
+                        val userRef = db.collection("users").document(UserPref.id)
 
                         val scrapRefs = db.collection("scraps")
                             .whereInWithFilters("albumRef", albumRefs) { query ->
@@ -131,7 +132,7 @@ class AlbumPagingSource(
                     Log.d(TAG, "SCRAP 필터 로드 요청")
 
                     // 현재 사용자 참조
-                    val userRef = db.collection("users").document(user!!.uid)
+                    val userRef = db.collection("users").document(UserPref.id)
 
                     // 커서 기반 페이징을 위한 시작점 설정
                     val startAfterDoc = params.key

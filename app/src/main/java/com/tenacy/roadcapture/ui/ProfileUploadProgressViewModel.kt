@@ -7,6 +7,8 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -39,7 +41,7 @@ class ProfileUploadProgressViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             channelFlow {
                 sendWithDelay(ProfileSaveState.Loading)
-                val userId = auth.currentUser!!.uid
+                val userId = UserPref.id
                 val userRef = db.collection("users")
                     .document(userId)
 
@@ -66,9 +68,14 @@ class ProfileUploadProgressViewModel @Inject constructor(
                 albumRefs.forEach {
                     allOperations.add(UpdateDocumentOperation(it, mapOf("userPhotoUrl" to imageUrl)))
                 }
-                allOperations.add(UpdateDocumentOperation(userRef, mapOf("photoName" to storagePath)))
-                allOperations.add(UpdateDocumentOperation(userRef, mapOf("photoUrl" to imageUrl)))
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf(
+                    "photoName" to storagePath,
+                    "photoUrl" to imageUrl,
+                    "updatedAt" to FieldValue.serverTimestamp(),
+                )))
                 db.executeInBatches(allOperations)
+
+                UserPref.photoUrl = imageUrl
 
                 sendWithDelay(ProfileSaveState.Completed)
             }
@@ -76,8 +83,8 @@ class ProfileUploadProgressViewModel @Inject constructor(
                     Log.e("ProfileUploadProgressViewModel", "에러", exception)
                     emit(ProfileSaveState.Error(exception.message ?: "알 수 없는 오류 발생"))
                 }
-                .collect {
-                    _saveState.emit(it)
+                .collect { state ->
+                    _saveState.emit(state)
                 }
         }
     }

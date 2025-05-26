@@ -326,6 +326,7 @@ class AdmobContainerAdapter(
                     url = null,
                     bitmap = null,
                     uri = icon.uri,
+                    src = null,
                     radius = 4,
                     borderWidth = null,
                     borderColor = null,

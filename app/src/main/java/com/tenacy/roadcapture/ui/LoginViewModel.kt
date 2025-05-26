@@ -6,9 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.auth.Loginable
+import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val _savedStateHandle: SavedStateHandle,
+    private val subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
     override val savedStateHandle: SavedStateHandle
@@ -36,12 +40,12 @@ class LoginViewModel @Inject constructor(
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
-                    updateUser(ProviderConstants.NAVER)
+                    updateUser(SocialType.Naver)
                 }
         }
     }
 
-    override fun signInWithCredential(credential: AuthCredential, provider: String) {
+    override fun signInWithCredential(credential: AuthCredential, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 emit(auth.signInWithCredential(credential).await())
@@ -51,31 +55,46 @@ class LoginViewModel @Inject constructor(
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
-                    updateUser(provider)
+                    updateUser(socialType)
                 }
         }
     }
 
-    private suspend fun updateUser(provider: String) {
+    private suspend fun updateUser(socialType: SocialType) {
         flow {
-            val userToUpdate: HashMap<String, Any?> = hashMapOf(
-                "updatedAt" to FieldValue.serverTimestamp(),
-            )
-
-            val ref = db.collection("users").document(user!!.uid)
-            val docSnapshot = ref.get().await()
+            val userId = user!!.uid
+            val userRef = db.collection("users").document(userId)
+            val docSnapshot = userRef.get().await()
             if (!docSnapshot.exists()) {
-                val photoPath = "images/users/${user!!.uid}/profile.jpg"
-                userToUpdate["displayName"] = user!!.displayName
-                userToUpdate["provider"] = provider
-                userToUpdate["createdAt"] = FieldValue.serverTimestamp()
-                userToUpdate["photoUrl"] = setDefaultProfileImage(photoPath)
-                userToUpdate["photoName"] = photoPath
-                userToUpdate["scrapCount"] = 0L
-                ref.set(userToUpdate).await()
+                val displayName = user!!.displayName ?: ""
+                val photoPath = "images/users/$userId/profile.jpg"
+                val photoUrl = setDefaultProfileImage(photoPath)
+
+                val userData = mapOf(
+                    "displayName" to displayName,
+                    "provider" to socialType.name,
+                    "createdAt" to FieldValue.serverTimestamp(),
+                    "photoUrl" to photoUrl,
+                    "photoName" to photoPath,
+                )
+
+                userRef.update(userData).await()
+
+                UserPref.id = userId
+                UserPref.provider = socialType
+                SubscriptionPref.isSubscriptionActive = false
+                UserPref.displayName = displayName
+                UserPref.photoUrl = photoUrl
             } else {
-                ref.set(userToUpdate, SetOptions.merge()).await()
+                val user = userRef.get().await().toUser()
+                UserPref.id = userId
+                UserPref.provider = socialType
+                SubscriptionPref.isSubscriptionActive = user.isSubscriptionActive
+                UserPref.displayName = user.displayName
+                UserPref.photoUrl = user.photoUrl
             }
+
+            subscriptionManager.checkSubscriptionStatus()
 
             emit(Unit)
         }

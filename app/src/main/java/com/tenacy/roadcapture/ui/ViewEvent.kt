@@ -32,7 +32,8 @@ sealed class AppInfoViewEvent: ViewEvent {
     data object InquireToDeveloper: AppInfoViewEvent()
     data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
     data object Logout: AppInfoViewEvent()
-    data class Donate(val type: String) : AppInfoViewEvent()
+    data object Donate : AppInfoViewEvent()
+    data object Subscribe : AppInfoViewEvent()
 }
 
 sealed class ScrapViewEvent: ViewEvent {
@@ -81,7 +82,7 @@ sealed class ModifiableMemoryViewerViewEvent: ViewEvent {
     data object MoveToPrevPage: ModifiableMemoryViewerViewEvent()
     data object MoveToNextPage: ModifiableMemoryViewerViewEvent()
     data object ShowMore: ModifiableMemoryViewerViewEvent()
-    data class ResultBack(val coordinates: LatLng? = null): ModifiableMemoryViewerViewEvent()
+    data class ResultBack(val coordinates: LatLng? = null, val deleted: Boolean = false): ModifiableMemoryViewerViewEvent()
 }
 
 sealed class NewAlbumViewEvent: ViewEvent {

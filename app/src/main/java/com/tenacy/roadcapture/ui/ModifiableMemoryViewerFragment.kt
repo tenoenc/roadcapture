@@ -154,7 +154,8 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(
                     TripFragment.KEY_MODIFIABLE_MEMORY_VIEWER,
                     bundleOf(
-                        TripFragment.RESULT_COORDINATES to event.coordinates
+                        TripFragment.RESULT_COORDINATES to event.coordinates,
+                        TripFragment.RESULT_MEMORY_DELETED to event.deleted,
                     )
                 )
                 findNavController().popBackStack()

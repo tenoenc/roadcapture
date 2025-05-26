@@ -8,14 +8,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-
 ) : BaseViewModel() {
-
-    fun onLogoutClick() {
-        viewModelScope.launch(Dispatchers.IO) {
-            viewEvent(MainViewEvent.Logout)
-        }
-    }
 
     fun onNewClick() {
         viewModelScope.launch(Dispatchers.IO) {

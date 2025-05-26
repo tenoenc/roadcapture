@@ -57,7 +57,7 @@ android {
 
     buildTypes {
         debug {
-            debuggable false
+            debuggable true
             minifyEnabled false
             shrinkResources false
         }
@@ -89,9 +89,9 @@ android {
         jvmTarget = '17'
     }
 
-    configurations {
-        implementation.exclude group: 'org.jetbrains', module: 'annotations'
-    }
+//    configurations {
+//        implementation.exclude group: 'org.jetbrains', module: 'annotations'
+//    }
 }
 
 dependencies {
@@ -199,6 +199,7 @@ dependencies {
     implementation libs.androidx.room.rxjava3
     implementation libs.androidx.room.paging
     implementation libs.androidx.paging.runtime.ktx
+    implementation libs.androidx.work.runtime
     ksp libs.androidx.room.compiler
 
     /**
@@ -237,8 +238,10 @@ dependencies {
      *              Dependency Injection
      * **********************************************************
      */
-    implementation libs.hilt.android
+    implementation libs.dagger.hilt.android
+    implementation libs.hilt.work
     implementation libs.play.services.location
+    ksp libs.dagger.hilt.compiler
     ksp libs.hilt.compiler
 
     /**

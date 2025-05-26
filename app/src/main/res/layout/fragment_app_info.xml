@@ -6,6 +6,7 @@
     <data>
 
         <variable name="vm" type="com.tenacy.roadcapture.ui.AppInfoViewModel"/>
+        <import type="android.view.View"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_app_info_container"
@@ -285,7 +286,8 @@
 
                     <ImageView android:layout_width="24dp"
                                android:layout_height="24dp"
-                               android:src="@drawable/ic_google"/>
+                               app:src="@{vm.providerDrawable}"
+                               tools:src="@drawable/ic_google"/>
 
                 </LinearLayout>
 
@@ -296,6 +298,7 @@
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
+                              android:onClick="@{() -> vm.onSubscribeClick()}"
                               android:orientation="horizontal"
                               android:paddingVertical="20dp"
                               android:gravity="center_vertical"
@@ -310,6 +313,28 @@
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
                               android:text="구독 관리"/>
+
+                    <LinearLayout android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:orientation="horizontal"
+                                  android:gravity="center_vertical">
+
+                        <ImageView android:layout_width="14dp"
+                                   android:layout_height="14dp"
+                                   android:src="@drawable/ic_crown_active"
+                                   android:visibility="@{vm.isSubscriptionActive ? View.VISIBLE : View.GONE}"
+                                   tools:visibility="visible"
+                                   android:layout_marginEnd="4dp"/>
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:textAppearance="@style/Body_12_M"
+                                  android:textColor="@{vm.isSubscriptionActive ? @color/special : @color/label_assistive}"
+                                  tools:textColor="@color/special"
+                                  android:text="@{vm.subscriptionText}"
+                                  tools:text="프리미엄 구독중"/>
+
+                    </LinearLayout>
 
                 </LinearLayout>
 

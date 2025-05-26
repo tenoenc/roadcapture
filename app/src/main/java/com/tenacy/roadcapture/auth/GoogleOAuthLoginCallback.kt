@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.GoogleAuthProvider
+import com.tenacy.roadcapture.data.pref.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
-import com.tenacy.roadcapture.util.ProviderConstants
 import com.tenacy.roadcapture.util.TagConstants
 
 class GoogleOAuthLoginCallback(private val fragment: Fragment): (GetCredentialResponse) -> Unit {
@@ -31,7 +31,7 @@ class GoogleOAuthLoginCallback(private val fragment: Fragment): (GetCredentialRe
                     val profilePicUrl = googleIdTokenCredential.profilePictureUri?.toString()
 
                     Log.d(TagConstants.AUTH, "구글 로그인 성공: $authCredential")
-                    viewModel.signInWithCredential(authCredential, ProviderConstants.GOOGLE)
+                    viewModel.signInWithCredential(authCredential, SocialType.Google)
                 }
             }
         }

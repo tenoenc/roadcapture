@@ -9,7 +9,6 @@ import android.location.Criteria
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -24,6 +23,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.android.billingclient.api.Purchase
 import com.facebook.FacebookSdk.setCacheDir
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -35,8 +35,11 @@ import com.google.maps.android.clustering.ClusterManager
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
 import com.tenacy.roadcapture.manager.NSFWDetector
+import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.*
@@ -46,13 +49,12 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
-import kotlinx.parcelize.Parcelize
 import java.io.File
 import java.time.LocalDateTime
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
+class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem>, SubscriptionPurchaseCallback {
 
     // ===== 1. 속성(Property) 그룹 =====
     private var _binding: FragmentTripBinding? = null
@@ -71,6 +73,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     @Inject
     lateinit var nsfwDetector: NSFWDetector
+
+    @Inject
+    lateinit var subscriptionManager: SubscriptionManager
 
     // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
@@ -102,11 +107,11 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         override fun onPermissionGranted() {
             repeatOnLifecycle(lifecycleState = Lifecycle.State.CREATED) {
                 Log.d("TAG", "위치 권한 허용됨")
-                vm.startTraveling()
 
                 permissionGranted.value = true
 
                 if (!vm.initialGuideShown) {
+                    vm.startTraveling()
                     showGuideDialog()
                     vm.initialGuideShown = true
                 }
@@ -154,6 +159,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     override fun onDestroyView() {
         super.onDestroyView()
+        subscriptionManager.setPurchaseCallback(null)
         _binding = null
     }
 
@@ -171,6 +177,17 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             Log.e("TripFragment", "마커 클릭 처리 오류", e)
             return false
         }
+    }
+
+
+
+    override fun onSubscriptionPurchaseCompleted(purchase: Purchase) {
+        val bottomSheet = SubscribeAfterBottomSheetFragment.newInstance()
+        bottomSheet.show(childFragmentManager, SubscribeAfterBottomSheetFragment.TAG)
+    }
+
+    override fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String) {
+
     }
 
     // ===== 5. 초기 설정 메서드 그룹 =====
@@ -205,6 +222,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             bundle.getParcelable<SubscriptionBottomSheetFragment.ParamsOut.Positive>(SubscriptionBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 // 정기구독
+                subscriptionManager.setPurchaseCallback(this)
+                subscriptionManager.subscribe(mainActivity)
             }
         }
         childFragmentManager.setFragmentResultListener(
@@ -388,7 +407,27 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             savedStateHandle?.consumeOnce<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER) { bundle ->
                 if (bundle == null) return@consumeOnce
                 val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                val removed = bundle.getBoolean(RESULT_MEMORY_DELETED, false)
                 vm.viewEvent(TripViewEvent.SetCamera(coordinates))
+                if(removed) {
+                    vm.fetchData()
+                }
+            }
+        }
+    }
+
+    private fun observeSubscriptionState() {
+        repeatOnLifecycle {
+            subscriptionManager.subscriptionState.collect { state ->
+                // 구독 상태에 따라 UI 업데이트
+                vm.updateSubscriptionStates(state.isActive)
+
+                // 다른 계정에 연결된 구독 상태 처리
+                if (state.isLinkedToOtherAccount) {
+//                        showLinkedAccountMessage(state.linkedAccountId)
+                } else {
+//                        hideLinkedAccountMessage()
+                }
             }
         }
     }
@@ -435,7 +474,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "위치 정보가 없기 때문에 사진을 찍을 수 없습니다",
+                                    "위치 정보가 없기 때문에 사진을 찍을 수 없어요",
                                     ToastMessageType.Warning
                                 )
                             )
@@ -463,7 +502,14 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             }
 
             is TripViewEvent.ShowSubscription -> {
-                showSubscriptionDialog()
+                val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
+                if(isSubscriptionActive) {
+                    lifecycleScope.launch(Dispatchers.Default) {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프리미엄 플랜을 구독 중이에요", ToastMessageType.Info)))
+                    }
+                } else {
+                    showSubscriptionDialog()
+                }
             }
 
             is TripViewEvent.ShowAfter -> {
@@ -745,7 +791,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "카메라 앱을 실행할 수 없습니다",
+                                    "카메라 앱을 실행할 수 없어요",
                                     ToastMessageType.Warning
                                 )
                             )
@@ -922,6 +968,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         const val KEY_NEW_MEMORY = "new_memory"
         const val RESULT_MEMORY_ID = "memory_id"
         const val RESULT_COORDINATES = "coordinates"
+        const val RESULT_MEMORY_DELETED = "memory_deleted"
         const val KEY_MODIFIABLE_MEMORY_VIEWER = "modifiable_memory_viewer"
     }
 }

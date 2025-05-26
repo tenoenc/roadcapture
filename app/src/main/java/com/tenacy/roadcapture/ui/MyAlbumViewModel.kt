@@ -6,6 +6,7 @@ import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,7 +68,7 @@ class MyAlbumViewModel @Inject constructor(
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val userId = auth.currentUser!!.uid
+                val userId = UserPref.id
                 val userRef = db.collection("users")
                     .document(userId)
                 val user = userRef.get().await().toUser()

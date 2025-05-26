@@ -1,25 +1,19 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
-import androidx.core.os.bundleOf
-import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetSubscriptionBinding
-import com.tenacy.roadcapture.util.Constants
-import com.tenacy.roadcapture.util.SubscriptionValues
-import kotlinx.parcelize.Parcelize
+import com.tenacy.roadcapture.databinding.BSheetSubscribeAfterBinding
 
-class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
+class SubscribeAfterBottomSheetFragment : BottomSheetDialogFragment() {
 
-    private var _binding: BSheetSubscriptionBinding? = null
+    private var _binding: BSheetSubscribeAfterBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -29,7 +23,7 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetSubscriptionBinding.inflate(inflater, container, false).apply {
+        return BSheetSubscribeAfterBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -37,14 +31,8 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViews()
         setupBottomSheet()
         setupListeners()
-    }
-
-    private fun setupViews() {
-        binding.premiumPricePerMonthText = "USD ${Constants.PREMIUM_PRICE_PER_MONTH} / 월"
-        binding.row2Text = "앨범 당 최대 ${Constants.PREMIUM_MEMORY_MAX_SIZE}개의 추억 생성"
     }
 
     private fun setupBottomSheet() {
@@ -64,14 +52,7 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetSubscriptionPositive.setOnClickListener {
-            setFragmentResult(
-                REQUEST_KEY,
-                bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
-            )
-            dismiss()
-        }
-        binding.btnBSheetSubscriptionNegative.setOnClickListener {
+        binding.btnBSheetSubscribeAfterNegative.setOnClickListener {
             dismiss()
         }
     }
@@ -81,21 +62,12 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
         _binding = null
     }
 
-    @Parcelize
-    sealed class ParamsOut: Parcelable {
-        @Parcelize
-        data object Positive: ParamsOut()
-    }
-
     companion object {
 
-        const val TAG = "SubscriptionBottomSheetFragment"
+        const val TAG = "SubscribeAfterBottomSheetFragment"
 
-        const val REQUEST_KEY = "subscription"
-        const val KEY_PARAMS_OUT_POSITIVE = "params_out_positive"
-
-        fun newInstance(bundle: Bundle? = null): SubscriptionBottomSheetFragment {
-            return SubscriptionBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): SubscribeAfterBottomSheetFragment {
+            return SubscribeAfterBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

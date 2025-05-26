@@ -2,7 +2,6 @@ package com.tenacy.roadcapture.ui.dto
 
 import android.os.Parcelable
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseAlbum
-import com.tenacy.roadcapture.util.user
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 

@@ -97,22 +97,26 @@
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Title_20"
-                          android:textColor="@color/label_neutral"
+                          android:textColor="@{vm.exceedLimitedMemorySize ? @color/warning : @color/label_neutral}"
+                          tools:textColor="@color/label_neutral"
                           android:text="@{vm.memoryCountText}"
-                          tools:text="추억 1 / 10"/>
+                          tools:text="추억 1 / 100"/>
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:layout_marginStart="2dp"
                           android:textAppearance="@style/Body_12_M"
-                          android:textColor="@color/label_neutral"
+                          android:textColor="@{vm.exceedLimitedMemorySize ? @color/warning : @color/label_neutral}"
+                          tools:textColor="@color/label_neutral"
                           android:text="개"/>
 
 
                 <ImageView android:layout_width="14dp"
                            android:layout_height="14dp"
                            android:layout_marginStart="2dp"
-                           android:src="@drawable/ic_crown"/>
+                           android:src="@{vm.isSubscriptionActive ? @drawable/ic_crown_active : @drawable/ic_crown}"
+                           tools:src="@drawable/ic_crown_active"
+                           app:custom_tint="@{vm.exceedLimitedMemorySize ? @color/warning : 0}"/>
 
             </LinearLayout>
 
@@ -147,8 +151,9 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_capture"
+                                                                               tools:enabled="false"
                                                                                android:onClick="@{() -> vm.onCaptureClick()}"
-                                                                               android:visibility="@{vm.durationText == null ? View.GONE : View.VISIBLE}"
+                                                                               android:visibility="@{(vm.durationText == null || vm.exceedLimitedMemorySize) ? View.GONE : View.VISIBLE}"
                                                                                android:layout_marginBottom="20dp"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                app:backgroundTint="@color/background_normal"

@@ -13,6 +13,8 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.MyToast
@@ -110,6 +112,9 @@ class MainActivity : AppCompatActivity() {
             R.id.mainFragment,
             true
         ).build()
+
+        UserPref.clear()
+        SubscriptionPref.clearSubscription()
 
         currentFragment?.findNavController()?.run {
             navigate(

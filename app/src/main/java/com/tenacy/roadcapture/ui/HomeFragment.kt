@@ -9,24 +9,22 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import com.facebook.shimmer.Shimmer
+import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
+import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.consumeOnce
-import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment: BaseFragment() {
@@ -36,10 +34,8 @@ class HomeFragment: BaseFragment() {
 
     private val vm: HomeViewModel by viewModels()
 
-    // 기존 방식과 유사하게 lazy 초기화 유지 가능
     private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
 
-    // 광고 어댑터도 lazy로 초기화
     private val adAdapter by lazy {
         AdmobContainerAdapter(
             originalAdapter = albumAdapter,
@@ -48,7 +44,15 @@ class HomeFragment: BaseFragment() {
         )
     }
 
+    @Inject
+    lateinit var subscriptionManager: SubscriptionManager
+
     private var wasRefreshing = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        vm
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
@@ -61,6 +65,14 @@ class HomeFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupObservers()
+
+        // AppInfoFragment에 추가할 코드 예시
+        if (BuildConfig.DEBUG) {
+            binding.btnHomeTestSubscription.visibility = View.VISIBLE
+            binding.btnHomeTestSubscription.setOnClickListener {
+                subscriptionManager.debugSubscriptionStatus()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -75,16 +87,6 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
-        // 로드 상태 어댑터 생성
-        val loadStateAdapter = LoadStateAdapter()
-
-        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
-        val finalAdapter = adAdapter.withLoadStateAdapter(loadStateAdapter)
-
-        // 최종 어댑터를 RecyclerView에 설정
-        binding.rvHomeAlbums.adapter = finalAdapter
-
-        // 나머지 설정은 동일하게 유지
         binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvHomeAlbums.setHasFixedSize(true)
 
@@ -133,6 +135,21 @@ class HomeFragment: BaseFragment() {
         }
     }
 
+    private fun bindAdapter(isSubscriptionActive: Boolean) {
+        // 로드 상태 어댑터 생성
+        val loadStateAdapter = LoadStateAdapter()
+
+        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
+        val finalAdapter = if (isSubscriptionActive) {
+            albumAdapter.withLoadStateFooter(loadStateAdapter)
+        } else {
+            adAdapter.withLoadStateAdapter(loadStateAdapter)
+        }
+
+        // 최종 어댑터를 RecyclerView에 설정
+        binding.rvHomeAlbums.adapter = finalAdapter
+    }
+
     private fun setupShimmer() {
         with(binding.shimmerLayout) {
             val shimmer = Shimmer.ColorHighlightBuilder()
@@ -166,9 +183,26 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupObservers() {
+        observeSubscriptionState()
         observeSavedState()
         observePagingData()
         observeViewEvents()
+    }
+
+    private fun observeSubscriptionState() {
+        repeatOnLifecycle {
+            subscriptionManager.subscriptionState.collect { state ->
+                // 구독 상태에 따라 UI 업데이트
+                bindAdapter(state.isActive)
+
+                // 다른 계정에 연결된 구독 상태 처리
+                if (state.isLinkedToOtherAccount) {
+//                        showLinkedAccountMessage(state.linkedAccountId)
+                } else {
+//                        hideLinkedAccountMessage()
+                }
+            }
+        }
     }
 
     private fun observeSavedState() {

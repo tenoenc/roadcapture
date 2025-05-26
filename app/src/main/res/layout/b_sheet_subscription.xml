@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
+        <variable name="row2Text" type="String"/>
+        <variable name="premiumPricePerMonthText" type="String"/>
         <import type="com.tenacy.roadcapture.ui.ViewScope"/>
     </data>
 
@@ -54,13 +57,47 @@
                           android:layout_marginTop="4dp"/>
 
                 <ImageView android:layout_width="168dp"
-                           android:layout_height="152dp"
+                           android:layout_height="168dp"
                            android:src="@drawable/crown"
                            android:scaleType="centerCrop"/>
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              android:orientation="horizontal">
+                              android:orientation="horizontal"
+                              android:gravity="center_vertical">
+
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:textAppearance="@style/Title_16"
+                              android:textColor="@color/label_normal"
+                              android:text="Premium"/>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                                       android:layout_height="wrap_content"
+                                                                       android:layout_marginStart="4dp"
+                                                                       app:strokeWidth="1dp"
+                                                                       app:strokeColor="@color/fill_assistive"
+                                                                       app:cardBackgroundColor="@color/background_alternative"
+                                                                       app:cardCornerRadius="4dp"
+                                                                       app:cardElevation="0dp">
+
+                        <TextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:textAppearance="@style/Body_12_M"
+                                  android:textColor="@color/label_normal"
+                                  android:text="@{premiumPricePerMonthText}"
+                                  tools:text="USD 1.99 / 월"
+                                  android:paddingHorizontal="4dp"
+                                  android:paddingVertical="2dp"/>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
 
                     <View android:layout_width="5dp"
                           android:layout_height="5dp"
@@ -72,7 +109,28 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_15_M"
                               android:textColor="@color/label_normal"
-                              android:text="앨범 당 최대 100개의 추억 생성"
+                              android:text="앨범 무제한 생성"
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_15_M"
+                              android:textColor="@color/label_normal"
+                              android:text="@{row2Text}"
+                              tools:text="앨범 당 최대 100개의 추억 생성"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -103,7 +161,7 @@
                                   android:layout_height="wrap_content"
                                   android:textAppearance="@style/Body_12_M"
                                   android:textColor="@color/label_neutral"
-                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있어요. (지도 제외)"
+                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있어요."
                                   android:layout_marginStart="8dp"/>
 
 
@@ -141,7 +199,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="정기구독 결제하기"
+                android:text="프리미엄 구독하기"
                 android:backgroundTint="#FFD700"
                 app:cornerRadius="12dp"
                 android:padding="12dp"/>

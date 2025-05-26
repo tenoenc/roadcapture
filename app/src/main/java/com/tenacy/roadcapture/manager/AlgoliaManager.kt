@@ -9,10 +9,10 @@ import com.google.firebase.firestore.FieldPath
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.data.firebase.dto.SearchResponse
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toAlbum
-import com.tenacy.roadcapture.util.user
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
@@ -77,7 +77,7 @@ class AlgoliaManager @Inject constructor() {
         return withContext(Dispatchers.IO) {
             val algoliaQuery = Query(query).apply {
                 // 공개 앨범만 필터링
-                filters = "albumPublic:true AND userRef:users/${user!!.uid}"
+                filters = "albumPublic:true AND userRef:users/${UserPref.id}"
 
                 // 페이지 설정
                 setPage(page)
@@ -179,7 +179,7 @@ class AlgoliaManager @Inject constructor() {
                 val scrapedIds = if (chunk.isNotEmpty()) {
                     val scrapSnapshot = db.collection("scraps")
                         .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
-                        .whereEqualTo("userRef", db.collection("users").document(user!!.uid))
+                        .whereEqualTo("userRef", db.collection("users").document(UserPref.id))
                         .get()
                         .await()
 

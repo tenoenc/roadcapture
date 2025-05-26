@@ -10,7 +10,9 @@ import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.ui.dto.Marker
+import com.tenacy.roadcapture.util.SubscriptionValues
 import com.tenacy.roadcapture.util.clearCacheDirectory
 import com.tenacy.roadcapture.util.getDurationFormattedText
 import com.tenacy.roadcapture.util.toTimestamp
@@ -34,14 +36,24 @@ class TripViewModel @Inject constructor(
     private val routePolylines = mutableListOf<Polyline>()
     private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
 
+    private val _isSubscriptionActive = MutableStateFlow(SubscriptionPref.isSubscriptionActive)
+    val isSubscriptionActive = _isSubscriptionActive.asStateFlow()
+
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
     private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
 
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
-    val memoryCountText = _memories.map { "추억 ${it.size} / 10" }
+    val memoryCountText = _memories.map { memories ->
+        val maxMemorySize = SubscriptionValues.memoryMaxSize
+        "추억 ${memories.size} / $maxMemorySize"
+    }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+
+    val exceedLimitedMemorySize = _memories.map {
+        it.size >= SubscriptionValues.memoryMaxSize
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val markers = combine(_locations, _memories) { locations, memories ->
         val memoryByLocationId = memories.associateBy { it.location.id }
@@ -63,10 +75,6 @@ class TripViewModel @Inject constructor(
 
     private var _lastLocation: LatLng? = null
 
-    init {
-        fetchData()
-    }
-
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.selectAll()
@@ -79,10 +87,13 @@ class TripViewModel @Inject constructor(
                     _lastLocation = coordinates
                 }
             }
-            viewEvent(TripViewEvent.SetCamera(zoom = 30f))
             _memories.emit(memories)
             _locations.emit(locations)
         }
+    }
+
+    fun updateSubscriptionStates(isActive: Boolean) {
+        _isSubscriptionActive.update { isActive }
     }
 
     fun getMemories() = _memories.value
@@ -103,7 +114,11 @@ class TripViewModel @Inject constructor(
         if(Album.createdAt == 0L) {
             Album.createdAt = LocalDateTime.now().toTimestamp()
         }
+        fetchData()
         updateDurationText()
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(TripViewEvent.SetCamera(zoom = 30f))
+        }
     }
 
     fun updateDurationText() {
@@ -115,7 +130,6 @@ class TripViewModel @Inject constructor(
             Album.clear()
             memoryDao.clear()
             locationDao.clear()
-            _durationText.update { null }
             context.clearCacheDirectory()
 
             viewEvent(TripViewEvent.Back)

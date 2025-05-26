@@ -13,8 +13,11 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.BSheetTripGuideBinding
 import com.tenacy.roadcapture.util.SpannableUtils
+import com.tenacy.roadcapture.util.SubscriptionValues
 import kotlinx.parcelize.Parcelize
 
 class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
@@ -58,9 +61,15 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
             )
         )
 
-        val spanText2_1 = "10개"
+        val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
+
+        val spanText2_1 = "${SubscriptionValues.memoryMaxSize}개"
         val spanText2_2 = "여기"
-        val spanFullText2 = "무료 플랜에서는 추억을 ${spanText2_1}개까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 ${spanText2_2}를 클릭해주세요."
+        val spanFullText2 = if(isSubscriptionActive) {
+            "추억은 ${spanText2_1}까지만 만들 수 있어요."
+        } else {
+            "무료 플랜에서는 추억을 ${spanText2_1}까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 ${spanText2_2}를 클릭해주세요."
+        }
 
         SpannableUtils.setClickableText(
             requireContext(),

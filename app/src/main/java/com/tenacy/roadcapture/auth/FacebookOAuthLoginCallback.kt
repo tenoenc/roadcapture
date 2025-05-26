@@ -1,16 +1,14 @@
 package com.tenacy.roadcapture.auth
 
-import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
-import com.facebook.GraphRequest
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
+import com.tenacy.roadcapture.data.pref.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
-import com.tenacy.roadcapture.util.ProviderConstants
 import com.tenacy.roadcapture.util.TagConstants
 
 class FacebookOAuthLoginCallback(private val fragment: Fragment): FacebookCallback<LoginResult> {
@@ -38,6 +36,6 @@ class FacebookOAuthLoginCallback(private val fragment: Fragment): FacebookCallba
         val profilePicUrl = "https://graph.facebook.com/${result.accessToken.userId}/picture?type=large"
 
         // 프로필 URL 포함하여 전달
-        viewModel.signInWithCredential(authCredential, ProviderConstants.FACEBOOK)
+        viewModel.signInWithCredential(authCredential, SocialType.Facebook)
     }
 }

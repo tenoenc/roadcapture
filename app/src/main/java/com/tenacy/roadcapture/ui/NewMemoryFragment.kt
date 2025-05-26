@@ -13,6 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
@@ -155,17 +157,18 @@ class NewMemoryFragment: BaseFragment() {
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
             is NewMemoryViewEvent.ShowAd -> {
-
-                mainActivity.adManager.showAd(
-                    mainActivity = mainActivity,
-                    onRewarded = {
-                        mainActivity.lifecycleScope.launch(Dispatchers.Main) {
+                if(SubscriptionPref.isSubscriptionActive) {
+                    vm.saveMemory()
+                } else {
+                    mainActivity.adManager.showAd(
+                        mainActivity = mainActivity,
+                        onRewarded = {
                             vm.saveMemory()
+                        },
+                        onFailed = {
                         }
-                    },
-                    onFailed = {
-                    }
-                )
+                    )
+                }
             }
         }
     }
