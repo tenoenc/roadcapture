@@ -94,7 +94,8 @@ class LoginViewModel @Inject constructor(
                 UserPref.photoUrl = user.photoUrl
             }
 
-            subscriptionManager.checkSubscriptionStatus()
+            val checkSubscriptionStatusSuspend = subscriptionManager.checkSubscriptionStatusSuspend()
+            Log.d("SubscriptionManager", checkSubscriptionStatusSuspend.toString())
 
             emit(Unit)
         }

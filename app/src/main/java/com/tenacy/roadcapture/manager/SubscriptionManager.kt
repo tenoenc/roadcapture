@@ -18,20 +18,19 @@ import com.tenacy.roadcapture.util.auth
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toFirebaseTimestamp
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 /**
  * 구독 관리 클래스
@@ -193,7 +192,7 @@ class SubscriptionManager @Inject constructor(
      * BillingManager로부터 받은 구독 이벤트를 처리합니다.
      * @param event 처리할 구독 이벤트
      */
-    private fun handlePurchaseEvent(event: BillingManager.PurchaseEvent) {
+    private suspend fun handlePurchaseEvent(event: BillingManager.PurchaseEvent) {
         when (event.type) {
             BillingManager.PurchaseEventType.SUCCESS -> {
                 event.purchases?.forEach { purchase ->
@@ -276,66 +275,117 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
+    suspend fun checkSubscriptionStatusSuspend(): SubscriptionState {
+        val currentTime = System.currentTimeMillis()
+        Log.d(TAG, "구독 상태 확인 시작")
+
+        // 네트워크 연결 확인
+        if (!isNetworkAvailable()) {
+            Log.d(TAG, "네트워크 연결 없음, 오프라인 모드로 확인")
+            return handleOfflineSubscriptionCheck(currentTime)
+        }
+
+        // 현재 앱 계정 검증
+        val currentUserId = UserPref.id
+        if (currentUserId.isEmpty()) {
+            Log.d(TAG, "사용자 ID가 없음, 구독 비활성화")
+            updateLocalSubscription(false, null, 0)
+            return SubscriptionState(isActive = false).also { _subscriptionState.value = it }
+        }
+
+        // Google Play에서 구독 정보 조회
+        Log.d(TAG, "Google Play에서 구독 정보 조회 중")
+
+        return try {
+            suspendCancellableCoroutine<SubscriptionState> { cont ->
+                billingManager.queryPurchases(BillingClient.ProductType.SUBS) { billingResult, purchases ->
+                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                        Log.d(TAG, "Google Play 구독 정보 조회 성공: ${purchases.size}개 구독 발견")
+
+                        CoroutineScope(cont.context).launch {
+                            try {
+                                // 해시된 Google 계정 ID 가져오기 (구독 연결 확인용)
+                                val googleAccountId = getGoogleAccountId()
+                                Log.d(TAG, "Google 계정 ID(해시): ${googleAccountId.take(8)}...")
+
+                                // Google Play 구독 처리
+                                handleQueryPurchasesResult(purchases, currentTime, cont)
+                            } catch (e: Exception) {
+                                Log.e(TAG, "구독 확인 중 오류 발생", e)
+                                checkFirestoreSubscriptionStatus(cont)
+                            }
+                        }
+                    } else {
+                        Log.d(TAG, "Google Play 구독 조회 실패: ${billingResult.responseCode}, ${billingResult.debugMessage}")
+                        // Google Play 조회 실패 시 Firestore 확인
+                        checkFirestoreSubscriptionStatus(cont)
+                    }
+                }
+            }
+        } catch (ignored: Exception) {
+            getDefaultSubscriptionState()
+        }
+    }
+
     /**
-     * Google Play 구독 조회 결과 처리
+     * Google Play 구독 조회 결과 처리 ( V )
      *
      * 1. 활성 구독이 있는지 확인
      * 2. 해당 구독이 현재 앱 계정에 연결되어 있는지 확인
      * 3. 다른 앱 계정에 연결된 경우 적절히 처리
      * 4. 정상적인 경우 구독 상태 업데이트
      */
-    private fun handleQueryPurchasesResult(
+    private suspend fun handleQueryPurchasesResult(
         purchases: List<Purchase>,
-        currentTime: Long
+        currentTime: Long,
+        cont: CancellableContinuation<SubscriptionState>? = null,
     ) {
-        coroutineScope.launch {
-            try {
-                // 활성 구독 찾기
-                val activeSubscription = purchases.find {
-                    it.purchaseState == Purchase.PurchaseState.PURCHASED && it.isAcknowledged
-                }
-
-                if (activeSubscription != null) {
-                    Log.d(TAG, "활성 구독 발견: 토큰=${activeSubscription.purchaseToken.take(8)}...")
-
-                    val googleAccountId = getGoogleAccountId()
-
-                    // 구독 해지 상태 확인 - 자동 갱신 변경 감지
-                    checkSubscriptionCancellation(activeSubscription, googleAccountId)
-
-                    // 이 구독이 다른 앱 계정에 연결되어 있는지 확인
-                    val subscriptionRef = db.collection(COLLECTION_SUBSCRIPTIONS)
-                        .document(activeSubscription.purchaseToken)
-
-                    val subscriptionDoc = subscriptionRef.get().await()
-
-                    if (subscriptionDoc.exists()) {
-                        Log.d(TAG, "구독 정보가 Firestore에 존재함")
-                        val linkedUserId = subscriptionDoc.getString(FIELD_USER_ID)
-                        val currentUserId = UserPref.id
-
-                        if (linkedUserId != null && linkedUserId != currentUserId) {
-                            Log.d(TAG, "이 구독은 다른 앱 계정($linkedUserId)에 연결되어 있음")
-                            // 이미 다른 앱 계정에 연결된 구독
-                            handleSubscriptionLinkedToOtherAccount(linkedUserId)
-                            return@launch
-                        } else {
-                            Log.d(TAG, "구독이 현재 계정에 올바르게 연결되어 있음")
-                        }
-                    } else {
-                        Log.d(TAG, "구독 정보가 Firestore에 존재하지 않음, 새로 생성 예정")
-                    }
-
-                    // 구독 처리 진행
-                    processSubscription(activeSubscription, googleAccountId, currentTime)
-                } else {
-                    Log.d(TAG, "활성 구독 찾을 수 없음")
-                    handleNoActiveSubscription()
-                }
-            } catch (e: Exception) {
-                Log.e(TAG, "구독 확인 중 오류 발생", e)
-                checkFirestoreSubscriptionStatus()
+        try {
+            // 활성 구독 찾기
+            val activeSubscription = purchases.find {
+                it.purchaseState == Purchase.PurchaseState.PURCHASED && it.isAcknowledged
             }
+
+            if (activeSubscription != null) {
+                Log.d(TAG, "활성 구독 발견: 토큰=${activeSubscription.purchaseToken.take(8)}...")
+
+                val googleAccountId = getGoogleAccountId()
+
+                // 구독 해지 상태 확인 - 자동 갱신 변경 감지
+                checkSubscriptionCancellation(activeSubscription)
+
+                // 이 구독이 다른 앱 계정에 연결되어 있는지 확인
+                val subscriptionRef = db.collection(COLLECTION_SUBSCRIPTIONS)
+                    .document(activeSubscription.purchaseToken)
+
+                val subscriptionDoc = subscriptionRef.get().await()
+
+                if (subscriptionDoc.exists()) {
+                    Log.d(TAG, "구독 정보가 Firestore에 존재함")
+                    val linkedUserId = subscriptionDoc.getString(FIELD_USER_ID)
+                    val currentUserId = UserPref.id
+
+                    if (linkedUserId != null && linkedUserId != currentUserId) {
+                        Log.d(TAG, "이 구독은 다른 앱 계정($linkedUserId)에 연결되어 있음")
+                        // 이미 다른 앱 계정에 연결된 구독
+                        handleSubscriptionLinkedToOtherAccount(linkedUserId, cont)
+                        return
+                    } else {
+                        Log.d(TAG, "구독이 현재 계정에 올바르게 연결되어 있음")
+                    }
+                } else {
+                    Log.d(TAG, "구독 정보가 Firestore에 존재하지 않음, 새로 생성 예정")
+                }
+
+                // 구독 처리 진행
+                processSubscription(activeSubscription, googleAccountId, currentTime, cont)
+            } else {
+                Log.d(TAG, "활성 구독 찾을 수 없음")
+                handleNoActiveSubscription(cont)
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "구독 확인 중 오류 발생", e)
+            checkFirestoreSubscriptionStatus(cont)
         }
     }
 
@@ -343,7 +393,7 @@ class SubscriptionManager @Inject constructor(
      * 구독 해지 상태 확인 및 처리
      * 사용자가 구독을 해지했을 때 이력 추가 및 상태 업데이트
      */
-    private suspend fun checkSubscriptionCancellation(purchase: Purchase, googleAccountId: String) {
+    private suspend fun checkSubscriptionCancellation(purchase: Purchase) {
         val userId = UserPref.id
         if (userId.isEmpty()) return
 
@@ -389,24 +439,24 @@ class SubscriptionManager @Inject constructor(
     }
 
     /**
-     * 다른 계정에 연결된 구독 처리
+     * 다른 계정에 연결된 구독 처리 ( V )
      *
      * 이 메서드는 현재 Google 계정의 구독이 다른 앱 계정에 연결된 경우를 처리합니다.
      * 1. 로컬 구독 상태를 비활성화
      * 2. 구독 상태 Flow 업데이트 (UI에서 특별한 메시지 표시용)
      */
-    private fun handleSubscriptionLinkedToOtherAccount(linkedUserId: String) {
+    private fun handleSubscriptionLinkedToOtherAccount(linkedUserId: String, cont: CancellableContinuation<SubscriptionState>? = null) {
         Log.d(TAG, "이 Google 계정의 구독은 다른 앱 계정($linkedUserId)에 연결되어 있습니다")
 
         // 현재 사용자의 구독 상태를 비활성화
         updateLocalSubscription(false, null, 0)
 
         // 구독 상태 업데이트 - 다른 계정에 연결됨 표시
-        _subscriptionState.value = SubscriptionState(
+        val subscriptionState = SubscriptionState(
             isActive = false,
             isLinkedToOtherAccount = true,
             linkedAccountId = linkedUserId
-        )
+        ).also { _subscriptionState.value = it }
 
         // 마스킹된 계정 ID 생성 (처음 3자리 + "*****" + 마지막 2자리)
         val maskedId = if (linkedUserId.length > 5) {
@@ -417,19 +467,23 @@ class SubscriptionManager @Inject constructor(
 
         Log.d(TAG, "사용자 알림: 이 Google 계정의 구독은 계정 $maskedId 에 연결되어 있습니다. " +
                 "현재 계정으로 혜택을 받으려면 Play 스토어에서 기존 구독을 해지하고 새로 구독해주세요.")
+
+        cont?.resume(subscriptionState)
     }
 
     /**
-     * 구독 처리
+     * 구독 처리 ( V )
      */
     private suspend fun processSubscription(
         purchase: Purchase,
         googleAccountId: String,
-        currentTime: Long
+        currentTime: Long,
+        cont: CancellableContinuation<SubscriptionState>? = null
     ) {
         // 테스트 환경에서 자동 갱신 처리
         if (purchase.isAutoRenewing && BuildConfig.DEBUG) {
             handleTestModeAutoRenewing(purchase, googleAccountId)
+            cont?.resume(getDefaultSubscriptionState())
             return
         }
 
@@ -438,7 +492,7 @@ class SubscriptionManager @Inject constructor(
 
         // 만료 여부 확인
         if (expiryTime <= currentTime) {
-            handleExpiredSubscription(purchase, currentTime)
+            handleExpiredSubscription(purchase, cont)
             return
         }
 
@@ -455,19 +509,25 @@ class SubscriptionManager @Inject constructor(
                 previousExpiryTime > 0 && expiryTime > previousExpiryTime
 
         when {
-            isRenewal -> handleSubscriptionRenewal(purchase, googleAccountId, previousExpiryTime, expiryTime)
+            isRenewal -> {
+                handleSubscriptionRenewal(purchase, googleAccountId, previousExpiryTime, expiryTime)
+                cont?.resume(getDefaultSubscriptionState())
+            }
             isSameToken && isAlreadyActive -> {
                 updateLocalSubscription(true, purchase, expiryTime)
-                updateSubscriptionStateWithCancelInfo(true, purchase, expiryTime)
+                updateSubscriptionStateWithCancelInfo(true, purchase, expiryTime, cont)
             }
-            else -> handleNewSubscription(purchase, googleAccountId, expiryTime)
+            else -> {
+                handleNewSubscription(purchase, googleAccountId, expiryTime)
+                cont?.resume(getDefaultSubscriptionState())
+            }
         }
     }
 
     /**
      * 테스트 모드 자동 갱신 처리
      */
-    private fun handleTestModeAutoRenewing(purchase: Purchase, googleAccountId: String) {
+    private suspend fun handleTestModeAutoRenewing(purchase: Purchase, googleAccountId: String) {
         // 테스트 모드에서는 현재 시간 + 5분으로 만료 시간 설정
         val newExpiryTime = System.currentTimeMillis() + TEST_SUBSCRIPTION_EXTENSION_MS
 
@@ -478,48 +538,46 @@ class SubscriptionManager @Inject constructor(
         updateSubscriptionStateWithCancelInfo(true, purchase, newExpiryTime)
 
         // Firestore 업데이트
-        coroutineScope.launch {
-            try {
-                updateSubscriptionInFirestore(purchase, googleAccountId, newExpiryTime)
-            } catch (e: Exception) {
-                Log.e(TAG, "테스트 모드 구독 정보 저장 실패", e)
-            }
+        try {
+            updateSubscriptionInFirestore(purchase, googleAccountId, newExpiryTime)
+        } catch (e: Exception) {
+            Log.e(TAG, "테스트 모드 구독 정보 저장 실패", e)
         }
     }
 
     /**
-     * 만료된 구독 처리
+     * 만료된 구독 처리 ( V )
      */
-    private fun handleExpiredSubscription(purchase: Purchase, currentTime: Long) {
+    private suspend fun handleExpiredSubscription(purchase: Purchase, cont: CancellableContinuation<SubscriptionState>? = null) {
         if (SubscriptionPref.isSubscriptionActive) {
             // 로컬 상태 업데이트
             updateLocalSubscription(false, null, 0)
 
             // 구독 상태 업데이트
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            val subscriptionState = SubscriptionState(isActive = false).also { _subscriptionState.value = it }
 
             // Firestore 업데이트
             val userId = UserPref.id
             if (userId.isNotEmpty()) {
-                coroutineScope.launch {
-                    try {
-                        // 만료 이력 추가
-                        addSubscriptionHistory(userId, ACTION_EXPIRED, purchase)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "구독 만료 이력 추가 실패", e)
-                    }
+                try {
+                    // 만료 이력 추가
+                    addSubscriptionHistory(userId, ACTION_EXPIRED, purchase)
+                } catch (e: Exception) {
+                    Log.e(TAG, "구독 만료 이력 추가 실패", e)
                 }
             }
+            cont?.resume(subscriptionState)
         } else {
             // 이미 비활성 상태
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            val subscriptionState = SubscriptionState(isActive = false).also { _subscriptionState.value = it }
+            cont?.resume(subscriptionState)
         }
     }
 
     /**
      * 구독 갱신 처리
      */
-    private fun handleSubscriptionRenewal(
+    private suspend fun handleSubscriptionRenewal(
         purchase: Purchase,
         googleAccountId: String,
         previousExpiryTime: Long,
@@ -534,22 +592,20 @@ class SubscriptionManager @Inject constructor(
         // Firestore 업데이트
         val userId = UserPref.id
         if (userId.isNotEmpty()) {
-            coroutineScope.launch {
-                try {
-                    // 구독 정보 업데이트
-                    updateSubscriptionInFirestore(purchase, googleAccountId, newExpiryTime)
+            try {
+                // 구독 정보 업데이트
+                updateSubscriptionInFirestore(purchase, googleAccountId, newExpiryTime)
 
-                    // 별도로 갱신 이력 추가 (구매 이력과 다른 타입)
-                    addSubscriptionHistory(
-                        userId,
-                        ACTION_RENEWED,
-                        purchase,
-                        previousExpiryTime,
-                        newExpiryTime
-                    )
-                } catch (e: Exception) {
-                    Log.e(TAG, "구독 갱신 정보 저장 실패", e)
-                }
+                // 별도로 갱신 이력 추가 (구매 이력과 다른 타입)
+                addSubscriptionHistory(
+                    userId,
+                    ACTION_RENEWED,
+                    purchase,
+                    previousExpiryTime,
+                    newExpiryTime
+                )
+            } catch (e: Exception) {
+                Log.e(TAG, "구독 갱신 정보 저장 실패", e)
             }
         }
     }
@@ -557,7 +613,7 @@ class SubscriptionManager @Inject constructor(
     /**
      * 새 구독 처리
      */
-    private fun handleNewSubscription(
+    private suspend fun handleNewSubscription(
         purchase: Purchase,
         googleAccountId: String,
         expiryTime: Long
@@ -571,86 +627,87 @@ class SubscriptionManager @Inject constructor(
         // Firestore 업데이트
         val userId = UserPref.id
         if (userId.isNotEmpty()) {
-            coroutineScope.launch {
-                try {
-                    // 구독 정보 업데이트 - 이력 추가는 이 메서드 내에서 처리됨
-                    updateSubscriptionInFirestore(purchase, googleAccountId, expiryTime)
-                } catch (e: Exception) {
-                    Log.e(TAG, "새 구독 정보 저장 실패", e)
-                }
+            try {
+                // 구독 정보 업데이트 - 이력 추가는 이 메서드 내에서 처리됨
+                updateSubscriptionInFirestore(purchase, googleAccountId, expiryTime)
+            } catch (e: Exception) {
+                Log.e(TAG, "새 구독 정보 저장 실패", e)
             }
         }
     }
 
     /**
-     * 활성 구독이 없는 경우 처리
+     * 활성 구독이 없는 경우 처리 ( V )
      */
-    private fun handleNoActiveSubscription() {
+    private suspend fun handleNoActiveSubscription(cont: CancellableContinuation<SubscriptionState>? = null) {
         if (SubscriptionPref.isSubscriptionActive) {
             // 로컬 상태 업데이트
             updateLocalSubscription(false, null, 0)
 
             // 구독 상태 업데이트
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            val subscriptionState = SubscriptionState(isActive = false).also { _subscriptionState.value = it }
 
             // Firestore 업데이트
             val userId = UserPref.id
             if (userId.isNotEmpty()) {
-                coroutineScope.launch {
-                    try {
-                        // 만료 이력 추가 (구매 정보 없음)
-                        addSubscriptionHistory(userId, ACTION_EXPIRED)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "구독 만료 이력 추가 실패", e)
-                    }
+                try {
+                    // 만료 이력 추가 (구매 정보 없음)
+                    addSubscriptionHistory(userId, ACTION_EXPIRED)
+                } catch (e: Exception) {
+                    Log.e(TAG, "구독 만료 이력 추가 실패", e)
+                    cont?.resumeWithException(e)
+                    return
                 }
             }
+            cont?.resume(subscriptionState)
         } else {
             // 이미 비활성 상태
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            val subscriptionState = SubscriptionState(isActive = false).also { _subscriptionState.value = it }
+            cont?.resume(subscriptionState)
         }
     }
 
     /**
      * 오프라인 모드에서 구독 상태 확인
      */
-    private fun handleOfflineSubscriptionCheck(currentTime: Long) {
+    private fun handleOfflineSubscriptionCheck(currentTime: Long): SubscriptionState {
         val isActive = SubscriptionPref.isSubscriptionActive
         val expiryTime = SubscriptionPref.subscriptionExpiryTime
         val isCanceled = SubscriptionPref.isSubscriptionCancelled
 
-        if (isActive && expiryTime > currentTime) {
+        return if (isActive && expiryTime > currentTime) {
             // 로컬 상태가 유효함
-            _subscriptionState.value = SubscriptionState(
+            SubscriptionState(
                 isActive = true,
                 isCanceled = isCanceled,
                 expiryDate = expiryTime
-            )
+            ).also { _subscriptionState.value = it }
         } else if (isActive) {
             // 로컬 만료 시간이 지남
             updateLocalSubscription(false, null, 0)
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            SubscriptionState(isActive = false).also { _subscriptionState.value = it }
         } else {
             // 이미 비활성 상태
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            SubscriptionState(isActive = false).also { _subscriptionState.value = it }
         }
     }
 
     /**
-     * Firestore에서 구독 상태 확인
+     * Firestore에서 구독 상태 확인 ( V )
      */
-    private fun checkFirestoreSubscriptionStatus() {
+    private fun checkFirestoreSubscriptionStatus(cont: CancellableContinuation<SubscriptionState>? = null) {
         val userId = UserPref.id
         if (userId.isEmpty()) {
             updateLocalSubscription(false, null, 0)
-            _subscriptionState.value = SubscriptionState(isActive = false)
+            val subscriptionState = SubscriptionState(isActive = false).also { _subscriptionState.value = it }
+            cont?.resume(subscriptionState)
             return
         }
 
         db.collection(COLLECTION_USERS).document(userId)
             .get()
             .addOnSuccessListener { document ->
-                if (document.exists()) {
+                val subscriptionState = if (document.exists()) {
                     val isActive = document.getBoolean(FIELD_IS_SUBSCRIPTION_ACTIVE) ?: false
                     val expiryTimestamp = document.getTimestamp(FIELD_SUBSCRIPTION_EXPIRED_AT)
                     val purchaseToken = document.getString(FIELD_PURCHASE_TOKEN)
@@ -670,47 +727,53 @@ class SubscriptionManager @Inject constructor(
                                 this.lastSubscriptionCheckTime = System.currentTimeMillis()
                             }
 
-                            _subscriptionState.value = SubscriptionState(
+                            SubscriptionState(
                                 isActive = true,
                                 isCanceled = !isAutoRenewing,
                                 expiryDate = expiryTime
-                            )
+                            ).also { _subscriptionState.value = it }
                         } else {
                             // 구독이 만료됨
                             updateLocalSubscription(false, null, 0)
-                            _subscriptionState.value = SubscriptionState(isActive = false)
+                            SubscriptionState(isActive = false).also { _subscriptionState.value = it }
                         }
                     } else {
                         // 구독 정보가 없거나 비활성
                         updateLocalSubscription(false, null, 0)
-                        _subscriptionState.value = SubscriptionState(isActive = false)
+                        SubscriptionState(isActive = false).also { _subscriptionState.value = it }
                     }
                 } else {
                     // 사용자 문서가 없음
                     updateLocalSubscription(false, null, 0)
-                    _subscriptionState.value = SubscriptionState(isActive = false)
+                    SubscriptionState(isActive = false).also { _subscriptionState.value = it }
                 }
+                cont?.resume(subscriptionState)
             }
             .addOnFailureListener { e ->
                 Log.e(TAG, "Firestore 구독 상태 확인 실패", e)
 
-                // 현재 로컬 상태 유지
-                val isActive = SubscriptionPref.isSubscriptionActive
-                val expiryTime = SubscriptionPref.subscriptionExpiryTime
-                val isCanceled = SubscriptionPref.isSubscriptionCancelled
-                val currentTime = System.currentTimeMillis()
-
-                if (isActive && expiryTime > currentTime) {
-                    _subscriptionState.value = SubscriptionState(
-                        isActive = true,
-                        isCanceled = isCanceled,
-                        expiryDate = expiryTime
-                    )
-                } else {
-                    updateLocalSubscription(false, null, 0)
-                    _subscriptionState.value = SubscriptionState(isActive = false)
-                }
+                val subscriptionState = getDefaultSubscriptionState().also { _subscriptionState.value = it }
+                cont?.resume(subscriptionState)
             }
+    }
+
+    private fun getDefaultSubscriptionState(): SubscriptionState {
+        // 현재 로컬 상태 유지
+        val isActive = SubscriptionPref.isSubscriptionActive
+        val expiryTime = SubscriptionPref.subscriptionExpiryTime
+        val isCanceled = SubscriptionPref.isSubscriptionCancelled
+        val currentTime = System.currentTimeMillis()
+
+        return if (isActive && expiryTime > currentTime) {
+            SubscriptionState(
+                isActive = true,
+                isCanceled = isCanceled,
+                expiryDate = expiryTime
+            )
+        } else {
+            updateLocalSubscription(false, null, 0)
+            SubscriptionState(isActive = false)
+        }
     }
 
     /**
@@ -719,22 +782,22 @@ class SubscriptionManager @Inject constructor(
      * 구매된 구독을 처리하고 적절한 후속 조치를 취합니다.
      * @param purchase 처리할 구독 구매 정보
      */
-    private fun handlePurchase(purchase: Purchase) {
+    private suspend fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             // 만료 시간 계산
             val expiryTime = calculateExpiryTime(purchase.purchaseTime)
 
             // 구매 확인 처리
             if (!purchase.isAcknowledged) {
-                acknowledgePurchase(purchase, expiryTime)
+                try {
+                    acknowledgePurchase(purchase, expiryTime)
+                } catch (ignored: Exception) {}
             } else {
-                coroutineScope.launch {
-                    try {
-                        val googleAccountId = getGoogleAccountId()
-                        processSubscription(purchase, googleAccountId, System.currentTimeMillis())
-                    } catch (e: Exception) {
-                        Log.e(TAG, "구독 처리 중 오류 발생", e)
-                    }
+                try {
+                    val googleAccountId = getGoogleAccountId()
+                    processSubscription(purchase, googleAccountId, System.currentTimeMillis())
+                } catch (e: Exception) {
+                    Log.e(TAG, "구독 처리 중 오류 발생", e)
                 }
             }
         }
@@ -743,47 +806,55 @@ class SubscriptionManager @Inject constructor(
     /**
      * 구매 확인 처리
      */
-    private fun acknowledgePurchase(purchase: Purchase, expiryTime: Long) {
+    private suspend fun acknowledgePurchase(purchase: Purchase, expiryTime: Long) {
         Log.d(TAG, "구매 확인 시작: 토큰=${purchase.purchaseToken.take(8)}, 만료 시간=${dateFormat.format(Date(expiryTime))}")
 
-        billingManager.acknowledgePurchase(purchase.purchaseToken) { billingResult ->
-            if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                Log.d(TAG, "구매 확인 성공 (acknowledgePurchase)")
+        suspendCancellableCoroutine { cont ->
+            billingManager.acknowledgePurchase(purchase.purchaseToken) { billingResult ->
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d(TAG, "구매 확인 성공 (acknowledgePurchase)")
 
-                coroutineScope.launch {
-                    try {
-                        // 사용자 ID와 Google 계정 ID 로그
-                        val userId = UserPref.id
-                        val googleAccountId = getGoogleAccountId()
-                        Log.d(TAG, "구독 저장 정보: 사용자 ID=$userId, Google 계정=${googleAccountId.take(8)}...")
+                    CoroutineScope(cont.context).launch {
+                        try {
+                            // 사용자 ID와 Google 계정 ID 로그
+                            val userId = UserPref.id
+                            val googleAccountId = getGoogleAccountId()
+                            Log.d(TAG, "구독 저장 정보: 사용자 ID=$userId, Google 계정=${googleAccountId.take(8)}...")
 
-                        if (userId.isEmpty()) {
-                            Log.e(TAG, "사용자 ID가 없음, Firestore 업데이트 불가")
-                            return@launch
+                            if (userId.isEmpty()) {
+                                Log.e(TAG, "사용자 ID가 없음, Firestore 업데이트 불가")
+                                return@launch
+                            }
+
+                            // 로컬 업데이트
+                            updateLocalSubscription(true, purchase, expiryTime)
+                            Log.d(TAG, "로컬 구독 상태 업데이트 완료")
+
+                            // 구독 상태 업데이트
+                            val subscriptionState =
+                                updateSubscriptionStateWithCancelInfo(true, purchase, expiryTime)
+                            Log.d(TAG, "구독 상태 Flow 업데이트 완료")
+
+                            // Firestore 업데이트
+                            Log.d(TAG, "Firestore 업데이트 시작")
+                            updateSubscriptionInFirestore(purchase, googleAccountId, expiryTime)
+                            Log.d(TAG, "Firestore 업데이트 종료")
+
+                            // 구독 완료 콜백 호출
+                            Log.d(TAG, "구독 완료 콜백 호출")
+                            purchaseCallback?.onSubscriptionPurchaseCompleted(purchase)
+
+                            cont.resume(subscriptionState)
+                        } catch (e: Exception) {
+                            Log.e(TAG, "구독 확인 후 처리 중 오류 발생", e)
+                            cont.resumeWithException(e)
                         }
-
-                        // 로컬 업데이트
-                        updateLocalSubscription(true, purchase, expiryTime)
-                        Log.d(TAG, "로컬 구독 상태 업데이트 완료")
-
-                        // 구독 상태 업데이트
-                        updateSubscriptionStateWithCancelInfo(true, purchase, expiryTime)
-                        Log.d(TAG, "구독 상태 Flow 업데이트 완료")
-
-                        // Firestore 업데이트
-                        Log.d(TAG, "Firestore 업데이트 시작")
-                        updateSubscriptionInFirestore(purchase, googleAccountId, expiryTime)
-                        Log.d(TAG, "Firestore 업데이트 종료")
-
-                        // 구독 완료 콜백 호출
-                        Log.d(TAG, "구독 완료 콜백 호출")
-                        purchaseCallback?.onSubscriptionPurchaseCompleted(purchase)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "구독 확인 후 처리 중 오류 발생", e)
                     }
+                } else {
+                    val errorMessage = "구매 확인 실패: 코드=${billingResult.responseCode}, 메시지=${billingResult.debugMessage}"
+                    Log.e(TAG, errorMessage)
+                    cont.resumeWithException(RuntimeException(errorMessage))
                 }
-            } else {
-                Log.e(TAG, "구매 확인 실패: 코드=${billingResult.responseCode}, 메시지=${billingResult.debugMessage}")
             }
         }
     }
@@ -849,23 +920,27 @@ class SubscriptionManager @Inject constructor(
     }
 
     /**
-     * 구독 상태 업데이트 메서드에서 해지 상태 반영
+     * 구독 상태 업데이트 메서드에서 해지 상태 반영 ( V )
      */
     private fun updateSubscriptionStateWithCancelInfo(
         isActive: Boolean,
         purchase: Purchase?,
-        expiryTime: Long
-    ) {
+        expiryTime: Long,
+        cont: CancellableContinuation<SubscriptionState>? = null,
+    ): SubscriptionState {
         // 해지 여부는 구독이 활성 상태이면서 자동 갱신이 꺼진 경우
         val isCanceled = isActive && purchase != null && !purchase.isAutoRenewing
 
-        _subscriptionState.value = SubscriptionState(
+        val subscriptionState = SubscriptionState(
             isActive = isActive,
             isLinkedToOtherAccount = false,
             linkedAccountId = "",
             isCanceled = isCanceled,
             expiryDate = if (isActive) expiryTime else 0
-        )
+        ).also { _subscriptionState.value = it }
+        cont?.resume(subscriptionState)
+
+        return subscriptionState
     }
 
     /**
