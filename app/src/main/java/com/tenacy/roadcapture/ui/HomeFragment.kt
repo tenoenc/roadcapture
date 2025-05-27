@@ -16,7 +16,6 @@ import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
-import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.consumeOnce
@@ -87,6 +86,23 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupRecyclerView() {
+
+    }
+
+    private fun bindAdapter(isSubscriptionActive: Boolean) {
+        // 로드 상태 어댑터 생성
+        val loadStateAdapter = LoadStateAdapter()
+
+        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
+        val finalAdapter = if (isSubscriptionActive) {
+            albumAdapter.withLoadStateFooter(loadStateAdapter)
+        } else {
+            adAdapter.withLoadStateAdapter(loadStateAdapter)
+        }
+
+        // 최종 어댑터를 RecyclerView에 설정
+        binding.rvHomeAlbums.adapter = finalAdapter
+
         binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
         binding.rvHomeAlbums.setHasFixedSize(true)
 
@@ -135,21 +151,6 @@ class HomeFragment: BaseFragment() {
         }
     }
 
-    private fun bindAdapter(isSubscriptionActive: Boolean) {
-        // 로드 상태 어댑터 생성
-        val loadStateAdapter = LoadStateAdapter()
-
-        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
-        val finalAdapter = if (isSubscriptionActive) {
-            albumAdapter.withLoadStateFooter(loadStateAdapter)
-        } else {
-            adAdapter.withLoadStateAdapter(loadStateAdapter)
-        }
-
-        // 최종 어댑터를 RecyclerView에 설정
-        binding.rvHomeAlbums.adapter = finalAdapter
-    }
-
     private fun setupShimmer() {
         with(binding.shimmerLayout) {
             val shimmer = Shimmer.ColorHighlightBuilder()
@@ -192,15 +193,18 @@ class HomeFragment: BaseFragment() {
     private fun observeSubscriptionState() {
         repeatOnLifecycle {
             subscriptionManager.subscriptionState.collect { state ->
-                // 구독 상태에 따라 UI 업데이트
-                bindAdapter(state.isActive)
-
                 // 다른 계정에 연결된 구독 상태 처리
                 if (state.isLinkedToOtherAccount) {
 //                        showLinkedAccountMessage(state.linkedAccountId)
                 } else {
 //                        hideLinkedAccountMessage()
                 }
+            }
+        }
+        repeatOnLifecycle {
+            vm.isSubscription.collect { active ->
+                // 구독 상태에 따라 UI 업데이트
+                bindAdapter(active)
             }
         }
     }

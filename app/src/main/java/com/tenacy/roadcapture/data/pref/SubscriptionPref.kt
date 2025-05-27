@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.data.pref
 
 import com.chibatching.kotpref.KotprefModel
+import com.tenacy.roadcapture.util.Constants
 
 object SubscriptionPref : KotprefModel() {
     private var _isSubscriptionActive by booleanPref(false)
@@ -8,7 +9,7 @@ object SubscriptionPref : KotprefModel() {
         set(value) {
             _isSubscriptionActive = value
         }
-        get() = _isSubscriptionActive && System.currentTimeMillis() < subscriptionExpiryTime
+        get() = _isSubscriptionActive && System.currentTimeMillis() < getGracePeriodExpiryTime()
     var subscriptionType by stringPref("")
     var subscriptionExpiryTime by longPref(0L)
     var isSubscriptionCancelled by booleanPref(false)
@@ -16,9 +17,21 @@ object SubscriptionPref : KotprefModel() {
     var subscriptionPurchaseTime by longPref(0L)
     var lastSubscriptionCheckTime by longPref(0L)
 
+    // 유예 기간 포함 만료 시간 (24시간 추가)
+    private fun getGracePeriodExpiryTime(): Long {
+        if (subscriptionExpiryTime == 0L) return 0L
+        return subscriptionExpiryTime + Constants.MILLIS_PER_DAY // 24시간 유예
+    }
+
     // 구독이 취소되었지만 아직 유효한지 확인
     fun isCancelledButStillValid(): Boolean {
         return _isSubscriptionActive && isSubscriptionCancelled
+    }
+
+    // 만료까지 남은 시간 (밀리초)
+    fun timeUntilExpiry(): Long {
+        if (!_isSubscriptionActive) return 0L
+        return subscriptionExpiryTime - System.currentTimeMillis()
     }
 
     // 만료까지 남은 일 수 계산

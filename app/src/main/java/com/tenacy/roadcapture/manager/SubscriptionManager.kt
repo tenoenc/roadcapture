@@ -9,6 +9,7 @@ import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
+import com.chibatching.kotpref.Kotpref
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.BuildConfig
@@ -19,10 +20,7 @@ import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toFirebaseTimestamp
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.tasks.await
 import java.security.MessageDigest
 import java.text.SimpleDateFormat
@@ -83,8 +81,9 @@ class SubscriptionManager @Inject constructor(
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     // 구독 상태 Flow
-    private val _subscriptionState = MutableStateFlow(SubscriptionState())
-    val subscriptionState: StateFlow<SubscriptionState> = _subscriptionState.asStateFlow()
+    private val _subscriptionState: MutableStateFlow<SubscriptionState>
+    val subscriptionState: StateFlow<SubscriptionState>
+    val isSubscriptionActive: Flow<Boolean>
 
     // 구독 상품 설정
     private val subscriptionProductIds = listOf(SUBSCRIPTION_PRODUCT_ID)
@@ -107,6 +106,19 @@ class SubscriptionManager @Inject constructor(
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
     init {
+        Kotpref.init(context)
+        _subscriptionState = MutableStateFlow(
+            SubscriptionState(
+                isActive = SubscriptionPref.isSubscriptionActive,
+                isCanceled = SubscriptionPref.isSubscriptionCancelled,
+                expiryDate = SubscriptionPref.subscriptionExpiryTime,
+            )
+        )
+        subscriptionState = _subscriptionState.asStateFlow()
+        isSubscriptionActive = _subscriptionState
+            .map { it.isActive }
+            .distinctUntilChanged()
+
         setupPurchaseListener()
     }
 
@@ -201,12 +213,14 @@ class SubscriptionManager @Inject constructor(
                     }
                 }
             }
+
             BillingManager.PurchaseEventType.ERROR -> {
                 purchaseCallback?.onSubscriptionPurchaseFailed(
                     event.billingResult.responseCode,
                     event.billingResult.debugMessage
                 )
             }
+
             BillingManager.PurchaseEventType.CANCELED -> {
                 Log.d(TAG, "구독이 취소되었습니다")
             }
@@ -420,9 +434,11 @@ class SubscriptionManager @Inject constructor(
                         addSubscriptionHistory(userId, ACTION_CANCELED, purchase)
 
                         // 구독 문서 업데이트
-                        subscriptionRef.update(mapOf(
-                            FIELD_AUTO_RENEWING to false
-                        )).await()
+                        subscriptionRef.update(
+                            mapOf(
+                                FIELD_AUTO_RENEWING to false
+                            )
+                        ).await()
 
                         // 사용자 문서 업데이트
                         db.collection(COLLECTION_USERS).document(userId)
@@ -445,7 +461,10 @@ class SubscriptionManager @Inject constructor(
      * 1. 로컬 구독 상태를 비활성화
      * 2. 구독 상태 Flow 업데이트 (UI에서 특별한 메시지 표시용)
      */
-    private fun handleSubscriptionLinkedToOtherAccount(linkedUserId: String, cont: CancellableContinuation<SubscriptionState>? = null) {
+    private fun handleSubscriptionLinkedToOtherAccount(
+        linkedUserId: String,
+        cont: CancellableContinuation<SubscriptionState>? = null
+    ) {
         Log.d(TAG, "이 Google 계정의 구독은 다른 앱 계정($linkedUserId)에 연결되어 있습니다")
 
         // 현재 사용자의 구독 상태를 비활성화
@@ -465,8 +484,10 @@ class SubscriptionManager @Inject constructor(
             "다른 계정"
         }
 
-        Log.d(TAG, "사용자 알림: 이 Google 계정의 구독은 계정 $maskedId 에 연결되어 있습니다. " +
-                "현재 계정으로 혜택을 받으려면 Play 스토어에서 기존 구독을 해지하고 새로 구독해주세요.")
+        Log.d(
+            TAG, "사용자 알림: 이 Google 계정의 구독은 계정 $maskedId 에 연결되어 있습니다. " +
+                    "현재 계정으로 혜택을 받으려면 Play 스토어에서 기존 구독을 해지하고 새로 구독해주세요."
+        )
 
         cont?.resume(subscriptionState)
     }
@@ -513,10 +534,12 @@ class SubscriptionManager @Inject constructor(
                 handleSubscriptionRenewal(purchase, googleAccountId, previousExpiryTime, expiryTime)
                 cont?.resume(getDefaultSubscriptionState())
             }
+
             isSameToken && isAlreadyActive -> {
                 updateLocalSubscription(true, purchase, expiryTime)
                 updateSubscriptionStateWithCancelInfo(true, purchase, expiryTime, cont)
             }
+
             else -> {
                 handleNewSubscription(purchase, googleAccountId, expiryTime)
                 cont?.resume(getDefaultSubscriptionState())
@@ -548,7 +571,10 @@ class SubscriptionManager @Inject constructor(
     /**
      * 만료된 구독 처리 ( V )
      */
-    private suspend fun handleExpiredSubscription(purchase: Purchase, cont: CancellableContinuation<SubscriptionState>? = null) {
+    private suspend fun handleExpiredSubscription(
+        purchase: Purchase,
+        cont: CancellableContinuation<SubscriptionState>? = null
+    ) {
         if (SubscriptionPref.isSubscriptionActive) {
             // 로컬 상태 업데이트
             updateLocalSubscription(false, null, 0)
@@ -791,7 +817,8 @@ class SubscriptionManager @Inject constructor(
             if (!purchase.isAcknowledged) {
                 try {
                     acknowledgePurchase(purchase, expiryTime)
-                } catch (ignored: Exception) {}
+                } catch (ignored: Exception) {
+                }
             } else {
                 try {
                     val googleAccountId = getGoogleAccountId()
@@ -990,37 +1017,45 @@ class SubscriptionManager @Inject constructor(
 
                 // 사용자 문서 업데이트
                 val userRef = db.collection(COLLECTION_USERS).document(userId)
-                transaction.update(userRef, mapOf(
-                    FIELD_IS_SUBSCRIPTION_ACTIVE to true,
-                    FIELD_SUBSCRIPTION_AUTO_RENEWING to purchase.isAutoRenewing,
-                    FIELD_SUBSCRIPTION_EXPIRED_AT to expiryTime.toFirebaseTimestamp(),
-                    FIELD_PURCHASE_TOKEN to purchase.purchaseToken
-                ))
+                transaction.update(
+                    userRef, mapOf(
+                        FIELD_IS_SUBSCRIPTION_ACTIVE to true,
+                        FIELD_SUBSCRIPTION_AUTO_RENEWING to purchase.isAutoRenewing,
+                        FIELD_SUBSCRIPTION_EXPIRED_AT to expiryTime.toFirebaseTimestamp(),
+                        FIELD_PURCHASE_TOKEN to purchase.purchaseToken
+                    )
+                )
 
                 // 기존 사용자 처리 (필요한 경우)
                 if (existingUserRef != null) {
                     Log.d(TAG, "다른 사용자에게 연결된 구독을 현재 사용자로 이전")
-                    transaction.update(existingUserRef, mapOf(
-                        FIELD_IS_SUBSCRIPTION_ACTIVE to false,
-                        FIELD_PURCHASE_TOKEN to ""
-                    ))
+                    transaction.update(
+                        existingUserRef, mapOf(
+                            FIELD_IS_SUBSCRIPTION_ACTIVE to false,
+                            FIELD_PURCHASE_TOKEN to ""
+                        )
+                    )
                 }
 
                 // 구독 문서 업데이트 또는 생성
                 if (subscriptionDoc.exists()) {
-                    transaction.update(subscriptionRef, mapOf(
-                        FIELD_USER_ID to userId,
-                        FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
-                        FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
-                        FIELD_AUTO_RENEWING to purchase.isAutoRenewing
-                    ))
+                    transaction.update(
+                        subscriptionRef, mapOf(
+                            FIELD_USER_ID to userId,
+                            FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
+                            FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
+                            FIELD_AUTO_RENEWING to purchase.isAutoRenewing
+                        )
+                    )
                 } else {
-                    transaction.set(subscriptionRef, mapOf(
-                        FIELD_USER_ID to userId,
-                        FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
-                        FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
-                        FIELD_AUTO_RENEWING to purchase.isAutoRenewing
-                    ))
+                    transaction.set(
+                        subscriptionRef, mapOf(
+                            FIELD_USER_ID to userId,
+                            FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
+                            FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
+                            FIELD_AUTO_RENEWING to purchase.isAutoRenewing
+                        )
+                    )
                 }
             }.await()
 
@@ -1071,10 +1106,12 @@ class SubscriptionManager @Inject constructor(
                 // 기존 사용자의 구독 비활성화
                 db.collection(COLLECTION_USERS)
                     .document(existingUserId)
-                    .update(mapOf(
-                        FIELD_IS_SUBSCRIPTION_ACTIVE to false,
-                        FIELD_PURCHASE_TOKEN to ""
-                    ))
+                    .update(
+                        mapOf(
+                            FIELD_IS_SUBSCRIPTION_ACTIVE to false,
+                            FIELD_PURCHASE_TOKEN to ""
+                        )
+                    )
                     .await()
 
                 Log.d(TAG, "이전 사용자 구독 비활성화 완료")
@@ -1084,31 +1121,37 @@ class SubscriptionManager @Inject constructor(
         // 3. 현재 사용자 문서 업데이트
         db.collection(COLLECTION_USERS)
             .document(userId)
-            .update(mapOf(
-                FIELD_IS_SUBSCRIPTION_ACTIVE to true,
-                FIELD_SUBSCRIPTION_AUTO_RENEWING to purchase.isAutoRenewing,
-                FIELD_SUBSCRIPTION_EXPIRED_AT to expiryTime.toFirebaseTimestamp(),
-                FIELD_PURCHASE_TOKEN to purchase.purchaseToken
-            ))
+            .update(
+                mapOf(
+                    FIELD_IS_SUBSCRIPTION_ACTIVE to true,
+                    FIELD_SUBSCRIPTION_AUTO_RENEWING to purchase.isAutoRenewing,
+                    FIELD_SUBSCRIPTION_EXPIRED_AT to expiryTime.toFirebaseTimestamp(),
+                    FIELD_PURCHASE_TOKEN to purchase.purchaseToken
+                )
+            )
             .await()
 
         Log.d(TAG, "사용자 문서 업데이트 완료")
 
         // 4. 구독 문서 업데이트 또는 생성
         if (subscriptionDoc.exists()) {
-            subscriptionRef.update(mapOf(
-                FIELD_USER_ID to userId,
-                FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
-                FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
-                FIELD_AUTO_RENEWING to purchase.isAutoRenewing
-            )).await()
+            subscriptionRef.update(
+                mapOf(
+                    FIELD_USER_ID to userId,
+                    FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
+                    FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
+                    FIELD_AUTO_RENEWING to purchase.isAutoRenewing
+                )
+            ).await()
         } else {
-            subscriptionRef.set(mapOf(
-                FIELD_USER_ID to userId,
-                FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
-                FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
-                FIELD_AUTO_RENEWING to purchase.isAutoRenewing
-            )).await()
+            subscriptionRef.set(
+                mapOf(
+                    FIELD_USER_ID to userId,
+                    FIELD_GOOGLE_ACCOUNT_ID to googleAccountId,
+                    FIELD_EXPIRY_TIME to expiryTime.toFirebaseTimestamp(),
+                    FIELD_AUTO_RENEWING to purchase.isAutoRenewing
+                )
+            ).await()
         }
 
         Log.d(TAG, "구독 문서 업데이트 완료")
@@ -1166,6 +1209,7 @@ class SubscriptionManager @Inject constructor(
                         purchase.products.firstOrNull()?.let { historyEntry["productId"] = it }
                     }
                 }
+
                 ACTION_RENEWED -> {
                     // 갱신 이력인 경우 만료 시간 정보 추가
                     if (purchase != null) {
@@ -1179,6 +1223,7 @@ class SubscriptionManager @Inject constructor(
                         historyEntry["newExpiryDate"] = newExpiryTime.toFirebaseTimestamp()
                     }
                 }
+
                 ACTION_CANCELED -> {
                     // 해지 이력인 경우 구매 정보와 해지 시간 추가
                     if (purchase != null) {
@@ -1413,7 +1458,10 @@ class SubscriptionManager @Inject constructor(
                             Log.d(TAG, "Firestore 사용자 구독 상태:")
                             Log.d(TAG, "- 활성 상태: $isActiveFirestore")
                             Log.d(TAG, "- 만료 시간: ${expiryTimestamp?.toDate()?.let { dateFormat.format(it) } ?: "없음"}")
-                            Log.d(TAG, "- 토큰: ${if (purchaseTokenFirestore.isNotEmpty()) purchaseTokenFirestore.take(8) + "..." else "없음"}")
+                            Log.d(
+                                TAG,
+                                "- 토큰: ${if (purchaseTokenFirestore.isNotEmpty()) purchaseTokenFirestore.take(8) + "..." else "없음"}"
+                            )
 
                             // 구독 히스토리 확인
                             @Suppress("UNCHECKED_CAST")
@@ -1421,7 +1469,10 @@ class SubscriptionManager @Inject constructor(
                             if (!historyList.isNullOrEmpty()) {
                                 Log.d(TAG, "- 구독 이력: ${historyList.size}개 항목")
                                 historyList.takeLast(3).forEachIndexed { index, entry ->
-                                    Log.d(TAG, "  이력 ${historyList.size - index}: 액션=${entry["action"]}, 시간=${entry["timestamp"]}")
+                                    Log.d(
+                                        TAG,
+                                        "  이력 ${historyList.size - index}: 액션=${entry["action"]}, 시간=${entry["timestamp"]}"
+                                    )
                                 }
                             } else {
                                 Log.d(TAG, "- 구독 이력: 없음")
@@ -1440,7 +1491,9 @@ class SubscriptionManager @Inject constructor(
                                     Log.d(TAG, "Firestore 구독 문서:")
                                     Log.d(TAG, "- 연결된 사용자 ID: $linkedUserId")
                                     Log.d(TAG, "- 연결된 Google ID: ${linkedGoogleId?.take(8)}...")
-                                    Log.d(TAG, "- 만료 시간: ${expiryTime?.toDate()?.let { dateFormat.format(it) } ?: "없음"}")
+                                    Log.d(
+                                        TAG,
+                                        "- 만료 시간: ${expiryTime?.toDate()?.let { dateFormat.format(it) } ?: "없음"}")
 
                                     // 일관성 검사
                                     if (linkedUserId != userId) {
@@ -1460,7 +1513,9 @@ class SubscriptionManager @Inject constructor(
 
                 // 4. Google Play 구독 상태 확인
                 try {
-                    val purchases = queryPurchasesSync(BillingClient.ProductType.SUBS)
+                    val purchases = withContext(Dispatchers.IO) {
+                        queryPurchasesSync(BillingClient.ProductType.SUBS)
+                    }
                     Log.d(TAG, "Google Play 구독:")
                     if (purchases.isNotEmpty()) {
                         purchases.forEach { purchase ->

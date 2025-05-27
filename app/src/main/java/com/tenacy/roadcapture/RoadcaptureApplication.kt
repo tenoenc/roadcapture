@@ -6,10 +6,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import com.chibatching.kotpref.Kotpref
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
@@ -18,10 +15,12 @@ import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.manager.BillingManager
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.NSFWDetector
 import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.util.Constants
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
@@ -65,7 +64,6 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         KakaoSdk.init(this, BuildConfig.KAKAO_CLIENT_ID)
         FacebookSdk.sdkInitialize(this)
         AppEventsLogger.activateApp(this)
-        Kotpref.init(this)
 
         initializeBilling()
         setupSubscriptionCheck()
@@ -82,18 +80,35 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
             .build()
 
     private fun setupSubscriptionCheck() {
-        // 매일 구독 상태 확인
-        val checkRequest = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
-//            1, TimeUnit.DAYS
-            15, TimeUnit.MINUTES
+        // 만료 시점에 정확히 체크
+        val expiryTime = SubscriptionPref.subscriptionExpiryTime
+        val currentTime = System.currentTimeMillis()
+
+        if (expiryTime > currentTime) {
+            val delay = expiryTime - currentTime + Constants.EXPIRY_CHECK_DELAY_MS
+
+            val expiryWork = OneTimeWorkRequestBuilder<SubscriptionCheckWorker>()
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .build()
+
+            WorkManager.getInstance(this).enqueueUniqueWork(
+                Constants.WORK_NAME_EXPIRY_CHECK,
+                ExistingWorkPolicy.REPLACE,
+                expiryWork
+            )
+        }
+
+        // 정기 체크
+        val periodicWork = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
+            Constants.PERIODIC_CHECK_INTERVAL_MINUTES, TimeUnit.MINUTES
         )
-            .setInitialDelay(5, TimeUnit.MINUTES)
+            .setInitialDelay(Constants.INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "subscription_check",
+            Constants.WORK_NAME_PERIODIC_CHECK,
             ExistingPeriodicWorkPolicy.REPLACE,
-            checkRequest
+            periodicWork
         )
     }
 
@@ -108,11 +123,8 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
                 subscriptionManager.initialize { subscriptionInitSuccess ->
                     if (subscriptionInitSuccess) {
                         Log.d("App", "구독 상품 정보 사전 로드 성공")
-                        // 구독 상태 확인
-//                        subscriptionManager.checkSubscriptionStatus()
                     } else {
                         Log.e("App", "구독 상품 정보 사전 로드 실패")
-                        // 나중에 다시 시도할 수 있는 로직
                     }
                 }
 
@@ -122,7 +134,6 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
                         Log.d("App", "후원 상품 정보 사전 로드 성공")
                     } else {
                         Log.e("App", "후원 상품 정보 사전 로드 실패")
-                        // 나중에 다시 시도할 수 있는 로직
                     }
                 }
             } else {

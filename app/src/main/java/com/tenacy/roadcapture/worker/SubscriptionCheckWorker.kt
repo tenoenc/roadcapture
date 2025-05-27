@@ -19,6 +19,7 @@ import com.tenacy.roadcapture.MainActivity
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.util.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -47,7 +48,8 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             Log.d("SubscriptionCheck", "구독 상태: $isActive")
 
             // 취소되었고 만료가 임박한 경우 알림 표시
-            if (SubscriptionPref.isCancelledButStillValid() && SubscriptionPref.daysUntilExpiry() <= 3) {
+            if (SubscriptionPref.isCancelledButStillValid() &&
+                SubscriptionPref.daysUntilExpiry() <= Constants.EXPIRY_WARNING_DAYS) {
                 showSubscriptionExpiringNotification()
             }
 
@@ -59,13 +61,12 @@ class SubscriptionCheckWorker @AssistedInject constructor(
     }
 
     private fun showSubscriptionExpiringNotification() {
-        // 구독 만료 임박 알림
         val notificationManager = NotificationManagerCompat.from(context)
 
         // 알림 채널 생성
         val channel = NotificationChannel(
-            "subscription_channel",
-            "구독 알림",
+            Constants.NOTIFICATION_CHANNEL_ID,
+            Constants.NOTIFICATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -74,7 +75,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         val daysLeft = SubscriptionPref.daysUntilExpiry()
 
         // 알림 생성
-        val builder = NotificationCompat.Builder(context, "subscription_channel")
+        val builder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("구독 만료 예정")
             .setContentText("구독이 ${daysLeft}일 후에 만료됩니다. 계속 이용하시려면 갱신하세요.")
@@ -94,6 +95,6 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             && ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return
         }
-        notificationManager.notify(1001, builder.build())
+        notificationManager.notify(Constants.NOTIFICATION_ID_EXPIRING, builder.build())
     }
 }
