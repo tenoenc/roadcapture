@@ -11,6 +11,7 @@ import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.SubscriptionValues
 import com.tenacy.roadcapture.util.clearCacheDirectory
@@ -26,18 +27,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TripViewModel @Inject constructor(
+    subscriptionManager: SubscriptionManager,
     @ApplicationContext private val context: Context,
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
 ) : BaseViewModel() {
 
+    val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = SubscriptionPref.isSubscriptionActive
+        )
+
     var initialGuideShown = false
 
     private val routePolylines = mutableListOf<Polyline>()
     private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
-
-    private val _isSubscriptionActive = MutableStateFlow(SubscriptionPref.isSubscriptionActive)
-    val isSubscriptionActive = _isSubscriptionActive.asStateFlow()
 
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
     private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
@@ -90,10 +96,6 @@ class TripViewModel @Inject constructor(
             _memories.emit(memories)
             _locations.emit(locations)
         }
-    }
-
-    fun updateSubscriptionStates(isActive: Boolean) {
-        _isSubscriptionActive.update { isActive }
     }
 
     fun getMemories() = _memories.value

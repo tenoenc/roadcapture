@@ -55,7 +55,10 @@ class MemoryPagingSource(
 
             when(filter) {
                 is MemoryFilter.User -> {
+                    val userRef = db.collection("users").document(filter.id)
+
                     var query = db.collection("memories")
+                        .whereEqualTo("userRef", userRef)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
 
                     filter.isPublic?.let {

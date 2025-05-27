@@ -80,16 +80,11 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupViews() {
-        setupRecyclerView()
         setupShimmer()
         setupSwipeRefresh()
     }
 
-    private fun setupRecyclerView() {
-
-    }
-
-    private fun bindAdapter(isSubscriptionActive: Boolean) {
+    private fun setupRecyclerView(isSubscriptionActive: Boolean) {
         // 로드 상태 어댑터 생성
         val loadStateAdapter = LoadStateAdapter()
 
@@ -202,9 +197,9 @@ class HomeFragment: BaseFragment() {
             }
         }
         repeatOnLifecycle {
-            vm.isSubscription.collect { active ->
+            vm.isSubscriptionActive.collect { active ->
                 // 구독 상태에 따라 UI 업데이트
-                bindAdapter(active)
+                setupRecyclerView(active)
             }
         }
     }

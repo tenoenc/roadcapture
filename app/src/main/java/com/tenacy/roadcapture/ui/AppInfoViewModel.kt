@@ -8,6 +8,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SocialType
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toUser
@@ -20,20 +21,25 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AppInfoViewModel @Inject constructor(
-
+    subscriptionManager: SubscriptionManager,
 ) : BaseViewModel() {
+
+    val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000L),
+            initialValue = SubscriptionPref.isSubscriptionActive
+        )
 
     val version = BuildConfig.VERSION_NAME
     private val _user = MutableStateFlow<User?>(null)
-    private val _isSubscriptionActive = MutableStateFlow(SubscriptionPref.isSubscriptionActive)
-    val isSubscriptionActive = _isSubscriptionActive.asStateFlow()
     val profilePhotoUrl = _user.mapNotNull { it?.photoUrl?.let(Uri::parse) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), UserPref.photoUrl.let(Uri::parse))
     val profileDisplayName = _user.mapNotNull { it?.displayName }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), UserPref.displayName)
     val subscriptionText = isSubscriptionActive.map {
-        if(it) "프리미엄 플랜 구독중" else "구독하고 더 많은 혜택을 누려보세요!"
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "구독하고 더 많은 혜택을 누려보세요!")
+        if(it) "프리미엄 플랜 구독중" else "구독하고 더 많은\n혜택을 누려보세요!"
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "구독하고 더 많은\n혜택을 누려보세요!")
 
     val providerDrawable = _user.mapNotNull {
         it?.provider?.let {
@@ -79,10 +85,6 @@ class AppInfoViewModel @Inject constructor(
             displayName = UserPref.displayName,
             provider = UserPref.provider!!,
         ) }
-    }
-
-    fun updateSubscriptionStates(isActive: Boolean) {
-        _isSubscriptionActive.update { isActive }
     }
 
     fun onServiceTermsAndConditionsClick() {

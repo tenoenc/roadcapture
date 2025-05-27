@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -22,7 +21,7 @@ class HomeViewModel @Inject constructor(
     subscriptionManager: SubscriptionManager,
 ) : BaseViewModel() {
 
-    val isSubscription: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+    val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

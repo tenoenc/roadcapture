@@ -15,6 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
+import com.navercorp.nid.oauth.NidOAuthPreferencesManager.state
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.SubscriptionManager
@@ -142,19 +143,6 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     }
 
     private fun observeSubscriptionState() {
-        repeatOnLifecycle {
-            subscriptionManager.subscriptionState.collect { state ->
-                // 구독 상태에 따라 UI 업데이트
-                vm.updateSubscriptionStates(state.isActive)
-
-                // 다른 계정에 연결된 구독 상태 처리
-                if (state.isLinkedToOtherAccount) {
-//                        showLinkedAccountMessage(state.linkedAccountId)
-                } else {
-//                        hideLinkedAccountMessage()
-                }
-            }
-        }
     }
 
     private fun observeViewEvents() {

@@ -416,22 +416,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         }
     }
 
-    private fun observeSubscriptionState() {
-        repeatOnLifecycle {
-            subscriptionManager.subscriptionState.collect { state ->
-                // 구독 상태에 따라 UI 업데이트
-                vm.updateSubscriptionStates(state.isActive)
-
-                // 다른 계정에 연결된 구독 상태 처리
-                if (state.isLinkedToOtherAccount) {
-//                        showLinkedAccountMessage(state.linkedAccountId)
-                } else {
-//                        hideLinkedAccountMessage()
-                }
-            }
-        }
-    }
-
     private fun observeViewEvents() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
