@@ -5,7 +5,7 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager

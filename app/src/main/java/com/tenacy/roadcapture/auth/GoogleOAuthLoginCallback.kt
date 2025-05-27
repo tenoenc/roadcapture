@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.GoogleAuthProvider
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
 import com.tenacy.roadcapture.util.TagConstants
 

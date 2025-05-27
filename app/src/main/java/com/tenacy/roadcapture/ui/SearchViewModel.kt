@@ -7,17 +7,19 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.AlgoliaPagingSource
 import com.tenacy.roadcapture.data.firebase.SearchFilter
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.AlgoliaManager
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 @HiltViewModel
@@ -64,6 +66,36 @@ class SearchViewModel @Inject constructor(
                 .cachedIn(viewModelScope)
                 .collect {
                     _pagingData.emit(it)
+                }
+        }
+    }
+
+    fun report(albumId: String, reason: ReportReason) {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                val userId = UserPref.id
+                val userRef = db.collection("users").document(userId)
+                val albumRef = db.collection("albums").document(albumId)
+
+                val reportData = mapOf(
+                    "userRef" to userRef,
+                    "albumRef" to albumRef,
+                    "reason" to reason.name,
+                    "createdAt" to FieldValue.serverTimestamp(),
+                )
+
+                db.collection("reports")
+                    .document()
+                    .set(reportData)
+                    .await()
+
+                emit(Unit)
+            }
+                .catch { exception ->
+                    Log.e("ScrapViewModel", "에러", exception)
+                }
+                .collect {
+                    viewEvent(SearchViewEvent.ReportComplete)
                 }
         }
     }

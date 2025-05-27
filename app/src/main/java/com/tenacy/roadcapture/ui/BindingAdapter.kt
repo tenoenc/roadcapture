@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
@@ -119,4 +120,62 @@ fun View.setSelectedIncludingChildren(selected: Boolean) {
             child.setSelectedIncludingChildren(selected)
         }
     }
+}
+
+@BindingAdapter("selectable", "singleSelection")
+fun ViewGroup.enableSelection(selectable: Boolean?, singleSelection: Boolean?) {
+    if(selectable != true) return
+
+    when (singleSelection) {
+        true -> setupSelectionContainer(true)   // 단일 선택
+        false, null -> setupSelectionContainer(false)  // 다중 선택
+    }
+}
+
+fun ViewGroup.setupSelectionContainer(
+    singleSelection: Boolean = true,
+    onSelectionChanged: ((List<Int>) -> Unit)? = null
+) {
+    for (i in 0 until childCount) {
+        val child = getChildAt(i)
+        child.setOnClickListener { clickedView ->
+            if (singleSelection) {
+                for (j in 0 until childCount) {
+                    val otherChild = getChildAt(j)
+                    if (otherChild != clickedView) {
+                        otherChild.setSelectedIncludingChildren(false)
+                    }
+                }
+                clickedView.setSelectedIncludingChildren(true)
+            } else {
+                clickedView.setSelectedIncludingChildren(!clickedView.isSelected)
+            }
+
+            // 선택 변경 콜백 호출
+            onSelectionChanged?.invoke(getSelectedIndices())
+        }
+    }
+}
+
+// 선택된 모든 뷰들을 찾는 확장 함수 (다중 선택용)
+fun ViewGroup.getSelectedViews(): List<View> {
+    val selectedViews = mutableListOf<View>()
+    for (i in 0 until childCount) {
+        val child = getChildAt(i)
+        if (child.isSelected) {
+            selectedViews.add(child)
+        }
+    }
+    return selectedViews
+}
+
+// 선택된 모든 인덱스를 찾는 확장 함수 (다중 선택용)
+fun ViewGroup.getSelectedIndices(): List<Int> {
+    val selectedIndices = mutableListOf<Int>()
+    for (i in 0 until childCount) {
+        if (getChildAt(i).isSelected) {
+            selectedIndices.add(i)
+        }
+    }
+    return selectedIndices
 }

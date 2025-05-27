@@ -26,6 +26,7 @@ sealed class MainViewEvent: ViewEvent {
 
 sealed class HomeViewEvent: ViewEvent {
     data object Search: HomeViewEvent()
+    data object ReportComplete: HomeViewEvent()
 }
 
 sealed class AppInfoViewEvent: ViewEvent {
@@ -38,6 +39,7 @@ sealed class AppInfoViewEvent: ViewEvent {
 
 sealed class ScrapViewEvent: ViewEvent {
     data object Search: ScrapViewEvent()
+    data object ReportComplete: ScrapViewEvent()
 }
 
 sealed class MyAlbumViewEvent: ViewEvent {
@@ -98,9 +100,13 @@ sealed class AlbumViewEvent: ViewEvent {
     data object Share: AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
     data class Forbidden(val message: String): AlbumViewEvent()
+    data class ShowReport(val albumId: String): AlbumViewEvent()
+    data object ReportComplete: AlbumViewEvent()
 }
 
-sealed class SearchViewEvent: ViewEvent
+sealed class SearchViewEvent: ViewEvent {
+    data object ReportComplete: SearchViewEvent()
+}
 
 sealed class MyAlbumTabViewEvent: ViewEvent {
     data object Refresh: MyAlbumTabViewEvent()

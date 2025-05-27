@@ -26,6 +26,7 @@ sealed class AlbumItem(open val value: Album): Parcelable {
         override val value: Album,
         val onItemClick: () -> Unit,
         val onProfileClick: () -> Unit,
+        val onLongClick: (String) -> Unit,
     ) : AlbumItem(value)
 
     @Parcelize
@@ -177,6 +178,10 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
 
             binding.llIAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
 
+            binding.clIAlbumTouchContainer.setOnLongClickListener {
+                item.onLongClick(item.value.id)
+                true
+            }
             binding.clIAlbumTouchContainer.setOnClickListener {
                 item.onItemClick()
             }

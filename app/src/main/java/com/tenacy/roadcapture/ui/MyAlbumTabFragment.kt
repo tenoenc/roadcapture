@@ -71,14 +71,14 @@ class MyAlbumTabFragment: BaseFragment() {
 
     private fun setupFragmentResultListeners() {
         childFragmentManager.setFragmentResultListener(
-            AlbumMoreBottomSheetFragment.REQUEST_KEY,
+            AlbumModifyMoreBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.TogglePublic>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_TOGGLE_PUBLIC)?.let {
+            bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.TogglePublic>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_TOGGLE_PUBLIC)?.let {
                 val album = it.album
                 vm.togglePublic(album.id, album.isPublic)
             }
-            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.Delete>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
+            bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Delete>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 val album = it.album
                 vm.deletePublic(album.id, album.user.id)
             }
@@ -188,12 +188,12 @@ class MyAlbumTabFragment: BaseFragment() {
                                 findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
                             },
                             onMoreClick = { album ->
-                                val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
+                                val bottomSheet = AlbumModifyMoreBottomSheetFragment.newInstance(
                                     bundle = bundleOf(
-                                        AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(album)
+                                        AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumModifyMoreBottomSheetFragment.ParamsIn(album)
                                     )
                                 )
-                                bottomSheet.show(childFragmentManager, AlbumMoreBottomSheetFragment.TAG)
+                                bottomSheet.show(childFragmentManager, AlbumModifyMoreBottomSheetFragment.TAG)
                             },
                         )
                     }

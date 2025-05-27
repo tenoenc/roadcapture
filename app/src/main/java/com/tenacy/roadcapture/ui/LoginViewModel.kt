@@ -8,7 +8,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.auth.Loginable
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager

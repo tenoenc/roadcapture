@@ -12,23 +12,27 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetAlbumMoreBinding
-import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.data.ReportReason
+import com.tenacy.roadcapture.databinding.BSheetReportBinding
+import com.tenacy.roadcapture.ui.LocationBottomSheetFragment.ParamsIn
 import kotlinx.parcelize.Parcelize
 
-class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
+class ReportBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetAlbumMoreBinding? = null
+    private var _binding: BSheetReportBinding? = null
     private val binding get() = _binding!!
-
-    private var params: ParamsIn? = null
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
 
+    private var albumId: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
-            this@AlbumMoreBottomSheetFragment.params = params
+        arguments?.getParcelable<ParamsIn>(
+            KEY_PARAMS_IN
+        )?.let { params ->
+            val albumId = params.albumId
+            this@ReportBottomSheetFragment.albumId = albumId
         }
     }
 
@@ -37,14 +41,13 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetAlbumMoreBinding.inflate(inflater, container, false).apply {
+        return BSheetReportBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         setupBottomSheet()
         setupListeners()
     }
@@ -66,12 +69,31 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumMoreReport.setOnClickListener {
-            val album = params?.albumId ?: return@setOnClickListener
+        binding.llBSheetReportReasonContainer.setupSelectionContainer(true) { selectedIndices ->
+            binding.btnBSheetReportPositive.visibility =
+                if (selectedIndices.isNotEmpty()) View.VISIBLE else View.GONE
+        }
+        binding.btnBSheetReportPositive.setOnClickListener {
+            val selectedIndex = binding.llBSheetReportReasonContainer.getSelectedIndices().firstOrNull()
+
+            val reportReason = when (selectedIndex) {
+                0 -> ReportReason.InappropriateContent
+                1 -> ReportReason.SpamAdvertising
+                2 -> ReportReason.PersonalInfoExposure
+                3 -> ReportReason.FalseInformation
+                else -> ReportReason.Undefined
+            }
+
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(KEY_PARAMS_OUT_REPORT to ParamsOut.Report(album))
+                bundleOf(
+                    KEY_PARAMS_OUT_REPORT to ParamsOut.Report(albumId!!, reportReason)
+                )
             )
+
+            dismiss()
+        }
+        binding.btnBSheetReportNegative.setOnClickListener {
             dismiss()
         }
     }
@@ -89,19 +111,22 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     @Parcelize
     sealed class ParamsOut: Parcelable {
         @Parcelize
-        data class Report(val albumId: String): ParamsOut()
+        data class Report(
+            val albumId: String,
+            val reason: ReportReason,
+        ): ParamsOut()
     }
 
     companion object {
 
-        const val TAG = "AlbumMoreBottomSheetFragment"
+        const val TAG = "ReportBottomSheetFragment"
 
-        const val REQUEST_KEY = "album_more"
+        const val REQUEST_KEY = "report"
         const val KEY_PARAMS_IN = "params_in"
         const val KEY_PARAMS_OUT_REPORT = "params_out_report"
 
-        fun newInstance(bundle: Bundle? = null): AlbumMoreBottomSheetFragment {
-            return AlbumMoreBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): ReportBottomSheetFragment {
+            return ReportBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

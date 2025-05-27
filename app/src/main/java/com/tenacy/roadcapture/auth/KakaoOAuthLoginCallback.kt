@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.auth.oAuthCredential
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.user.UserApiClient
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
 import com.tenacy.roadcapture.util.TagConstants
 

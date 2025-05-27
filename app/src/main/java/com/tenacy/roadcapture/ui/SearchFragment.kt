@@ -8,19 +8,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.isActive
 
 @AndroidEntryPoint
 class SearchFragment: BaseFragment() {
@@ -37,6 +38,12 @@ class SearchFragment: BaseFragment() {
 
     private var wasRefreshing = false
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
+        vm
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         binding.vm = vm
@@ -48,6 +55,39 @@ class SearchFragment: BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
         setupObservers()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            ReportBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<ReportBottomSheetFragment.ParamsOut.Report>(ReportBottomSheetFragment.KEY_PARAMS_OUT_REPORT)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    vm.report(it.albumId, it.reason)
+                }
+        }
+        childFragmentManager.setFragmentResultListener(
+            AlbumMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.Report>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_REPORT)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    val bottomSheet = ReportBottomSheetFragment.newInstance(
+                        bundleOf(
+                            ReportBottomSheetFragment.KEY_PARAMS_IN to ReportBottomSheetFragment.ParamsIn(it.albumId)
+                        )
+                    )
+                    bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+                }
+        }
     }
 
     private fun setupViews() {
@@ -158,6 +198,15 @@ class SearchFragment: BaseFragment() {
                                 findNavController().navigate(SearchFragmentDirections.actionSearchToAlbum(it.id, it.user.id))
                             },
                             onProfileClick = {
+
+                            },
+                            onLongClick = { albumId ->
+                                val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
+                                    bundleOf(
+                                        AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(albumId)
+                                    )
+                                )
+                                bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
                             },
                         )
                     }
@@ -178,10 +227,12 @@ class SearchFragment: BaseFragment() {
 
     private fun handleViewEvents(event: SearchViewEvent) {
         // 필요한 이벤트 처리 로직 구현
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        when(event) {
+            is SearchViewEvent.ReportComplete -> {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                }
+            }
+        }
     }
 }

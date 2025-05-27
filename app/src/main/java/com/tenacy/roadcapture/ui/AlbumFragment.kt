@@ -3,7 +3,6 @@ package com.tenacy.roadcapture.ui
 import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Bundle
-import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -34,7 +33,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 
 @AndroidEntryPoint
 class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClusterItemClickListener<ClusterMarkerItem> {
@@ -108,6 +106,18 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                     } else {
                         it.items.getOrNull(0)?.let { navigateToMemoryViewer(it) }
                     }
+                }
+
+        }
+
+        childFragmentManager.setFragmentResultListener(
+            ReportBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<ReportBottomSheetFragment.ParamsOut.Report>(ReportBottomSheetFragment.KEY_PARAMS_OUT_REPORT)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    vm.report(it.albumId, it.reason)
                 }
         }
     }
@@ -280,6 +290,21 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                         )
                     )
                     findNavController().popBackStack()
+                }
+            }
+
+            is AlbumViewEvent.ShowReport -> {
+                val bottomSheet = ReportBottomSheetFragment.newInstance(
+                    bundleOf(
+                        ReportBottomSheetFragment.KEY_PARAMS_IN to ReportBottomSheetFragment.ParamsIn(event.albumId)
+                    )
+                )
+                bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+            }
+
+            is AlbumViewEvent.ReportComplete -> {
+                lifecycleScope.launch(Dispatchers.Default) {
+                   mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
                 }
             }
         }

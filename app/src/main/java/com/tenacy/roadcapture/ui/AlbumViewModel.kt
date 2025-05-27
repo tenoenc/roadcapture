@@ -8,6 +8,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
 import com.tenacy.roadcapture.data.pref.UserPref
@@ -73,11 +74,14 @@ class AlbumViewModel @Inject constructor(
     private val _scraped = MutableStateFlow(false)
     val scraped = _scraped.asStateFlow()
 
+    val profileDisplayName = _album.mapNotNull { it?.user?.displayName }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
+
     val profileUrl = _album.mapNotNull { it?.user?.photoUrl }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val albumId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).albumId
-    private val userId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).userId
+    private val albumUserId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).userId
 
     init {
         fetchData()
@@ -108,7 +112,7 @@ class AlbumViewModel @Inject constructor(
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
                     ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
 
-                if(userId != UserPref.id && !firebaseAlbum.isPublic) {
+                if(albumUserId != UserPref.id && !firebaseAlbum.isPublic) {
                     throw FirebaseFirestoreException("접근할 수 없어요",FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
@@ -252,6 +256,36 @@ class AlbumViewModel @Inject constructor(
         }
     }
 
+    fun report(albumId: String, reason: ReportReason) {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                val userId = UserPref.id
+                val userRef = db.collection("users").document(userId)
+                val albumRef = db.collection("albums").document(albumId)
+
+                val reportData = mapOf(
+                    "userRef" to userRef,
+                    "albumRef" to albumRef,
+                    "reason" to reason.name,
+                    "createdAt" to FieldValue.serverTimestamp(),
+                )
+
+                db.collection("reports")
+                    .document()
+                    .set(reportData)
+                    .await()
+
+                emit(Unit)
+            }
+                .catch { exception ->
+                    Log.e("AlbumViewModel", "에러", exception)
+                }
+                .collect {
+                    viewEvent(AlbumViewEvent.ReportComplete)
+                }
+        }
+    }
+
     fun getMemories() = _memories.value
 
     fun getMemoriesIn(items: List<ClusterMarkerItem>): List<FirebaseMemory> {
@@ -344,6 +378,12 @@ class AlbumViewModel @Inject constructor(
                 val userId = it.user.id
                 viewEvent(AlbumViewEvent.NavigateToStudio(userId))
             }
+        }
+    }
+
+    fun onReportClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AlbumViewEvent.ShowReport(albumId))
         }
     }
 }

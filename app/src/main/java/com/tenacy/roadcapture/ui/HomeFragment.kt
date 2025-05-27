@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
@@ -19,10 +21,13 @@ import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.consumeOnce
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -50,6 +55,7 @@ class HomeFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setupFragmentResultListeners()
         vm
     }
 
@@ -77,6 +83,34 @@ class HomeFragment: BaseFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun setupFragmentResultListeners() {
+        childFragmentManager.setFragmentResultListener(
+            ReportBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<ReportBottomSheetFragment.ParamsOut.Report>(ReportBottomSheetFragment.KEY_PARAMS_OUT_REPORT)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    vm.report(it.albumId, it.reason)
+                }
+        }
+        childFragmentManager.setFragmentResultListener(
+            AlbumMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<AlbumMoreBottomSheetFragment.ParamsOut.Report>(AlbumMoreBottomSheetFragment.KEY_PARAMS_OUT_REPORT)
+                ?.let {
+                    Log.d("TAG", "Positive Button Clicked!")
+                    val bottomSheet = ReportBottomSheetFragment.newInstance(
+                        bundleOf(
+                            ReportBottomSheetFragment.KEY_PARAMS_IN to ReportBottomSheetFragment.ParamsIn(it.albumId)
+                        )
+                    )
+                    bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+                }
+        }
     }
 
     private fun setupViews() {
@@ -229,6 +263,14 @@ class HomeFragment: BaseFragment() {
                             },
                             onProfileClick = {
                             },
+                            onLongClick = { albumId ->
+                                val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
+                                    bundleOf(
+                                        AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(albumId)
+                                    )
+                                )
+                                bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+                            }
                         )
                     }
                 )
@@ -250,6 +292,11 @@ class HomeFragment: BaseFragment() {
         when (event) {
             is HomeViewEvent.Search -> {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
+            }
+            is HomeViewEvent.ReportComplete -> {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                }
             }
         }
     }

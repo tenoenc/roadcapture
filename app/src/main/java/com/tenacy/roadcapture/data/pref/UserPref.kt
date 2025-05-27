@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.data.pref
 
 import com.chibatching.kotpref.KotprefModel
+import com.tenacy.roadcapture.data.SocialType
 
 object UserPref: KotprefModel() {
 

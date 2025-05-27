@@ -7,7 +7,7 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginResult
 import com.google.firebase.auth.FacebookAuthProvider
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
 import com.tenacy.roadcapture.util.TagConstants
 

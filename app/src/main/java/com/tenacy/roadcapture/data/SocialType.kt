@@ -1,4 +1,4 @@
-package com.tenacy.roadcapture.data.pref
+package com.tenacy.roadcapture.data
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

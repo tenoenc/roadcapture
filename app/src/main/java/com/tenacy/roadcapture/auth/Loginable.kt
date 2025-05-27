@@ -2,7 +2,7 @@ package com.tenacy.roadcapture.auth
 
 import androidx.lifecycle.SavedStateHandle
 import com.google.firebase.auth.AuthCredential
-import com.tenacy.roadcapture.data.pref.SocialType
+import com.tenacy.roadcapture.data.SocialType
 
 interface Loginable {
 
