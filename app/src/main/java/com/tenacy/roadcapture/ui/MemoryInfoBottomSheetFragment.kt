@@ -21,15 +21,14 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     private var _binding: BSheetMemoryInfoBinding? = null
     private val binding get() = _binding!!
 
-    private var memory: ParamsIn.Memory? = null
+    private var paramsIn: ParamsIn? = null
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.getParcelable<ParamsIn>(KEY_PARAMS_IN)?.let { params ->
-            val memory = params.memory
-            this@MemoryInfoBottomSheetFragment.memory = memory
+            this@MemoryInfoBottomSheetFragment.paramsIn = params
         }
     }
 
@@ -56,7 +55,7 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getTitleText(): String? {
-        return memory?.let {
+        return paramsIn?.let {
             val placeName = it.placeName
             if (placeName != null) return placeName
 
@@ -65,7 +64,7 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getDescriptionText(): String? {
-        return memory?.let {
+        return paramsIn?.let {
             val placeName = it.placeName
             val formattedText = it.createdAt.formatWithPattern("yyyy-MM-dd HH:mm:ss")
             if (placeName != null) {
@@ -77,7 +76,7 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getDurationFormattedText(): String? {
-        return memory?.let {
+        return paramsIn?.let {
             val currentTimeStamp = LocalDateTime.now().toTimestamp()
             val (value, unit) = getFormattedDuration(it.createdAt.toTimestamp(), currentTimeStamp)
 
@@ -98,22 +97,18 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     @Parcelize
     data class ParamsIn(
-        val memory: Memory,
+        val id: String = "",
+        val placeName: String? = null,
+        val createdAt: LocalDateTime,
     ): Parcelable {
-        @Parcelize
-        data class Memory(
-            val id: String = "",
-            val placeName: String? = null,
-            val createdAt: LocalDateTime,
-        ) : Parcelable
 
         companion object {
-            fun of(dto: MemoryViewerArguments.Memory) = Memory(
+            fun of(dto: MemoryViewerArguments.Memory) = ParamsIn(
                 id = dto.id,
                 placeName = dto.placeName,
                 createdAt = dto.createdAt,
             )
-            fun of(dto: com.tenacy.roadcapture.ui.dto.Memory) = Memory(
+            fun of(dto: Memory) = ParamsIn(
                 id = dto.id,
                 placeName = dto.placeName,
                 createdAt = dto.createdAt,

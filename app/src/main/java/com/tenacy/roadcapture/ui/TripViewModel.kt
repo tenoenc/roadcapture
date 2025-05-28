@@ -46,23 +46,28 @@ class TripViewModel @Inject constructor(
     private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
 
     private val _locations = MutableStateFlow<List<LocationEntity>>(emptyList())
-    private val _memories = MutableStateFlow<List<MemoryWithLocation>>(emptyList())
+    private val _memories = MutableStateFlow<List<MemoryWithLocation>?>(null)
 
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
-    val memoryCountText = _memories.map { memories ->
+    val memoryLoaded = _memories.map { it != null }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
+    val memoryCountText = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
+        val currentMemorySize = memories?.size ?: 0
         val maxMemorySize = SubscriptionValues.memoryMaxSize
-        "추억 ${memories.size} / $maxMemorySize"
+        "추억 $currentMemorySize / $maxMemorySize"
     }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    val exceedLimitedMemorySize = _memories.map {
-        it.size >= SubscriptionValues.memoryMaxSize
+    val exceedLimitedMemorySize = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
+        if(memories == null) return@combine false
+        memories.size >= SubscriptionValues.memoryMaxSize
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val markers = combine(_locations, _memories) { locations, memories ->
-        val memoryByLocationId = memories.associateBy { it.location.id }
+        val memoryByLocationId = memories?.associateBy { it.location.id } ?: emptyMap()
 
         locations.map { location ->
             val memory = memoryByLocationId[location.id]
@@ -98,16 +103,16 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    fun getMemories() = _memories.value
+    fun getMemories(): List<MemoryWithLocation> = _memories.value ?: emptyList()
 
     fun getMemoriesIn(items: List<ClusterMarkerItem>): List<MemoryWithLocation> {
-        val currentMemories = _memories.value
+        val currentMemories = _memories.value ?: emptyList()
         val associateBy = currentMemories.associateBy { it.location.id.toString() }
         return items.mapNotNull { associateBy[it.id] }
     }
 
     fun getMemoryIdBy(item: ClusterMarkerItem): String {
-        val currentMemories = _memories.value
+        val currentMemories = _memories.value ?: emptyList()
         val memoryIdsByLocationId = currentMemories.associate { it.location.id.toString() to it.memory.id }
         return memoryIdsByLocationId[item.id]!!.toString()
     }

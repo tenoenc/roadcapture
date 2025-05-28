@@ -24,6 +24,7 @@ object Constants {
     // WorkManager 작업 이름
     const val WORK_NAME_PERIODIC_CHECK = "subscription_check"
     const val WORK_NAME_EXPIRY_CHECK = "subscription_expiry_check"
+    const val WORK_NAME_DELETE_ALBUM = "delete_album"
 
     // 시간 단위
     const val MILLIS_PER_DAY = 24 * 60 * 60 * 1000L

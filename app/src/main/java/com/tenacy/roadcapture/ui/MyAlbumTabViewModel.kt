@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -7,12 +8,17 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.DeleteAlbumWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,6 +30,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyAlbumTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
     private val params: MyAlbumTabFragment.ParamsIn? = savedStateHandle.get<MyAlbumTabFragment.ParamsIn>(MyAlbumTabFragment.KEY_PARAMS)
@@ -108,6 +115,8 @@ class MyAlbumTabViewModel @Inject constructor(
                 }
                 db.executeInBatches(allOperations)
 
+                deleteAlbumImages(userId, albumId)
+
                 emit(Unit)
             }
                 .catch { exception ->
@@ -117,5 +126,17 @@ class MyAlbumTabViewModel @Inject constructor(
                     viewEvent(MyAlbumTabViewEvent.RefreshAll)
                 }
         }
+    }
+
+    // 앨범 삭제 요청
+    private fun deleteAlbumImages(userId: String, albumId: String) {
+        val workRequest = DeleteAlbumWorker.createWorkRequest(userId, albumId)
+
+        WorkManager.getInstance(context)
+            .enqueueUniqueWork(
+                "delete_album_${userId}_${albumId}",
+                ExistingWorkPolicy.KEEP,  // 이미 실행 중이면 기존 작업 유지
+                workRequest
+            )
     }
 }
