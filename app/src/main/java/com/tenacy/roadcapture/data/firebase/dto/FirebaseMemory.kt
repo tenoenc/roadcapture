@@ -7,6 +7,8 @@ import java.time.LocalDateTime
 @Parcelize
 data class FirebaseMemory(
     val id: String = "",
+    val albumId: String = "",
+    val userId: String = "",
     val content: String = "",
     val photoUrl: String = "",
     val photoName: String = "",

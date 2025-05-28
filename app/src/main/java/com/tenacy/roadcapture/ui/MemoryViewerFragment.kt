@@ -132,7 +132,7 @@ class MemoryViewerFragment: BaseFragment() {
                 val memory = vm.currentMemory.value ?: return
                 val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(memory),
+                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(MemoryInfoBottomSheetFragment.ParamsIn.of(memory)),
                     )
                 )
                 bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)

@@ -12,12 +12,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.databinding.BSheetMemoryMoreBinding
+import com.tenacy.roadcapture.databinding.BSheetMemoryModifyMoreBinding
 import kotlinx.parcelize.Parcelize
 
-class MemoryMoreBottomSheetFragment: BottomSheetDialogFragment() {
+class MemoryModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
 
-    private var _binding: BSheetMemoryMoreBinding? = null
+    private var _binding: BSheetMemoryModifyMoreBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -27,7 +27,7 @@ class MemoryMoreBottomSheetFragment: BottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetMemoryMoreBinding.inflate(inflater, container, false).apply {
+        return BSheetMemoryModifyMoreBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -45,17 +45,17 @@ class MemoryMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetMemoryMoreInfo.setOnClickListener {
+        binding.btnBSheetMemoryModifyMoreInfo.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_INFO to ParamsOut.Info)
             )
             dismiss()
         }
-        binding.btnBSheetMemoryMoreAlbum.setOnClickListener {
+        binding.btnBSheetMemoryModifyMoreDelete.setOnClickListener {
             setFragmentResult(
                 REQUEST_KEY,
-                bundleOf(KEY_PARAMS_OUT_ALBUM to ParamsOut.Album)
+                bundleOf(KEY_PARAMS_OUT_DELETE to ParamsOut.Delete)
             )
             dismiss()
         }
@@ -82,19 +82,19 @@ class MemoryMoreBottomSheetFragment: BottomSheetDialogFragment() {
         @Parcelize
         data object Info: ParamsOut()
         @Parcelize
-        data object Album: ParamsOut()
+        data object Delete: ParamsOut()
     }
 
     companion object {
 
-        const val TAG = "MemoryMoreBottomSheetFragment"
+        const val TAG = "MemoryModifyMoreBottomSheetFragment"
 
-        const val REQUEST_KEY = "memory_more"
+        const val REQUEST_KEY = "memory_modify_more"
         const val KEY_PARAMS_OUT_INFO = "params_out_info"
-        const val KEY_PARAMS_OUT_ALBUM = "params_out_album"
+        const val KEY_PARAMS_OUT_DELETE = "params_out_delete"
 
-        fun newInstance(bundle: Bundle? = null): MemoryMoreBottomSheetFragment {
-            return MemoryMoreBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): MemoryModifyMoreBottomSheetFragment {
+            return MemoryModifyMoreBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

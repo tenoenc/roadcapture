@@ -9,6 +9,8 @@ import android.widget.LinearLayout
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.tenacy.roadcapture.databinding.FragmentUserMemoryViewerBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.util.mainActivity
@@ -25,6 +27,8 @@ class UserMemoryViewerFragment: BaseFragment() {
     val binding get() = _binding!!
 
     private val vm: UserMemoryViewerViewModel by viewModels()
+
+    private val args by navArgs<UserMemoryViewerFragmentArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +70,26 @@ class UserMemoryViewerFragment: BaseFragment() {
                 }
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            MemoryMoreBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Info>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_INFO)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                val memory = args.memory
+                val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
+                    bundle = bundleOf(
+                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(MemoryInfoBottomSheetFragment.ParamsIn.of(memory))
+                    )
+                )
+                bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
+            }
+            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Album>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_ALBUM)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                val memory = args.memory
+                findNavController().navigate(UserMemoryViewerFragmentDirections.actionUserMemoryViewerToAlbum(memory.albumId, memory.userId))
+            }
+        }
     }
 
     private fun setupViews() {
@@ -97,12 +121,8 @@ class UserMemoryViewerFragment: BaseFragment() {
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
             is UserMemoryViewerViewEvent.ShowMore -> {
-//                val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
-//                    bundle = bundleOf(
-//                        MemoryInfoBottomSheetFragment.KEY_MEMORY to vm.currentMemory,
-//                    )
-//                )
-//                bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
+                val bottomSheet = MemoryMoreBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, MemoryMoreBottomSheetFragment.TAG)
             }
         }
     }

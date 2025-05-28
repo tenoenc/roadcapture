@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetMemoryInfoBinding
+import com.tenacy.roadcapture.ui.dto.Memory
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.formatWithPattern
 import com.tenacy.roadcapture.util.getFormattedDuration
@@ -20,7 +21,7 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     private var _binding: BSheetMemoryInfoBinding? = null
     private val binding get() = _binding!!
 
-    private var memory: MemoryViewerArguments.Memory? = null
+    private var memory: ParamsIn.Memory? = null
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
 
@@ -97,8 +98,28 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
 
     @Parcelize
     data class ParamsIn(
-        val memory: MemoryViewerArguments.Memory
-    ): Parcelable
+        val memory: Memory,
+    ): Parcelable {
+        @Parcelize
+        data class Memory(
+            val id: String = "",
+            val placeName: String? = null,
+            val createdAt: LocalDateTime,
+        ) : Parcelable
+
+        companion object {
+            fun of(dto: MemoryViewerArguments.Memory) = Memory(
+                id = dto.id,
+                placeName = dto.placeName,
+                createdAt = dto.createdAt,
+            )
+            fun of(dto: com.tenacy.roadcapture.ui.dto.Memory) = Memory(
+                id = dto.id,
+                placeName = dto.placeName,
+                createdAt = dto.createdAt,
+            )
+        }
+    }
 
     companion object {
 

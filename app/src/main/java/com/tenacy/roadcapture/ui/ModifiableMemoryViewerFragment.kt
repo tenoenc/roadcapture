@@ -77,19 +77,19 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
             }
         }
         childFragmentManager.setFragmentResultListener(
-            MemoryMoreBottomSheetFragment.REQUEST_KEY,
+            MemoryModifyMoreBottomSheetFragment.REQUEST_KEY,
             this
         ) { _, bundle ->
-            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Info>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_INFO)?.let {
+            bundle.getParcelable<MemoryModifyMoreBottomSheetFragment.ParamsOut.Info>(MemoryModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_INFO)?.let {
                 val memory = vm.currentMemory.value ?: return@let
                 val bottomSheet = MemoryInfoBottomSheetFragment.newInstance(
                     bundle = bundleOf(
-                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(memory),
+                        MemoryInfoBottomSheetFragment.KEY_PARAMS_IN to MemoryInfoBottomSheetFragment.ParamsIn(MemoryInfoBottomSheetFragment.ParamsIn.of(memory)),
                     )
                 )
                 bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
             }
-            bundle.getParcelable<MemoryMoreBottomSheetFragment.ParamsOut.Delete>(MemoryMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
+            bundle.getParcelable<MemoryModifyMoreBottomSheetFragment.ParamsOut.Delete>(MemoryModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 vm.deleteCurrentMemory()
             }
         }
@@ -147,8 +147,8 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
                 binding.vpModifiableMemoryViewerPhoto.currentItem += 1
             }
             is ModifiableMemoryViewerViewEvent.ShowMore -> {
-                val bottomSheet = MemoryMoreBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, MemoryMoreBottomSheetFragment.TAG)
+                val bottomSheet = MemoryModifyMoreBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, MemoryModifyMoreBottomSheetFragment.TAG)
             }
             is ModifiableMemoryViewerViewEvent.ResultBack -> {
                 findNavController().previousBackStackEntry?.savedStateHandle?.set(

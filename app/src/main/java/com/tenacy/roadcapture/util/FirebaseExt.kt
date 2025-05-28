@@ -100,6 +100,8 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
 
 fun DocumentSnapshot.toMemory(): FirebaseMemory {
     val id = id
+    val albumId = getDocumentReference("albumRef")?.id ?: ""
+    val userId = getDocumentReference("userRef")?.id ?: ""
     val content = getString("content") ?: ""
     val photoUrl = getString("photoUrl") ?: ""
     val photoName = getString("photoName") ?: ""
@@ -112,6 +114,8 @@ fun DocumentSnapshot.toMemory(): FirebaseMemory {
 
     return FirebaseMemory(
         id = id,
+        albumId = albumId,
+        userId = userId,
         content = content,
         photoUrl = photoUrl,
         photoName = photoName,

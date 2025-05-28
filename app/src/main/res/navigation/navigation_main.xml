@@ -107,6 +107,9 @@
               tools:layout="@layout/fragment_user_memory_viewer">
 
         <argument android:name="memory" app:argType="com.tenacy.roadcapture.ui.dto.Memory"/>
+        <action android:id="@+id/action_userMemoryViewer_to_album"
+                app:popUpTo="@id/mainFragment"
+                app:destination="@id/albumFragment"/>
     </fragment>
     <fragment android:id="@+id/profileUploadProgressFragment"
               android:name="com.tenacy.roadcapture.ui.ProfileUploadProgressFragment"
