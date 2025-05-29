@@ -120,6 +120,7 @@ class TripViewModel @Inject constructor(
         // 여행 최초 시점이라면 서비스에 영향 가능성이 있는 위치 정보 초기화
         if(!TravelStatePref.isTraveling) {
             viewModelScope.launch(Dispatchers.IO) {
+                memoryDao.clear()
                 locationDao.clear()
             }
         }
@@ -257,6 +258,11 @@ class TripViewModel @Inject constructor(
     }
 
     fun onCheckClick() {
+        if(TravelStatePref.isOverOneMonth()) {
+            stopTraveling()
+            return
+        }
+
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(TripViewEvent.ShowAfter)
         }

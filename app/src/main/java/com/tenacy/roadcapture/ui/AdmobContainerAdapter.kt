@@ -288,12 +288,12 @@ class AdmobContainerAdapter(
 
         init {
             // 아이템 루트에 고정 높이 설정
-            binding.root.layoutParams = ViewGroup.MarginLayoutParams(
+            /*binding.root.layoutParams = ViewGroup.MarginLayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                354.toPx  // 고정 높이
+                356.toPx  // 고정 높이
             ).apply {
                 setMargins(20.toPx, 0, 20.toPx, 0)
-            }
+            }*/
         }
 
         fun bind(position: Int) {
@@ -301,18 +301,18 @@ class AdmobContainerAdapter(
             if (cachedAd != null) {
                 populateNativeAdView(cachedAd)
             } else {
-                showPlaceholder()
+//                showPlaceholder()
                 if (!loadingAds.contains(position)) {
                     loadAdForPosition(position)
                 }
             }
         }
 
-        private fun showPlaceholder() {
+        /*private fun showPlaceholder() {
             binding.adContainer.visibility = View.VISIBLE
-            binding.adContainer.minimumHeight = 354.toPx  // 동일한 높이
+            binding.adContainer.minimumHeight = 356.toPx  // 동일한 높이
             binding.adContainer.alpha = 0.2f
-        }
+        }*/
 
         fun unbind() {
             currentAd = null

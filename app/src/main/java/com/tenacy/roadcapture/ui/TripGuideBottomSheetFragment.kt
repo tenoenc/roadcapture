@@ -45,8 +45,8 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText1 = "자동으로 삭제"
-        val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범은 ${spanText1}돼요."
+        val spanText1 = "앨범이 유효하지 않게 되어 생성 시도 시 삭제돼요."
+        val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 ${spanText1}"
 
         SpannableUtils.setClickableText(
             requireContext(),
