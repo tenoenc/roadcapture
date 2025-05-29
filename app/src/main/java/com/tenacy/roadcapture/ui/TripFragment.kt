@@ -3,18 +3,22 @@ package com.tenacy.roadcapture.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.location.Criteria
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -38,7 +42,7 @@ import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
-import com.tenacy.roadcapture.manager.NSFWDetector
+import com.tenacy.roadcapture.manager.FreepikNSFWDetector
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
 import com.tenacy.roadcapture.ui.dto.Marker
@@ -73,7 +77,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private val permissionGranted = MutableStateFlow(false)
 
     @Inject
-    lateinit var nsfwDetector: NSFWDetector
+    lateinit var freepikNSFWDetector: FreepikNSFWDetector
 
     @Inject
     lateinit var subscriptionManager: SubscriptionManager
@@ -148,6 +152,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         return binding.root
     }
 
+    @Inject
+    lateinit var locationDummyGenerator: LocationDummyGenerator
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         resetInitializationState()
@@ -155,6 +162,38 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
+        binding.abcdefg.setQuickTapListener {
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "더미 경로 데이터 생성 중...", Toast.LENGTH_SHORT).show()
+                    }
+
+                    val startTime = System.currentTimeMillis()
+
+                    // 10개 경로, 각 300포인트 = 총 3000개 포인트 생성
+                    val pathsList = locationDummyGenerator.generateDummyPaths(
+                        count = 10, // 10개 경로
+                        pathCount = 300 // 각 경로당 300개 포인트
+                    )
+
+                    val totalPoints = pathsList.sumOf { it.size }
+                    val endTime = System.currentTimeMillis()
+                    val duration = (endTime - startTime) / 1000.0
+
+                    withContext(Dispatchers.Main) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "${pathsList.size}개 경로, 총 ${totalPoints}개 포인트 생성 완료 (${duration}초 소요)", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "더미 경로 데이터 생성 실패", e)
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(requireContext(), "경로 데이터 생성 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
 
         repeatOnLifecycle { vm.fetchData() }
     }
@@ -180,8 +219,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             return false
         }
     }
-
-
 
     override fun onSubscriptionPurchaseCompleted(purchase: Purchase) {
         val bottomSheet = SubscribeAfterBottomSheetFragment.newInstance()
@@ -930,7 +967,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
                 withContext(Dispatchers.IO) {
                     val bitmap = uri.toBitmap(requireContext()) ?: return@withContext
-                    if(nsfwDetector.detectNSFW(bitmap).isNSFW) {
+                    saveBitmapLosslessToExternalStorage(requireContext(), bitmap, "sample_image.png", true)
+                    if(freepikNSFWDetector.detectNSFW(bitmap).isNSFW) {
                         withContext(Dispatchers.Main) {
                             mainActivity.vm.viewEvent(
                                 GlobalViewEvent.Toast(
@@ -950,6 +988,69 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 }
             }
         }
+
+    /**
+     * Bitmap을 손상 없이 외부 저장소에 저장
+     * @param context Context 객체
+     * @param bitmap 저장할 비트맵
+     * @param filename 파일 이름 (예: "original_image.png")
+     * @param usePng PNG 형식 사용 여부 (true: PNG, false: 최고 품질 JPEG)
+     * @return 저장된 파일의 URI, 실패 시 null
+     */
+    suspend fun saveBitmapLosslessToExternalStorage(
+        context: Context,
+        bitmap: Bitmap,
+        filename: String,
+        usePng: Boolean = true
+    ): Uri? = withContext(Dispatchers.IO) {
+        try {
+            val resolver = context.contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.Images.Media.DISPLAY_NAME, filename)
+
+                // MIME 타입 설정
+                val mimeType = if (usePng) "image/png" else "image/jpeg"
+                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    put(MediaStore.Images.Media.IS_PENDING, 1)
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+            }
+
+            // 압축 포맷 설정
+            val format = if (usePng) {
+                Bitmap.CompressFormat.PNG  // 무손실 압축
+            } else {
+                Bitmap.CompressFormat.JPEG // 최고 품질 설정
+            }
+
+            // 이미지를 미디어 스토어에 삽입
+            val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+            if (imageUri != null) {
+                resolver.openOutputStream(imageUri).use { outputStream ->
+                    if (outputStream != null) {
+                        // 최고 품질(100)로 비트맵 저장
+                        bitmap.compress(format, 100, outputStream)
+                    }
+                }
+
+                // Android 10 이상에서는 IS_PENDING 플래그 해제
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    contentValues.clear()
+                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                    resolver.update(imageUri, contentValues, null, null)
+                }
+            }
+
+            imageUri
+        } catch (e: Exception) {
+            Log.e("BitmapSaver", "Error saving bitmap lossless to external storage: ${e.message}")
+            e.printStackTrace()
+            null
+        }
+    }
 
     // ===== 13. 상태 초기화 메서드 그룹 =====
     private fun resetInitializationState() {

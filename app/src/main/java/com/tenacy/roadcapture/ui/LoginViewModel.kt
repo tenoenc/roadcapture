@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,6 +38,10 @@ class LoginViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e(TagConstants.AUTH, "파이어베이스 로그인 실패", exception)
+                    // 에러 이벤트 발생
+                    withContext(Dispatchers.Default) {
+                        viewEvent(LoginViewEvent.SocialError(exception.message, SocialType.Naver))
+                    }
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
@@ -52,11 +57,30 @@ class LoginViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e(TagConstants.AUTH, "파이어베이스 로그인 실패", exception)
+                    // 에러 이벤트 발생
+                    withContext(Dispatchers.Default) {
+                        viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
+                    }
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
                     updateUser(socialType)
                 }
+        }
+    }
+
+    override fun onLoginError(exception: Throwable, socialType: SocialType) {
+        Log.e(TagConstants.AUTH, "${socialType.name} 로그인 에러", exception)
+        viewModelScope.launch(Dispatchers.Main) {
+            // 에러 메시지 표시나 다른 에러 처리
+            viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
+        }
+    }
+
+    override fun onLoginCancelled(socialType: SocialType) {
+        Log.d(TagConstants.AUTH, "${socialType.name} 로그인 취소")
+        viewModelScope.launch(Dispatchers.Main) {
+            // 취소 처리 (필요한 경우)
         }
     }
 
@@ -74,11 +98,12 @@ class LoginViewModel @Inject constructor(
                     "displayName" to displayName,
                     "provider" to socialType.name,
                     "createdAt" to FieldValue.serverTimestamp(),
+                    "updatedAt" to FieldValue.serverTimestamp(),
                     "photoUrl" to photoUrl,
                     "photoName" to photoPath,
                 )
 
-                userRef.update(userData).await()
+                userRef.set(userData).await()
 
                 UserPref.id = userId
                 UserPref.provider = socialType
@@ -100,7 +125,10 @@ class LoginViewModel @Inject constructor(
             emit(Unit)
         }
             .catch { exception ->
+                Log.e("LoginViewModel", "에러", exception)
                 auth.signOut()
+                // 사용자 업데이트 실패 처리
+                viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
             }
             .collect {
                 viewEvent(LoginViewEvent.NavigateToMain)

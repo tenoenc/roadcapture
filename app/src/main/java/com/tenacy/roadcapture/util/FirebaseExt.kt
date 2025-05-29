@@ -6,6 +6,7 @@ import android.util.Log
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
@@ -22,6 +23,7 @@ val auth get() = Firebase.auth
 val user get() = auth.currentUser
 val db get() = Firebase.firestore
 val storage get() = Firebase.storage(BuildConfig.STORAGE_BASE_URL)
+val functions get() = Firebase.functions
 private val storageRef = storage.reference
 
 

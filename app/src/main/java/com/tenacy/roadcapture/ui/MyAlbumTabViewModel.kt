@@ -114,7 +114,7 @@ class MyAlbumTabViewModel @Inject constructor(
                 }
                 db.executeInBatches(allOperations)
 
-                deleteAlbumImages(userId, albumId)
+                DeleteAlbumWorker.enqueueOneTimeWork(context, userId, albumId)
 
                 emit(Unit)
             }
@@ -125,17 +125,5 @@ class MyAlbumTabViewModel @Inject constructor(
                     viewEvent(MyAlbumTabViewEvent.RefreshAll)
                 }
         }
-    }
-
-    // 앨범 삭제 요청
-    private fun deleteAlbumImages(userId: String, albumId: String) {
-        val workRequest = DeleteAlbumWorker.createWorkRequest(userId, albumId)
-
-        WorkManager.getInstance(context)
-            .enqueueUniqueWork(
-                "${Constants.WORK_NAME_DELETE_ALBUM}_${userId}_${albumId}",
-                ExistingWorkPolicy.KEEP,  // 이미 실행 중이면 기존 작업 유지
-                workRequest
-            )
     }
 }

@@ -34,9 +34,7 @@ class ProfileUploadProgressFragment: BaseFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         onBackPressedCallback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                remove()
-            }
+            override fun handleOnBackPressed() { }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
     }

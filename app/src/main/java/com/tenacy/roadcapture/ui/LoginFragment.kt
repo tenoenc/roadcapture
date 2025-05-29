@@ -14,6 +14,7 @@ import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.facebook.CallbackManager
 import com.facebook.login.LoginManager
@@ -31,11 +32,13 @@ import com.tenacy.roadcapture.auth.NaverOAuthLoginCallback
 import com.tenacy.roadcapture.databinding.FragmentLoginBinding
 import com.tenacy.roadcapture.util.TagConstants
 import com.tenacy.roadcapture.util.auth
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -152,6 +155,14 @@ class LoginFragment : BaseFragment() {
             is LoginViewEvent.NaverLogin -> {
                 naverLogin()
             }
+
+            // 추가된 에러 처리
+            is LoginViewEvent.SocialError -> {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    val message = event.message ?: "로그인에 실패했어요"
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(message, ToastMessageType.Warning)))
+                }
+            }
         }
     }
 
@@ -181,7 +192,6 @@ class LoginFragment : BaseFragment() {
     }
 
     private fun googleLogin() {
-
         val credentialManager = CredentialManager.create(requireContext())
 
         val googleIdOption = GetGoogleIdOption.Builder()
@@ -195,9 +205,15 @@ class LoginFragment : BaseFragment() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = credentialManager.getCredential(requireContext(), request)
-                googleOAuthLoginCallback(response)
+                // 성공 Result 전달
+                withContext(Dispatchers.Main) {
+                    googleOAuthLoginCallback(Result.success(response))
+                }
             } catch (e: GetCredentialException) {
-                Log.e(TagConstants.AUTH, "구글 로그인 실패", e)
+                // 실패 Result 전달
+                withContext(Dispatchers.Main) {
+                    googleOAuthLoginCallback(Result.failure(e))
+                }
             }
         }
     }

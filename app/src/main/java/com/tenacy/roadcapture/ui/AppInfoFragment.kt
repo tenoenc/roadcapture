@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -7,25 +8,58 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.credentials.CredentialManager
+import androidx.credentials.GetCredentialRequest
+import androidx.credentials.exceptions.GetCredentialException
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.GoogleAuthProvider
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import com.navercorp.nid.NaverIdLoginSDK
+import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
+import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
+import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
+import com.tenacy.roadcapture.auth.NaverOAuthLoginCallback
+import com.tenacy.roadcapture.data.SocialType
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.setQuickTapListener
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import javax.inject.Named
+import kotlin.random.Random
 
 @AndroidEntryPoint
 class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
@@ -41,6 +75,21 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
 
     @Inject
     lateinit var donationManager: DonationManager
+
+    @Inject
+    lateinit var callbackManager: CallbackManager
+
+    @Inject
+    @Named("reauth")
+    lateinit var kakaoOAuthLoginCallback: KakaoOAuthLoginCallback
+
+    @Inject
+    @Named("reauth")
+    lateinit var googleOAuthLoginCallback: GoogleOAuthLoginCallback
+
+    @Inject
+    @Named("reauth")
+    lateinit var facebookOAuthLoginCallback: FacebookOAuthLoginCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +113,11 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        callbackManager.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onBecameVisible() {
@@ -150,6 +204,17 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 launchDonation(it.type)
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            WithdrawBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<WithdrawBeforeBottomSheetFragment.ParamsOut.Positive>(
+                WithdrawBeforeBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE
+            )?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                reauthenticate()
+            }
+        }
     }
 
     private fun observeSubscriptionState() {
@@ -176,7 +241,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             }
 
             is AppInfoViewEvent.Logout -> {
-                mainActivity.signOut()
+                mainActivity.vm.logout()
             }
 
             is AppInfoViewEvent.Donate -> {
@@ -191,6 +256,124 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     subscriptionManager.subscribe(activity, this)
                 }
             }
+
+            is AppInfoViewEvent.WithdrawComplete -> {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴가 완료되었어요", ToastMessageType.Success)))
+
+                    val navOptions = NavOptions.Builder().setPopUpTo(
+                        R.id.mainFragment,
+                        true
+                    ).build()
+                    mainActivity.currentFragment?.findNavController()?.run {
+                        navigate(
+                            R.id.loginFragment,
+                            null,
+                            navOptions
+                        )
+                    }
+                }
+            }
+
+            is AppInfoViewEvent.ShowWithdrawBefore -> {
+                val bottomSheet = WithdrawBeforeBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, WithdrawBeforeBottomSheetFragment.TAG)
+            }
+
+            is AppInfoViewEvent.Error -> {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    when(event) {
+                        is AppInfoViewEvent.Error.Reauth -> {
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("계정이 일치하지 않아요", ToastMessageType.Warning)))
+                        }
+                        is AppInfoViewEvent.Error.Withdraw -> {
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴 중 오류가 발생했어요", ToastMessageType.Warning)))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun reauthenticate() {
+        when (UserPref.provider) {
+            SocialType.Google -> googleReauth()
+            SocialType.Facebook -> facebookReauth()
+            SocialType.Kakao -> kakaoReauth()
+            SocialType.Naver -> {}
+        }
+    }
+
+    private fun kakaoReauth() {
+        loginWithKakaoMethod(kakaoOAuthLoginCallback)
+    }
+
+    private fun googleReauth() {
+        val credentialManager = CredentialManager.create(requireContext())
+
+        val googleIdOption = GetGoogleIdOption.Builder()
+            .setFilterByAuthorizedAccounts(false)
+            .setServerClientId(BuildConfig.GOOGLE_CLIENT_ID)
+            .setAutoSelectEnabled(true)
+            .build()
+
+        val request = GetCredentialRequest.Builder().addCredentialOption(googleIdOption).build()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val response = credentialManager.getCredential(requireContext(), request)
+                // 성공 Result 전달
+                withContext(Dispatchers.Main) {
+                    googleOAuthLoginCallback(Result.success(response))
+                }
+            } catch (e: GetCredentialException) {
+                // 실패 Result 전달
+                withContext(Dispatchers.Main) {
+                    googleOAuthLoginCallback(Result.failure(e))
+                }
+            }
+        }
+    }
+
+    private fun facebookReauth() {
+        LoginManager.getInstance().run {
+            logInWithReadPermissions(
+                this@AppInfoFragment,
+                listOf(
+                    "email",
+                    "public_profile"
+                )
+            )
+            registerCallback(callbackManager, facebookOAuthLoginCallback)
+        }
+    }
+
+    private fun loginWithKakaoMethod(kakaoLoginCallback: KakaoOAuthLoginCallback) {
+
+        // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
+            UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
+                if (error != null) {
+                    Log.e(TagConstants.AUTH, "카카오톡으로 로그인 실패", error)
+
+                    kakaoLoginCallback(token, error)
+
+                    // 사용자가 카카오톡 설치 후 디바이스 권한 요청 0화면에서 로그인을 취소한 경우,
+                    // 의도적인 로그인 취소로 보고 카카오계정으로 로그인 시도 없이 로그인 취소로 처리 (예: 뒤로 가기)
+                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+
+                    // 카카오톡에 연결된 카카오계정이 없는 경우, 카카오계정으로 로그인 시도
+                    UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = kakaoLoginCallback)
+                } else if (token != null) {
+                    Log.i(TagConstants.AUTH, "카카오톡으로 로그인 성공 ${token.accessToken}")
+
+                    kakaoLoginCallback(token, null)
+                }
+            }
+        } else {
+            UserApiClient.instance.loginWithKakaoAccount(requireContext(), callback = kakaoLoginCallback)
         }
     }
 

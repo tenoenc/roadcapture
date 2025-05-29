@@ -160,7 +160,7 @@ class MainFragment: BaseFragment() {
     private fun handleViewEvents(event: MainViewEvent) {
         when (event) {
             is MainViewEvent.Logout -> {
-                mainActivity.signOut()
+                mainActivity.vm.logout()
             }
             is MainViewEvent.ShowTripBefore -> {
                 // Album.createdAt 대신 TravelStatePref.isTraveling 사용

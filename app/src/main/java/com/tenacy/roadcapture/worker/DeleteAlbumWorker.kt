@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.google.firebase.storage.FirebaseStorage
+import com.tenacy.roadcapture.util.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -23,13 +24,13 @@ class DeleteAlbumWorker @AssistedInject constructor(
         private const val KEY_USER_ID = "user_id"
         private const val KEY_ALBUM_ID = "album_id"
 
-        fun createWorkRequest(userId: String, albumId: String): OneTimeWorkRequest {
+        fun enqueueOneTimeWork(context: Context, userId: String, albumId: String) {
             val inputData = workDataOf(
                 KEY_USER_ID to userId,
                 KEY_ALBUM_ID to albumId
             )
 
-            return OneTimeWorkRequestBuilder<DeleteAlbumWorker>()
+            val workRequest = OneTimeWorkRequestBuilder<DeleteAlbumWorker>()
                 .setInputData(inputData)
                 .setConstraints(
                     Constraints.Builder()
@@ -42,6 +43,18 @@ class DeleteAlbumWorker @AssistedInject constructor(
                     TimeUnit.MILLISECONDS
                 )
                 .build()
+
+            WorkManager.getInstance(context)
+                .enqueueUniqueWork(
+                    "${Constants.USER_WORK_NAME_DELETE_ALBUM}_${userId}_${albumId}",
+                    ExistingWorkPolicy.KEEP,  // 이미 실행 중이면 기존 작업 유지
+                    workRequest
+                )
+        }
+
+        fun cancelWork(context: Context) {
+            Log.d(TAG, "앨범 삭제 워커 취소")
+            WorkManager.getInstance(context).cancelUniqueWork(Constants.USER_WORK_NAME_DELETE_ALBUM)
         }
     }
 

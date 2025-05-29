@@ -44,11 +44,12 @@ object SubscriptionPref : KotprefModel() {
     }
 
     // 구독 정보 초기화
-    fun clearSubscription() {
+    override fun clear() {
         _isSubscriptionActive = false
         subscriptionType = ""
         subscriptionExpiryTime = 0L
         isSubscriptionCancelled = false
         purchaseToken = ""
+        super.clear()
     }
 }

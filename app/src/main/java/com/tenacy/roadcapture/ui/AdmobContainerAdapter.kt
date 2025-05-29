@@ -178,25 +178,47 @@ class AdmobContainerAdapter(
         }
     }
 
+    // 광고 위치 계산 로직 수정
     private fun isAdPosition(position: Int): Boolean {
         if (position == 0) return false
-        return position >= adPosition && (position - adPosition) % (adInterval + 1) == 0
+        if (adInterval == 1) {
+            // adInterval이 1일 때의 로직 (매 아이템마다 광고)
+            return position >= adPosition && (position - adPosition) % 2 == 0
+        } else {
+            // 일반적인 로직
+            return position >= adPosition && (position - adPosition) % (adInterval + 1) == 0
+        }
     }
 
+    // 원본 위치 계산 로직 수정
     private fun getOriginalPosition(position: Int): Int {
         if (position < adPosition) return position
 
-        val adCount = (position - adPosition + adInterval) / (adInterval + 1)
-        return position - adCount
+        if (adInterval == 1) {
+            // adInterval이 1일 때의 로직 (매 아이템마다 광고)
+            return position - (position - adPosition + 1) / 2
+        } else {
+            // 일반적인 로직
+            val adCount = (position - adPosition + adInterval) / (adInterval + 1)
+            return position - adCount
+        }
     }
 
+    // 광고를 고려한 위치 계산 로직 수정
     private fun getAdjustedPositionForAd(originalPosition: Int): Int {
         if (originalPosition < adPosition) return originalPosition
 
-        val adCount = (originalPosition - adPosition + adInterval) / adInterval
-        return originalPosition + adCount
+        if (adInterval == 1) {
+            // adInterval이 1일 때의 로직 (매 아이템마다 광고)
+            return originalPosition + (originalPosition - adPosition + 1)
+        } else {
+            // 일반적인 로직
+            val adCount = (originalPosition - adPosition + adInterval) / adInterval
+            return originalPosition + adCount
+        }
     }
 
+    // 범위의 크기 계산 로직
     private fun getAdjustedRangeCount(startPosition: Int, itemCount: Int): Int {
         val endPosition = startPosition + itemCount - 1
         val adjustedStart = getAdjustedPositionForAd(startPosition)
@@ -204,11 +226,18 @@ class AdmobContainerAdapter(
         return adjustedEnd - adjustedStart + 1
     }
 
+    // 총 아이템 개수 계산 로직 수정
     private fun getCountWithAds(originalCount: Int): Int {
         if (originalCount <= adPosition) return originalCount
 
-        val adCount = (originalCount - adPosition + adInterval - 1) / adInterval
-        return originalCount + adCount
+        if (adInterval == 1) {
+            // adInterval이 1일 때의 로직 (매 아이템마다 광고)
+            return originalCount + Math.max(0, originalCount - adPosition + 1)
+        } else {
+            // 일반적인 로직
+            val adCount = (originalCount - adPosition + adInterval) / adInterval
+            return originalCount + adCount
+        }
     }
 
     // 심플한 스크롤 리스너
@@ -286,33 +315,16 @@ class AdmobContainerAdapter(
 
         private var currentAd: NativeAd? = null
 
-        init {
-            // 아이템 루트에 고정 높이 설정
-            /*binding.root.layoutParams = ViewGroup.MarginLayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                356.toPx  // 고정 높이
-            ).apply {
-                setMargins(20.toPx, 0, 20.toPx, 0)
-            }*/
-        }
-
         fun bind(position: Int) {
             val cachedAd = adCache[position]
             if (cachedAd != null) {
                 populateNativeAdView(cachedAd)
             } else {
-//                showPlaceholder()
                 if (!loadingAds.contains(position)) {
                     loadAdForPosition(position)
                 }
             }
         }
-
-        /*private fun showPlaceholder() {
-            binding.adContainer.visibility = View.VISIBLE
-            binding.adContainer.minimumHeight = 356.toPx  // 동일한 높이
-            binding.adContainer.alpha = 0.2f
-        }*/
 
         fun unbind() {
             currentAd = null

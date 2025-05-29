@@ -6,7 +6,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.*
+import androidx.work.Configuration
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.MobileAds
@@ -16,11 +16,7 @@ import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelStatePref
-import com.tenacy.roadcapture.manager.BillingManager
-import com.tenacy.roadcapture.manager.DonationManager
-import com.tenacy.roadcapture.manager.NSFWDetector
-import com.tenacy.roadcapture.manager.SubscriptionManager
-import com.tenacy.roadcapture.util.Constants
+import com.tenacy.roadcapture.manager.*
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.EntryPoint
@@ -28,14 +24,13 @@ import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.components.SingletonComponent
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @HiltAndroidApp
 class RoadcaptureApplication: Application(), Configuration.Provider {
 
     @Inject
-    lateinit var nsfwDetector: NSFWDetector
+    lateinit var freepikNSFWDetector: FreepikNSFWDetector
 
     @Inject
     lateinit var billingManager: BillingManager
@@ -57,7 +52,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-        nsfwDetector.initialize()
+//        freepikNSFWDetector.initialize()
         MobileAds.initialize(this)
         Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
         FirebaseApp.initializeApp(this)
@@ -72,7 +67,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
     }
 
     override fun onTerminate() {
-        nsfwDetector.close()
+        freepikNSFWDetector.close()
         super.onTerminate()
     }
 
@@ -100,31 +95,10 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         val currentTime = System.currentTimeMillis()
 
         if (expiryTime > currentTime) {
-            val delay = expiryTime - currentTime + Constants.SUBSCRIPTION_EXPIRY_CHECK_DELAY_MS
-
-            val expiryWork = OneTimeWorkRequestBuilder<SubscriptionCheckWorker>()
-                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
-                .build()
-
-            WorkManager.getInstance(this).enqueueUniqueWork(
-                Constants.SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK,
-                ExistingWorkPolicy.REPLACE,
-                expiryWork
-            )
+            SubscriptionCheckWorker.enqueueOneTimeWork(this, expiryTime - currentTime)
         }
 
-        // 정기 체크
-        val periodicWork = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
-            Constants.SUBSCRIPTION_PERIODIC_CHECK_INTERVAL_MINUTES, TimeUnit.MINUTES
-        )
-            .setInitialDelay(Constants.SUBSCRIPTION_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
-            .build()
-
-        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            Constants.SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK,
-            ExistingPeriodicWorkPolicy.REPLACE,
-            periodicWork
-        )
+        SubscriptionCheckWorker.enqueuePeriodicWork(this)
     }
 
     // 애플리케이션 시작 시 빌링 서비스 초기화

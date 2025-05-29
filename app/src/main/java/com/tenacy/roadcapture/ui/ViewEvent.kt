@@ -1,14 +1,15 @@
 package com.tenacy.roadcapture.ui
 
 import com.google.android.gms.maps.model.LatLng
+import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.dto.Album
 
 sealed interface ViewEvent
 
 sealed class GlobalViewEvent: ViewEvent {
-    data object GlobalNavigateToLogin: GlobalViewEvent()
     data class Toast(val toast: ToastModel) : GlobalViewEvent()
     data class CopyToClipboard(val text: String) : GlobalViewEvent()
+    data object Logout: GlobalViewEvent()
 }
 
 sealed class LoginViewEvent: ViewEvent {
@@ -17,6 +18,7 @@ sealed class LoginViewEvent: ViewEvent {
     data object FacebookLogin: LoginViewEvent()
     data object KakaoLogin: LoginViewEvent()
     data object NaverLogin: LoginViewEvent()
+    data class SocialError(val message: String?, val socialType: SocialType): LoginViewEvent()
 }
 
 sealed class MainViewEvent: ViewEvent {
@@ -35,6 +37,12 @@ sealed class AppInfoViewEvent: ViewEvent {
     data object Logout: AppInfoViewEvent()
     data object Donate : AppInfoViewEvent()
     data object Subscribe : AppInfoViewEvent()
+    data object WithdrawComplete : AppInfoViewEvent()
+    data object ShowWithdrawBefore : AppInfoViewEvent()
+    sealed class Error(open val message: String?): AppInfoViewEvent() {
+        data class Reauth(override val message: String?, val socialType: SocialType) : Error(message)
+        data class Withdraw(override val message: String?): Error(message)
+    }
 }
 
 sealed class ScrapViewEvent: ViewEvent {

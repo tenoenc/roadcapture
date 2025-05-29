@@ -29,7 +29,7 @@ class TripViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
-    private val travelingStateManager: TravelingStateManager
+    private val travelingStateManager: TravelingStateManager,
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive

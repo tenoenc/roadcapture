@@ -48,7 +48,7 @@ class HomeFragment: BaseFragment() {
         AdmobContainerAdapter(
             originalAdapter = albumAdapter,
             adPosition = 1,
-            adInterval = 1
+            adInterval = 3,
         )
     }
     // RecyclerView 상태 관리
@@ -293,11 +293,23 @@ class HomeFragment: BaseFragment() {
             val scrollPosition = layoutManager?.findFirstVisibleItemPosition() ?: 0
             val scrollOffset = layoutManager?.findViewByPosition(scrollPosition)?.top ?: 0
 
-            // 부드러운 전환을 위해 swapAdapter 사용
-            binding.rvHomeAlbums.swapAdapter(newAdapter, false)
+            binding.rvHomeAlbums.apply {
+                // RecyclerView가 계산 중이 아닐 때만 교체
+                if (!isComputingLayout) {
+                    adapter = null
+                    adapter = newAdapter
 
-            // 스크롤 위치 복원
-            layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
+                    // 스크롤 위치 복원
+                    layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
+                } else {
+                    // 계산 중이면 post로 지연 실행
+                    post {
+                        adapter = null
+                        adapter = newAdapter
+                        layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
+                    }
+                }
+            }
         }
     }
 

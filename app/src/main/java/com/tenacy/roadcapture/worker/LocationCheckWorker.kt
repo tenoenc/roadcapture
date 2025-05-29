@@ -8,6 +8,7 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.tenacy.roadcapture.data.pref.TravelStatePref
 import com.tenacy.roadcapture.service.LocationTrackingService
+import com.tenacy.roadcapture.util.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -81,9 +82,6 @@ class LocationCheckWorker @AssistedInject constructor(
 
     companion object {
         private const val TAG = "LocationCheckWorker"
-        private const val WORK_NAME = "LocationCheckPeriodicWork"
-        private const val INITIAL_DELAY_MINUTES = 1L
-        private const val REPEAT_INTERVAL_MINUTES = 15L
 
         fun enqueuePeriodicWork(context: Context) {
             Log.d(TAG, "주기적 워커 등록")
@@ -95,11 +93,11 @@ class LocationCheckWorker @AssistedInject constructor(
                 .build()
 
             val periodicWorkRequest = PeriodicWorkRequestBuilder<LocationCheckWorker>(
-                REPEAT_INTERVAL_MINUTES,
+                Constants.TRACKING_REPEAT_INTERVAL_MINUTES,
                 TimeUnit.MINUTES
             )
                 .setConstraints(constraints)
-                .setInitialDelay(INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
+                .setInitialDelay(Constants.TRACKING_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
                 .setBackoffCriteria(
                     BackoffPolicy.LINEAR,
                     WorkRequest.MIN_BACKOFF_MILLIS,  // 수정됨
@@ -109,17 +107,12 @@ class LocationCheckWorker @AssistedInject constructor(
 
             WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
-                    WORK_NAME,
+                    Constants.TRACKING_WORK_NAME,
                     ExistingPeriodicWorkPolicy.UPDATE,
                     periodicWorkRequest
                 )
 
             Log.d(TAG, "주기적 워커 등록 완료")
-        }
-
-        fun cancelWork(context: Context) {
-            Log.d(TAG, "주기적 워커 취소")
-            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
         }
 
         // 즉시 실행을 위한 일회성 워커
@@ -136,6 +129,11 @@ class LocationCheckWorker @AssistedInject constructor(
 
             WorkManager.getInstance(context)
                 .enqueue(oneTimeWorkRequest)
+        }
+
+        fun cancelWork(context: Context) {
+            Log.d(TAG, "위치 추적 워커 취소")
+            WorkManager.getInstance(context).cancelUniqueWork(Constants.TRACKING_WORK_NAME)
         }
     }
 }

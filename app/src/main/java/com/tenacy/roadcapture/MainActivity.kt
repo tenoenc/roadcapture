@@ -155,11 +155,6 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     private suspend fun handleViewEvents(event: GlobalViewEvent) = withContext(Dispatchers.Main) {
         when (event) {
-            is GlobalViewEvent.GlobalNavigateToLogin -> {
-                supportFragmentManager.dismissAllDialogs()
-                signOut()
-            }
-
             is GlobalViewEvent.Toast -> {
                 when (event.toast.type) {
                     is ToastMessageType.Info -> MyToast.info(this@MainActivity, event.toast.message).show()
@@ -173,18 +168,21 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 val clipData = ClipData.newPlainText("text", event.text)
                 clipboardManager.setPrimaryClip(clipData)
             }
+
+            is GlobalViewEvent.Logout -> {
+                supportFragmentManager.dismissAllDialogs()
+                signOut()
+            }
         }
     }
 
-    fun signOut() {
+    private fun signOut() {
         Firebase.auth.signOut()
+
         val navOptions = NavOptions.Builder().setPopUpTo(
             R.id.mainFragment,
             true
         ).build()
-
-        UserPref.clear()
-        SubscriptionPref.clearSubscription()
 
         currentFragment?.findNavController()?.run {
             navigate(

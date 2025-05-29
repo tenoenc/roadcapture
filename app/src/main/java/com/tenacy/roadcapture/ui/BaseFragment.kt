@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.util.mainActivity
 
@@ -30,6 +32,17 @@ abstract class BaseFragment : Fragment(), View.OnClickListener {
         setClickListenerRecursively(view)
     }
 
+    override fun onPause() {
+        super.onPause()
+        childFragmentManager.dismissAllDialogs()
+    }
+
+    override fun onClick(v: View?) {
+        when(v?.id) {
+            R.id.ibtn_a_bar_back -> mainActivity.onBackPressed()
+        }
+    }
+
     private fun setClickListenerRecursively(view: View) {
         if(view.id == R.id.ibtn_a_bar_back) {
             view.setOnClickListener(this)
@@ -42,9 +55,9 @@ abstract class BaseFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    override fun onClick(v: View?) {
-        when(v?.id) {
-            R.id.ibtn_a_bar_back -> mainActivity.onBackPressed()
+    private fun FragmentManager.dismissAllDialogs() {
+        fragments.forEach { fragment ->
+            (fragment as? DialogFragment)?.dismissAllowingStateLoss()
         }
     }
 }

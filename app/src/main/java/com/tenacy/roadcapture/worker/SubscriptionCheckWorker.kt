@@ -13,8 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.CoroutineWorker
-import androidx.work.WorkerParameters
+import androidx.work.*
 import com.tenacy.roadcapture.MainActivity
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
@@ -23,6 +22,7 @@ import com.tenacy.roadcapture.util.Constants
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -96,5 +96,44 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             return
         }
         notificationManager.notify(Constants.SUBSCRIPTION_NOTIFICATION_ID_EXPIRING, builder.build())
+    }
+
+    companion object {
+        private const val TAG = "SubscriptionCheckWorker"
+
+        fun enqueueOneTimeWork(context: Context, duration: Long) {
+            val delay = duration + Constants.SUBSCRIPTION_EXPIRY_CHECK_DELAY_MS
+
+            val expiryWork = OneTimeWorkRequestBuilder<SubscriptionCheckWorker>()
+                .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                Constants.SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK,
+                ExistingWorkPolicy.REPLACE,
+                expiryWork
+            )
+        }
+
+        fun enqueuePeriodicWork(context: Context) {
+            // 정기 체크
+            val periodicWork = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
+                Constants.SUBSCRIPTION_REPEAT_INTERVAL_MINUTES, TimeUnit.MINUTES
+            )
+                .setInitialDelay(Constants.SUBSCRIPTION_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                Constants.SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK,
+                ExistingPeriodicWorkPolicy.REPLACE,
+                periodicWork
+            )
+        }
+
+        fun cancelWork(context: Context) {
+            Log.d(TAG, "구독 상태 확인 워커 취소")
+            WorkManager.getInstance(context).cancelUniqueWork(Constants.SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK)
+            WorkManager.getInstance(context).cancelUniqueWork(Constants.SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK)
+        }
     }
 }
