@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.esafirm.imagepicker.features.ImagePickerConfig
 import com.esafirm.imagepicker.features.ImagePickerLauncher
@@ -20,8 +21,12 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentMyAlbumBinding
 import com.tenacy.roadcapture.util.consumeOnce
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyAlbumFragment: BaseFragment() {
@@ -64,7 +69,8 @@ class MyAlbumFragment: BaseFragment() {
     private fun setupImagePicker() {
         imagePickerLauncher = registerImagePicker { result: List<Image> ->
             result.getOrNull(0)?.let {
-                findNavController().navigate(MainFragmentDirections.actionMainToProfileUploadProgress(it.uri))
+                UpdateUserPhotoWorker.enqueueOneTimeWork(requireContext(), it.uri)
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프로필 사진을 변경하고 있어요\n반영되는 데 시간이 걸려요")))
             }
         }
     }
@@ -120,15 +126,6 @@ class MyAlbumFragment: BaseFragment() {
 
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_PROFILE_UPLOAD_PROGRESS) { bundle ->
-                if (bundle == null) return@consumeOnce
-                bundle.getLong(RESULT_EVENT_REFRESH, 0L).takeIf { it > 0 }?.let {
-                    vm.fetchData()
-                }
-            }
-        }
-
-        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
-            savedStateHandle?.consumeOnce<Bundle?>(KEY_USERNAME_SAVING) { bundle ->
                 if (bundle == null) return@consumeOnce
                 bundle.getLong(RESULT_EVENT_REFRESH, 0L).takeIf { it > 0 }?.let {
                     vm.fetchData()
@@ -192,7 +189,6 @@ class MyAlbumFragment: BaseFragment() {
 
     companion object {
         const val KEY_PROFILE_UPLOAD_PROGRESS = "profile_upload_progress"
-        const val KEY_USERNAME_SAVING = "username_saving"
         const val RESULT_EVENT_REFRESH = "event_refresh"
     }
 }

@@ -158,7 +158,7 @@ class LoginFragment : BaseFragment() {
 
             // 추가된 에러 처리
             is LoginViewEvent.SocialError -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     val message = event.message ?: "로그인에 실패했어요"
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(message, ToastMessageType.Warning)))
                 }

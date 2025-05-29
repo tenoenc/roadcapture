@@ -33,7 +33,11 @@ object Constants {
     const val SUBSCRIPTION_EXPIRY_WARNING_DAYS = 3
     const val SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK = "subscription_check"
     const val SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK = "subscription_expiry_check"
-    
-    // 앨범 삭제 워커
-    const val USER_WORK_NAME_DELETE_ALBUM = "delete_album"
+
+    const val ALBUM_WORK_NAME_DELETE = "delete_album"
+    const val ALBUM_WORK_NAME_UPDATE_PUBLIC = "update_album_public"
+
+    const val USER_WORK_NAME_UPDATE_NAME = "update_username"
+    const val USER_WORK_NAME_UPDATE_PHOTO = "update_user_photo"
+
 }

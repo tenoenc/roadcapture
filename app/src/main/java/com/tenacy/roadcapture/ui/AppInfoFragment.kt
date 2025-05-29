@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -8,12 +7,10 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
@@ -23,28 +20,16 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
 import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
 import com.facebook.login.LoginManager
-import com.facebook.login.LoginResult
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.firebase.auth.FacebookAuthProvider
-import com.google.firebase.auth.GoogleAuthProvider
-import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.navercorp.nid.NaverIdLoginSDK
-import com.navercorp.nid.oauth.OAuthLoginCallback
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
-import com.tenacy.roadcapture.auth.NaverOAuthLoginCallback
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
@@ -59,7 +44,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.random.Random
 
 @AndroidEntryPoint
 class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
@@ -135,7 +119,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     override fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String) {
         if (!isAdded) return
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
                     ToastModel("구독에 실패했습니다: $errorMessage", ToastMessageType.Warning)
@@ -154,7 +138,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             else -> "후원에 감사드립니다! 앱 개선에 큰 도움이 됩니다."
         }
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
                     ToastModel(message, ToastMessageType.Success)
@@ -170,7 +154,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     override fun onDonationFailed(errorCode: Int, errorMessage: String) {
         if (!isAdded) return
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
                     ToastModel("후원에 실패했습니다: $errorMessage", ToastMessageType.Warning)
@@ -258,7 +242,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             }
 
             is AppInfoViewEvent.WithdrawComplete -> {
-                lifecycleScope.launch(Dispatchers.Main) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴가 완료되었어요", ToastMessageType.Success)))
 
                     val navOptions = NavOptions.Builder().setPopUpTo(
@@ -281,7 +265,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             }
 
             is AppInfoViewEvent.Error -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     when(event) {
                         is AppInfoViewEvent.Error.Reauth -> {
                             mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("계정이 일치하지 않아요", ToastMessageType.Warning)))
@@ -384,7 +368,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     }
 
     private fun openEmailToContactDeveloper() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:")
@@ -409,7 +393,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 Log.e("EmailError", "이메일을 보낼 수 없습니다: ${e.message}")
 
                 if (isAdded()) {
-                    lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel("이메일을 보낼 수 없습니다: ${e.localizedMessage}", ToastMessageType.Warning)
@@ -423,7 +407,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     val clipData = ClipData.newPlainText("개발자 이메일", "tentenacy@gmail.com")
                     clipboardManager.setPrimaryClip(clipData)
 
-                    lifecycleScope.launch {
+                    viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel("개발자 이메일이 클립보드에 복사되었습니다.", ToastMessageType.Info)

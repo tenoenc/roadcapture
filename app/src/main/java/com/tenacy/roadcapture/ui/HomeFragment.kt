@@ -64,6 +64,7 @@ class HomeFragment: BaseFragment() {
     lateinit var subscriptionManager: SubscriptionManager
 
     private var wasRefreshing = false
+    private var requireNoShimmer: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -182,7 +183,7 @@ class HomeFragment: BaseFragment() {
             wasRefreshing = isLoading
 
             // 로딩 시 Shimmer 효과 처리
-            if (isLoading && !binding.swipeRefreshLayout.isRefreshing) {
+            if (isLoading && !binding.swipeRefreshLayout.isRefreshing && !requireNoShimmer) {
                 binding.shimmerLayout.visibility = View.VISIBLE
                 binding.shimmerLayout.startShimmer()
                 binding.swipeRefreshLayout.visibility = View.GONE
@@ -192,6 +193,7 @@ class HomeFragment: BaseFragment() {
                 binding.swipeRefreshLayout.visibility = View.VISIBLE
 
                 if(isRefreshComplete) {
+                    requireNoShimmer = false
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.rvHomeAlbums.scrollToPosition(0)
                 }
@@ -206,6 +208,7 @@ class HomeFragment: BaseFragment() {
             }
 
             errorState?.let {
+                requireNoShimmer = false
                 wasRefreshing = false
                 binding.swipeRefreshLayout.isRefreshing = false
                 Log.e("HomeFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
@@ -320,7 +323,7 @@ class HomeFragment: BaseFragment() {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_ALBUM) { bundle ->
                 if (bundle == null) return@consumeOnce
                 bundle.getLong(RESULT_FORBIDDEN, 0L).takeIf { it > 0 }?.let {
-                    albumAdapter.refresh()
+                    refreshData()
                 }
             }
         }
@@ -369,7 +372,7 @@ class HomeFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
             }
             is HomeViewEvent.ReportComplete -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
                 }
             }
@@ -391,7 +394,8 @@ class HomeFragment: BaseFragment() {
         recyclerViewState = null
     }
 
-    private fun refreshData() {
+    fun refreshData(requireNoShimmer: Boolean = false) {
+        this@HomeFragment.requireNoShimmer = requireNoShimmer
         albumAdapter.refresh()
     }
 

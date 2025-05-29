@@ -12,6 +12,9 @@ import com.tenacy.roadcapture.ui.BaseViewModel
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.util.clearCacheDirectory
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
+import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
+import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
+import com.tenacy.roadcapture.worker.UpdateUsernameWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +31,10 @@ class GlobalViewModel @Inject constructor(
     fun logout() {
         viewModelScope.launch(Dispatchers.IO) {
             travelingStateManager.stopTraveling()
-            DeleteAlbumWorker.cancelWork(context)
+            DeleteAlbumWorker.cancelAll(context)
+            UpdateUsernameWorker.cancelWork(context)
+            UpdateUserPhotoWorker.cancelWork(context)
+            UpdateAlbumPublicWorker.cancelWork(context)
 
             UserPref.clear()
             TravelStatePref.clear()

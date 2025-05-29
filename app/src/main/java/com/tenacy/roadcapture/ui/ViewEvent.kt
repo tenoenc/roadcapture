@@ -116,15 +116,11 @@ sealed class SearchViewEvent: ViewEvent {
     data object ReportComplete: SearchViewEvent()
 }
 
-sealed class MyAlbumTabViewEvent: ViewEvent {
-    data object Refresh: MyAlbumTabViewEvent()
-    data object RefreshAll: MyAlbumTabViewEvent()
-}
-
+sealed class MyAlbumTabViewEvent: ViewEvent
 sealed class MyMemoryTabViewEvent: ViewEvent
 
 sealed class ModifyUsernameViewEvent: ViewEvent {
-    data class Complete(val username: String): ModifyUsernameViewEvent()
+    data object Complete: ModifyUsernameViewEvent()
 }
 
 sealed class HtmlViewEvent

@@ -75,7 +75,7 @@ class MarkerClusterRenderer(
         clusterManager.algorithm.maxDistanceBetweenClusteredItems = 50f.toPx
 
         // 먼저 자주 사용되는 클러스터 아이콘을 미리 생성
-        fragment.lifecycleScope.launch {
+        fragment.viewLifecycleOwner.lifecycleScope.launch {
             // 일반적인 클러스터 크기에 대한 아이콘 미리 생성 (2-10)
             for (i in 2..10) {
                 createClusterMarkerBitmap(i)?.let { bitmap ->
@@ -99,7 +99,7 @@ class MarkerClusterRenderer(
 
             // 아직 로딩 중이 아니면 커스텀 마커 로딩 시작
             if (!markerJobs.containsKey(item.id)) {
-                val job = fragment.lifecycleScope.launch {
+                val job = fragment.viewLifecycleOwner.lifecycleScope.launch {
                     try {
                         val requestBuilder = item.photoUri?.let { createRequestBuilder(it) } ?: createRequestBuilder(item.photoUrl)
                         val icon = createCustomMarkerBitmap(requestBuilder)
@@ -136,7 +136,7 @@ class MarkerClusterRenderer(
             markerOptions.icon(cachedBitmap)
         } else {
             // 없으면 즉시 생성 시도 (동기적으로)
-            fragment.lifecycleScope.launch(Dispatchers.Main.immediate) {
+            fragment.viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main.immediate) {
                 try {
                     val bitmap = createClusterMarkerBitmap(clusterSize)
                     bitmap?.let {
@@ -183,7 +183,7 @@ class MarkerClusterRenderer(
         // 애니메이션 리스너 설정이 필요함
 
         // 애니메이션 완료될 때까지 약간의 지연 후 클러스터 마커 표시
-        fragment.lifecycleScope.launch {
+        fragment.viewLifecycleOwner.lifecycleScope.launch {
 //            delay(ANIMATION_DELAY)  // 애니메이션 완료 대기
 
             withContext(Dispatchers.Main) {

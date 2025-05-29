@@ -4,13 +4,16 @@ import android.content.Context
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.storage.FirebaseStorage
-import com.tenacy.roadcapture.util.Constants
+import com.tenacy.roadcapture.util.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -20,11 +23,15 @@ class DeleteAlbumWorker @AssistedInject constructor(
 ) : CoroutineWorker(context, params) {
 
     companion object {
-        private const val TAG = "DeleteAlbumWorker"
+        const val TAG = "DeleteAlbumWorker"
         private const val KEY_USER_ID = "user_id"
         private const val KEY_ALBUM_ID = "album_id"
 
-        fun enqueueOneTimeWork(context: Context, userId: String, albumId: String) {
+        private fun getUniqueWorkName(userId: String, albumId: String): String {
+            return "${Constants.ALBUM_WORK_NAME_DELETE}_${userId}_${albumId}"
+        }
+
+        fun enqueueOneTimeWork(context: Context, userId: String, albumId: String): UUID {
             val inputData = workDataOf(
                 KEY_USER_ID to userId,
                 KEY_ALBUM_ID to albumId
@@ -32,6 +39,7 @@ class DeleteAlbumWorker @AssistedInject constructor(
 
             val workRequest = OneTimeWorkRequestBuilder<DeleteAlbumWorker>()
                 .setInputData(inputData)
+                .addTag(TAG)
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -44,17 +52,21 @@ class DeleteAlbumWorker @AssistedInject constructor(
                 )
                 .build()
 
+            val uniqueWorkName = getUniqueWorkName(userId, albumId)
+
             WorkManager.getInstance(context)
                 .enqueueUniqueWork(
-                    "${Constants.USER_WORK_NAME_DELETE_ALBUM}_${userId}_${albumId}",
+                    uniqueWorkName,
                     ExistingWorkPolicy.KEEP,  // 이미 실행 중이면 기존 작업 유지
                     workRequest
                 )
+
+            return workRequest.id
         }
 
-        fun cancelWork(context: Context) {
+        fun cancelAll(context: Context) {
             Log.d(TAG, "앨범 삭제 워커 취소")
-            WorkManager.getInstance(context).cancelUniqueWork(Constants.USER_WORK_NAME_DELETE_ALBUM)
+            WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
         }
     }
 
@@ -63,13 +75,39 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val userId = inputData.getString(KEY_USER_ID) ?: return@withContext Result.failure()
             val albumId = inputData.getString(KEY_ALBUM_ID) ?: return@withContext Result.failure()
 
+            // 먼저 삭제할 문서들의 참조를 모두 가져옵니다
+            val albumRef = db.collection("albums").document(albumId)
+
+            // 관련 문서들의 참조를 모두 가져옵니다
+            val memoryRefs = db.collection("memories")
+                .whereEqualTo("albumRef", albumRef).getAllReferences()
+
+            val locationRefs = db.collection("locations")
+                .whereEqualTo("albumRef", albumRef).getAllReferences()
+
+            val scrapRefs = db.collection("scraps")
+                .whereEqualTo("albumRef", albumRef).getAllReferences()
+
+            val allOperations = mutableListOf<BatchOperation>()
+            allOperations.add(DeleteDocumentOperation(albumRef))
+            memoryRefs.forEach { ref ->
+                allOperations.add(DeleteDocumentOperation(ref))
+            }
+            locationRefs.forEach { ref ->
+                allOperations.add(DeleteDocumentOperation(ref))
+            }
+            scrapRefs.forEach { ref ->
+                allOperations.add(DeleteDocumentOperation(ref))
+            }
+
             Log.d(TAG, "앨범 삭제 시작: userId=$userId, albumId=$albumId")
+            db.executeInBatches(allOperations)
 
             val storage = FirebaseStorage.getInstance()
-            val albumRef = storage.reference.child("images/albums/$userId/$albumId")
+            val albumStorageRef = storage.reference.child("images/albums/$userId/$albumId")
 
             // 폴더 내 모든 파일 리스트 가져오기
-            val listResult = albumRef.listAll().await()
+            val listResult = albumStorageRef.listAll().await()
 
             // 모든 파일 삭제
             val deleteResults = listResult.items.map { fileRef ->

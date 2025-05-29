@@ -15,7 +15,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
@@ -46,6 +45,7 @@ class ScrapFragment: BaseFragment() {
     private var isLoadStateListenerRegistered = false
 
     private var wasRefreshing = false
+    private var requireNoShimmer: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -159,7 +159,7 @@ class ScrapFragment: BaseFragment() {
             wasRefreshing = isLoading
 
             // 로딩 상태 처리
-            if (isLoading && !binding.swipeRefreshLayout.isRefreshing) {
+            if (isLoading && !binding.swipeRefreshLayout.isRefreshing && !requireNoShimmer) {
                 // 사용자 제스처가 아닌 경우만 Shimmer 표시
                 binding.shimmerLayout.visibility = View.VISIBLE
                 binding.shimmerLayout.startShimmer()
@@ -176,6 +176,7 @@ class ScrapFragment: BaseFragment() {
 
                 // 초기 로딩이나 사용자 리프레시인 경우에만 스크롤
                 if (isRefreshComplete) {
+                    requireNoShimmer = false
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.rvScrapAlbums.scrollToPosition(0)
                 }
@@ -190,6 +191,7 @@ class ScrapFragment: BaseFragment() {
             }
 
             errorState?.let {
+                requireNoShimmer = false
                 wasRefreshing = false
                 binding.swipeRefreshLayout.isRefreshing = false
                 Log.e("ScrapFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
@@ -225,7 +227,8 @@ class ScrapFragment: BaseFragment() {
         }
     }
 
-    private fun refreshData() {
+    fun refreshData(requireNoShimmer: Boolean = false) {
+        this@ScrapFragment.requireNoShimmer = requireNoShimmer
         albumAdapter.refresh()
     }
 
@@ -289,7 +292,7 @@ class ScrapFragment: BaseFragment() {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.Scrap))
             }
             is ScrapViewEvent.ReportComplete -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
                 }
             }

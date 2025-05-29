@@ -14,8 +14,11 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabMyAlbumBinding
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.worker.DeleteAlbumWorker
+import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -76,11 +79,15 @@ class MyAlbumTabFragment: BaseFragment() {
         ) { _, bundle ->
             bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.TogglePublic>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_TOGGLE_PUBLIC)?.let {
                 val album = it.album
-                vm.togglePublic(album.id, album.isPublic)
+                val updatePublic = !album.isPublic
+                UpdateAlbumPublicWorker.enqueueOneTimeWork(requireContext(), album.id, updatePublic)
+                val publicText = if(updatePublic) "공개" else "비공개"
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 ${publicText}로 전환하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
             }
             bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Delete>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 val album = it.album
-                vm.deletePublic(album.id, album.user.id)
+                DeleteAlbumWorker.enqueueOneTimeWork(requireContext(), album.id, album.user.id)
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
             }
         }
     }
@@ -155,10 +162,12 @@ class MyAlbumTabFragment: BaseFragment() {
         }
     }
 
-    private fun refreshData() {
+    fun refreshData(includeParent: Boolean = true) {
         // 데이터 리프레시 로직
         albumAdapter.refresh()
-        pVm.fetchData()
+        if(includeParent) {
+            pVm.fetchData()
+        }
     }
 
     private fun setupObservers() {
@@ -213,14 +222,6 @@ class MyAlbumTabFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: MyAlbumTabViewEvent) {
-        when (event) {
-            is MyAlbumTabViewEvent.Refresh -> {
-                refreshData()
-            }
-            is MyAlbumTabViewEvent.RefreshAll -> {
-                pVm.refreshAll()
-            }
-        }
     }
 
     @Parcelize

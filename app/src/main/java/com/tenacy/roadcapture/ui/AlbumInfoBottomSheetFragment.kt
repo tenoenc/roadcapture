@@ -107,7 +107,7 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
                         textColor = ContextCompat.getColor(requireContext(), R.color.label_neutral),
                         isUnderlined = true,
                     ) {
-                        lifecycleScope.launch(Dispatchers.Default) {
+                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                             activity?.vm?.viewEvent(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
@@ -124,7 +124,7 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
                         isUnderlined = true,
                         startIndex = startDateText.length,
                     ) {
-                        lifecycleScope.launch(Dispatchers.Default) {
+                        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                             activity?.vm?.viewEvent(
                                 GlobalViewEvent.Toast(
                                     ToastModel(

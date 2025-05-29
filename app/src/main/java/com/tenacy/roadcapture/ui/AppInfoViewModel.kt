@@ -5,7 +5,6 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.AuthCredential
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
@@ -22,6 +21,9 @@ import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
+import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
+import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
+import com.tenacy.roadcapture.worker.UpdateUsernameWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -166,7 +168,10 @@ class AppInfoViewModel @Inject constructor(
                 // 2. 여행 중이라면 서비스 및 워커 작업 취소
                 Log.d("AppInfoViewModel", "백그라운드 작업 정리 시작")
                 travelingStateManager.stopTraveling()
-                DeleteAlbumWorker.cancelWork(context)
+                DeleteAlbumWorker.cancelAll(context)
+                UpdateUsernameWorker.cancelWork(context)
+                UpdateUserPhotoWorker.cancelWork(context)
+                UpdateAlbumPublicWorker.cancelWork(context)
                 Log.d("AppInfoViewModel", "백그라운드 작업 정리 완료")
                 
                 // 3. 로컬 데이터 정리

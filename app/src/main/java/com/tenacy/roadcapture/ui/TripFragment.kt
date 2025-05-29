@@ -163,7 +163,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupPermissions()
         setupObservers()
         binding.abcdefg.setQuickTapListener {
-            lifecycleScope.launch(Dispatchers.IO) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main) {
                         Toast.makeText(requireContext(), "더미 경로 데이터 생성 중...", Toast.LENGTH_SHORT).show()
@@ -280,7 +280,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         ) { _, bundle ->
             bundle.getParcelable<TripStopBeforeBottomSheetFragment.ParamsOut.Positive>(TripStopBeforeBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     vm.stopTraveling()
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제했어요", ToastMessageType.Success)))
                 }
@@ -499,7 +499,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             }
 
             is TripViewEvent.Capture -> {
-                lifecycleScope.launch(Dispatchers.IO) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                     val location = getCurrentLocation()
                     if (location == null) {
                         mainActivity.vm.viewEvent(
@@ -535,7 +535,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             is TripViewEvent.ShowSubscription -> {
                 val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
                 if(isSubscriptionActive) {
-                    lifecycleScope.launch(Dispatchers.Default) {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프리미엄 플랜을 구독 중이에요", ToastMessageType.Info)))
                     }
                 } else {
@@ -554,7 +554,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     private fun navigateToModifiableMemoryViewer(item: ClusterMarkerItem) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val memories = vm.getMemories()
             val selectedMemoryId = vm.getMemoryIdBy(item)
             val memoryViewerArguments = MemoryViewerArguments(
@@ -567,7 +567,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     private fun navigateToModifiableMemoryViewer(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val memories = vm.getMemoriesIn(items)
             val memoryViewerArguments = MemoryViewerArguments(
                 viewScope = ViewScope.AROUND,
@@ -578,7 +578,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
                     RangeSelectBottomSheetFragment.KEY_PARAMS_IN to RangeSelectBottomSheetFragment.ParamsIn(items = items),
@@ -674,7 +674,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         }
 
         // 백그라운드에서 좌표점 간소화 처리
-        lifecycleScope.launch(Dispatchers.Default) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             // 좌표점 간소화 적용 (Douglas-Peucker 알고리즘)
             val optimizedPoints = PolyUtil.simplify(routePoints, simplificationTolerance)
 
@@ -803,7 +803,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private var tempPhotoUri: Uri? = null
 
     private fun captureImageWithCameraApp() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             try {
                 tempPhotoFile = createTempImageFile()
 
@@ -872,7 +872,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     // 카메라 앱에서 돌아왔을 때의 결과 처리
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            lifecycleScope.launch(Dispatchers.Main) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 tempPhotoUri?.let { sourceUri ->
                     try {
                         // 내부 캐시 디렉토리에 크롭된 이미지를 저장할 파일 생성
@@ -940,7 +940,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
             val (uri, coordinates) = result
 
-            lifecycleScope.launch(Dispatchers.Main) {
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 if (uri == null) {
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(

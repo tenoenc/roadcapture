@@ -8,11 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.databinding.FragmentModifyUsernameBinding
 import com.tenacy.roadcapture.di.UsernameFilter
+import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -89,7 +93,8 @@ class ModifyUsernameFragment: BaseFragment() {
     private fun handleViewEvents(event: ModifyUsernameViewEvent) {
         when (event) {
             is ModifyUsernameViewEvent.Complete -> {
-                findNavController().navigate(ModifyUsernameFragmentDirections.actionModifyUsernameToUsernameSaving(event.username))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이름을 변경하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
+                findNavController().popBackStack()
             }
         }
     }

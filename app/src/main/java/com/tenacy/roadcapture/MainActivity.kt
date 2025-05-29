@@ -10,28 +10,26 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import androidx.work.WorkInfo
+import androidx.work.WorkManager
+import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.data.pref.WorkPrefs
 import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationTrackingService
-import com.tenacy.roadcapture.ui.GlobalViewEvent
-import com.tenacy.roadcapture.ui.MyToast
-import com.tenacy.roadcapture.ui.ToastMessageType
-import com.tenacy.roadcapture.util.currentFragment
-import com.tenacy.roadcapture.util.navController
-import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.ui.*
+import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.DeleteAlbumWorker
+import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -54,7 +52,295 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         setContentView(R.layout.activity_main)
         setupObservers()
         setupNavigationListener()
-        checkTravelingStateOnStartup()  // 추가
+        setupWorkManagerCleaning()
+        checkTravelingStateOnStartup()
+    }
+
+    private fun observeUpdateUserPhoto() {
+        repeatOnLifecycle {
+            WorkManager.getInstance(this@MainActivity)
+                .getWorkInfosForUniqueWorkFlow(Constants.USER_WORK_NAME_UPDATE_PHOTO)
+                .collect {
+                    val workInfo = it.takeIf { it.isNotEmpty() }?.first() ?: return@collect
+
+                    if (WorkPrefs.processedUserPhotoUpdateWorkIds.contains(workInfo.id.toString())) {
+                        return@collect
+                    }
+
+                    when (workInfo.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+//                            val userId = workInfo.outputData.getString(UpdateUsernameWorker.KEY_USER_ID)
+//                            val username = workInfo.outputData.getString(UpdateUsernameWorker.KEY_USERNAME)
+
+                            // 성공 처리
+                            val childVm =
+                                getFragmentViewModel<MyAlbumViewModel>(R.id.container, MyAlbumFragment::class.java)
+                            childVm?.fetchData()
+
+                            withContext(Dispatchers.Default) {
+                                handleViewEvents(
+                                    GlobalViewEvent.Toast(
+                                        ToastModel(
+                                            "성공적으로 프로필 사진이 변경되었어요",
+                                            ToastMessageType.Success
+                                        )
+                                    )
+                                )
+                            }
+
+                            WorkPrefs.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
+
+                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+
+                            (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
+                            (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
+                            getFragmentViewModel<MyAlbumViewModel>(R.id.container, MyAlbumFragment::class.java)?.fetchData()
+                        }
+
+                        WorkInfo.State.FAILED -> {
+//                            val errorMessage = workInfo.outputData.getString(UpdateUsernameWorker.KEY_RESULT_ERROR_MESSAGE)
+                            withContext(Dispatchers.Default) {
+                                handleViewEvents(
+                                    GlobalViewEvent.Toast(
+                                        ToastModel(
+                                            "프로필 사진 변경 중에 문제가 발생했어요",
+                                            ToastMessageType.Warning
+                                        )
+                                    )
+                                )
+                            }
+
+                            // 처리된 작업 ID 저장
+                            WorkPrefs.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
+                        }
+                        else -> {}
+                    }
+                }
+        }
+    }
+
+    private fun observeUpdateUsername() {
+        repeatOnLifecycle {
+            WorkManager.getInstance(this@MainActivity)
+                .getWorkInfosForUniqueWorkFlow(Constants.USER_WORK_NAME_UPDATE_NAME)
+                .collect {
+                    val workInfo = it.takeIf { it.isNotEmpty() }?.first() ?: return@collect
+
+                    if (WorkPrefs.processedUsernameUpdateWorkIds.contains(workInfo.id.toString())) {
+                        return@collect
+                    }
+
+                    when (workInfo.state) {
+                        WorkInfo.State.SUCCEEDED -> {
+//                            val userId = workInfo.outputData.getString(UpdateUsernameWorker.KEY_USER_ID)
+//                            val username = workInfo.outputData.getString(UpdateUsernameWorker.KEY_USERNAME)
+
+                            // 성공 처리
+                            withContext(Dispatchers.Default) {
+                                handleViewEvents(
+                                    GlobalViewEvent.Toast(
+                                        ToastModel(
+                                            "성공적으로 이름이 변경되었어요",
+                                            ToastMessageType.Success
+                                        )
+                                    )
+                                )
+                            }
+
+                            WorkPrefs.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
+
+                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+
+                            (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
+                            (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
+                            getFragmentViewModel<MyAlbumViewModel>(R.id.container, MyAlbumFragment::class.java)?.fetchData()
+                        }
+
+                        WorkInfo.State.FAILED -> {
+//                            val errorMessage = workInfo.outputData.getString(UpdateUsernameWorker.KEY_RESULT_ERROR_MESSAGE)
+                            withContext(Dispatchers.Default) {
+                                handleViewEvents(
+                                    GlobalViewEvent.Toast(
+                                        ToastModel(
+                                            "이름 변경 중에 문제가 발생했어요",
+                                            ToastMessageType.Warning
+                                        )
+                                    )
+                                )
+                            }
+
+                            // 처리된 작업 ID 저장
+                            WorkPrefs.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
+                        }
+                        else -> {}
+                    }
+                }
+        }
+    }
+
+    private fun observeUpdateAlbumPublic() {
+        repeatOnLifecycle {
+            // 성공 및 실패 상태의 작업 관찰
+            WorkManager.getInstance(this@MainActivity)
+                .getWorkInfosFlow(
+                    WorkQuery.Builder
+                        .fromStates(listOf(WorkInfo.State.SUCCEEDED, WorkInfo.State.FAILED))
+                        .build()
+                )
+                .collect { workInfoList ->
+                    // 앨범 삭제 작업만 필터링
+                    val updateAlbumPublicWorks = workInfoList.filter { workInfo ->
+                        val isNotProcessed = !WorkPrefs.processedAlbumPublicUpdateWorkIds.contains(workInfo.id.toString())
+                        val isAlbumDeleteWork = workInfo.tags.any { tag ->
+                            tag.startsWith(UpdateAlbumPublicWorker.TAG)
+                        }
+
+                        isNotProcessed && isAlbumDeleteWork
+                    }
+
+                    // 새로운 작업이 있는지 확인 및 처리
+                    if (updateAlbumPublicWorks.isNotEmpty()) {
+                        // 작업 상태별로 처리
+                        val hasSucceededWork = updateAlbumPublicWorks.any { it.state == WorkInfo.State.SUCCEEDED }
+                        val hasFailedWork = updateAlbumPublicWorks.any { it.state == WorkInfo.State.FAILED }
+
+                        // 성공 메시지 (한 번만)
+                        if (hasSucceededWork) {
+                            updateAlbumPublicWorks.forEach { Log.d("MainActivity", it.toString()) }
+                            val workInfo = updateAlbumPublicWorks.first()
+                            val albumId = workInfo.outputData.getString(UpdateAlbumPublicWorker.KEY_ALBUM_ID)
+                            val isPublic = workInfo.outputData.getBoolean(UpdateAlbumPublicWorker.KEY_PUBLIC, false)
+
+                            // 성공 처리
+                            val publicText = if(isPublic) "공개" else "비공개"
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "성공적으로 앨범이 ${publicText}로 전환되었어요",
+                                        ToastMessageType.Success
+                                    )
+                                )
+                            )
+
+                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+
+                            (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
+                            (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
+                            (findFragmentByClass(currentFragment, MyAlbumTabFragment::class.java) as? MyAlbumTabFragment)?.refreshData(includeParent = false)
+                        }
+
+                        // 실패 메시지 (한 번만)
+                        if (hasFailedWork) {
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "공개 여부 전환 중에 문제가 발생했어요",
+                                        ToastMessageType.Warning
+                                    )
+                                )
+                            )
+                        }
+
+                        // 처리된 작업 ID 저장
+                        updateAlbumPublicWorks.forEach { workInfo ->
+                            WorkPrefs.addProcessedAlbumPublicUpdateWorkId(workInfo.id.toString())
+                        }
+                    }
+                }
+
+        }
+    }
+
+    private fun observeDeleteAlbum() {
+        repeatOnLifecycle {
+            // 성공 및 실패 상태의 작업 관찰
+            WorkManager.getInstance(this@MainActivity)
+                .getWorkInfosFlow(
+                    WorkQuery.Builder
+                        .fromStates(listOf(WorkInfo.State.SUCCEEDED, WorkInfo.State.FAILED))
+                        .build()
+                )
+                .collect { workInfoList ->
+                    // 앨범 삭제 작업만 필터링
+                    val albumDeleteWorks = workInfoList.filter { workInfo ->
+                        val isNotProcessed = !WorkPrefs.processedAlbumDeleteWorkIds.contains(workInfo.id.toString())
+                        val isAlbumDeleteWork = workInfo.tags.any { tag ->
+                            tag.startsWith(DeleteAlbumWorker.TAG)
+                        }
+
+                        isNotProcessed && isAlbumDeleteWork
+                    }
+
+                    // 새로운 작업이 있는지 확인 및 처리
+                    if (albumDeleteWorks.isNotEmpty()) {
+                        // 작업 상태별로 처리
+                        val hasSucceededWork = albumDeleteWorks.any { it.state == WorkInfo.State.SUCCEEDED }
+                        val hasFailedWork = albumDeleteWorks.any { it.state == WorkInfo.State.FAILED }
+
+                        // 성공 메시지 (한 번만)
+                        if (hasSucceededWork) {
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "앨범이 성공적으로 삭제되었어요",
+                                        ToastMessageType.Success
+                                    )
+                                )
+                            )
+
+                            // 데이터 새로고침 (한 번만)
+                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+                            (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
+                            (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
+                            getFragmentViewModel<MyAlbumViewModel>(R.id.container, MyAlbumFragment::class.java)?.refreshAll()
+                        }
+
+                        // 실패 메시지 (한 번만)
+                        if (hasFailedWork) {
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "앨범 삭제 중에 문제가 발생했어요",
+                                        ToastMessageType.Warning
+                                    )
+                                )
+                            )
+                        }
+
+                        // 처리된 작업 ID 저장
+                        albumDeleteWorks.forEach { workInfo ->
+                            WorkPrefs.addProcessedAlbumDeleteWorkId(workInfo.id.toString())
+                        }
+                    }
+                }
+
+        }
+    }
+
+    private fun setupWorkManagerCleaning() {
+        // 마지막 정리 시간으로부터 일정 시간(예: 일주일)이 지났는지 확인
+        val currentTime = System.currentTimeMillis()
+        val lastCleanTime = WorkPrefs.lastWorkPruneTime
+        val cleanInterval = 7 * 24 * 60 * 60 * 1000L // 7일 (밀리초)
+
+        if (currentTime - lastCleanTime > cleanInterval) {
+            // 백그라운드 스레드에서 정리 작업 수행
+            lifecycleScope.launch(Dispatchers.IO) {
+                try {
+                    // WorkManager의 완료된 작업 정리
+                    WorkManager.getInstance(applicationContext).pruneWork()
+
+                    // WorkPrefs의 오래된 작업 ID 정리
+                    WorkPrefs.cleanupOldWorkIds()
+                } catch (e: Exception) {
+                    Log.e("MainActivity", "작업 정리 중 오류 발생", e)
+                }
+            }
+        }
     }
 
     private fun checkTravelingStateOnStartup() {
@@ -140,6 +426,10 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     }
 
     private fun setupObservers() {
+        observeUpdateUsername()
+        observeUpdateUserPhoto()
+        observeUpdateAlbumPublic()
+        observeDeleteAlbum()
         observeViewEventState()
     }
 

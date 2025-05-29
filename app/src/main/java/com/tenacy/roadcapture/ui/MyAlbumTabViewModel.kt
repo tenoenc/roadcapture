@@ -8,9 +8,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkManager
-import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
@@ -56,74 +53,4 @@ class MyAlbumTabViewModel @Inject constructor(
     val albums: Flow<PagingData<Album>> = pager.flow
         .flowOn(Dispatchers.IO)
         .cachedIn(viewModelScope)
-
-    fun togglePublic(albumId: String, isPublic: Boolean) {
-        viewModelScope.launch(Dispatchers.IO) {
-            flow {
-                val albumRef = db.collection("albums").document(albumId)
-                val scrapRefs = db.collection("scraps")
-                    .whereEqualTo("albumRef", albumRef).getAllReferences()
-
-                val allOperations = mutableListOf<BatchOperation>()
-                scrapRefs.forEach {
-                    allOperations.add(UpdateDocumentOperation(it, mapOf("albumPublic" to !isPublic)))
-                }
-                allOperations.add(UpdateDocumentOperation(albumRef, mapOf("isPublic" to !isPublic)))
-                db.executeInBatches(allOperations)
-
-                emit(Unit)
-            }
-                .catch { exception ->
-                    Log.e("TAG", "에러", exception)
-                }
-                .collect {
-                    viewEvent(MyAlbumTabViewEvent.Refresh)
-                }
-        }
-    }
-
-    fun deletePublic(albumId: String, userId: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            flow {
-                // 먼저 삭제할 문서들의 참조를 모두 가져옵니다
-                val albumRef = db.collection("albums").document(albumId)
-
-                val userRef = db.collection("users").document(userId)
-
-                // 관련 문서들의 참조를 모두 가져옵니다
-                val memoryRefs = db.collection("memories")
-                    .whereEqualTo("albumRef", albumRef).getAllReferences()
-
-                val locationRefs = db.collection("locations")
-                    .whereEqualTo("albumRef", albumRef).getAllReferences()
-
-                val scrapRefs = db.collection("scraps")
-                    .whereEqualTo("albumRef", albumRef).getAllReferences()
-
-                val allOperations = mutableListOf<BatchOperation>()
-                allOperations.add(UpdateDocumentOperation(userRef, mapOf("scrapCount" to FieldValue.increment(-scrapRefs.size.toLong()))))
-                allOperations.add(DeleteDocumentOperation(albumRef))
-                memoryRefs.forEach { ref ->
-                    allOperations.add(DeleteDocumentOperation(ref))
-                }
-                locationRefs.forEach { ref ->
-                    allOperations.add(DeleteDocumentOperation(ref))
-                }
-                scrapRefs.forEach { ref ->
-                    allOperations.add(DeleteDocumentOperation(ref))
-                }
-                db.executeInBatches(allOperations)
-
-                DeleteAlbumWorker.enqueueOneTimeWork(context, userId, albumId)
-
-                emit(Unit)
-            }
-                .catch { exception ->
-                    Log.e("TAG", "에러", exception)
-                }
-                .collect {
-                    viewEvent(MyAlbumTabViewEvent.RefreshAll)
-                }
-        }
-    }
 }

@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.annotation.SuppressLint
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -115,6 +116,7 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
                 return oldItem.value.id == newItem.value.id
             }
 
+            @SuppressLint("DiffUtilEquals")
             override fun areContentsTheSame(oldItem: AlbumItem, newItem: AlbumItem): Boolean {
 //                return oldItem == newItem
                 return oldItem.value.user == newItem.value.user &&
@@ -132,8 +134,12 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
                     payload.add("thumbnailUrl")
                 }
 
-                if (oldItem.value.user != newItem.value.user) {
-                    payload.add("user")
+                if (oldItem.value.user.photoUrl != newItem.value.user.photoUrl) {
+                    payload.add("userPhotoUrl")
+                }
+
+                if (oldItem.value.user.displayName != newItem.value.user.displayName) {
+                    payload.add("userDisplayName")
                 }
 
                 if (oldItem.value.title != newItem.value.title) {
@@ -203,8 +209,11 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
                                 binding.thumbnailUrl = item.value.thumbnailUrl
                             }
 
-                            "user" -> {
+                            "userPhotoUrl" -> {
                                 binding.profileImageUrl = item.value.user.photoUrl
+                            }
+
+                            "userDisplayName" -> {
                                 binding.username = item.value.user.displayName
                             }
 

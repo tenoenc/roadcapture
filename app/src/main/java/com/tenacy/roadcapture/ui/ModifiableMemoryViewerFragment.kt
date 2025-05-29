@@ -71,7 +71,7 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
             bundle.getParcelable<LocationBottomSheetFragment.ParamsOut.Positive>(LocationBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
                 val address = it.address
-                lifecycleScope.launch(Dispatchers.Main) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(address))
                 }
             }

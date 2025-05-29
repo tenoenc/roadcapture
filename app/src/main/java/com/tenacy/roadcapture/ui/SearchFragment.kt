@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
 import com.tenacy.roadcapture.util.mainActivity
@@ -273,7 +272,7 @@ class SearchFragment: BaseFragment() {
         // 필요한 이벤트 처리 로직 구현
         when(event) {
             is SearchViewEvent.ReportComplete -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
                 }
             }

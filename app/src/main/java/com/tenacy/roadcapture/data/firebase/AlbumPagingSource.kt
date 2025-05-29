@@ -19,7 +19,7 @@ class AlbumPagingSource(
 ): PagingSource<DocumentSnapshot, Album>() {
 
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 3
         private const val TAG = "AlbumPagingSource"
     }
 
@@ -147,19 +147,12 @@ class AlbumPagingSource(
 
                     // 시작점 설정
                     if (startAfterDoc != null) {
-                        // 앨범 ID로 해당 스크랩 찾기
-                        val scrapDoc = db.collection("scraps")
-                            .whereEqualTo("userRef", userRef)
-                            .whereEqualTo("albumRef", db.collection("albums").document(startAfterDoc.id))
-                            .get().await().documents.firstOrNull()
-
-                        if (scrapDoc != null) {
-                            scrapQuery = scrapQuery.startAfter(scrapDoc)
-                        }
+                        scrapQuery = scrapQuery.startAfter(startAfterDoc)
                     }
 
                     // 스크랩 문서 가져오기
-                    val scrapDocs = scrapQuery.get().await().documents
+                    val scrapSnapshot = scrapQuery.get().await()
+                    val scrapDocs = scrapSnapshot.documents
 
                     if (scrapDocs.isEmpty()) {
                         Log.d(TAG, "스크랩 쿼리 결과가 비어있음")
@@ -184,41 +177,34 @@ class AlbumPagingSource(
 
                     // 배치로 앨범 문서 가져오기
                     val albums = mutableListOf<Album>()
-                    val lastAlbumDoc = albumRefs.chunked(10).fold<List<DocumentReference>, DocumentSnapshot?>(null) { _, chunk ->
+                    albumRefs.chunked(10).forEach { chunk ->
                         // whereIn으로 앨범 문서 가져오기
                         val albumDocs = db.collection("albums")
                             .whereIn(FieldPath.documentId(), chunk.map { it.id })
                             .get().await().documents
 
-                        // 앨범 객체로 변환 (항상 스크랩된 상태)
-                        val batchAlbums = albumDocs.map { doc ->
-                            val album = doc.toAlbum()
-                            Album.from(album, true) // 스크랩된 상태로 설정
+                        // albumId -> 앨범 객체 매핑 생성
+                        val albumMap = albumDocs.associateBy { it.id }
+
+                        // 스크랩 순서를 유지하며 앨범 객체 변환
+                        chunk.forEach { albumRef ->
+                            albumMap[albumRef.id]?.let { albumDoc ->
+                                val album = albumDoc.toAlbum()
+                                albums.add(Album.from(album, true)) // 스크랩된 상태로 설정
+                            }
                         }
-
-                        albums.addAll(batchAlbums)
-
-                        // 마지막 앨범 문서 반환
-                        albumDocs.lastOrNull()
                     }
 
-                    // 생성 시간 기준으로 정렬 (최신순)
-                    val sortedAlbums = albums.sortedByDescending { it.createdAt }
+                    // 다음 키 설정 (마지막 스크랩 문서)
+                    val nextKey = if (scrapDocs.size >= PAGE_SIZE) scrapDocs.last() else null
 
-                    Log.d(TAG, "로드된 스크랩된 앨범: ${sortedAlbums.size}개")
-                    sortedAlbums.forEachIndexed { index, album ->
+                    Log.d(TAG, "로드된 스크랩된 앨범: ${albums.size}개")
+                    albums.forEachIndexed { index, album ->
                         Log.d(TAG, "스크랩된 앨범[$index]: ID=${album.id}")
                     }
 
-                    // 결과가 있을 경우 마지막 앨범 문서를 다음 키로 사용
-                    val nextKey = if (sortedAlbums.isNotEmpty()) {
-                        db.collection("albums").document(sortedAlbums.last().id).get().await()
-                    } else {
-                        null
-                    }
-
                     LoadResult.Page(
-                        data = sortedAlbums,
+                        data = albums,
                         prevKey = null,
                         nextKey = nextKey
                     )

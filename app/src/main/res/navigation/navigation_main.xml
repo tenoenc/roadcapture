@@ -21,8 +21,6 @@
         <action android:id="@+id/action_main_to_search" app:destination="@id/searchFragment"/>
         <action android:id="@+id/action_main_to_userMemoryViewer"
                 app:destination="@id/userMemoryViewerFragment"/>
-        <action android:id="@+id/action_main_to_profileUploadProgress"
-                app:destination="@id/profileUploadProgressFragment"/>
         <action android:id="@+id/action_main_to_modifyUsername"
                 app:destination="@id/modifyUsernameFragment"/>
         <action android:id="@+id/action_main_to_html" app:destination="@id/htmlFragment"/>
@@ -113,25 +111,9 @@
                 app:popUpTo="@id/mainFragment"
                 app:destination="@id/albumFragment"/>
     </fragment>
-    <fragment android:id="@+id/profileUploadProgressFragment"
-              android:name="com.tenacy.roadcapture.ui.ProfileUploadProgressFragment"
-              android:label="ProfileUploadProgressFragment"
-              tools:layout="@layout/fragment_upload_progress">
-
-        <argument android:name="uri" app:argType="android.net.Uri"/>
-    </fragment>
     <fragment android:id="@+id/modifyUsernameFragment" android:name="com.tenacy.roadcapture.ui.ModifyUsernameFragment"
               android:label="ModifyUsernameFragment"
-              tools:layout="@layout/fragment_modify_username">
-        <action android:id="@+id/action_modifyUsername_to_usernameSaving"
-                app:destination="@id/usernameSavingFragment"/>
-    </fragment>
-    <fragment android:id="@+id/usernameSavingFragment" android:name="com.tenacy.roadcapture.ui.UsernameSavingFragment"
-              android:label="UsernameSavingFragment"
-              tools:layout="@layout/fragment_loading">
-
-        <argument android:name="username" app:argType="string"/>
-    </fragment>
+              tools:layout="@layout/fragment_modify_username"/>
     <fragment android:id="@+id/htmlFragment" android:name="com.tenacy.roadcapture.ui.HtmlFragment"
               android:label="HtmlFragment"
               tools:layout="@layout/fragment_html">

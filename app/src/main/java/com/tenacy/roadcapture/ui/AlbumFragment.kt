@@ -281,7 +281,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.Forbidden -> {
-                lifecycleScope.launch(Dispatchers.Main) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
                     findNavController().previousBackStackEntry?.savedStateHandle?.set(
                         HomeFragment.KEY_ALBUM,
@@ -303,7 +303,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.ReportComplete -> {
-                lifecycleScope.launch(Dispatchers.Default) {
+                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
                 }
             }
@@ -311,7 +311,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
     }
 
     private fun navigateToMemoryViewer(item: ClusterMarkerItem) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val memories = vm.getMemories()
             val selectedMemoryId = vm.getMemoryIdBy(item)
             val memoryViewerArguments = MemoryViewerArguments(
@@ -327,7 +327,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
     }
 
     private fun navigateToMemoryViewer(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val itemsById = items.associateBy { it.id }
             val memories = vm.getMemoriesIn(items)
             val memoryViewerArguments = MemoryViewerArguments(
@@ -344,7 +344,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
     }
 
     private fun showRangeSelectingDialog(items: List<ClusterMarkerItem>) {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             val bottomSheet = RangeSelectBottomSheetFragment.newInstance(
                 bundle = bundleOf(
                     RangeSelectBottomSheetFragment.KEY_PARAMS_IN to RangeSelectBottomSheetFragment.ParamsIn(items = items),
@@ -406,7 +406,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         }
 
         // 백그라운드에서 좌표점 간소화 처리
-        lifecycleScope.launch(Dispatchers.Default) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             // 좌표점 간소화 적용 (Douglas-Peucker 알고리즘)
             val optimizedPoints = PolyUtil.simplify(routePoints, simplificationTolerance)
 
