@@ -49,7 +49,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
 
             // 취소되었고 만료가 임박한 경우 알림 표시
             if (SubscriptionPref.isCancelledButStillValid() &&
-                SubscriptionPref.daysUntilExpiry() <= Constants.EXPIRY_WARNING_DAYS) {
+                SubscriptionPref.daysUntilExpiry() <= Constants.SUBSCRIPTION_EXPIRY_WARNING_DAYS) {
                 showSubscriptionExpiringNotification()
             }
 
@@ -65,8 +65,8 @@ class SubscriptionCheckWorker @AssistedInject constructor(
 
         // 알림 채널 생성
         val channel = NotificationChannel(
-            Constants.NOTIFICATION_CHANNEL_ID,
-            Constants.NOTIFICATION_CHANNEL_NAME,
+            Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID,
+            Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_NAME,
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -75,7 +75,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         val daysLeft = SubscriptionPref.daysUntilExpiry()
 
         // 알림 생성
-        val builder = NotificationCompat.Builder(context, Constants.NOTIFICATION_CHANNEL_ID)
+        val builder = NotificationCompat.Builder(context, Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("구독 만료 예정")
             .setContentText("구독이 ${daysLeft}일 후에 만료됩니다. 계속 이용하시려면 갱신하세요.")
@@ -95,6 +95,6 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             && ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             return
         }
-        notificationManager.notify(Constants.NOTIFICATION_ID_EXPIRING, builder.build())
+        notificationManager.notify(Constants.SUBSCRIPTION_NOTIFICATION_ID_EXPIRING, builder.build())
     }
 }

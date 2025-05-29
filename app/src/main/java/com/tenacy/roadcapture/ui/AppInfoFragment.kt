@@ -15,13 +15,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
-import com.navercorp.nid.oauth.NidOAuthPreferencesManager.state
+import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.util.setQuickTapListener
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -57,6 +58,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupObservers()
+        setupListeners()
     }
 
     override fun onDestroyView() {
@@ -120,6 +122,14 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     ToastModel("후원에 실패했습니다: $errorMessage", ToastMessageType.Warning)
                 )
             )
+        }
+    }
+
+    private fun setupListeners() {
+        if (BuildConfig.DEBUG) {
+            binding.llAppInfoApp.setQuickTapListener(tapCount = 5) {
+                findNavController().navigate(MainFragmentDirections.actionMainToDebugSettings())
+            }
         }
     }
 

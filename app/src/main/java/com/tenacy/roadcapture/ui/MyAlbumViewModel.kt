@@ -1,14 +1,15 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
-import android.net.Uri
-import android.provider.SyncStateContract.Helpers.update
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.User
-import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.util.db
+import com.tenacy.roadcapture.util.toFormattedDecimalText
+import com.tenacy.roadcapture.util.toReadableUnit
+import com.tenacy.roadcapture.util.toUser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,6 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.*
 import javax.inject.Inject
 
 @HiltViewModel

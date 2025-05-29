@@ -9,7 +9,9 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.util.db
+import com.tenacy.roadcapture.util.toAlbum
+import com.tenacy.roadcapture.util.whereInWithFilters
 import kotlinx.coroutines.tasks.await
 
 class AlbumPagingSource(

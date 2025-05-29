@@ -1,7 +1,6 @@
 package com.tenacy.roadcapture.ui
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -14,7 +13,6 @@ import com.tenacy.roadcapture.databinding.FragmentNewAlbumBinding
 import com.tenacy.roadcapture.di.AlbumTitleFilter
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
 @AndroidEntryPoint

@@ -10,7 +10,6 @@ import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetDonateBeforeBinding
-import com.tenacy.roadcapture.databinding.BSheetProfileMoreBinding
 import kotlinx.parcelize.Parcelize
 
 class DonateBeforeBottomSheetFragment: BottomSheetDialogFragment() {

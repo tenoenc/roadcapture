@@ -14,7 +14,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.BSheetTripGuideBinding
 import com.tenacy.roadcapture.util.SpannableUtils
 import com.tenacy.roadcapture.util.SubscriptionValues

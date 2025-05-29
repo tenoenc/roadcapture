@@ -8,8 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
-import com.tenacy.roadcapture.data.pref.Album
+import com.tenacy.roadcapture.data.pref.TravelStatePref
 import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,6 +36,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
+    private val travelingStateManager: TravelingStateManager,
 ) : BaseViewModel() {
 
     private val title = AlbumUploadProgressFragmentArgs.fromSavedStateHandle(savedStateHandle).title
@@ -56,10 +58,12 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 1. 데이터 가져오기
                 sendWithDelay(AlbumSaveState.FetchingData)
+                sendWithDelay(AlbumSaveState.FetchingData)
                 val albumTitle = title
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()
-                val startTime = Album.createdAt.toLocalDateTime()
+                // Album.createdAt 대신 TravelStatePref.createdAt 사용
+                val startTime = TravelStatePref.createdAt.toLocalDateTime()
                 val endTime = LocalDateTime.now()
                 val userId = UserPref.id
                 val userRef = db.collection("users").document(userId)
@@ -199,7 +203,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 5. 로컬 데이터 초기화
                 sendWithDelay(AlbumSaveState.ClearingLocalData)
-                Album.clear()
+                travelingStateManager.stopTraveling()
+                TravelStatePref.clear()
                 memoryDao.clear()
                 locationDao.clear()
                 context.clearCacheDirectory()

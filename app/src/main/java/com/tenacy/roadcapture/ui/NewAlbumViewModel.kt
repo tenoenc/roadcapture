@@ -1,12 +1,8 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import androidx.lifecycle.viewModelScope
-import com.tenacy.roadcapture.data.db.LocationDao
-import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.di.InputModule
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch

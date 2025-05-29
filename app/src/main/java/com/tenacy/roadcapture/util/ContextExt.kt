@@ -5,11 +5,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.lang.Exception
+import kotlinx.coroutines.*
 
 val Fragment.viewLifeCycleOwnerOrNull get() = try {
     viewLifecycleOwner
@@ -17,8 +13,8 @@ val Fragment.viewLifeCycleOwnerOrNull get() = try {
     null
 }
 
-fun Fragment.repeatOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit) {
-    viewLifeCycleOwnerOrNull?.lifecycleScope?.launch(dispatcher) {
+fun Fragment.repeatOnLifecycle(dispatcher: CoroutineDispatcher = Dispatchers.Main, lifecycleState: Lifecycle.State = Lifecycle.State.STARTED, block: suspend CoroutineScope.() -> Unit): Job? {
+    return viewLifeCycleOwnerOrNull?.lifecycleScope?.launch(dispatcher) {
         viewLifecycleOwner.repeatOnLifecycle(lifecycleState) {
             block()
         }

@@ -9,14 +9,12 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
-import com.tenacy.roadcapture.data.pref.Album
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.TravelStatePref
 import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.ui.dto.Marker
-import com.tenacy.roadcapture.util.SubscriptionValues
-import com.tenacy.roadcapture.util.clearCacheDirectory
-import com.tenacy.roadcapture.util.getDurationFormattedText
-import com.tenacy.roadcapture.util.toTimestamp
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +29,7 @@ class TripViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
+    private val travelingStateManager: TravelingStateManager
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
@@ -51,7 +50,7 @@ class TripViewModel @Inject constructor(
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
-    val memoryLoaded = _memories.map { it != null }
+    val memoryLoaded = combine(_memories, _durationText) { memories, durationText -> memories != null && durationText != null }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val memoryCountText = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
@@ -118,28 +117,40 @@ class TripViewModel @Inject constructor(
     }
 
     fun startTraveling() {
-        if(Album.createdAt == 0L) {
-            Album.createdAt = LocalDateTime.now().toTimestamp()
+        // 여행 최초 시점이라면 서비스에 영향 가능성이 있는 위치 정보 초기화
+        if(!TravelStatePref.isTraveling) {
+            viewModelScope.launch(Dispatchers.IO) {
+                locationDao.clear()
+            }
         }
-        fetchData()
+
+        // TravelStatePref.startTravel()이 내부적으로 createdAt(travelStartedAt)을 설정함
+        travelingStateManager.startTraveling()
+
         updateDurationText()
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(TripViewEvent.SetCamera(zoom = 30f))
         }
     }
 
-    fun updateDurationText() {
-        _durationText.update { getDurationFormattedText(Album.createdAt, LocalDateTime.now().toTimestamp()) }
-    }
 
     fun stopTraveling() {
+        travelingStateManager.stopTraveling()  // StateManager 사용
+
         viewModelScope.launch(Dispatchers.IO) {
-            Album.clear()
+            // Album.clear() 대신 TravelStatePref.clear() 사용
+            TravelStatePref.clear()
             memoryDao.clear()
             locationDao.clear()
             context.clearCacheDirectory()
 
             viewEvent(TripViewEvent.Back)
+        }
+    }
+
+    fun updateDurationText() {
+        _durationText.update {
+            getDurationFormattedText(TravelStatePref.createdAt, LocalDateTime.now().toTimestamp())
         }
     }
 
@@ -177,7 +188,7 @@ class TripViewModel @Inject constructor(
             results
         )
 
-        return results[0] >= MIN_DISTANCE_TO_SAVE
+        return results[0] >= Constants.MIN_DISTANCE_TO_SAVE
     }
 
     fun clearRoutePolylines() {
@@ -255,9 +266,5 @@ class TripViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(TripViewEvent.ShowStopBefore)
         }
-    }
-
-    companion object {
-        const val MIN_DISTANCE_TO_SAVE = 30f
     }
 }

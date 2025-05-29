@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.ui
 
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
@@ -27,6 +30,7 @@ import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,15 +42,23 @@ class HomeFragment: BaseFragment() {
 
     private val vm: HomeViewModel by viewModels()
 
-    private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
+    private val albumAdapter = AlbumPagingAdapter()
 
     private val adAdapter by lazy {
         AdmobContainerAdapter(
             originalAdapter = albumAdapter,
-            adPosition = 5,
-            adInterval = 10
+            adPosition = 1,
+            adInterval = 1
         )
     }
+    // RecyclerView 상태 관리
+    private var recyclerViewState: Parcelable? = null
+    private var currentAdapterType: AdapterType? = null
+
+    enum class AdapterType { WITH_ADS, WITHOUT_ADS }
+
+    // LoadStateListener 중복 등록 방지용
+    private var isLoadStateListenerRegistered = false
 
     @Inject
     lateinit var subscriptionManager: SubscriptionManager
@@ -56,7 +68,6 @@ class HomeFragment: BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupFragmentResultListeners()
-        vm
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -69,7 +80,24 @@ class HomeFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+
+        // 구독 상태에 따른 어댑터 타입 결정
+        val newAdapterType = if (vm.isSubscriptionActive.value) {
+            AdapterType.WITHOUT_ADS
+        } else {
+            AdapterType.WITH_ADS
+        }
+
+        // 어댑터 타입이 변경되었거나 어댑터가 없을 때만 설정
+        if (currentAdapterType != newAdapterType || binding.rvHomeAlbums.adapter == null) {
+            updateAdapterForSubscription(vm.isSubscriptionActive.value)
+            currentAdapterType = newAdapterType
+        }
+
         setupObservers()
+
+        // 스크롤 위치 복원
+        restoreRecyclerViewState()
 
         // AppInfoFragment에 추가할 코드 예시
         if (BuildConfig.DEBUG) {
@@ -81,6 +109,10 @@ class HomeFragment: BaseFragment() {
     }
 
     override fun onDestroyView() {
+        // RecyclerView 상태 저장
+        saveRecyclerViewState()
+
+        // ViewBinding만 정리, adapter는 그대로 유지
         super.onDestroyView()
         _binding = null
     }
@@ -114,51 +146,52 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun setupViews() {
+        setupRecyclerViewBase()
         setupShimmer()
         setupSwipeRefresh()
     }
 
-    private fun setupRecyclerView(isSubscriptionActive: Boolean) {
-        // 로드 상태 어댑터 생성
-        val loadStateAdapter = LoadStateAdapter()
+    private fun setupRecyclerViewBase() {
+        with(binding.rvHomeAlbums) {
+            // ItemDecoration이 중복 추가되지 않도록 체크
+            if (itemDecorationCount == 0) {
+                addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
+            }
 
-        // 광고와 로드 상태 어댑터를 결합한 최종 어댑터
-        val finalAdapter = if (isSubscriptionActive) {
-            albumAdapter.withLoadStateFooter(loadStateAdapter)
-        } else {
-            adAdapter.withLoadStateAdapter(loadStateAdapter)
+            // 아이템 변경 애니메이션 비활성화 (깜빡임 방지)
+            (itemAnimator as? SimpleItemAnimator)?.apply {
+                supportsChangeAnimations = false
+                changeDuration = 0
+            }
+
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
         }
 
-        // 최종 어댑터를 RecyclerView에 설정
-        binding.rvHomeAlbums.adapter = finalAdapter
+        // LoadStateListener는 한 번만 등록
+        if (!isLoadStateListenerRegistered) {
+            setupLoadStateListener()
+            isLoadStateListenerRegistered = true
+        }
+    }
 
-        binding.rvHomeAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
-        binding.rvHomeAlbums.setHasFixedSize(true)
-
-        // 뷰홀더 캐시 사이즈 증가
-        binding.rvHomeAlbums.setItemViewCacheSize(5)
-
-        // 어댑터 상태 리스너
+    private fun setupLoadStateListener() {
         albumAdapter.addLoadStateListener { loadStates ->
             val isLoading = loadStates.refresh is LoadState.Loading
-
             val isRefreshComplete = wasRefreshing && loadStates.refresh is LoadState.NotLoading
             wasRefreshing = isLoading
 
             // 로딩 시 Shimmer 효과 처리
             if (isLoading && !binding.swipeRefreshLayout.isRefreshing) {
-                // 사용자 제스처가 아닌 경우에만 Shimmer 표시
                 binding.shimmerLayout.visibility = View.VISIBLE
                 binding.shimmerLayout.startShimmer()
                 binding.swipeRefreshLayout.visibility = View.GONE
             } else {
-                // 로딩 완료 시
                 binding.shimmerLayout.stopShimmer()
                 binding.shimmerLayout.visibility = View.GONE
                 binding.swipeRefreshLayout.visibility = View.VISIBLE
 
                 if(isRefreshComplete) {
-                    // 로딩 완료 후 맨 위로 스크롤
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.rvHomeAlbums.scrollToPosition(0)
                 }
@@ -201,15 +234,9 @@ class HomeFragment: BaseFragment() {
 
     private fun setupSwipeRefresh() {
         binding.swipeRefreshLayout.setColorSchemeResources(R.color.primary_normal)
-
-        // 사용자 제스처로 인한 리프레시
         binding.swipeRefreshLayout.setOnRefreshListener {
             refreshData()
         }
-    }
-
-    private fun refreshData() {
-        albumAdapter.refresh()
     }
 
     private fun setupObservers() {
@@ -222,19 +249,55 @@ class HomeFragment: BaseFragment() {
     private fun observeSubscriptionState() {
         repeatOnLifecycle {
             subscriptionManager.subscriptionState.collect { state ->
-                // 다른 계정에 연결된 구독 상태 처리
                 if (state.isLinkedToOtherAccount) {
-//                        showLinkedAccountMessage(state.linkedAccountId)
+                    // showLinkedAccountMessage(state.linkedAccountId)
                 } else {
-//                        hideLinkedAccountMessage()
+                    // hideLinkedAccountMessage()
                 }
             }
         }
+
         repeatOnLifecycle {
-            vm.isSubscriptionActive.collect { active ->
-                // 구독 상태에 따라 UI 업데이트
-                setupRecyclerView(active)
-            }
+            vm.isSubscriptionActive
+                .debounce(100) // 빠른 상태 변경 디바운싱
+                .collect { active ->
+                    val newAdapterType = if (active) {
+                        AdapterType.WITHOUT_ADS
+                    } else {
+                        AdapterType.WITH_ADS
+                    }
+
+                    // 어댑터 타입이 실제로 변경된 경우에만 업데이트
+                    if (currentAdapterType != newAdapterType) {
+                        updateAdapterForSubscription(active)
+                        currentAdapterType = newAdapterType
+                    }
+                }
+        }
+    }
+
+    private fun updateAdapterForSubscription(isSubscriptionActive: Boolean) {
+        val loadStateAdapter = LoadStateAdapter()
+        val currentAdapter = binding.rvHomeAlbums.adapter
+
+        val newAdapter = if (isSubscriptionActive) {
+            albumAdapter.withLoadStateFooter(loadStateAdapter)
+        } else {
+            adAdapter.withLoadStateAdapter(loadStateAdapter)
+        }
+
+        // 어댑터가 실제로 변경되는 경우에만 교체
+        if (currentAdapter !== newAdapter) {
+            // 현재 스크롤 위치 저장
+            val layoutManager = binding.rvHomeAlbums.layoutManager as? LinearLayoutManager
+            val scrollPosition = layoutManager?.findFirstVisibleItemPosition() ?: 0
+            val scrollOffset = layoutManager?.findViewByPosition(scrollPosition)?.top ?: 0
+
+            // 부드러운 전환을 위해 swapAdapter 사용
+            binding.rvHomeAlbums.swapAdapter(newAdapter, false)
+
+            // 스크롤 위치 복원
+            layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
         }
     }
 
@@ -299,6 +362,25 @@ class HomeFragment: BaseFragment() {
                 }
             }
         }
+    }
+
+    private fun saveRecyclerViewState() {
+        binding.rvHomeAlbums.layoutManager?.let { layoutManager ->
+            recyclerViewState = layoutManager.onSaveInstanceState()
+        }
+    }
+
+    private fun restoreRecyclerViewState() {
+        recyclerViewState?.let { state ->
+            binding.rvHomeAlbums.post {
+                binding.rvHomeAlbums.layoutManager?.onRestoreInstanceState(state)
+            }
+        }
+        recyclerViewState = null
+    }
+
+    private fun refreshData() {
+        albumAdapter.refresh()
     }
 
     companion object {

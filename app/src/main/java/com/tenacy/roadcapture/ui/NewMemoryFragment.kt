@@ -14,12 +14,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
 import com.tenacy.roadcapture.di.PlaceNameFilter
-import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -160,7 +158,7 @@ class NewMemoryFragment: BaseFragment() {
                 if(SubscriptionPref.isSubscriptionActive) {
                     vm.saveMemory()
                 } else {
-                    mainActivity.adManager.showAd(
+                    mainActivity.rewardedAdManager.showAd(
                         mainActivity = mainActivity,
                         onRewarded = {
                             vm.saveMemory()

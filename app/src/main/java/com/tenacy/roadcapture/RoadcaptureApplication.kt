@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.*
-import com.chibatching.kotpref.Kotpref
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.MobileAds
@@ -16,11 +15,13 @@ import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.TravelStatePref
 import com.tenacy.roadcapture.manager.BillingManager
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.NSFWDetector
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.Constants
+import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.EntryPoint
 import dagger.hilt.EntryPoints
@@ -67,6 +68,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
         initializeBilling()
         setupSubscriptionCheck()
+        setupLocationCheck()  // 추가
     }
 
     override fun onTerminate() {
@@ -79,20 +81,33 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
             .setWorkerFactory(EntryPoints.get(this, HiltWorkerFactoryEntryPoint::class.java).workerFactory())
             .build()
 
+
+    // RoadcaptureApplication.kt의 setupLocationCheck() 메서드 수정
+    private fun setupLocationCheck() {
+        // 이전 여행 상태 확인 및 워커 등록 - TravelStatePref만 사용
+        val isTraveling = TravelStatePref.isTraveling
+
+        if (isTraveling) {
+            Log.d("Application", "이전 여행 상태 감지 - LocationCheckWorker 등록")
+            LocationCheckWorker.enqueuePeriodicWork(this)
+            LocationCheckWorker.enqueueOneTimeWork(this)
+        }
+    }
+
     private fun setupSubscriptionCheck() {
         // 만료 시점에 정확히 체크
         val expiryTime = SubscriptionPref.subscriptionExpiryTime
         val currentTime = System.currentTimeMillis()
 
         if (expiryTime > currentTime) {
-            val delay = expiryTime - currentTime + Constants.EXPIRY_CHECK_DELAY_MS
+            val delay = expiryTime - currentTime + Constants.SUBSCRIPTION_EXPIRY_CHECK_DELAY_MS
 
             val expiryWork = OneTimeWorkRequestBuilder<SubscriptionCheckWorker>()
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .build()
 
             WorkManager.getInstance(this).enqueueUniqueWork(
-                Constants.WORK_NAME_EXPIRY_CHECK,
+                Constants.SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK,
                 ExistingWorkPolicy.REPLACE,
                 expiryWork
             )
@@ -100,13 +115,13 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
         // 정기 체크
         val periodicWork = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
-            Constants.PERIODIC_CHECK_INTERVAL_MINUTES, TimeUnit.MINUTES
+            Constants.SUBSCRIPTION_PERIODIC_CHECK_INTERVAL_MINUTES, TimeUnit.MINUTES
         )
-            .setInitialDelay(Constants.INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
+            .setInitialDelay(Constants.SUBSCRIPTION_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
             .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            Constants.WORK_NAME_PERIODIC_CHECK,
+            Constants.SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK,
             ExistingPeriodicWorkPolicy.REPLACE,
             periodicWork
         )

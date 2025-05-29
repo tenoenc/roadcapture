@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
 import com.tenacy.roadcapture.databinding.*
-import com.tenacy.roadcapture.util.toPx
 
 sealed class EmptyItem {
     data object Scrap: EmptyItem()

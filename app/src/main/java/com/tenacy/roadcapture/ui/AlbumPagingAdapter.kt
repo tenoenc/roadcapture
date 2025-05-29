@@ -13,7 +13,6 @@ import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemMyAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.ui.dto.Memory
 import com.tenacy.roadcapture.util.*
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime

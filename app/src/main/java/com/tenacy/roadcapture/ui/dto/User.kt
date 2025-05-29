@@ -1,8 +1,8 @@
 package com.tenacy.roadcapture.ui.dto
 
 import android.os.Parcelable
-import com.tenacy.roadcapture.data.firebase.dto.FirebaseUser
 import com.tenacy.roadcapture.data.SocialType
+import com.tenacy.roadcapture.data.firebase.dto.FirebaseUser
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 

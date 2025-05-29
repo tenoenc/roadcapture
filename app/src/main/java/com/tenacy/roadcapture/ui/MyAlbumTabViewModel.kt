@@ -9,7 +9,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.work.ExistingWorkPolicy
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
@@ -134,7 +133,7 @@ class MyAlbumTabViewModel @Inject constructor(
 
         WorkManager.getInstance(context)
             .enqueueUniqueWork(
-                "delete_album_${userId}_${albumId}",
+                "${Constants.WORK_NAME_DELETE_ALBUM}_${userId}_${albumId}",
                 ExistingWorkPolicy.KEEP,  // 이미 실행 중이면 기존 작업 유지
                 workRequest
             )

@@ -6,7 +6,6 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.data.firebase.MemoryFilter
 import com.tenacy.roadcapture.data.firebase.MemoryPagingSource
 import com.tenacy.roadcapture.ui.dto.Memory

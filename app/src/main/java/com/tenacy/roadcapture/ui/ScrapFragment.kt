@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.ui
 
 import android.animation.ValueAnimator
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,6 +15,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
@@ -33,17 +36,20 @@ class ScrapFragment: BaseFragment() {
 
     private val vm: ScrapViewModel by viewModels()
 
-    private val albumAdapter: AlbumPagingAdapter by lazy { AlbumPagingAdapter() }
-    private val emptyStateAdapter: EmptyStateAdapter by lazy {
-        EmptyStateAdapter(EmptyItem.Scrap)
-    }
+    private val albumAdapter = AlbumPagingAdapter()
+    private val emptyStateAdapter = EmptyStateAdapter(EmptyItem.Scrap)
+
+    // RecyclerView 상태 관리
+    private var recyclerViewState: Parcelable? = null
+
+    // LoadStateListener 중복 등록 방지용
+    private var isLoadStateListenerRegistered = false
 
     private var wasRefreshing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupFragmentResultListeners()
-        vm
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -56,10 +62,23 @@ class ScrapFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
+
+        // 어댑터가 없을 때만 설정
+        if (binding.rvScrapAlbums.adapter == null) {
+            setupAdapter()
+        }
+
         setupObservers()
+
+        // 스크롤 위치 복원
+        restoreRecyclerViewState()
     }
 
     override fun onDestroyView() {
+        // RecyclerView 상태 저장
+        saveRecyclerViewState()
+
+        // ViewBinding만 정리, adapter는 그대로 유지
         super.onDestroyView()
         _binding = null
     }
@@ -93,12 +112,36 @@ class ScrapFragment: BaseFragment() {
     }
 
     private fun setupViews() {
-        setupRecyclerView()
+        setupRecyclerViewBase()
         setupShimmer()
         setupSwipeRefresh()
     }
 
-    private fun setupRecyclerView() {
+    private fun setupRecyclerViewBase() {
+        with(binding.rvScrapAlbums) {
+            // ItemDecoration이 중복 추가되지 않도록 체크
+            if (itemDecorationCount == 0) {
+                addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
+            }
+
+            // 아이템 변경 애니메이션 비활성화 (깜빡임 방지)
+            (itemAnimator as? SimpleItemAnimator)?.apply {
+                supportsChangeAnimations = false
+                changeDuration = 0
+            }
+
+            setHasFixedSize(true)
+            setItemViewCacheSize(20)
+        }
+
+        // LoadStateListener는 한 번만 등록
+        if (!isLoadStateListenerRegistered) {
+            setupLoadStateListener()
+            isLoadStateListenerRegistered = true
+        }
+    }
+
+    private fun setupAdapter() {
         val concatAdapter = ConcatAdapter(
             emptyStateAdapter,
             albumAdapter.withLoadStateFooter(
@@ -107,13 +150,11 @@ class ScrapFragment: BaseFragment() {
         )
 
         binding.rvScrapAlbums.adapter = concatAdapter
-        binding.rvScrapAlbums.addItemDecoration(ItemSpacingDecoration(spacing = 24f.toPx))
-        binding.rvScrapAlbums.setHasFixedSize(true)
+    }
 
-        // 어댑터 상태 리스너
+    private fun setupLoadStateListener() {
         albumAdapter.addLoadStateListener { loadStates ->
             val isLoading = loadStates.refresh is LoadState.Loading
-
             val isRefreshComplete = wasRefreshing && loadStates.refresh is LoadState.NotLoading
             wasRefreshing = isLoading
 
@@ -154,13 +195,6 @@ class ScrapFragment: BaseFragment() {
                 Log.e("ScrapFragment", "데이터 로딩 중 오류 발생: ${it.error.message}")
             }
         }
-
-        repeatOnLifecycle {
-            while(currentCoroutineContext().isActive) {
-                albumAdapter.refreshVisibleItems()
-                delay(60_000)
-            }
-        }
     }
 
     private fun setupShimmer() {
@@ -198,6 +232,7 @@ class ScrapFragment: BaseFragment() {
     private fun setupObservers() {
         observePagingData()
         observeViewEvents()
+        setupAlbumRefreshTimer()
     }
 
     private fun observePagingData() {
@@ -239,6 +274,15 @@ class ScrapFragment: BaseFragment() {
         }
     }
 
+    private fun setupAlbumRefreshTimer() {
+        repeatOnLifecycle {
+            while(currentCoroutineContext().isActive) {
+                albumAdapter.refreshVisibleItems()
+                delay(60_000)
+            }
+        }
+    }
+
     private fun handleViewEvents(event: ScrapViewEvent) {
         when (event) {
             is ScrapViewEvent.Search -> {
@@ -250,5 +294,20 @@ class ScrapFragment: BaseFragment() {
                 }
             }
         }
+    }
+
+    private fun saveRecyclerViewState() {
+        binding.rvScrapAlbums.layoutManager?.let { layoutManager ->
+            recyclerViewState = layoutManager.onSaveInstanceState()
+        }
+    }
+
+    private fun restoreRecyclerViewState() {
+        recyclerViewState?.let { state ->
+            binding.rvScrapAlbums.post {
+                binding.rvScrapAlbums.layoutManager?.onRestoreInstanceState(state)
+            }
+        }
+        recyclerViewState = null
     }
 }

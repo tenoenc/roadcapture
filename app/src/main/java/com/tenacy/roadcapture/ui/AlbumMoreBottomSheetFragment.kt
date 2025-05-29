@@ -13,7 +13,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetAlbumMoreBinding
-import com.tenacy.roadcapture.ui.dto.Album
 import kotlinx.parcelize.Parcelize
 
 class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {

@@ -28,6 +28,7 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .distinctUntilChanged()
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),

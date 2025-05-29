@@ -14,7 +14,6 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetSubscriptionBinding
 import com.tenacy.roadcapture.util.Constants
-import com.tenacy.roadcapture.util.SubscriptionValues
 import kotlinx.parcelize.Parcelize
 
 class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {

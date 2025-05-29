@@ -5,9 +5,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.tenacy.roadcapture.util.toLocalDateTime
 import com.tenacy.roadcapture.util.toTimestamp
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 
 class RoomConverters {

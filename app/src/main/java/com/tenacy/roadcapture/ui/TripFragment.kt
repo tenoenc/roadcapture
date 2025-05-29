@@ -8,6 +8,7 @@ import android.content.Intent
 import android.location.Criteria
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -60,7 +61,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private var _binding: FragmentTripBinding? = null
     val binding get() = _binding!!
 
-    private val vm: TripViewModel by viewModels()
+    val vm: TripViewModel by viewModels()
 
     private lateinit var map: GoogleMap
 
@@ -138,7 +139,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupFragmentResultListeners()
-        vm
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -155,6 +155,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
+
+        repeatOnLifecycle { vm.fetchData() }
     }
 
     override fun onDestroyView() {
@@ -335,13 +337,14 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private fun setupLocationUpdates() {
         repeatOnLifecycle {
             while (isActive) {
-                delay(1 * 1000)
+                delay(1000L)
                 getCurrentLocation()?.let { latLng ->
                     vm.saveLocation(latLng)
                 }
-                delay(9 * 1000)
+                delay(Constants.TRACKING_INTERVAL - 1000L)
             }
         }
+
         repeatOnLifecycle {
             while (isActive) {
                 vm.updateDurationText()
@@ -355,16 +358,27 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     // ===== 6. 권한 처리 메서드 그룹 =====
-    private fun checkLocationPermission() =
+    private fun checkLocationPermission() {
+        val permissions = mutableListOf(
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        )
+
+        // Android 10 이상에서는 백그라운드 위치 권한도 요청
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        }
+
         TedPermission.create()
             .setPermissionListener(locationPermissionListener)
-            .setPermissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+            .setPermissions(*permissions.toTypedArray())
             .setGotoSettingButton(true)
             .setDeniedTitle("위치 권한 필요")
-            .setDeniedMessage("지도에 현재 위치를 표시하기 위해 위치 권한이 필요합니다. 설정에서 권한을 허용해주세요.")
+            .setDeniedMessage("지도에 현재 위치를 표시하고 백그라운드에서 경로를 기록하기 위해 위치 권한이 필요합니다. 설정에서 위치 권한을 항상 허용으로 선택해주세요.")
             .setDeniedCloseButtonText("취소")
             .setGotoSettingButtonText("설정")
             .check()
+    }
 
     private fun checkCameraPermission() =
         TedPermission.create()
@@ -400,7 +414,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val memoryId = bundle.getString(RESULT_MEMORY_ID)
                 val coordinates = bundle.getParcelable<LatLng>(RESULT_COORDINATES)
                 coordinates?.let { vm.saveLocation(it, false) }
-                vm.fetchData()
             }
         }
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
@@ -409,9 +422,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
                 val removed = bundle.getBoolean(RESULT_MEMORY_DELETED, false)
                 vm.viewEvent(TripViewEvent.SetCamera(coordinates))
-                if(removed) {
-                    vm.fetchData()
-                }
             }
         }
     }
