@@ -10,10 +10,10 @@ import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
-import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.firebase.AlbumPagingSourceWithAds
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
-import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
 import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,35 +27,37 @@ class HomeViewModel @Inject constructor(
     subscriptionManager: SubscriptionManager,
 ) : BaseViewModel() {
 
-    val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
-        .distinctUntilChanged()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000L),
-            initialValue = SubscriptionPref.isSubscriptionActive
-        )
+    private val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
-    private val pagingSourceFactory = {
-        AlbumPagingSource(filter = AlbumFilter.All)
-    }
-
-    // 페이징 설정 최적화
-    private val pager = Pager(
-        config = PagingConfig(
-            pageSize = AlbumPagingSource.PAGE_SIZE,
-            enablePlaceholders = false,
-            maxSize = AlbumPagingSource.PAGE_SIZE * 5,
-            prefetchDistance = AlbumPagingSource.PAGE_SIZE,
-            initialLoadSize = AlbumPagingSource.PAGE_SIZE
-        ),
-        pagingSourceFactory = pagingSourceFactory
-    )
+    val subscriptionState = subscriptionManager.subscriptionState
+        .distinctUntilChanged { old, new ->
+            old.isActive == new.isActive // 활성 상태가 변경된 경우만 처리
+        }
 
     // 앨범 데이터 Flow
-    val albums: Flow<PagingData<Album>> = pager.flow
-        .flowOn(Dispatchers.IO)
-        .cachedIn(viewModelScope)
+    val albums: Flow<PagingData<AlbumItemWithAds>> = isSubscriptionActive.flatMapLatest { isActive ->
+        Pager(
+            config = PagingConfig(
+                pageSize = AlbumPagingSource.PAGE_SIZE,
+                enablePlaceholders = false,
+                maxSize = AlbumPagingSource.PAGE_SIZE * 5,
+                prefetchDistance = AlbumPagingSource.PAGE_SIZE,
+                initialLoadSize = AlbumPagingSource.PAGE_SIZE
+            ),
+            pagingSourceFactory = {
+                AlbumPagingSourceWithAds(
+                    filter = AlbumFilter.All,
+                    minAdPosition = 2,
+                    maxAdPosition = 4,
+                    minAdInterval = 3,
+                    maxAdInterval = 6,
+                    adDensity = 0.7f,
+                    showAds = !isActive
+                )
+            }
+        ).flow
+    }.cachedIn(viewModelScope)
 
     fun report(albumId: String, reason: ReportReason) {
         viewModelScope.launch(Dispatchers.IO) {

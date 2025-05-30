@@ -50,6 +50,11 @@ class TripViewModel @Inject constructor(
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
+    val saveEnabled = _memories.map {
+        val memoryCount = it?.size ?: 0
+        memoryCount > 0
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
     val memoryLoaded = combine(_memories, _durationText) { memories, durationText -> memories != null && durationText != null }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
@@ -258,6 +263,7 @@ class TripViewModel @Inject constructor(
     }
 
     fun onCheckClick() {
+        // 한 달이 지나면 여행 중단 (워커로도 확인 필요)
         if(TravelStatePref.isOverOneMonth()) {
             stopTraveling()
             return

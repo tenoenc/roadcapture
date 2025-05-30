@@ -15,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.map
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.BuildConfig
@@ -23,6 +22,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
 import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -30,32 +30,22 @@ import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment: BaseFragment() {
+class HomeFragment : BaseFragment() {
 
     private var _binding: FragmentHomeBinding? = null
     val binding get() = _binding!!
 
     private val vm: HomeViewModel by viewModels()
 
-    private val albumAdapter = AlbumPagingAdapter()
+    private val albumAdapter = AlbumWithAdsPagingAdapter()
+    private val loadStateAdapter = LoadStateAdapter()
 
-    private val adAdapter by lazy {
-        AdmobContainerAdapter(
-            originalAdapter = albumAdapter,
-            adPosition = 1,
-            adInterval = 3,
-        )
-    }
     // RecyclerView 상태 관리
     private var recyclerViewState: Parcelable? = null
-    private var currentAdapterType: AdapterType? = null
-
-    enum class AdapterType { WITH_ADS, WITHOUT_ADS }
 
     // LoadStateListener 중복 등록 방지용
     private var isLoadStateListenerRegistered = false
@@ -81,20 +71,7 @@ class HomeFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupViews()
-
-        // 구독 상태에 따른 어댑터 타입 결정
-        val newAdapterType = if (vm.isSubscriptionActive.value) {
-            AdapterType.WITHOUT_ADS
-        } else {
-            AdapterType.WITH_ADS
-        }
-
-        // 어댑터 타입이 변경되었거나 어댑터가 없을 때만 설정
-        if (currentAdapterType != newAdapterType || binding.rvHomeAlbums.adapter == null) {
-            updateAdapterForSubscription(vm.isSubscriptionActive.value)
-            currentAdapterType = newAdapterType
-        }
-
+        setupAdapter()
         setupObservers()
 
         // 스크롤 위치 복원
@@ -152,6 +129,13 @@ class HomeFragment: BaseFragment() {
         setupSwipeRefresh()
     }
 
+    private fun setupAdapter() {
+        // 리사이클러뷰에 어댑터 설정
+        binding.rvHomeAlbums.apply {
+            adapter = albumAdapter.withLoadStateFooter(loadStateAdapter)
+        }
+    }
+
     private fun setupRecyclerViewBase() {
         with(binding.rvHomeAlbums) {
             // ItemDecoration이 중복 추가되지 않도록 체크
@@ -192,7 +176,7 @@ class HomeFragment: BaseFragment() {
                 binding.shimmerLayout.visibility = View.GONE
                 binding.swipeRefreshLayout.visibility = View.VISIBLE
 
-                if(isRefreshComplete) {
+                if (isRefreshComplete) {
                     requireNoShimmer = false
                     binding.swipeRefreshLayout.isRefreshing = false
                     binding.rvHomeAlbums.scrollToPosition(0)
@@ -250,67 +234,14 @@ class HomeFragment: BaseFragment() {
     }
 
     private fun observeSubscriptionState() {
+        // 구독 상태 변화 감지 및 어댑터 업데이트
         repeatOnLifecycle {
-            subscriptionManager.subscriptionState.collect { state ->
+            vm.subscriptionState.collect { state ->
+                // 링크된 계정 처리 (필요 시)
                 if (state.isLinkedToOtherAccount) {
                     // showLinkedAccountMessage(state.linkedAccountId)
                 } else {
                     // hideLinkedAccountMessage()
-                }
-            }
-        }
-
-        repeatOnLifecycle {
-            vm.isSubscriptionActive
-                .debounce(100) // 빠른 상태 변경 디바운싱
-                .collect { active ->
-                    val newAdapterType = if (active) {
-                        AdapterType.WITHOUT_ADS
-                    } else {
-                        AdapterType.WITH_ADS
-                    }
-
-                    // 어댑터 타입이 실제로 변경된 경우에만 업데이트
-                    if (currentAdapterType != newAdapterType) {
-                        updateAdapterForSubscription(active)
-                        currentAdapterType = newAdapterType
-                    }
-                }
-        }
-    }
-
-    private fun updateAdapterForSubscription(isSubscriptionActive: Boolean) {
-        val loadStateAdapter = LoadStateAdapter()
-        val currentAdapter = binding.rvHomeAlbums.adapter
-
-        val newAdapter = if (isSubscriptionActive) {
-            albumAdapter.withLoadStateFooter(loadStateAdapter)
-        } else {
-            adAdapter.withLoadStateAdapter(loadStateAdapter)
-        }
-
-        // 어댑터가 실제로 변경되는 경우에만 교체
-        if (currentAdapter !== newAdapter) {
-            // 현재 스크롤 위치 저장
-            val layoutManager = binding.rvHomeAlbums.layoutManager as? LinearLayoutManager
-            val scrollPosition = layoutManager?.findFirstVisibleItemPosition() ?: 0
-            val scrollOffset = layoutManager?.findViewByPosition(scrollPosition)?.top ?: 0
-
-            binding.rvHomeAlbums.apply {
-                // RecyclerView가 계산 중이 아닐 때만 교체
-                if (!isComputingLayout) {
-                    adapter = null
-                    adapter = newAdapter
-
-                    // 스크롤 위치 복원
-                    layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
-                } else {
-                    // 계산 중이면 post로 지연 실행
-                    post {
-                        adapter = null
-                        adapter = newAdapter
-                        layoutManager?.scrollToPositionWithOffset(scrollPosition, scrollOffset)
-                    }
                 }
             }
         }
@@ -334,22 +265,33 @@ class HomeFragment: BaseFragment() {
             vm.albums.collectLatest { pagingData ->
                 albumAdapter.submitData(
                     pagingData.map {
-                        AlbumItem.General(
-                            value = it,
-                            onItemClick = {
-                                findNavController().navigate(MainFragmentDirections.actionMainToAlbum(it.id, it.user.id))
-                            },
-                            onProfileClick = {
-                            },
-                            onLongClick = { albumId ->
-                                val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
-                                    bundleOf(
-                                        AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(albumId)
+                        when (it) {
+                            is AlbumItemWithAds.Album.General -> it.copy(
+                                onItemClick = {
+                                    findNavController().navigate(
+                                        MainFragmentDirections.actionMainToAlbum(
+                                            it.id,
+                                            it.value.user.id
+                                        )
                                     )
-                                )
-                                bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
-                            }
-                        )
+                                },
+                                onProfileClick = {
+                                    // 프로필 클릭 처리
+                                },
+                                onLongClick = { albumId ->
+                                    val bottomSheet = AlbumMoreBottomSheetFragment.newInstance(
+                                        bundleOf(
+                                            AlbumMoreBottomSheetFragment.KEY_PARAMS_IN to AlbumMoreBottomSheetFragment.ParamsIn(
+                                                albumId
+                                            )
+                                        )
+                                    )
+                                    bottomSheet.show(childFragmentManager, AlbumMoreBottomSheetFragment.TAG)
+                                }
+                            )
+
+                            else -> it
+                        }
                     }
                 )
             }
@@ -371,9 +313,17 @@ class HomeFragment: BaseFragment() {
             is HomeViewEvent.Search -> {
                 findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
             }
+
             is HomeViewEvent.ReportComplete -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(
+                        GlobalViewEvent.Toast(
+                            ToastModel(
+                                "신고 내용이 접수되었어요",
+                                ToastMessageType.Success
+                            )
+                        )
+                    )
                 }
             }
         }
