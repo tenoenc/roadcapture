@@ -5,13 +5,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout.LayoutParams
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.databinding.FragmentLoadingBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class NewMemoryBeforeFragment: BaseFragment() {
@@ -57,15 +62,25 @@ class NewMemoryBeforeFragment: BaseFragment() {
 
     private fun setupObservers() {
         repeatOnLifecycle {
-            vm.fetchState.collect {
+            vm.readyState.collect {
                 when(it) {
-                    is AddressFetchState.Initial -> {}
-                    is AddressFetchState.Loading -> {}
-                    is AddressFetchState.Completed -> {
+                    is MemoryReadyState.Loading -> {}
+                    is MemoryReadyState.ProcessingImage -> {
+                        binding.txtLoadingStatus.text = "이미지 처리 중"
+                    }
+                    is MemoryReadyState.DetectingNsfw -> {
+                        binding.txtLoadingStatus.text = "이미지 검토 중"
+                    }
+                    is MemoryReadyState.FetchingAddress -> {
+                        binding.lottieLoadingLayers.visibility = View.GONE
+                        binding.lottieLoadingSearchLocations.visibility = View.VISIBLE
+                        binding.txtLoadingStatus.text = "위치 정보 불러오는 중"
+                    }
+                    is MemoryReadyState.Completed -> {
                         findNavController().navigate(NewMemoryBeforeFragmentDirections.actionLoadingToNewMemory(it.address, it.photoUri))
                     }
-                    is AddressFetchState.Error -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("위치 정보를 불러오는 중에\n오류가 발생했어요", ToastMessageType.Warning)))
+                    is MemoryReadyState.Error -> {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(it.message, ToastMessageType.Warning)))
                         findNavController().popBackStack()
                     }
                 }

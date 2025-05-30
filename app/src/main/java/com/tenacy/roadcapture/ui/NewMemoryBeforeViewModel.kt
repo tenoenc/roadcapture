@@ -1,80 +1,114 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.tenacy.roadcapture.manager.FreepikNSFWDetector
 import com.tenacy.roadcapture.ui.dto.Address
-import com.tenacy.roadcapture.util.RetrofitInstance
-import com.tenacy.roadcapture.util.containsDigit
-import com.tenacy.roadcapture.util.containsLetter
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
+import java.time.Duration
 import javax.inject.Inject
+import kotlin.time.toKotlinDuration
 
 @HiltViewModel
 class NewMemoryBeforeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle,
+    private val freepikNSFWDetector: FreepikNSFWDetector,
 ): BaseViewModel() {
 
     private val photoUri: Uri = NewMemoryBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
     private val coordinates: LatLng = NewMemoryBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle).coordinates
 
-    private val _fetchState = MutableStateFlow<AddressFetchState>(AddressFetchState.Initial)
-    val fetchState: StateFlow<AddressFetchState> = _fetchState
+    private val _readyState = MutableSharedFlow<MemoryReadyState>()
+    val readyState = _readyState.asSharedFlow()
 
     init {
-        fetchAddress()
+        ready()
     }
 
-    private fun fetchAddress() {
+    private fun ready() {
         viewModelScope.launch(Dispatchers.IO) {
-            flow {
-                emit(AddressFetchState.Loading)
+            channelFlow {
+                sendWithDelay(MemoryReadyState.Loading)
 
+                // 1. 이미지 압축하기
+                sendWithDelay(MemoryReadyState.ProcessingImage)
+                val (compressedUri, bitmap) = try {
+                    val compressedUri = context.compressImage(photoUri)
+                    val bitmap = photoUri.toBitmap(context)!!
+                    compressedUri to bitmap
+                } catch (exception: Exception) {
+                    throw RuntimeException("이미지 처리 중에 문제가 발생했어요", exception)
+                }
+
+                // 2. NSFW 감지하기
+                sendWithDelay(MemoryReadyState.DetectingNsfw)
+                val isNSFW = freepikNSFWDetector.detectNSFW(bitmap).isNSFW
+                if(isNSFW) {
+                    throw RuntimeException("부적절한 컨텐츠를 감지했어요\n다시 촬영해주세요")
+                }
+                
+                // 3. 위치 정보 얻기
+                sendWithDelay(MemoryReadyState.FetchingAddress)
                 val excludePatterns = listOf("ISO", "country_code")
-                val nominatimReverseResponse = RetrofitInstance.nominatimApi.reverse(
-                    lat = coordinates.latitude,
-                    lon = coordinates.longitude,
-                )
-                val address = Address(
-                    country = nominatimReverseResponse.address?.country,
-                    formattedAddress = nominatimReverseResponse.displayName,
-                    components = nominatimReverseResponse.address?.otherFields?.entries
-                        ?.filter { (key, value) ->
-                            !excludePatterns.any { pattern -> key.contains(pattern, ignoreCase = true) }
-                                    && (!value.containsDigit() || value.containsLetter())
-                        }
-                        ?.map { it.value }
-                        ?.toList()
-                        ?.distinct()
-                        ?.reversed() ?: emptyList(),
-                    coordinates = coordinates,
-                )
 
-                emit(AddressFetchState.Completed(photoUri, address))
+                val address = try {
+                    val nominatimReverseResponse = RetrofitInstance.nominatimApi.reverse(
+                        lat = coordinates.latitude,
+                        lon = coordinates.longitude,
+                    )
+                    Address(
+                        country = nominatimReverseResponse.address?.country,
+                        formattedAddress = nominatimReverseResponse.displayName,
+                        components = nominatimReverseResponse.address?.otherFields?.entries
+                            ?.filter { (key, value) ->
+                                !excludePatterns.any { pattern -> key.contains(pattern, ignoreCase = true) }
+                                        && (!value.containsDigit() || value.containsLetter())
+                            }
+                            ?.map { it.value }
+                            ?.toList()
+                            ?.distinct()
+                            ?.reversed() ?: emptyList(),
+                        coordinates = coordinates,
+                    )
+                } catch (exception: Exception) {
+                    throw RuntimeException("위치 정보를 불러오는 중에\n문제가 발생했어요")
+                }
+
+                sendWithDelay(MemoryReadyState.Completed(compressedUri, address))
             }
+                .timeout(Duration.ofMillis(30 * Constants.MILLIS_PER_SECONDS).toKotlinDuration())
                 .catch { exception ->
-                    emit(AddressFetchState.Error(exception.message ?: "알 수 없는 오류 발생"))
+                    if(exception is TimeoutCancellationException) {
+                        emit(MemoryReadyState.Error("다시 시도해주세요"))
+                    } else {
+                        emit(MemoryReadyState.Error(exception.message ?: "문제가 발생했어요"))
+                    }
                 }
                 .collect { state ->
-                    _fetchState.value = state
+                    _readyState.emit(state)
                 }
         }
     }
 }
 
 @Parcelize
-sealed class AddressFetchState : Parcelable {
-    data object Initial : AddressFetchState()
-    data object Loading : AddressFetchState()
-    data class Completed(val photoUri: Uri, val address: Address) : AddressFetchState()
-    data class Error(val message: String) : AddressFetchState()
+sealed class MemoryReadyState : Parcelable {
+    data object Loading : MemoryReadyState()
+    data object ProcessingImage : MemoryReadyState()
+    data object DetectingNsfw : MemoryReadyState()
+    data object FetchingAddress : MemoryReadyState()
+    data class Completed(val photoUri: Uri, val address: Address) : MemoryReadyState()
+    data class Error(val message: String) : MemoryReadyState()
 }

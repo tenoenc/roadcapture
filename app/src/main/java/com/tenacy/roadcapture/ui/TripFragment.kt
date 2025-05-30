@@ -3,16 +3,13 @@ package com.tenacy.roadcapture.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.location.Criteria
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
@@ -957,7 +954,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                "위치 정보가 없기 때문에 추억을 만들 수 없어요",
+                                "현재 위치를 확인할 수 없어요",
                                 ToastMessageType.Warning
                             )
                         )
@@ -965,92 +962,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     return@launch
                 }
 
-                withContext(Dispatchers.IO) {
-                    val bitmap = uri.toBitmap(requireContext()) ?: return@withContext
-                    saveBitmapLosslessToExternalStorage(requireContext(), bitmap, "sample_image.png", true)
-                    if(freepikNSFWDetector.detectNSFW(bitmap).isNSFW) {
-                        withContext(Dispatchers.Main) {
-                            mainActivity.vm.viewEvent(
-                                GlobalViewEvent.Toast(
-                                    ToastModel(
-                                        "부적절한 컨텐츠를 감지했어요\n다시 촬영해주세요",
-                                        ToastMessageType.Warning
-                                    )
-                                )
-                            )
-                        }
-                    } else {
-                        val compressedUri = requireContext().compressImage(uri)
-                        withContext(Dispatchers.Main) {
-                            findNavController().navigate(TripFragmentDirections.actionTripToLoading(compressedUri, coordinates))
-                        }
-                    }
-                }
+                findNavController().navigate(TripFragmentDirections.actionTripToLoading(uri, coordinates))
             }
         }
-
-    /**
-     * Bitmap을 손상 없이 외부 저장소에 저장
-     * @param context Context 객체
-     * @param bitmap 저장할 비트맵
-     * @param filename 파일 이름 (예: "original_image.png")
-     * @param usePng PNG 형식 사용 여부 (true: PNG, false: 최고 품질 JPEG)
-     * @return 저장된 파일의 URI, 실패 시 null
-     */
-    suspend fun saveBitmapLosslessToExternalStorage(
-        context: Context,
-        bitmap: Bitmap,
-        filename: String,
-        usePng: Boolean = true
-    ): Uri? = withContext(Dispatchers.IO) {
-        try {
-            val resolver = context.contentResolver
-            val contentValues = ContentValues().apply {
-                put(MediaStore.Images.Media.DISPLAY_NAME, filename)
-
-                // MIME 타입 설정
-                val mimeType = if (usePng) "image/png" else "image/jpeg"
-                put(MediaStore.Images.Media.MIME_TYPE, mimeType)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    put(MediaStore.Images.Media.IS_PENDING, 1)
-                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                }
-            }
-
-            // 압축 포맷 설정
-            val format = if (usePng) {
-                Bitmap.CompressFormat.PNG  // 무손실 압축
-            } else {
-                Bitmap.CompressFormat.JPEG // 최고 품질 설정
-            }
-
-            // 이미지를 미디어 스토어에 삽입
-            val imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-            if (imageUri != null) {
-                resolver.openOutputStream(imageUri).use { outputStream ->
-                    if (outputStream != null) {
-                        // 최고 품질(100)로 비트맵 저장
-                        bitmap.compress(format, 100, outputStream)
-                    }
-                }
-
-                // Android 10 이상에서는 IS_PENDING 플래그 해제
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    contentValues.clear()
-                    contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-                    resolver.update(imageUri, contentValues, null, null)
-                }
-            }
-
-            imageUri
-        } catch (e: Exception) {
-            Log.e("BitmapSaver", "Error saving bitmap lossless to external storage: ${e.message}")
-            e.printStackTrace()
-            null
-        }
-    }
 
     // ===== 13. 상태 초기화 메서드 그룹 =====
     private fun resetInitializationState() {

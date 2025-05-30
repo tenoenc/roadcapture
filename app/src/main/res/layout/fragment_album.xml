@@ -308,6 +308,7 @@
                 <LinearLayout android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
                               android:gravity="center_vertical"
+                              android:minWidth="88dp"
                               android:orientation="horizontal">
 
                     <ImageView android:layout_width="36dp"
@@ -316,13 +317,15 @@
                                app:radius="@{100}"
                                tools:src="@drawable/profile_image"/>
 
-                    <TextView android:layout_width="wrap_content"
+                    <TextView android:layout_width="0dp"
                               android:layout_height="wrap_content"
+                              android:layout_weight="1"
                               android:layout_marginStart="4dp"
                               android:ellipsize="end"
                               android:maxLines="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
+                              android:textAlignment="center"
                               android:text="@{vm.profileDisplayName}"
                               tools:text="purifree"/>
 

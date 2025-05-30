@@ -58,7 +58,6 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 1. 데이터 가져오기
                 sendWithDelay(AlbumSaveState.FetchingData)
-                sendWithDelay(AlbumSaveState.FetchingData)
                 val albumTitle = title
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()

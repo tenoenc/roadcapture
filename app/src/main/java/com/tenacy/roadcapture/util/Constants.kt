@@ -9,6 +9,8 @@ object Constants {
 
     const val MILLIS_PER_DAY = 24 * 60 * 60 * 1000L
     const val MILLIS_PER_HOUR = 60 * 60 * 1000L
+    const val MILLIS_PER_MINUTES = 60 * 1000L
+    const val MILLIS_PER_SECONDS = 1000L
 
     const val MIN_DISTANCE_TO_SAVE = 30f
 
