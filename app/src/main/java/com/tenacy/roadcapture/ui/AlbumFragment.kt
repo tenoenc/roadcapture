@@ -281,16 +281,14 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.Forbidden -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
-                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                        HomeFragment.KEY_ALBUM,
-                        bundleOf(
-                            HomeFragment.RESULT_FORBIDDEN to System.currentTimeMillis()
-                        )
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
+                findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                    HomeFragment.KEY_ALBUM,
+                    bundleOf(
+                        HomeFragment.RESULT_FORBIDDEN to System.currentTimeMillis()
                     )
-                    findNavController().popBackStack()
-                }
+                )
+                findNavController().popBackStack()
             }
 
             is AlbumViewEvent.ShowReport -> {

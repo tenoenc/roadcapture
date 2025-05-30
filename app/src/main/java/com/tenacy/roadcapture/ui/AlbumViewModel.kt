@@ -34,16 +34,17 @@ class AlbumViewModel @Inject constructor(
     private var scrapJob: Job? = null
     private var isScrapProcessing = false
 
-    val loaded = MutableStateFlow(false)
-
     private val routePolylines = mutableListOf<Polyline>()
     private val clusterItems = mutableMapOf<String, ClusterMarkerItem>()
 
     private val _locations = MutableStateFlow<List<FirebaseLocation>>(emptyList())
-    private val _memories = MutableStateFlow<List<FirebaseMemory>>(emptyList())
+    private val _memories = MutableStateFlow<List<FirebaseMemory>?>(null)
+
+    val memoryLoaded = _memories.map { it != null }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val markers = combine(_locations, _memories) { locations, memories ->
-        val memoryByLocationId = memories.associateBy { it.locationRefId }
+        val memoryByLocationId = memories?.associateBy { it.locationRefId } ?: emptyMap()
 
         locations.map { location ->
             val memory = memoryByLocationId[location.id]
@@ -107,6 +108,11 @@ class AlbumViewModel @Inject constructor(
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                val albumUserRef = db.collection("users").document(albumUserId)
+                if(!albumUserRef.get().await().exists()) {
+                    throw FirebaseFirestoreException("존재하지 않는 사용자예요", FirebaseFirestoreException.Code.NOT_FOUND)
+                }
+
                 val userRef = db.collection("users").document(UserPref.id)
                 val albumRef = db.collection("albums").document(albumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
@@ -151,8 +157,6 @@ class AlbumViewModel @Inject constructor(
 
                     _memories.emit(memories)
                     _locations.emit(locations)
-
-                    loaded.emit(true)
                 }
         }
     }
@@ -286,17 +290,17 @@ class AlbumViewModel @Inject constructor(
         }
     }
 
-    fun getMemories() = _memories.value
+    fun getMemories() = _memories.value ?: emptyList()
 
     fun getMemoriesIn(items: List<ClusterMarkerItem>): List<FirebaseMemory> {
         val currentMemories = _memories.value
-        val associateBy = currentMemories.associateBy { it.locationRefId }
+        val associateBy = currentMemories?.associateBy { it.locationRefId } ?: emptyMap()
         return items.mapNotNull { associateBy[it.id] }
     }
 
     fun getMemoryIdBy(item: ClusterMarkerItem): String {
         val currentMemories = _memories.value
-        val memoryIdsByLocationId = currentMemories.associate { it.locationRefId to it.id }
+        val memoryIdsByLocationId = currentMemories?.associate { it.locationRefId to it.id } ?: emptyMap()
         return memoryIdsByLocationId[item.id]!!
     }
 
@@ -350,7 +354,7 @@ class AlbumViewModel @Inject constructor(
     fun onInfoClick() {
         viewModelScope.launch(Dispatchers.Default) {
             _album.value?.let {
-                val totalMemoryCount = _memories.value.size
+                val totalMemoryCount = _memories.value?.size ?: 0
                 viewEvent(AlbumViewEvent.ShowInfo(it, totalMemoryCount))
             }
         }

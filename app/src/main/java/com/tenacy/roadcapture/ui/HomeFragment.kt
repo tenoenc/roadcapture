@@ -323,7 +323,7 @@ class HomeFragment: BaseFragment() {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_ALBUM) { bundle ->
                 if (bundle == null) return@consumeOnce
                 bundle.getLong(RESULT_FORBIDDEN, 0L).takeIf { it > 0 }?.let {
-                    refreshData()
+                    refreshData(requireNoShimmer = true)
                 }
             }
         }

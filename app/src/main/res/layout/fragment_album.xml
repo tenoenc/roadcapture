@@ -16,7 +16,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="match_parent"
-                                                           android:visibility="@{vm.loaded ? View.VISIBLE : View.INVISIBLE}"
+                                                           android:visibility="@{vm.memoryLoaded ? View.VISIBLE : View.INVISIBLE}"
                                                            tools:visibility="visible"
                                                            app:layout_constraintStart_toStartOf="parent"
                                                            app:layout_constraintEnd_toEndOf="parent"
@@ -335,7 +335,7 @@
         <com.airbnb.lottie.LottieAnimationView android:layout_width="232dp"
                                                android:layout_height="116dp"
                                                android:id="@+id/lottie_album_loading"
-                                               android:visibility="@{vm.loaded ? View.GONE : View.VISIBLE}"
+                                               android:visibility="@{vm.memoryLoaded ? View.GONE : View.VISIBLE}"
                                                app:lottie_autoPlay="true"
                                                app:lottie_loop="true"
                                                app:lottie_fileName="page_loading.lottie"
