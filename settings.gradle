@@ -22,4 +22,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "roadcapture"
-include ':app'
+include(':app')
+include(':realtimeblurview')

@@ -5,35 +5,76 @@
 
     <data>
         <variable name="vm" type="com.tenacy.roadcapture.ui.NewMemoryViewModel"/>
-        <import type="com.tenacy.roadcapture.ui.EditTextState" />
-        <import type="com.tenacy.roadcapture.di.InputModule" />
-        <import type="android.view.View" />
+        <import type="com.tenacy.roadcapture.ui.EditTextState"/>
+        <import type="com.tenacy.roadcapture.di.InputModule"/>
+        <import type="android.view.View"/>
     </data>
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout
-            android:id="@+id/cl_new_memory_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/background_normal">
+    <LinearLayout android:id="@+id/ll_new_memory_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:orientation="vertical"
+                  android:background="@color/background_normal">
 
-        <com.google.android.material.appbar.AppBarLayout
-                android:id="@+id/abl_new_memory"
+        <androidx.appcompat.widget.Toolbar
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+                android:minHeight="0dp"
+                android:paddingVertical="8dp"
+                app:contentInsetStart="16dp"
+                app:contentInsetEnd="16dp">
 
-            <com.google.android.material.appbar.CollapsingToolbarLayout
+            <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:contentScrim="@color/background_normal"
-                    app:layout_scrollFlags="scroll|exitUntilCollapsed"
-                    app:titleEnabled="false">
+                    android:orientation="horizontal">
+
+                <ImageButton
+                        android:id="@+id/ibtn_a_bar_back"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_arrow_left"
+                        android:background="@null"
+                        android:scaleType="fitCenter"/>
+
+                <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txt_new_memory_title"
+                        android:layout_weight="1"
+                        android:textAppearance="@style/Title_18"
+                        android:textColor="@color/label_normal"
+                        android:textAlignment="center"
+                        android:text="추억 생성"/>
+
+                <ImageButton
+                        android:id="@+id/ibtn_new_memory_complete"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="@{() -> vm.onNewClick()}"
+                        android:src="@drawable/ic_check"
+                        android:background="@null"
+                        android:scaleType="fitCenter"/>
+            </LinearLayout>
+
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+            <com.google.android.material.appbar.AppBarLayout
+                    android:id="@+id/abl_new_memory"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    app:liftOnScroll="false">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_collapseMode="parallax">
+                        app:layout_scrollFlags="scroll|enterAlways">
 
                     <ImageView
                             android:id="@+id/img_new_memory_photo"
@@ -43,177 +84,136 @@
                             app:layout_constraintDimensionRatio="1:1"
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:scaleType="centerCrop"/>
+                            app:layout_constraintEnd_toEndOf="parent"/>
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.appcompat.widget.Toolbar
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:minHeight="0dp"
-                        android:paddingVertical="8dp"
-                        app:contentInsetStart="16dp"
-                        app:contentInsetEnd="16dp"
-                        app:layout_collapseMode="pin"
-                        android:background="@drawable/ol_gradient">
+            </com.google.android.material.appbar.AppBarLayout>
 
-                    <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                        <ImageButton
-                                android:id="@+id/ibtn_a_bar_back"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:src="@drawable/ic_arrow_left"
-                                android:background="@null"
-                                android:scaleType="fitCenter"/>
-
-                        <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:id="@+id/txt_new_memory_title"
-                                android:layout_weight="1"
-                                android:textAppearance="@style/Title_18"
-                                android:textColor="@color/label_normal"
-                                android:textAlignment="center"
-                                android:text="추억 생성"/>
-
-                        <ImageButton
-                                android:id="@+id/ibtn_new_memory_complete"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:onClick="@{() -> vm.onNewClick()}"
-                                android:src="@drawable/ic_check"
-                                android:background="@null"
-                                android:scaleType="fitCenter"/>
-                    </LinearLayout>
-                </androidx.appcompat.widget.Toolbar>
-            </com.google.android.material.appbar.CollapsingToolbarLayout>
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:clipToPadding="false"
-                android:paddingBottom="40dp"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <androidx.core.widget.NestedScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:fillViewport="true"
+                    android:clipToPadding="false"
+                    android:paddingBottom="40dp"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <HorizontalScrollView
-                        android:id="@+id/hs_new_memory_tags"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:visibility="@{vm.addressTags.empty ? View.GONE : View.VISIBLE}"
-                        android:clickable="true"
-                        android:clipToPadding="false"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="10dp"
-                        android:scrollbars="none"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <LinearLayout
+                    <HorizontalScrollView
+                            android:id="@+id/hs_new_memory_tags"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:visibility="@{vm.addressTags.empty ? View.GONE : View.VISIBLE}"
+                            android:clickable="true"
+                            android:clipToPadding="false"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="10dp"
+                            android:scrollbars="none"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent">
+
+                        <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/ll_new_memory_tags"
+                                android:onClick="@{() -> vm.onLocationClick()}"
+                                android:minHeight="24dp"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                            <ImageButton
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:clickable="false"
+                                    android:src="@drawable/ic_circle_pin"
+                                    android:background="@android:color/transparent"
+                                    android:scaleType="fitCenter"/>
+                        </LinearLayout>
+                    </HorizontalScrollView>
+
+                    <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/et_new_memory_place_name"
+                            android:gravity="start"
+                            style="@style/EditBox"
+                            android:text="@={vm.placeName}"
+                            android:inputType="text"
+                            app:state="@{vm.placeNameState}"
+                            android:textAppearance="@style/Body_14_M"
+                            android:textColor="@color/label_normal"
+                            android:textAlignment="textStart"
+                            android:hint="(선택) 장소명을 입력해주세요"
+                            android:textColorHint="@color/fill_neutral"
+                            android:background="@drawable/input_normal"
+                            android:paddingVertical="12dp"
+                            android:paddingHorizontal="16dp"
+                            android:layout_marginHorizontal="20dp"
+                            app:layout_goneMarginTop="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/hs_new_memory_tags"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
+
+                    <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/ll_new_memory_tags"
-                            android:onClick="@{() -> vm.onLocationClick()}"
-                            android:minHeight="24dp"
-                            android:gravity="center"
-                            android:orientation="horizontal">
+                            android:id="@+id/txt_new_memory_place_name_count"
+                            android:textAppearance="@style/Body_12_M"
+                            android:textAlignment="textEnd"
+                            android:textColor="@{vm.placeNameState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
+                            tools:textColor="@color/label_assistive"
+                            android:text="@{vm.placeNameLength + ` / ` + InputModule.MAX_LENGTH_PLACE_NAME}"
+                            tools:text="12 / 50"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintTop_toBottomOf="@id/et_new_memory_place_name"
+                            app:layout_constraintEnd_toEndOf="@id/et_new_memory_place_name"/>
 
-                        <ImageButton
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:clickable="false"
-                                android:src="@drawable/ic_circle_pin"
-                                android:background="@android:color/transparent"
-                                android:scaleType="fitCenter"/>
-                    </LinearLayout>
-                </HorizontalScrollView>
+                    <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/et_new_memory_content"
+                            android:gravity="start"
+                            style="@style/EditBox"
+                            android:text="@={vm.content}"
+                            app:state="@{vm.contentState}"
+                            android:minHeight="112dp"
+                            android:textAppearance="@style/Body_14_M"
+                            android:textColor="@color/label_normal"
+                            android:textAlignment="textStart"
+                            android:hint="(선택) 내용을 자유롭게 입력해주세요"
+                            android:textColorHint="@color/fill_neutral"
+                            android:background="@drawable/input_normal"
+                            android:layout_marginTop="12dp"
+                            android:paddingVertical="12dp"
+                            android:paddingHorizontal="16dp"
+                            android:layout_marginHorizontal="20dp"
+                            app:layout_constraintTop_toBottomOf="@id/txt_new_memory_place_name_count"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
-                <EditText
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/et_new_memory_place_name"
-                        android:gravity="start"
-                        style="@style/EditBox"
-                        android:text="@={vm.placeName}"
-                        android:inputType="text"
-                        app:state="@{vm.placeNameState}"
-                        android:textAppearance="@style/Body_14_M"
-                        android:textColor="@color/label_normal"
-                        android:textAlignment="textStart"
-                        android:hint="(선택) 장소명을 입력해주세요"
-                        android:textColorHint="@color/fill_neutral"
-                        android:background="@drawable/input_normal"
-                        android:paddingVertical="12dp"
-                        android:paddingHorizontal="16dp"
-                        android:layout_marginHorizontal="20dp"
-                        app:layout_goneMarginTop="10dp"
-                        app:layout_constraintTop_toBottomOf="@id/hs_new_memory_tags"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/txt_new_memory_content_count"
+                            android:textAppearance="@style/Body_12_M"
+                            android:textAlignment="textEnd"
+                            android:textColor="@{vm.contentState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
+                            tools:textColor="@color/label_assistive"
+                            android:text="@{vm.contentLength + ` / ` + InputModule.MAX_LENGTH_CONTENT}"
+                            tools:text="32 / 1500"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="8dp"
+                            app:layout_constraintTop_toBottomOf="@id/et_new_memory_content"
+                            app:layout_constraintEnd_toEndOf="@id/et_new_memory_content"/>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.core.widget.NestedScrollView>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/txt_new_memory_place_name_count"
-                        android:textAppearance="@style/Body_12_M"
-                        android:textAlignment="textEnd"
-                        android:textColor="@{vm.placeNameState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
-                        tools:textColor="@color/label_assistive"
-                        android:text="@{vm.placeNameLength + ` / ` + InputModule.MAX_LENGTH_PLACE_NAME}"
-                        tools:text="12 / 50"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/et_new_memory_place_name"
-                        app:layout_constraintEnd_toEndOf="@id/et_new_memory_place_name"/>
 
-                <EditText
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/et_new_memory_content"
-                        android:gravity="start"
-                        style="@style/EditBox"
-                        android:text="@={vm.content}"
-                        app:state="@{vm.contentState}"
-                        android:minHeight="112dp"
-                        android:textAppearance="@style/Body_14_M"
-                        android:textColor="@color/label_normal"
-                        android:textAlignment="textStart"
-                        android:hint="(선택) 내용을 자유롭게 입력해주세요"
-                        android:textColorHint="@color/fill_neutral"
-                        android:background="@drawable/input_normal"
-                        android:layout_marginTop="12dp"
-                        android:paddingVertical="12dp"
-                        android:paddingHorizontal="16dp"
-                        android:layout_marginHorizontal="20dp"
-                        app:layout_constraintTop_toBottomOf="@id/txt_new_memory_place_name_count"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"/>
+    </LinearLayout>
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/txt_new_memory_content_count"
-                        android:textAppearance="@style/Body_12_M"
-                        android:textAlignment="textEnd"
-                        android:textColor="@{vm.contentState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
-                        tools:textColor="@color/label_assistive"
-                        android:text="@{vm.contentLength + ` / ` + InputModule.MAX_LENGTH_CONTENT}"
-                        tools:text="32 / 1500"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginEnd="8dp"
-                        app:layout_constraintTop_toBottomOf="@id/et_new_memory_content"
-                        app:layout_constraintEnd_toEndOf="@id/et_new_memory_content"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.core.widget.NestedScrollView>
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

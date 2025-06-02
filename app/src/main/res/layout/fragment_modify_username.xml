@@ -9,6 +9,7 @@
 
         <import type="com.tenacy.roadcapture.ui.EditTextState" />
         <import type="com.tenacy.roadcapture.di.InputModule" />
+        <import type="android.view.View" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -47,6 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> vm.onCompleteClick()}"
+                    android:visibility="@{vm.username.empty ? View.INVISIBLE : View.VISIBLE}"
                     android:src="@drawable/ic_check"
                     android:background="@null"
                     android:scaleType="fitCenter"/>
