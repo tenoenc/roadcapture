@@ -7,8 +7,14 @@ import kotlinx.parcelize.Parcelize
 sealed class HtmlType: Parcelable {
 
     @Parcelize
-    data object PersonalInfoPolicy: HtmlType()
+    data object PrivacyPolicy: HtmlType()
 
     @Parcelize
-    data object ServiceTermsAndConditions: HtmlType()
+    data object TermsOfService: HtmlType()
+
+    @Parcelize
+    data object PrivacyPolicyAgreement: HtmlType()
+
+    @Parcelize
+    data object TermsOfServiceAgreement: HtmlType()
 }

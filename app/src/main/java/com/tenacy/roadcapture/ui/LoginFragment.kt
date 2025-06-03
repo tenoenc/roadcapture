@@ -136,8 +136,8 @@ class LoginFragment : BaseFragment() {
 
     private fun handleViewEvents(event: LoginViewEvent) {
         when (event) {
-            is LoginViewEvent.NavigateToMain -> {
-                findNavController().navigate(LoginFragmentDirections.actionLoginToMain())
+            is LoginViewEvent.Login -> {
+                findNavController().navigate(LoginFragmentDirections.actionLoginToMainBefore(event.authCredential, event.socialType, isExistingUser = true))
             }
 
             is LoginViewEvent.GoogleLogin -> {
@@ -162,6 +162,10 @@ class LoginFragment : BaseFragment() {
                     val message = event.message ?: "로그인에 실패했어요"
                     mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(message, ToastMessageType.Warning)))
                 }
+            }
+
+            is LoginViewEvent.Signup -> {
+                findNavController().navigate(LoginFragmentDirections.actionLoginToSignupUsername(event.authCredential, event.socialUserId, event.socialType))
             }
         }
     }

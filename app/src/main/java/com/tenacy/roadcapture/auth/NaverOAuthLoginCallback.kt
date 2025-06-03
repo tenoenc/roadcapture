@@ -35,7 +35,7 @@ class NaverOAuthLoginCallback(
                 return
             }
 
-            viewModel.signInWithCustomToken(firebaseToken)
+//            viewModel.signInWithCustomToken(firebaseToken)
         } catch (e: Exception) {
             Log.e(TagConstants.AUTH, "네이버 로그인 실패", e)
             viewModel.onLoginError(e, SocialType.Naver)

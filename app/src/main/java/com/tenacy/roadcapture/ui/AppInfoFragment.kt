@@ -172,7 +172,6 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     }
 
     private fun setupObservers() {
-        observeSubscriptionState()
         observeViewEvents()
     }
 
@@ -199,9 +198,6 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 reauthenticate()
             }
         }
-    }
-
-    private fun observeSubscriptionState() {
     }
 
     private fun observeViewEvents() {

@@ -39,8 +39,10 @@ class HtmlFragment: BaseFragment() {
 
     private fun setupViews() {
         binding.title = when (args.type) {
-            HtmlType.PersonalInfoPolicy -> "개인정보 처리방침"
-            HtmlType.ServiceTermsAndConditions -> "서비스 이용약관"
+            HtmlType.PrivacyPolicy -> "개인정보 처리방침"
+            HtmlType.TermsOfService -> "서비스 이용약관"
+            HtmlType.PrivacyPolicyAgreement -> "개인정보 수집 · 이용 동의서"
+            HtmlType.TermsOfServiceAgreement -> "서비스 이용약관 동의서"
         }
 
         setupWebView()
@@ -76,8 +78,10 @@ class HtmlFragment: BaseFragment() {
 
     private suspend fun loadHtmlFromAssets(): String = withContext(Dispatchers.IO) {
         val fileName = when(args.type) {
-            HtmlType.ServiceTermsAndConditions -> "terms_of_service.html"
-            HtmlType.PersonalInfoPolicy -> "privacy_policy.html"
+            HtmlType.TermsOfService -> "terms_of_service.html"
+            HtmlType.PrivacyPolicy -> "privacy_policy.html"
+            HtmlType.TermsOfServiceAgreement -> "terms_of_service_agreement.html"
+            HtmlType.PrivacyPolicyAgreement -> "privacy_policy_agreement.html"
         }
         val inputStream = requireContext().assets.open(fileName) // assets 폴더에 있는 HTML 파일 이름
         val reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))

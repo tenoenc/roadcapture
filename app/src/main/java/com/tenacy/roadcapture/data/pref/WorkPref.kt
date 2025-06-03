@@ -2,7 +2,7 @@ package com.tenacy.roadcapture.data.pref
 
 import com.chibatching.kotpref.KotprefModel
 
-object WorkPrefs : KotprefModel() {
+object WorkPref : KotprefModel() {
     // 처리된 앨범 삭제 작업 ID 저장소
     val processedAlbumDeleteWorkIds by stringSetPref(default = setOf())
 

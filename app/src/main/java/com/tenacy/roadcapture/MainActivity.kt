@@ -19,7 +19,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.tenacy.roadcapture.data.pref.WorkPrefs
+import com.tenacy.roadcapture.data.pref.WorkPref
 import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationTrackingService
@@ -63,7 +63,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 .collect {
                     val workInfo = it.takeIf { it.isNotEmpty() }?.first() ?: return@collect
 
-                    if (WorkPrefs.processedUserPhotoUpdateWorkIds.contains(workInfo.id.toString())) {
+                    if (WorkPref.processedUserPhotoUpdateWorkIds.contains(workInfo.id.toString())) {
                         return@collect
                     }
 
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 )
                             }
 
-                            WorkPrefs.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
 
                             val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
                                 ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
@@ -112,7 +112,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             }
 
                             // 처리된 작업 ID 저장
-                            WorkPrefs.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
                         }
                         else -> {}
                     }
@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 .collect {
                     val workInfo = it.takeIf { it.isNotEmpty() }?.first() ?: return@collect
 
-                    if (WorkPrefs.processedUsernameUpdateWorkIds.contains(workInfo.id.toString())) {
+                    if (WorkPref.processedUsernameUpdateWorkIds.contains(workInfo.id.toString())) {
                         return@collect
                     }
 
@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 )
                             }
 
-                            WorkPrefs.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
 
                             val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
                                 ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             }
 
                             // 처리된 작업 ID 저장
-                            WorkPrefs.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
                         }
                         else -> {}
                     }
@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 .collect { workInfoList ->
                     // 앨범 삭제 작업만 필터링
                     val updateAlbumPublicWorks = workInfoList.filter { workInfo ->
-                        val isNotProcessed = !WorkPrefs.processedAlbumPublicUpdateWorkIds.contains(workInfo.id.toString())
+                        val isNotProcessed = !WorkPref.processedAlbumPublicUpdateWorkIds.contains(workInfo.id.toString())
                         val isAlbumDeleteWork = workInfo.tags.any { tag ->
                             tag.startsWith(UpdateAlbumPublicWorker.TAG)
                         }
@@ -246,7 +246,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
                         // 처리된 작업 ID 저장
                         updateAlbumPublicWorks.forEach { workInfo ->
-                            WorkPrefs.addProcessedAlbumPublicUpdateWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedAlbumPublicUpdateWorkId(workInfo.id.toString())
                         }
                     }
                 }
@@ -266,7 +266,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 .collect { workInfoList ->
                     // 앨범 삭제 작업만 필터링
                     val albumDeleteWorks = workInfoList.filter { workInfo ->
-                        val isNotProcessed = !WorkPrefs.processedAlbumDeleteWorkIds.contains(workInfo.id.toString())
+                        val isNotProcessed = !WorkPref.processedAlbumDeleteWorkIds.contains(workInfo.id.toString())
                         val isAlbumDeleteWork = workInfo.tags.any { tag ->
                             tag.startsWith(DeleteAlbumWorker.TAG)
                         }
@@ -313,7 +313,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
                         // 처리된 작업 ID 저장
                         albumDeleteWorks.forEach { workInfo ->
-                            WorkPrefs.addProcessedAlbumDeleteWorkId(workInfo.id.toString())
+                            WorkPref.addProcessedAlbumDeleteWorkId(workInfo.id.toString())
                         }
                     }
                 }
@@ -324,7 +324,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     private fun setupWorkManagerCleaning() {
         // 마지막 정리 시간으로부터 일정 시간(예: 일주일)이 지났는지 확인
         val currentTime = System.currentTimeMillis()
-        val lastCleanTime = WorkPrefs.lastWorkPruneTime
+        val lastCleanTime = WorkPref.lastWorkPruneTime
         val cleanInterval = 7 * 24 * 60 * 60 * 1000L // 7일 (밀리초)
 
         if (currentTime - lastCleanTime > cleanInterval) {
@@ -335,7 +335,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                     WorkManager.getInstance(applicationContext).pruneWork()
 
                     // WorkPrefs의 오래된 작업 ID 정리
-                    WorkPrefs.cleanupOldWorkIds()
+                    WorkPref.cleanupOldWorkIds()
                 } catch (e: Exception) {
                     Log.e("MainActivity", "작업 정리 중 오류 발생", e)
                 }

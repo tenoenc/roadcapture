@@ -49,8 +49,10 @@ class KakaoOAuthLoginCallback(
                 // 사용자 정보 요청 실패도 에러로 처리
                 viewModel.onLoginError(error, SocialType.Kakao)
             } else if (user != null) {
+                val kakaoUserId = user.id
                 val profilePicUrl = user.kakaoAccount?.profile?.thumbnailImageUrl
-                proceedWithFirebaseAuth(token, profilePicUrl)
+
+                proceedWithFirebaseAuth(token, kakaoUserId.toString(), profilePicUrl)
             }
         }
     }
@@ -61,7 +63,7 @@ class KakaoOAuthLoginCallback(
         viewModel.onLoginCancelled(SocialType.Kakao)
     }
 
-    private fun proceedWithFirebaseAuth(token: OAuthToken, profilePicUrl: String?) {
+    private fun proceedWithFirebaseAuth(token: OAuthToken, kakaoUserId: String, profilePicUrl: String?) {
         try {
             val providerId = "oidc.roadcapture"
             val authCredential = oAuthCredential(providerId) {
@@ -69,7 +71,7 @@ class KakaoOAuthLoginCallback(
                 accessToken = token.accessToken
             }
 
-            viewModel.signInWithCredential(authCredential, SocialType.Kakao)
+            viewModel.signInWithCredential(authCredential, kakaoUserId, SocialType.Kakao)
         } catch (e: Exception) {
             Log.e(TagConstants.AUTH, "Firebase 인증 실패", e)
             viewModel.onLoginError(e, SocialType.Kakao)

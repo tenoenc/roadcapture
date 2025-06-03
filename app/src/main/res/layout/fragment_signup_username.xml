@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.SignupUsernameViewModel"/>
+
+        <import type="com.tenacy.roadcapture.ui.EditTextState"/>
+        <import type="com.tenacy.roadcapture.di.InputModule"/>
+        <import type="android.view.View"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_normal">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_signup_username_a_bar_container"
+                      android:orientation="horizontal"
+                      android:paddingHorizontal="16dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                    android:id="@+id/ibtn_a_bar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_signup_username_hint"
+                  android:layout_marginTop="80dp"
+                  android:layout_marginHorizontal="20dp"
+                  android:textAppearance="@style/Title_20"
+                  android:textColor="@color/label_normal"
+                  android:textAlignment="center"
+                  android:text="이름을 입력해주세요"
+                  app:layout_constraintTop_toBottomOf="@id/ll_signup_username_a_bar_container"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_signup_username_hint_description"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textColor="@color/label_neutral"
+                  android:textAlignment="center"
+                  android:text="앱에서 활동하는 동안 표시되는 이름이에요"
+                  android:layout_marginHorizontal="20dp"
+                  app:layout_constraintTop_toBottomOf="@id/txt_signup_username_hint"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <EditText android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/et_signup_username"
+                  android:gravity="start"
+                  style="@style/EditBox"
+                  android:text="@={vm.username}"
+                  android:inputType="text"
+                  app:state="@{vm.usernameState}"
+                  android:textAppearance="@style/Body_14_M"
+                  android:textColor="@color/label_normal"
+                  android:textAlignment="textStart"
+                  android:background="@drawable/input_normal"
+                  android:paddingVertical="12dp"
+                  android:paddingHorizontal="16dp"
+                  android:layout_marginHorizontal="20dp"
+                  android:layout_marginTop="28dp"
+                  app:layout_constraintTop_toBottomOf="@id/txt_signup_username_hint_description"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_signup_username_count"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textAlignment="textEnd"
+                  android:textColor="@{vm.usernameState == EditTextState.Error.INSTANCE ? @color/warning : @color/label_assistive}"
+                  tools:textColor="@color/label_assistive"
+                  android:text="@{vm.usernameLength + ` / ` + InputModule.MAX_LENGTH_USERNAME}"
+                  tools:text="12 / 15"
+                  android:layout_marginTop="4dp"
+                  android:layout_marginEnd="8dp"
+                  app:layout_constraintTop_toBottomOf="@id/et_signup_username"
+                  app:layout_constraintEnd_toEndOf="@id/et_signup_username"/>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_signup_username_next"
+                android:visibility="@{vm.username.empty ? View.INVISIBLE : View.VISIBLE}"
+                android:onClick="@{() -> vm.onNextClick()}"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="다음"
+                android:backgroundTint="@color/primary_normal"
+                app:cornerRadius="12dp"
+                android:padding="12dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

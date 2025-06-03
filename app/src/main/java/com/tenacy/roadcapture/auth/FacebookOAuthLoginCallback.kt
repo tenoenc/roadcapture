@@ -40,10 +40,11 @@ class FacebookOAuthLoginCallback(
             val authCredential = FacebookAuthProvider.getCredential(token)
 
             // 페이스북 프로필 이미지 URL 생성
-            val profilePicUrl = "https://graph.facebook.com/${result.accessToken.userId}/picture?type=large"
+            val facebookUserId = result.accessToken.userId
+            val profilePicUrl = "https://graph.facebook.com/$facebookUserId/picture?type=large"
 
             // 프로필 URL 포함하여 전달
-            viewModel.signInWithCredential(authCredential, SocialType.Facebook)
+            viewModel.signInWithCredential(authCredential, facebookUserId, SocialType.Facebook)
         } catch (e: Exception) {
             Log.e(TagConstants.AUTH, "페이스북 로그인 성공 후 처리 중 실패", e)
             viewModel.onLoginError(e, SocialType.Facebook)

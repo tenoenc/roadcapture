@@ -75,10 +75,10 @@ class AppInfoViewModel @Inject constructor(
         fetchUser()
     }
 
-    override fun signInWithCustomToken(customToken: String) {
-    }
+//    override fun signInWithCustomToken(customToken: String) {
+//    }
 
-    override fun signInWithCredential(credential: AuthCredential, socialType: SocialType) {
+    override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 user!!.reauthenticate(credential).await()
@@ -213,7 +213,7 @@ class AppInfoViewModel @Inject constructor(
 
     fun onServiceTermsAndConditionsClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.ServiceTermsAndConditions))
+            viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.TermsOfService))
         }
     }
 
@@ -231,7 +231,7 @@ class AppInfoViewModel @Inject constructor(
 
     fun onPersonalInfoPolicyClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.PersonalInfoPolicy))
+            viewEvent(AppInfoViewEvent.NavigateToHtml(HtmlType.PrivacyPolicy))
         }
     }
 

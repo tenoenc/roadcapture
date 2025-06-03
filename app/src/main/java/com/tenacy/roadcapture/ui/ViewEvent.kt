@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.AuthCredential
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.dto.Album
 
@@ -13,11 +14,12 @@ sealed class GlobalViewEvent: ViewEvent {
 }
 
 sealed class LoginViewEvent: ViewEvent {
-    data object NavigateToMain: LoginViewEvent()
+    data class Login(val socialType: SocialType, val authCredential: AuthCredential, val isExistingUser: Boolean): LoginViewEvent()
     data object GoogleLogin: LoginViewEvent()
     data object FacebookLogin: LoginViewEvent()
     data object KakaoLogin: LoginViewEvent()
     data object NaverLogin: LoginViewEvent()
+    data class Signup(val socialUserId: String, val socialType: SocialType, val authCredential: AuthCredential): LoginViewEvent()
     data class SocialError(val message: String?, val socialType: SocialType): LoginViewEvent()
 }
 
@@ -129,3 +131,19 @@ sealed class ModifyUsernameViewEvent: ViewEvent {
 }
 
 sealed class HtmlViewEvent
+
+sealed class SignupUsernameViewEvent: ViewEvent {
+    data class Next(val username: String): SignupUsernameViewEvent()
+}
+
+sealed class SignupAgreementViewEvent : ViewEvent {
+    data class NavigateToHtml(val type: HtmlType): SignupAgreementViewEvent()
+    data object Start: SignupAgreementViewEvent()
+}
+
+sealed class MainBeforeViewEvent : ViewEvent {
+    data object Complete : MainBeforeViewEvent()
+    sealed class Error(open val message: String?): MainBeforeViewEvent() {
+        data class Login(override val message: String?) : Error(message)
+    }
+}
