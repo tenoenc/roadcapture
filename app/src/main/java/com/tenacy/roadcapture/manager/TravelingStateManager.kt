@@ -52,7 +52,7 @@ class TravelingStateManager @Inject constructor(
         TravelStatePref.stopTravel()
 
         // 워커 취소
-        LocationCheckWorker.cancelWork(context)
+        LocationCheckWorker.cancelAll(context)
         // 서비스 중지
         stopLocationTrackingService()
 

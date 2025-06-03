@@ -105,7 +105,7 @@ sealed class AlbumViewEvent: ViewEvent {
     data object ZoomOut: AlbumViewEvent()
     data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null): AlbumViewEvent()
     data class ShowInfo(val album: Album, val totalMemoryCount: Int): AlbumViewEvent()
-    data object Share: AlbumViewEvent()
+    data class Share(val link: String?): AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()
     data class Forbidden(val message: String): AlbumViewEvent()
     data class ShowReport(val albumId: String): AlbumViewEvent()
@@ -116,7 +116,12 @@ sealed class SearchViewEvent: ViewEvent {
     data object ReportComplete: SearchViewEvent()
 }
 
-sealed class MyAlbumTabViewEvent: ViewEvent
+sealed class MyAlbumTabViewEvent: ViewEvent {
+    data class ShareComplete(val shareLink: String): MyAlbumTabViewEvent()
+    sealed class Error(open val message: String?): MyAlbumTabViewEvent() {
+        data class GenerateShareLink(override val message: String?): Error(message)
+    }
+}
 sealed class MyMemoryTabViewEvent: ViewEvent
 
 sealed class ModifyUsernameViewEvent: ViewEvent {

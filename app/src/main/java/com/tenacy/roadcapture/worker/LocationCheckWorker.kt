@@ -96,6 +96,7 @@ class LocationCheckWorker @AssistedInject constructor(
                 Constants.TRACKING_REPEAT_INTERVAL_MINUTES,
                 TimeUnit.MINUTES
             )
+                .addTag(TAG)
                 .setConstraints(constraints)
                 .setInitialDelay(Constants.TRACKING_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
                 .setBackoffCriteria(
@@ -120,6 +121,7 @@ class LocationCheckWorker @AssistedInject constructor(
             Log.d(TAG, "일회성 워커 등록")
 
             val oneTimeWorkRequest = OneTimeWorkRequestBuilder<LocationCheckWorker>()
+                .addTag(TAG)
                 .setConstraints(
                     Constraints.Builder()
                         .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
@@ -131,9 +133,9 @@ class LocationCheckWorker @AssistedInject constructor(
                 .enqueue(oneTimeWorkRequest)
         }
 
-        fun cancelWork(context: Context) {
+        fun cancelAll(context: Context) {
             Log.d(TAG, "위치 추적 워커 취소")
-            WorkManager.getInstance(context).cancelUniqueWork(Constants.TRACKING_WORK_NAME)
+            WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
         }
     }
 }

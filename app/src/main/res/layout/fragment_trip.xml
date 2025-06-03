@@ -22,6 +22,7 @@
                   app:layout_constraintBottom_toBottomOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>
 
+<!--
         <Button android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/abcdefg"
@@ -30,6 +31,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
+-->
 
         <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                            android:layout_height="wrap_content"
@@ -197,7 +199,7 @@
 
                 <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                    android:layout_height="wrap_content"
-                                                                   app:safeClick="@{() -> vm.onZoomInClick()}"
+                                                                   android:onClick="@{() -> vm.onZoomInClick()}"
                                                                    android:clickable="true"
                                                                    android:focusable="true"
                                                                    android:foreground="?attr/selectableItemBackground"
@@ -226,7 +228,7 @@
 
                 <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                    android:layout_height="wrap_content"
-                                                                   app:safeClick="@{() -> vm.onZoomOutClick()}"
+                                                                   android:onClick="@{() -> vm.onZoomOutClick()}"
                                                                    android:clickable="true"
                                                                    android:focusable="true"
                                                                    android:foreground="?attr/selectableItemBackground"
@@ -255,7 +257,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_location"
-                                                                               app:safeClick="@{() -> vm.onResetCameraClick()}"
+                                                                               android:onClick="@{() -> vm.onResetCameraClick()}"
                                                                                android:visibility="@{vm.memoryLoaded == false ? View.GONE : View.VISIBLE}"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                app:backgroundTint="@color/background_normal"
@@ -271,7 +273,7 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_compass"
-                                                                               app:safeClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                               android:onClick="@{() -> vm.onResetCameraPositionClick()}"
                                                                                android:visibility="@{vm.memoryLoaded == false ? View.GONE : View.VISIBLE}"
                                                                                android:layout_marginBottom="7dp"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"

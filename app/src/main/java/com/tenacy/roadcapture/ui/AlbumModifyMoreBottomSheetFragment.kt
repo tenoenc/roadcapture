@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.BSheetAlbumModifyMoreBinding
 import com.tenacy.roadcapture.ui.dto.Album
 import kotlinx.parcelize.Parcelize
@@ -49,15 +50,24 @@ class AlbumModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
     private fun setupViews() {
         params?.let {
             binding.toggleText = if (it.album.isPublic) "비공개로 전환하기" else "공개로 전환하기"
+            binding.shareVisible = it.album.shareId.isNullOrBlank() && it.album.isPublic && SubscriptionPref.isSubscriptionActive
         }
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumModifyMoreModify.setSafeClickListener {
+        binding.btnBSheetAlbumModifyMorePublic.setSafeClickListener {
             val album = params?.album ?: return@setSafeClickListener
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_TOGGLE_PUBLIC to ParamsOut.TogglePublic(album))
+            )
+            dismiss()
+        }
+        binding.btnBSheetAlbumModifyMoreShare.setSafeClickListener {
+            val album = params?.album ?: return@setSafeClickListener
+            setFragmentResult(
+                REQUEST_KEY,
+                bundleOf(KEY_PARAMS_OUT_SHARE to ParamsOut.Share(album))
             )
             dismiss()
         }
@@ -86,6 +96,8 @@ class AlbumModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
         @Parcelize
         data class TogglePublic(val album: Album): ParamsOut()
         @Parcelize
+        data class Share(val album: Album): ParamsOut()
+        @Parcelize
         data class Delete(val album: Album): ParamsOut()
     }
 
@@ -96,6 +108,7 @@ class AlbumModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
         const val REQUEST_KEY = "album_more"
         const val KEY_PARAMS_IN = "params_in"
         const val KEY_PARAMS_OUT_TOGGLE_PUBLIC = "toggle_public"
+        const val KEY_PARAMS_OUT_SHARE = "share"
         const val KEY_PARAMS_OUT_DELETE = "delete"
 
         fun newInstance(bundle: Bundle? = null): AlbumModifyMoreBottomSheetFragment {

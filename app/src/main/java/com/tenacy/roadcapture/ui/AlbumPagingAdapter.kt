@@ -124,7 +124,8 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
                         oldItem.value.title == newItem.value.title &&
                         oldItem.value.regionTags == newItem.value.regionTags &&
                         oldItem.value.isScraped == newItem.value.isScraped &&
-                        oldItem.value.isPublic == newItem.value.isPublic
+                        oldItem.value.isPublic == newItem.value.isPublic &&
+                        oldItem.value.shareId == newItem.value.shareId
             }
 
             override fun getChangePayload(oldItem: AlbumItem, newItem: AlbumItem): Any? {
@@ -156,6 +157,10 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
 
                 if (oldItem.value.isPublic != newItem.value.isPublic) {
                     payload.add("isPublic")
+                }
+
+                if (oldItem.value.shareId != newItem.value.shareId) {
+                    payload.add("shareId")
                 }
 
                 // 시간은 항상 변경되므로 페이로드에 포함

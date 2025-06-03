@@ -93,7 +93,7 @@
 
                     <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                        android:layout_height="wrap_content"
-                                                                       app:safeClick="@{() -> vm.onZoomInClick()}"
+                                                                       android:onClick="@{() -> vm.onZoomInClick()}"
                                                                        android:clickable="true"
                                                                        android:focusable="true"
                                                                        android:foreground="?attr/selectableItemBackground"
@@ -122,7 +122,7 @@
 
                     <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                        android:layout_height="wrap_content"
-                                                                       app:safeClick="@{() -> vm.onZoomOutClick()}"
+                                                                       android:onClick="@{() -> vm.onZoomOutClick()}"
                                                                        android:clickable="true"
                                                                        android:focusable="true"
                                                                        android:foreground="?attr/selectableItemBackground"
@@ -151,7 +151,7 @@
             <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                    android:layout_height="wrap_content"
                                                                                    android:id="@+id/fab_album_compass"
-                                                                                   app:safeClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                                   android:onClick="@{() -> vm.onResetCameraPositionClick()}"
                                                                                    android:layout_marginBottom="7dp"
                                                                                    app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                    app:backgroundTint="@color/background_normal"

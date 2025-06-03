@@ -76,6 +76,8 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val scrapCount = getLong("scrapCount")?.toInt() ?: 0
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
     val isPublic = getBoolean("isPublic") ?: false
+    val shareId = getString("shareId")
+    val shareCreatedAt = getTimestamp("shareCreatedAt")?.toDate()?.toLocalDateTime()
     val userId = getDocumentReference("userRef")?.id ?: ""
     val userDisplayName = getString("userDisplayName") ?: ""
     val userPhotoUrl = getString("userPhotoUrl") ?: ""
@@ -92,6 +94,8 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
         scrapCount = scrapCount,
         regionTags = regionTags,
         isPublic = isPublic,
+        shareId = shareId,
+        shareCreatedAt = shareCreatedAt,
         userId = userId,
         userDisplayName = userDisplayName,
         userPhotoUrl = userPhotoUrl,
@@ -453,3 +457,4 @@ suspend fun Context.uploadImageToStorage(
     }
 }
 
+fun getShareLinkOrNull(shareId: String?) = shareId?.let { "${BuildConfig.WEB_BASE_URL}/albums/$it" }

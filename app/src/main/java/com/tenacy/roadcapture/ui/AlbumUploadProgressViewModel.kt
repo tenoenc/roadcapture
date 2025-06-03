@@ -130,8 +130,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val memoryPlaceNames = hashSetOf<String>()
 
                 val locationsData = locations.map { location ->
-                    mapOf(
-                        "id" to location.id.toString(),
+                    hashMapOf(
+                        "localId" to location.id.toString(),
                         "latitude" to location.latitude,
                         "longitude" to location.longitude,
                         "albumRef" to albumRef,
@@ -193,8 +193,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 위치 작업 추가
                 locationsData.forEach { locationData ->
-                    val locationId = (locationData["id"] as String).toLong()
-                    allOperations.add(SetDocumentOperation(locationRefByMemoryId[locationId]!!, locationData))
+                    val locationId = (locationData["localId"] as String).toLong()
+                    allOperations.add(SetDocumentOperation(locationRefByMemoryId[locationId]!!, locationData.apply { remove("localId") }))
                 }
 
                 // 배치 실행

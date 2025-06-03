@@ -26,6 +26,8 @@ android {
 
         multiDexEnabled true
 
+        resValue "string", "deeplink_albums", properties.getProperty("WEB_BASE_URL") + "/albums/{shareId}"
+
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [

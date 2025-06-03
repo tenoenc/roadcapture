@@ -60,7 +60,7 @@ class UpdateAlbumPublicWorker @AssistedInject constructor(
             return workRequest.id
         }
 
-        fun cancelWork(context: Context) {
+        fun cancelAll(context: Context) {
             Log.d(TAG, "앨범 공개 여부 업데이트 워커 취소")
             WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
         }

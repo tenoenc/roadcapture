@@ -90,8 +90,20 @@
               android:label="AlbumFragment"
               tools:layout="@layout/fragment_album">
 
-        <argument android:name="albumId" app:argType="string"/>
-        <argument android:name="userId" app:argType="string"/>
+        <argument android:name="albumId" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
+        <argument android:name="userId" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
+
+        <!-- 공유 ID로 접근 (딥링크용) -->
+        <argument
+                android:name="shareId"
+                app:argType="string"
+                app:nullable="true"
+                android:defaultValue="@null"/>
+
+        <!-- 원본 앨범 URL 딥링크 -->
+        <deepLink
+                app:uri="@string/deeplink_albums"/>
+
         <action android:id="@+id/action_album_to_memoryViewer"
                 app:destination="@id/memoryViewerFragment"/>
     </fragment>

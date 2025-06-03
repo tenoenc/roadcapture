@@ -40,7 +40,7 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -52,6 +52,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="roadcapturenaverauthcallbackscheme" />
+            </intent-filter>
+            <!-- 웹 URL 딥링크 처리 -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- 호스팅된 웹사이트 URL로 열기 -->
+                <data
+                        android:scheme="https"
+                        android:host="${WEB_HOST}" />
             </intent-filter>
         </activity>
         <activity

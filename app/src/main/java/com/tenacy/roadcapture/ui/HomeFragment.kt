@@ -79,10 +79,10 @@ class HomeFragment : BaseFragment() {
 
         // AppInfoFragment에 추가할 코드 예시
         if (BuildConfig.DEBUG) {
-            binding.btnHomeTestSubscription.visibility = View.VISIBLE
-            binding.btnHomeTestSubscription.setSafeClickListener {
-                subscriptionManager.debugSubscriptionStatus()
-            }
+//            binding.btnHomeTestSubscription.visibility = View.VISIBLE
+//            binding.btnHomeTestSubscription.setSafeClickListener {
+//                subscriptionManager.debugSubscriptionStatus()
+//            }
         }
     }
 

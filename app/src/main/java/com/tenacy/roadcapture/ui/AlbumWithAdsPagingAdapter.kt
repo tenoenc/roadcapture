@@ -60,7 +60,8 @@ class AlbumWithAdsPagingAdapter(
                                 oldItem.value.title == newItem.value.title &&
                                 oldItem.value.regionTags == newItem.value.regionTags &&
                                 oldItem.value.isScraped == newItem.value.isScraped &&
-                                oldItem.value.isPublic == newItem.value.isPublic
+                                oldItem.value.isPublic == newItem.value.isPublic &&
+                                oldItem.value.shareId == newItem.value.shareId
                     }
                     oldItem is AlbumItemWithAds.Ad && newItem is AlbumItemWithAds.Ad -> true
                     else -> false
@@ -97,6 +98,10 @@ class AlbumWithAdsPagingAdapter(
 
                     if (oldItem.value.isPublic != newItem.value.isPublic) {
                         payload.add("isPublic")
+                    }
+
+                    if (oldItem.value.shareId != newItem.value.shareId) {
+                        payload.add("shareId")
                     }
 
                     // 시간은 항상 변경되므로 페이로드에 포함

@@ -20,10 +20,7 @@ import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
-import com.tenacy.roadcapture.worker.DeleteAlbumWorker
-import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
-import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
-import com.tenacy.roadcapture.worker.UpdateUsernameWorker
+import com.tenacy.roadcapture.worker.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -171,7 +168,8 @@ class AppInfoViewModel @Inject constructor(
                 DeleteAlbumWorker.cancelAll(context)
                 UpdateUsernameWorker.cancelWork(context)
                 UpdateUserPhotoWorker.cancelWork(context)
-                UpdateAlbumPublicWorker.cancelWork(context)
+                UpdateAlbumPublicWorker.cancelAll(context)
+                SubscriptionCheckWorker.cancelAll(context)
                 Log.d("AppInfoViewModel", "백그라운드 작업 정리 완료")
                 
                 // 3. 로컬 데이터 정리

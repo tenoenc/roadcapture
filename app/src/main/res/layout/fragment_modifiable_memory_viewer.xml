@@ -92,7 +92,7 @@
                     <ImageButton
                             android:layout_width="44dp"
                             android:layout_height="44dp"
-                            app:safeClick="@{() -> vm.onPrevPageClick()}"
+                            android:onClick="@{() -> vm.onPrevPageClick()}"
                             android:src="@drawable/ic_simple_arrow_left"
                             android:background="@null"
                             android:scaleType="fitCenter"
@@ -126,7 +126,7 @@
                     <ImageButton
                             android:layout_width="44dp"
                             android:layout_height="44dp"
-                            app:safeClick="@{() -> vm.onNextPageClick()}"
+                            android:onClick="@{() -> vm.onNextPageClick()}"
                             android:src="@drawable/ic_simple_arrow_right"
                             android:background="@null"
                             android:scaleType="fitCenter"

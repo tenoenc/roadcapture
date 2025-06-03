@@ -84,6 +84,10 @@ class MyAlbumTabFragment: BaseFragment() {
                 val publicText = if(updatePublic) "공개" else "비공개"
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 ${publicText}로 전환하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
             }
+            bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Share>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_SHARE)?.let {
+                val album = it.album
+                vm.generateShareLink(album.id)
+            }
             bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Delete>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 val album = it.album
                 DeleteAlbumWorker.enqueueOneTimeWork(requireContext(), album.id, album.user.id)
@@ -222,6 +226,15 @@ class MyAlbumTabFragment: BaseFragment() {
     }
 
     private fun handleViewEvents(event: MyAlbumTabViewEvent) {
+        when(event) {
+            is MyAlbumTabViewEvent.ShareComplete -> {
+                // 테스트용
+                mainActivity.vm.viewEvent(GlobalViewEvent.CopyToClipboard(event.shareLink))
+            }
+            is MyAlbumTabViewEvent.Error -> {
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message ?: "문제가 발생했어요")))
+            }
+        }
     }
 
     @Parcelize

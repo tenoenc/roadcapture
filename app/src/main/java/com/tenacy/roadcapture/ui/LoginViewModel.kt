@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -13,7 +14,9 @@ import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -24,6 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val _savedStateHandle: SavedStateHandle,
     private val subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
@@ -121,6 +125,8 @@ class LoginViewModel @Inject constructor(
 
             val checkSubscriptionStatusSuspend = subscriptionManager.checkSubscriptionStatusSuspend()
             Log.d("SubscriptionManager", checkSubscriptionStatusSuspend.toString())
+
+            SubscriptionCheckWorker.enqueuePeriodicWork(context)
 
             emit(Unit)
         }

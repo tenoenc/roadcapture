@@ -159,7 +159,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
-        binding.abcdefg.setQuickTapListener {
+        /*binding.abcdefg.setQuickTapListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main) {
@@ -190,7 +190,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     }
                 }
             }
-        }
+        }*/
 
         repeatOnLifecycle { vm.fetchData() }
     }

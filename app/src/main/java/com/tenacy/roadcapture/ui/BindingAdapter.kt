@@ -181,7 +181,7 @@ fun ViewGroup.getSelectedIndices(): List<Int> {
 }
 
 @BindingAdapter("debounceTime", "safeClick", requireAll = false)
-fun View.setSafeClickListener(debounceTime: Long = 600L, clickListener: View.OnClickListener?) {
+fun View.setSafeClickListener(debounceTime: Long? = null, clickListener: View.OnClickListener?) {
     clickListener ?: return
 
     // 각 뷰마다 별도의 Job을 관리
@@ -192,7 +192,7 @@ fun View.setSafeClickListener(debounceTime: Long = 600L, clickListener: View.OnC
         if (clickJob?.isActive != true) {
             clickJob = scope.launch {
                 clickListener.onClick(view)
-                delay(debounceTime)
+                delay(debounceTime?.takeIf { it > 0L } ?: 600L)
             }
         }
     }

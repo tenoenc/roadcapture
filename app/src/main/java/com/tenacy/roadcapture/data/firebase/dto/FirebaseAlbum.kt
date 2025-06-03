@@ -15,6 +15,8 @@ data class FirebaseAlbum(
     val viewCount: Int = 0,
     val regionTags: List<Map<String, String>> = emptyList(),
     val isPublic: Boolean = false,
+    val shareId: String? = null,
+    val shareCreatedAt: LocalDateTime? = null,
     val userId: String = "",
     val userDisplayName: String = "",
     val userPhotoUrl: String = "",

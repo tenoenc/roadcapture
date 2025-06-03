@@ -49,7 +49,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
 
             // 취소되었고 만료가 임박한 경우 알림 표시
             if (SubscriptionPref.isCancelledButStillValid() &&
-                SubscriptionPref.daysUntilExpiry() <= Constants.SUBSCRIPTION_EXPIRY_WARNING_DAYS) {
+                SubscriptionPref.daysUntilExpiry() in 1 .. Constants.SUBSCRIPTION_EXPIRY_WARNING_DAYS) {
                 showSubscriptionExpiringNotification()
             }
 
@@ -105,6 +105,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             val delay = duration + Constants.SUBSCRIPTION_EXPIRY_CHECK_DELAY_MS
 
             val expiryWork = OneTimeWorkRequestBuilder<SubscriptionCheckWorker>()
+                .addTag(TAG)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .build()
 
@@ -120,6 +121,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             val periodicWork = PeriodicWorkRequestBuilder<SubscriptionCheckWorker>(
                 Constants.SUBSCRIPTION_REPEAT_INTERVAL_MINUTES, TimeUnit.MINUTES
             )
+                .addTag(TAG)
                 .setInitialDelay(Constants.SUBSCRIPTION_INITIAL_DELAY_MINUTES, TimeUnit.MINUTES)
                 .build()
 
@@ -130,10 +132,9 @@ class SubscriptionCheckWorker @AssistedInject constructor(
             )
         }
 
-        fun cancelWork(context: Context) {
+        fun cancelAll(context: Context) {
             Log.d(TAG, "구독 상태 확인 워커 취소")
-            WorkManager.getInstance(context).cancelUniqueWork(Constants.SUBSCRIPTION_WORK_NAME_EXPIRY_CHECK)
-            WorkManager.getInstance(context).cancelUniqueWork(Constants.SUBSCRIPTION_WORK_NAME_PERIODIC_CHECK)
+            WorkManager.getInstance(context).cancelAllWorkByTag(TAG)
         }
     }
 }

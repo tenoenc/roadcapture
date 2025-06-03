@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -273,7 +275,11 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.Share -> {
-
+                if(event.link.isNullOrBlank()) {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("공유 링크가 존재하지 않아요", ToastMessageType.Warning)))
+                    return
+                }
+                shareLink(event.link)
             }
 
             is AlbumViewEvent.NavigateToStudio -> {
@@ -306,6 +312,21 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                 }
             }
         }
+    }
+
+    private fun shareLink(link: String, title: String = "앨범 공유하기") {
+        // 공유할 텍스트 메시지 (제목과 링크 포함)
+        val shareText = "$link"
+
+        // 공유 인텐트 생성
+        val shareIntent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+        }
+
+        // 공유 앱 선택 다이얼로그 표시
+        mainActivity.startActivity(Intent.createChooser(shareIntent, title))
     }
 
     private fun navigateToMemoryViewer(item: ClusterMarkerItem) {

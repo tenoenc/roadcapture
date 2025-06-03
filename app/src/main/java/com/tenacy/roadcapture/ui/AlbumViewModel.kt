@@ -81,12 +81,29 @@ class AlbumViewModel @Inject constructor(
     val profileUrl = _album.mapNotNull { it?.user?.photoUrl }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
-    private val albumId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).albumId
-    private val albumUserId = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).userId
+    private val _albumId = MutableStateFlow(AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).albumId ?: "")
+    private val albumId: StateFlow<String> = _albumId.asStateFlow()
+    private val _albumUserId = MutableStateFlow(AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle).userId ?: "")
+    private val albumUserId: StateFlow<String> = _albumUserId.asStateFlow()
 
     init {
-        fetchData()
-        countView()
+        checkDeepLinkAndLoad()
+    }
+
+    private fun checkDeepLinkAndLoad() {
+        viewModelScope.launch {
+            // 딥링크 매개변수 확인
+            val args = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle)
+
+            if (args.shareId != null) {
+                // shareId 딥링크 처리
+                handleShareIdDeepLink(args.shareId!!)
+            } else {
+                // 일반 진입이면 바로 데이터 로드
+                fetchData()
+                countView()
+            }
+        }
     }
 
     /*private fun fetchData() {
@@ -107,19 +124,22 @@ class AlbumViewModel @Inject constructor(
 
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
+            val currentAlbumId = albumId.value
+            val currentUserId = albumUserId.value
+
             flow {
-                val albumUserRef = db.collection("users").document(albumUserId)
+                val albumUserRef = db.collection("users").document(currentUserId)
                 if(!albumUserRef.get().await().exists()) {
                     throw FirebaseFirestoreException("존재하지 않는 사용자예요", FirebaseFirestoreException.Code.NOT_FOUND)
                 }
 
                 val userRef = db.collection("users").document(UserPref.id)
-                val albumRef = db.collection("albums").document(albumId)
+                val albumRef = db.collection("albums").document(currentAlbumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
                     ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
 
-                if(albumUserId != UserPref.id && !firebaseAlbum.isPublic) {
-                    throw FirebaseFirestoreException("접근할 수 없어요",FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                if(currentUserId != UserPref.id && !firebaseAlbum.isPublic) {
+                    throw FirebaseFirestoreException("접근할 수 없어요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
                 val scrapRef = db.collection("scraps")
@@ -162,9 +182,11 @@ class AlbumViewModel @Inject constructor(
     }
 
     private fun countView() {
+        val currentAlbumId = albumId.value
+
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val albumRef = db.collection("albums").document(albumId)
+                val albumRef = db.collection("albums").document(currentAlbumId)
                 albumRef.update("viewCount", FieldValue.increment(1)).await()
                 emit(Unit)
             }.catch { exception ->
@@ -181,13 +203,15 @@ class AlbumViewModel @Inject constructor(
         scrapJob?.cancel()
 
         scrapJob = viewModelScope.launch(Dispatchers.IO) {
+            val currentAlbumId = albumId.value
+
             flow {
                 isScrapProcessing = true
 
                 val userId = UserPref.id
 
                 // 참조 생성
-                val albumRef = db.collection("albums").document(albumId)
+                val albumRef = db.collection("albums").document(currentAlbumId)
                 val userRef = db.collection("users").document(userId)
 
                 // 트랜잭션 밖에서 먼저 scraps 문서 ID를 찾아두기
@@ -290,6 +314,38 @@ class AlbumViewModel @Inject constructor(
         }
     }
 
+    private fun handleShareIdDeepLink(shareId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // shareId로 앨범 정보 가져오기
+                val snapshot = db.collection("albums")
+                    .whereEqualTo("shareId", shareId)
+                    .limit(1)
+                    .get()
+                    .await()
+
+                if (!snapshot.isEmpty) {
+                    val albumDoc = snapshot.documents[0]
+                    val albumId = albumDoc.id
+                    val userId = albumDoc.getDocumentReference("userRef")?.id
+
+                    if (userId != null) {
+                        // 기존 fetchData 로직이 자동으로 실행되도록 필드 업데이트
+                        _albumId.value = albumId
+                        _albumUserId.value = userId
+
+                        // 데이터 다시 로드
+                        fetchData()
+                        countView()
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e("AlbumViewModel", "shareId 처리 오류", e)
+                viewEvent(AlbumViewEvent.Forbidden("공유 링크를 통한 접근에 실패했어요"))
+            }
+        }
+    }
+
     fun getMemories() = _memories.value ?: emptyList()
 
     fun getMemoriesIn(items: List<ClusterMarkerItem>): List<FirebaseMemory> {
@@ -353,10 +409,9 @@ class AlbumViewModel @Inject constructor(
 
     fun onInfoClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            _album.value?.let {
-                val totalMemoryCount = _memories.value?.size ?: 0
-                viewEvent(AlbumViewEvent.ShowInfo(it, totalMemoryCount))
-            }
+            val currentAlbum = _album.value ?: return@launch
+            val totalMemoryCount = _memories.value?.size ?: 0
+            viewEvent(AlbumViewEvent.ShowInfo(currentAlbum, totalMemoryCount))
         }
     }
 
@@ -372,7 +427,9 @@ class AlbumViewModel @Inject constructor(
 
     fun onShareClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AlbumViewEvent.Share)
+            val currentAlbum = _album.value ?: return@launch
+            val shareLink = getShareLinkOrNull(currentAlbum.shareId)
+            viewEvent(AlbumViewEvent.Share(shareLink))
         }
     }
 
@@ -387,7 +444,8 @@ class AlbumViewModel @Inject constructor(
 
     fun onReportClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AlbumViewEvent.ShowReport(albumId))
+            val currentAlbumId = albumId.value
+            viewEvent(AlbumViewEvent.ShowReport(currentAlbumId))
         }
     }
 }

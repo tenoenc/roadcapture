@@ -97,8 +97,6 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         if (expiryTime > currentTime) {
             SubscriptionCheckWorker.enqueueOneTimeWork(this, expiryTime - currentTime)
         }
-
-        SubscriptionCheckWorker.enqueuePeriodicWork(this)
     }
 
     // 애플리케이션 시작 시 빌링 서비스 초기화
