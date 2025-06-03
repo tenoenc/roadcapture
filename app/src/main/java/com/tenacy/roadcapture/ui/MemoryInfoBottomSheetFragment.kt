@@ -85,7 +85,7 @@ class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetMemoryInfoNegative.setOnClickListener {
+        binding.btnBSheetMemoryInfoNegative.setSafeClickListener {
             dismiss()
         }
     }

@@ -31,7 +31,7 @@
                         android:id="@+id/ibtn_a_bar_back"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="@{() -> vm.onBackClick()}"
+                        app:safeClick="@{() -> vm.onBackClick()}"
                         android:src="@drawable/ic_arrow_left"
                         android:background="@null"
                         android:scaleType="fitCenter"/>
@@ -50,7 +50,7 @@
                         android:id="@+id/ibtn_memory_viewer_info"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="@{() -> vm.onInfoClick()}"
+                        app:safeClick="@{() -> vm.onInfoClick()}"
                         android:src="@drawable/ic_circle_info"
                         android:background="@null"
                         android:scaleType="fitCenter"/>
@@ -92,7 +92,7 @@
                     <ImageButton
                             android:layout_width="44dp"
                             android:layout_height="44dp"
-                            android:onClick="@{() -> vm.onPrevPageClick()}"
+                            app:safeClick="@{() -> vm.onPrevPageClick()}"
                             android:src="@drawable/ic_simple_arrow_left"
                             android:background="@null"
                             android:scaleType="fitCenter"
@@ -126,7 +126,7 @@
                     <ImageButton
                             android:layout_width="44dp"
                             android:layout_height="44dp"
-                            android:onClick="@{() -> vm.onNextPageClick()}"
+                            app:safeClick="@{() -> vm.onNextPageClick()}"
                             android:src="@drawable/ic_simple_arrow_right"
                             android:background="@null"
                             android:scaleType="fitCenter"
@@ -147,7 +147,7 @@
                     <LinearLayout android:layout_width="wrap_content"
                                   android:layout_height="wrap_content"
                                   android:id="@+id/ll_memory_viewer_tags"
-                                  android:onClick="@{() -> vm.onLocationClick()}"
+                                  app:safeClick="@{() -> vm.onLocationClick()}"
                                   android:minHeight="24dp"
                                   android:gravity="center"
                                   android:orientation="horizontal">

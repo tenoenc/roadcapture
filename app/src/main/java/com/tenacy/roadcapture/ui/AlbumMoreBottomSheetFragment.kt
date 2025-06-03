@@ -65,8 +65,8 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumMoreReport.setOnClickListener {
-            val album = params?.albumId ?: return@setOnClickListener
+        binding.btnBSheetAlbumMoreReport.setSafeClickListener {
+            val album = params?.albumId ?: return@setSafeClickListener
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_REPORT to ParamsOut.Report(album))

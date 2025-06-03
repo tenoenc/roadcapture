@@ -47,7 +47,7 @@
                     android:id="@+id/ibtn_new_album_complete"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:onClick="@{() -> vm.onCompleteClick()}"
+                    app:safeClick="@{() -> vm.onCompleteClick()}"
                     android:visibility="@{vm.albumTitle.empty ? View.INVISIBLE : View.VISIBLE}"
                     android:src="@drawable/ic_check"
                     android:background="@null"

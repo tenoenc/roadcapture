@@ -43,7 +43,8 @@
                           app:layout_constraintEnd_toEndOf="parent"
                           app:layout_constraintStart_toStartOf="parent">
 
-                <ImageButton android:layout_width="24dp"
+                <ImageButton android:id="@+id/ibtn_a_bar_back"
+                             android:layout_width="24dp"
                              android:layout_height="24dp"
                              android:background="@null"
                              android:src="@drawable/ic_arrow_left"
@@ -63,7 +64,7 @@
 
                 <ImageButton android:layout_width="24dp"
                              android:layout_height="24dp"
-                             android:onClick="@{() -> vm.onInfoClick()}"
+                             app:safeClick="@{() -> vm.onInfoClick()}"
                              android:background="@null"
                              android:src="@drawable/ic_circle_info"
                              android:scaleType="fitCenter"
@@ -92,7 +93,7 @@
 
                     <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                        android:layout_height="wrap_content"
-                                                                       android:onClick="@{() -> vm.onZoomInClick()}"
+                                                                       app:safeClick="@{() -> vm.onZoomInClick()}"
                                                                        android:clickable="true"
                                                                        android:focusable="true"
                                                                        android:foreground="?attr/selectableItemBackground"
@@ -121,7 +122,7 @@
 
                     <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                        android:layout_height="wrap_content"
-                                                                       android:onClick="@{() -> vm.onZoomOutClick()}"
+                                                                       app:safeClick="@{() -> vm.onZoomOutClick()}"
                                                                        android:clickable="true"
                                                                        android:focusable="true"
                                                                        android:foreground="?attr/selectableItemBackground"
@@ -150,7 +151,7 @@
             <com.google.android.material.floatingactionbutton.FloatingActionButton android:layout_width="wrap_content"
                                                                                    android:layout_height="wrap_content"
                                                                                    android:id="@+id/fab_album_compass"
-                                                                                   android:onClick="@{() -> vm.onResetCameraPositionClick()}"
+                                                                                   app:safeClick="@{() -> vm.onResetCameraPositionClick()}"
                                                                                    android:layout_marginBottom="7dp"
                                                                                    app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"
                                                                                    app:backgroundTint="@color/background_normal"
@@ -176,7 +177,7 @@
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              android:onClick="@{() -> vm.onReportClick()}"
+                              app:safeClick="@{() -> vm.onReportClick()}"
                               android:clickable="true"
                               android:focusable="true"
                               android:foreground="?attr/selectableItemBackground"
@@ -213,7 +214,7 @@
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              android:onClick="@{() -> vm.onShareClick()}"
+                              app:safeClick="@{() -> vm.onShareClick()}"
                               android:clickable="true"
                               android:focusable="true"
                               android:foreground="?attr/selectableItemBackground"
@@ -249,7 +250,7 @@
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              android:onClick="@{() -> vm.onScrapClick()}"
+                              app:safeClick="@{() -> vm.onScrapClick()}"
                               android:clickable="true"
                               android:focusable="true"
                               android:foreground="?attr/selectableItemBackground"
@@ -276,7 +277,7 @@
             <!--<ImageButton android:layout_width="38dp"
                          android:layout_height="38dp"
 
-                         android:onClick="@{() -> vm.onProfileClick()}"
+                         app:safeClick="@{() -> vm.onProfileClick()}"
                          android:background="@null"
                          android:scaleType="fitCenter"
 
@@ -288,7 +289,7 @@
 
             <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                android:layout_height="wrap_content"
-                                                               android:onClick="@{() -> vm.onProfileClick()}"
+                                                               app:safeClick="@{() -> vm.onProfileClick()}"
                                                                app:contentPaddingTop="1dp"
                                                                app:contentPaddingBottom="1dp"
                                                                app:contentPaddingLeft="1dp"

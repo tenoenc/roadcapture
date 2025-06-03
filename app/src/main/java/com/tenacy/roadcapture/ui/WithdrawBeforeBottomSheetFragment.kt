@@ -59,14 +59,14 @@ class WithdrawBeforeBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetWithdrawBeforePositive.setOnClickListener {
+        binding.btnBSheetWithdrawBeforePositive.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
             )
             dismiss()
         }
-        binding.btnBSheetWithdrawBeforeNegative.setOnClickListener {
+        binding.btnBSheetWithdrawBeforeNegative.setSafeClickListener {
             dismiss()
         }
     }

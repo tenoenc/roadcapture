@@ -63,14 +63,14 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetSubscriptionPositive.setOnClickListener {
+        binding.btnBSheetSubscriptionPositive.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
             )
             dismiss()
         }
-        binding.btnBSheetSubscriptionNegative.setOnClickListener {
+        binding.btnBSheetSubscriptionNegative.setSafeClickListener {
             dismiss()
         }
     }

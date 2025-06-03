@@ -73,7 +73,7 @@ class ReportBottomSheetFragment: BottomSheetDialogFragment() {
             binding.btnBSheetReportPositive.visibility =
                 if (selectedIndices.isNotEmpty()) View.VISIBLE else View.GONE
         }
-        binding.btnBSheetReportPositive.setOnClickListener {
+        binding.btnBSheetReportPositive.setSafeClickListener {
             val selectedIndex = binding.llBSheetReportReasonContainer.getSelectedIndices().firstOrNull()
 
             val reportReason = when (selectedIndex) {
@@ -93,7 +93,7 @@ class ReportBottomSheetFragment: BottomSheetDialogFragment() {
 
             dismiss()
         }
-        binding.btnBSheetReportNegative.setOnClickListener {
+        binding.btnBSheetReportNegative.setSafeClickListener {
             dismiss()
         }
     }

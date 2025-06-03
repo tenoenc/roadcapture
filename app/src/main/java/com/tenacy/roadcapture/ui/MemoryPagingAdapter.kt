@@ -21,7 +21,7 @@ class MemoryViewHolder(private val binding: ItemMemoryBinding): RecyclerView.Vie
 
     fun bind(item: MemoryItem) {
         binding.photoUrl = item.value.photoUrl
-        binding.root.setOnClickListener { item.onItemClick() }
+        binding.root.setSafeClickListener { item.onItemClick() }
     }
 
     fun bind(item: MemoryItem, payloads: List<Any>) {

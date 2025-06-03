@@ -36,14 +36,14 @@ class ProfileMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetProfileMoreModifyPhoto.setOnClickListener {
+        binding.btnBSheetProfileMoreModifyPhoto.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_MODIFY_PHOTO to ParamsOut.ModifyPhoto)
             )
             dismiss()
         }
-        binding.btnBSheetProfileMoreModifyName.setOnClickListener {
+        binding.btnBSheetProfileMoreModifyName.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_MODIFY_NAME to ParamsOut.ModifyName)

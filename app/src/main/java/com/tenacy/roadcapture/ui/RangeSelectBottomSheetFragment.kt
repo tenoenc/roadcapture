@@ -48,7 +48,7 @@ class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetRangeSelectPositive.setOnClickListener {
+        binding.btnBSheetRangeSelectPositive.setSafeClickListener {
             val checkedChipId = binding.cgBSheetRangeSelect.checkedChipId
             val checkedChip = binding.cgBSheetRangeSelect.findViewById<Chip>(checkedChipId)
             val tag = checkedChip.tag as String

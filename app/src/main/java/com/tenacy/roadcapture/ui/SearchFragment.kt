@@ -190,7 +190,7 @@ class SearchFragment: BaseFragment() {
 
     private fun setupSearchBar() {
         // X 버튼 클릭 이벤트
-        binding.ibtnSearchInputClear.setOnClickListener {
+        binding.ibtnSearchInputClear.setSafeClickListener {
             binding.etSearchInput.text.clear()
         }
 

@@ -36,7 +36,7 @@ class AlbumCompeteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumCompleteBeforePositive.setOnClickListener {
+        binding.btnBSheetAlbumCompleteBeforePositive.setSafeClickListener {
             val isPublic = binding.chipBSheetAlbumCompleteBeforePublic.isChecked
             setFragmentResult(
                 REQUEST_KEY,

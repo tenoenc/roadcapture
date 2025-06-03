@@ -36,14 +36,14 @@ class TripAfterBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetTripAfterPositive.setOnClickListener {
+        binding.btnBSheetTripAfterPositive.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive)
             )
             dismiss()
         }
-        binding.btnBSheetTripAfterNegative.setOnClickListener {
+        binding.btnBSheetTripAfterNegative.setSafeClickListener {
             dismiss()
         }
     }

@@ -52,7 +52,7 @@ class SubscribeAfterBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetSubscribeAfterNegative.setOnClickListener {
+        binding.btnBSheetSubscribeAfterNegative.setSafeClickListener {
             dismiss()
         }
     }

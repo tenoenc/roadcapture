@@ -26,7 +26,7 @@ abstract class BaseDialogFragment : DialogFragment(), View.OnClickListener {
 
     private fun setClickListenerRecursively(view: View) {
         if (view.id in clickableViewIds) {
-            view.setOnClickListener(this)
+            view.setSafeClickListener(clickListener = this)
         }
 
         if (view is ViewGroup) {

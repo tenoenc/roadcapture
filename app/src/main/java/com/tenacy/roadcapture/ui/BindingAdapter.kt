@@ -19,6 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.util.toPx
+import kotlinx.coroutines.*
 
 @BindingAdapter("url", "bitmap", "uri", "src", "radius", "borderWidth", "borderColor", "coverColor", requireAll = false)
 fun ImageView.showImage(
@@ -137,7 +138,7 @@ fun ViewGroup.setupSelectionContainer(
 ) {
     for (i in 0 until childCount) {
         val child = getChildAt(i)
-        child.setOnClickListener { clickedView ->
+        child.setSafeClickListener { clickedView ->
             if (singleSelection) {
                 for (j in 0 until childCount) {
                     val otherChild = getChildAt(j)
@@ -177,4 +178,22 @@ fun ViewGroup.getSelectedIndices(): List<Int> {
         }
     }
     return selectedIndices
+}
+
+@BindingAdapter("debounceTime", "safeClick", requireAll = false)
+fun View.setSafeClickListener(debounceTime: Long = 600L, clickListener: View.OnClickListener?) {
+    clickListener ?: return
+
+    // 각 뷰마다 별도의 Job을 관리
+    val scope = CoroutineScope(Dispatchers.Main)
+    var clickJob: Job? = null
+
+    setOnClickListener { view ->
+        if (clickJob?.isActive != true) {
+            clickJob = scope.launch {
+                clickListener.onClick(view)
+                delay(debounceTime)
+            }
+        }
+    }
 }

@@ -329,10 +329,10 @@ sealed class AlbumWithAdsViewHolder<out T: AlbumItemWithAds>(binding: ViewDataBi
                 item.onLongClick(item.value.id)
                 true
             }
-            binding.clIAlbumTouchContainer.setOnClickListener {
+            binding.clIAlbumTouchContainer.setSafeClickListener {
                 item.onItemClick()
             }
-            binding.clIAlbumRow1Profile.setOnClickListener {
+            binding.clIAlbumRow1Profile.setSafeClickListener {
                 item.onProfileClick()
             }
         }
@@ -386,10 +386,10 @@ sealed class AlbumWithAdsViewHolder<out T: AlbumItemWithAds>(binding: ViewDataBi
 
             binding.llIMyAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
 
-            binding.cardIMyAlbumTouchContainer.setOnClickListener {
+            binding.cardIMyAlbumTouchContainer.setSafeClickListener {
                 item.onItemClick()
             }
-            binding.ibtnIMyAlbumMore.setOnClickListener {
+            binding.ibtnIMyAlbumMore.setSafeClickListener {
                 item.onMoreClick(item.value)
             }
         }
@@ -417,7 +417,7 @@ sealed class AlbumWithAdsViewHolder<out T: AlbumItemWithAds>(binding: ViewDataBi
                             }
 
                             "isPublic" -> {
-                                binding.ibtnIMyAlbumMore.setOnClickListener {
+                                binding.ibtnIMyAlbumMore.setSafeClickListener {
                                     item.onMoreClick(item.value)
                                     binding.numericalText = getNumericalText(item)
                                 }

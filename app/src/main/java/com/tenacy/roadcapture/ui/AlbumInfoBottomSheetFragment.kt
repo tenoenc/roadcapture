@@ -87,7 +87,7 @@ class AlbumInfoBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumInfoNegative.setOnClickListener {
+        binding.btnBSheetAlbumInfoNegative.setSafeClickListener {
             dismiss()
         }
     }

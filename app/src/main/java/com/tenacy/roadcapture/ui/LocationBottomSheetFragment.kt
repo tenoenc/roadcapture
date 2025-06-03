@@ -51,15 +51,15 @@ class LocationBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetLocationPositive.setOnClickListener {
-            val address = address ?: return@setOnClickListener
+        binding.btnBSheetLocationPositive.setSafeClickListener {
+            val address = address ?: return@setSafeClickListener
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_POSITIVE to ParamsOut.Positive(address))
             )
             dismiss()
         }
-        binding.btnBSheetLocationNegative.setOnClickListener {
+        binding.btnBSheetLocationNegative.setSafeClickListener {
             dismiss()
         }
     }

@@ -45,14 +45,14 @@ class MemoryMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetMemoryMoreInfo.setOnClickListener {
+        binding.btnBSheetMemoryMoreInfo.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_INFO to ParamsOut.Info)
             )
             dismiss()
         }
-        binding.btnBSheetMemoryMoreAlbum.setOnClickListener {
+        binding.btnBSheetMemoryMoreAlbum.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_ALBUM to ParamsOut.Album)

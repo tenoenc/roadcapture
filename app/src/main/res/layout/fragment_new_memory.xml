@@ -51,7 +51,7 @@
                         android:id="@+id/ibtn_new_memory_complete"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="@{() -> vm.onNewClick()}"
+                        app:safeClick="@{() -> vm.onNewClick()}"
                         android:src="@drawable/ic_check"
                         android:background="@null"
                         android:scaleType="fitCenter"/>
@@ -119,7 +119,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/ll_new_memory_tags"
-                                android:onClick="@{() -> vm.onLocationClick()}"
+                                app:safeClick="@{() -> vm.onLocationClick()}"
                                 android:minHeight="24dp"
                                 android:gravity="center"
                                 android:orientation="horizontal">

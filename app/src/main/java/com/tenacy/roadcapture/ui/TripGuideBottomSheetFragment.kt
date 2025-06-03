@@ -111,7 +111,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetTripGuideCancel.setOnClickListener {
+        binding.btnBSheetTripGuideCancel.setSafeClickListener {
             dismiss()
         }
     }

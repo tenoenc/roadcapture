@@ -53,16 +53,16 @@ class AlbumModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetAlbumModifyMoreModify.setOnClickListener {
-            val album = params?.album ?: return@setOnClickListener
+        binding.btnBSheetAlbumModifyMoreModify.setSafeClickListener {
+            val album = params?.album ?: return@setSafeClickListener
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_TOGGLE_PUBLIC to ParamsOut.TogglePublic(album))
             )
             dismiss()
         }
-        binding.btnBSheetAlbumModifyMoreDelete.setOnClickListener {
-            val album = params?.album ?: return@setOnClickListener
+        binding.btnBSheetAlbumModifyMoreDelete.setSafeClickListener {
+            val album = params?.album ?: return@setSafeClickListener
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_DELETE to ParamsOut.Delete(album))

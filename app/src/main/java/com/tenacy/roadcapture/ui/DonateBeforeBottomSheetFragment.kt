@@ -36,21 +36,21 @@ class DonateBeforeBottomSheetFragment: BottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetDonateBeforeSmall.setOnClickListener {
+        binding.btnBSheetDonateBeforeSmall.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_DONATE to ParamsOut.Donate("donation_small"))
             )
             dismiss()
         }
-        binding.btnBSheetDonateBeforeMedium.setOnClickListener {
+        binding.btnBSheetDonateBeforeMedium.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_DONATE to ParamsOut.Donate("donation_medium"))
             )
             dismiss()
         }
-        binding.btnBSheetDonateBeforeLarge.setOnClickListener {
+        binding.btnBSheetDonateBeforeLarge.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_DONATE to ParamsOut.Donate("donation_large"))

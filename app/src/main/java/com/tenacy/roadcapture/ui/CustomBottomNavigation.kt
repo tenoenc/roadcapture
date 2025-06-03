@@ -3,6 +3,7 @@ package com.tenacy.roadcapture.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
@@ -40,27 +41,27 @@ class CustomBottomNavigation @JvmOverloads constructor(
 
     private fun setupClickListeners() {
         // 홈 버튼 클릭 리스너
-        binding.bnHome.setOnClickListener {
+        binding.bnHome.setSafeClickListener {
             navigateTo(R.id.homeFragment)
         }
 
         // 북마크 버튼 클릭 리스너
-        binding.bnScrap.setOnClickListener {
+        binding.bnScrap.setSafeClickListener {
             navigateTo(R.id.scrapFragment)
         }
 
         // 새 아이템 버튼 클릭 리스너
-        binding.bnNew.setOnClickListener {
+        binding.bnNew.setSafeClickListener {
             onNewItemClickListener?.invoke()
         }
 
         // 앨범 버튼 클릭 리스너
-        binding.bnMyAlbum.setOnClickListener {
+        binding.bnMyAlbum.setSafeClickListener {
             navigateTo(R.id.myAlbumFragment)
         }
 
         // 검색 버튼 클릭 리스너
-        binding.bnAppInfo.setOnClickListener {
+        binding.bnAppInfo.setSafeClickListener {
             navigateTo(R.id.appInfoFragment)
         }
     }
