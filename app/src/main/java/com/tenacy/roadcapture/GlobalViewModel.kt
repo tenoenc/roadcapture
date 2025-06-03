@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.ui.BaseViewModel
@@ -35,7 +35,7 @@ class GlobalViewModel @Inject constructor(
             SubscriptionCheckWorker.cancelAll(context)
 
             UserPref.clear()
-            TravelStatePref.clear()
+            TravelPref.clear()
             SubscriptionPref.clear()
             memoryDao.clear()
             locationDao.clear()

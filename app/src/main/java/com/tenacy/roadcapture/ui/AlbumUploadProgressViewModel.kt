@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.Timestamp
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.util.*
@@ -62,7 +62,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()
                 // Album.createdAt 대신 TravelStatePref.createdAt 사용
-                val startTime = TravelStatePref.createdAt.toLocalDateTime()
+                val startTime = TravelPref.createdAt.toLocalDateTime()
                 val endTime = LocalDateTime.now()
                 val userId = UserPref.id
                 val userRef = db.collection("users").document(userId)
@@ -203,7 +203,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 // 5. 로컬 데이터 초기화
                 sendWithDelay(AlbumSaveState.ClearingLocalData)
                 travelingStateManager.stopTraveling()
-                TravelStatePref.clear()
+                TravelPref.clear()
                 memoryDao.clear()
                 locationDao.clear()
                 context.clearCacheDirectory()

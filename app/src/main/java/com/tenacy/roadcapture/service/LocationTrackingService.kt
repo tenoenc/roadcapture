@@ -17,6 +17,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.pref.DebugSettings
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.util.Constants
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -34,10 +35,7 @@ class LocationTrackingService : Service() {
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
 
-    private var lastSavedLocation: Location? = null
     private var isInitialized = false
-
-    private var lastSavedTime: Long = 0
 
     companion object {
         private const val TAG = "LocationTrackingService"
@@ -138,7 +136,6 @@ class LocationTrackingService : Service() {
         isInitialized = false
         fusedLocationClient = null
         locationCallback = null
-        lastSavedLocation = null
         instance = null
 
         super.onDestroy()
@@ -394,8 +391,8 @@ class LocationTrackingService : Service() {
 
         try {
             locationDao.insert(locationEntity)
-            lastSavedLocation = location
-            lastSavedTime = System.currentTimeMillis()
+            TravelPref.setLastSavedLocation(location)
+            TravelPref.lastSavedTime = System.currentTimeMillis()
             Log.d(TAG, "위치 저장됨: ${location.latitude}, ${location.longitude}")
         } catch (e: Exception) {
             Log.e(TAG, "위치 저장 실패", e)
@@ -407,14 +404,14 @@ class LocationTrackingService : Service() {
         val isDebugMode = BuildConfig.DEBUG
 
         // 이전 저장 시간이 0인 경우 (첫 번째 위치)
-        if (lastSavedTime == 0L) {
-            lastSavedTime = currentTime
+        if (TravelPref.lastSavedTime == 0L) {
+            TravelPref.lastSavedTime = currentTime
             Log.d(TAG, "첫 위치 저장")
             return true
         }
 
         // 시간 간격 계산
-        val timeDiff = currentTime - lastSavedTime
+        val timeDiff = currentTime - TravelPref.lastSavedTime
 
         // 디버그 모드에서는 시간 체크도 추가
         if (isDebugMode) {
@@ -424,8 +421,8 @@ class LocationTrackingService : Service() {
             }
         }
 
-        val lastLocation = lastSavedLocation ?: run {
-            lastSavedTime = currentTime
+        val lastLocation = TravelPref.getLastSavedLocation() ?: run {
+            TravelPref.lastSavedTime = currentTime
             return true
         }
 

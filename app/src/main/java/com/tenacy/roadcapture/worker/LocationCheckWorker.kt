@@ -6,7 +6,7 @@ import android.os.Build
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.service.LocationTrackingService
 import com.tenacy.roadcapture.util.Constants
 import dagger.assisted.Assisted
@@ -26,7 +26,7 @@ class LocationCheckWorker @AssistedInject constructor(
 
         return try {
             // 여행 상태 확인 - TravelStatePref만 사용
-            val isTraveling = TravelStatePref.isTraveling
+            val isTraveling = TravelPref.isTraveling
 
             if (isTraveling) {
                 Log.d(TAG, "여행 중 상태 확인됨")

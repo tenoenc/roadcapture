@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -164,7 +164,7 @@ class MainFragment: BaseFragment() {
             }
             is MainViewEvent.ShowTripBefore -> {
                 // Album.createdAt 대신 TravelStatePref.isTraveling 사용
-                if(TravelStatePref.isTraveling) {
+                if(TravelPref.isTraveling) {
                     val bottomSheet = TripOngoingBottomSheetFragment.newInstance()
                     bottomSheet.show(childFragmentManager, TripOngoingBottomSheetFragment.TAG)
                 } else {

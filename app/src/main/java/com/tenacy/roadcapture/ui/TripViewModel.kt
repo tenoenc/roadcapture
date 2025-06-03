@@ -10,7 +10,7 @@ import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.ui.dto.Marker
@@ -88,8 +88,6 @@ class TripViewModel @Inject constructor(
             .map { LatLng(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    private var _lastLocation: LatLng? = null
-
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val locations = locationDao.selectAll()
@@ -99,7 +97,7 @@ class TripViewModel @Inject constructor(
                 val last = locations.maxByOrNull { it.createdAt }
                 last?.let {
                     val coordinates = LatLng(it.latitude, it.longitude)
-                    _lastLocation = coordinates
+                    TravelPref.setLastSavedLatLng(coordinates)
                 }
             }
             _memories.emit(memories)
@@ -123,7 +121,7 @@ class TripViewModel @Inject constructor(
 
     fun startTraveling() {
         // 여행 최초 시점이라면 서비스에 영향 가능성이 있는 위치 정보 초기화
-        if(!TravelStatePref.isTraveling) {
+        if(!TravelPref.isTraveling) {
             viewModelScope.launch(Dispatchers.IO) {
                 memoryDao.clear()
                 locationDao.clear()
@@ -145,7 +143,7 @@ class TripViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             // Album.clear() 대신 TravelStatePref.clear() 사용
-            TravelStatePref.clear()
+            TravelPref.clear()
             memoryDao.clear()
             locationDao.clear()
             context.clearCacheDirectory()
@@ -156,7 +154,7 @@ class TripViewModel @Inject constructor(
 
     fun updateDurationText() {
         _durationText.update {
-            getDurationFormattedText(TravelStatePref.createdAt, LocalDateTime.now().toTimestamp())
+            getDurationFormattedText(TravelPref.createdAt, LocalDateTime.now().toTimestamp())
         }
     }
 
@@ -176,13 +174,13 @@ class TripViewModel @Inject constructor(
                         it.toMutableList().apply { add(locationEntity.copy(id = locationId)) }
                     }
                 }
-                _lastLocation = latLng
+                TravelPref.setLastSavedLatLng(latLng)
             }
         }
     }
 
     private fun shouldSaveLocation(currentLatLng: LatLng): Boolean {
-        val lastSavedLocation = _lastLocation ?: return true
+        val lastSavedLocation = TravelPref.getLastSavedLatLng() ?: return true
 
         val lastLat = lastSavedLocation.latitude
         val lastLng = lastSavedLocation.longitude
@@ -264,7 +262,7 @@ class TripViewModel @Inject constructor(
 
     fun onCheckClick() {
         // 한 달이 지나면 여행 중단 (워커로도 확인 필요)
-        if(TravelStatePref.isOverOneMonth()) {
+        if(TravelPref.isOverOneMonth()) {
             stopTraveling()
             return
         }

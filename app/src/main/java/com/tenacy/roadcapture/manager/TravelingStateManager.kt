@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.util.Log
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.service.LocationTrackingService
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -23,7 +23,7 @@ class TravelingStateManager @Inject constructor(
     // init 블록도 수정
     init {
         // 앱 시작 시 이전 여행 상태 확인
-        val isCurrentlyTraveling = TravelStatePref.isTraveling
+        val isCurrentlyTraveling = TravelPref.isTraveling
         _isTraveling.value = isCurrentlyTraveling
 
         if (isCurrentlyTraveling) {
@@ -37,7 +37,7 @@ class TravelingStateManager @Inject constructor(
 
     fun startTraveling() {
         _isTraveling.value = true
-        TravelStatePref.startTravel()
+        TravelPref.startTravel()
 
         // 워커 등록
         LocationCheckWorker.enqueuePeriodicWork(context)
@@ -49,7 +49,7 @@ class TravelingStateManager @Inject constructor(
 
     fun stopTraveling() {
         _isTraveling.value = false
-        TravelStatePref.stopTravel()
+        TravelPref.stopTravel()
 
         // 워커 취소
         LocationCheckWorker.cancelAll(context)

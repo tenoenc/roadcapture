@@ -15,7 +15,7 @@ import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.manager.*
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
@@ -80,7 +80,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
     // RoadcaptureApplication.kt의 setupLocationCheck() 메서드 수정
     private fun setupLocationCheck() {
         // 이전 여행 상태 확인 및 워커 등록 - TravelStatePref만 사용
-        val isTraveling = TravelStatePref.isTraveling
+        val isTraveling = TravelPref.isTraveling
 
         if (isTraveling) {
             Log.d("Application", "이전 여행 상태 감지 - LocationCheckWorker 등록")

@@ -14,7 +14,7 @@ import com.tenacy.roadcapture.data.api.dto.DeleteUserRequest
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.TravelStatePref
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
@@ -177,7 +177,7 @@ class AppInfoViewModel @Inject constructor(
 
                 // 로컬 데이터 삭제
                 UserPref.clear()
-                TravelStatePref.clear()
+                TravelPref.clear()
                 SubscriptionPref.clear()
                 memoryDao.clear()
                 locationDao.clear()
