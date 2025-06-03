@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.ReportReason
+import com.tenacy.roadcapture.data.db.*
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
 import com.tenacy.roadcapture.data.pref.UserPref
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -29,6 +31,9 @@ import kotlin.coroutines.resumeWithException
 @HiltViewModel
 class AlbumViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val memoryCacheDao: MemoryCacheDao,
+    private val locationCacheDao: LocationCacheDao,
+    private val cacheDao: CacheDao,
 ) : BaseViewModel() {
 
     private var scrapJob: Job? = null
@@ -155,14 +160,35 @@ class AlbumViewModel @Inject constructor(
                 _scraped.emit(album.isScraped)
                 _scrapCount.emit(album.scrapCount)
 
-                val memories = db.collection("memories")
-                    .whereEqualTo("albumRef", albumRef)
-                    .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toMemory() }
+                val cached = cacheDao.cachedBy(CacheType.Album, album.id)
+                val (memories, locations) = if (cached) {
+                    val memories = memoryCacheDao.selectByAlbumId(album.id).map(MemoryCacheEntity::toFirebaseMemory)
+                    val locations =
+                        locationCacheDao.selectByAlbumId(album.id).map(LocationCacheEntity::toFirebaseLocation)
+                    memories to locations
+                } else {
+                    val memories = db.collection("memories")
+                        .whereEqualTo("albumRef", albumRef)
+                        .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toMemory() }
 
-                val locations = db.collection("locations")
-                    .whereEqualTo("albumRef", albumRef)
-                    .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toLocation() }
+                    // 추억 캐싱
+                    val memoryCaches = memories.map(MemoryCacheEntity::of)
+                    memoryCacheDao.insertAll(memoryCaches)
 
+                    val locations = db.collection("locations")
+                        .whereEqualTo("albumRef", albumRef)
+                        .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toLocation() }
+
+                    // 위치 정보 캐싱
+                    val locationCaches = locations.map { LocationCacheEntity.from(it, album.id) }
+                    locationCacheDao.insertAll(locationCaches)
+
+                    // 캐싱 정보 저장
+                    val cache = CacheEntity(type = CacheType.Album, targetId = album.id, createdAt = LocalDateTime.now().toTimestamp())
+                    cacheDao.insert(cache)
+
+                    memories to locations
+                }
                 emit(memories to locations)
             }
                 .catch { exception ->

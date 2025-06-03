@@ -382,7 +382,7 @@ class LocationTrackingService : Service() {
         return false
     }
 
-    private fun saveLocation(location: Location) {
+    private suspend fun saveLocation(location: Location) {
         val locationEntity = LocationEntity(
             latitude = location.latitude,
             longitude = location.longitude,

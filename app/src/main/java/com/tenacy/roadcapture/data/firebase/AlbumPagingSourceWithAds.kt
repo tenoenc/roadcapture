@@ -192,6 +192,7 @@ class AlbumPagingSourceWithAds(
         // 스크랩 쿼리 생성
         var scrapQuery = db.collection("scraps")
             .whereEqualTo("userRef", userRef)
+            .whereEqualTo("albumPublic", true)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .limit(PAGE_SIZE.toLong())
 

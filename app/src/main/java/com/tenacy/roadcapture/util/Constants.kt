@@ -42,4 +42,7 @@ object Constants {
     const val USER_WORK_NAME_UPDATE_NAME = "update_username"
     const val USER_WORK_NAME_UPDATE_PHOTO = "update_user_photo"
 
+    const val CACHE_REPEAT_INTERVAL_DAYS = 1L
+    const val CACHE_EXPIRATION_DAYS = 30L
+    const val CACHE_CLEANUP_WORK_NAME = "cleanup_cache"
 }

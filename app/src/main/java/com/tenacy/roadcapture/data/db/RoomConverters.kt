@@ -37,4 +37,22 @@ class RoomConverters {
         }
         return Gson().toJson(list)
     }
+
+    @TypeConverter
+    fun fromCacheType(cacheType: CacheType?): String? {
+        return when (cacheType) {
+            is CacheType.Album -> "ALBUM"
+            null -> null
+            // 새로운 CacheType 서브클래스가 추가되면 여기에 케이스 추가
+        }
+    }
+
+    @TypeConverter
+    fun toCacheType(value: String?): CacheType? {
+        return when (value) {
+            "ALBUM" -> CacheType.Album
+            null -> null
+            else -> throw IllegalArgumentException("Unknown CacheType: $value")
+        }
+    }
 }

@@ -10,17 +10,14 @@ import kotlinx.coroutines.flow.Flow
 interface LocationDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(entity: LocationEntity): Long
+    suspend fun insert(entity: LocationEntity): Long
 
     @Query("SELECT * FROM locations ORDER BY createdAt ASC")
-    fun selectAll(): List<LocationEntity>
-
-    @Query("SELECT * FROM locations ORDER BY createdAt ASC")
-    fun selectAllAsFlow(): Flow<List<LocationEntity>>
+    suspend fun selectAll(): List<LocationEntity>
 
     @Query("DELETE FROM locations WHERE id = :id")
-    fun deleteById(id: Long): Int
+    suspend fun deleteById(id: Long): Int
 
     @Query("DELETE FROM locations")
-    fun clear()
+    suspend fun clear()
 }

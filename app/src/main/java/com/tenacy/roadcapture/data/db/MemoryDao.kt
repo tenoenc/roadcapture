@@ -6,16 +6,16 @@ import androidx.room.*
 interface MemoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(entity: MemoryEntity): Long
+    suspend fun insert(entity: MemoryEntity): Long
 
     @Transaction // 추가
     @Query("SELECT * FROM memories ORDER BY createdAt ASC")
-    fun selectAll(): List<MemoryWithLocation>
+    suspend fun selectAll(): List<MemoryWithLocation>
 
     @Transaction // 추가
     @Query("SELECT * FROM memories WHERE id IN (:ids) ORDER BY createdAt ASC")
-    fun selectByIds(ids: List<Long>): List<MemoryWithLocation>
+    suspend fun selectByIds(ids: List<Long>): List<MemoryWithLocation>
 
     @Query("DELETE FROM memories")
-    fun clear()
+    suspend fun clear()
 }

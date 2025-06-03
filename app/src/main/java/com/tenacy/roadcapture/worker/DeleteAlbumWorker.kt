@@ -6,6 +6,8 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.*
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.storage.FirebaseStorage
+import com.tenacy.roadcapture.data.db.LocationCacheDao
+import com.tenacy.roadcapture.data.db.MemoryCacheDao
 import com.tenacy.roadcapture.util.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -19,7 +21,9 @@ import java.util.concurrent.TimeUnit
 @HiltWorker
 class DeleteAlbumWorker @AssistedInject constructor(
     @Assisted private val context: Context,
-    @Assisted params: WorkerParameters
+    @Assisted params: WorkerParameters,
+    private val memoryCacheDao: MemoryCacheDao,
+    private val locationCacheDao: LocationCacheDao,
 ) : CoroutineWorker(context, params) {
 
     companion object {
@@ -75,10 +79,9 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val userId = inputData.getString(KEY_USER_ID) ?: return@withContext Result.failure()
             val albumId = inputData.getString(KEY_ALBUM_ID) ?: return@withContext Result.failure()
 
-            // 먼저 삭제할 문서들의 참조를 모두 가져옵니다
+            // 참조 불러오기
             val albumRef = db.collection("albums").document(albumId)
 
-            // 관련 문서들의 참조를 모두 가져옵니다
             val memoryRefs = db.collection("memories")
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
@@ -101,7 +104,11 @@ class DeleteAlbumWorker @AssistedInject constructor(
             }
 
             Log.d(TAG, "앨범 삭제 시작: userId=$userId, albumId=$albumId")
+            // 배치 삭제
             db.executeInBatches(allOperations)
+            // 로컬 캐시 삭제
+            memoryCacheDao.deleteByAlbumId(albumId)
+            locationCacheDao.deleteByAlbumId(albumId)
 
             val storage = FirebaseStorage.getInstance()
             val albumStorageRef = storage.reference.child("images/albums/$userId/$albumId")

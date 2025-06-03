@@ -12,6 +12,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase
     entities = [
         MemoryEntity::class,
         LocationEntity::class,
+        MemoryCacheEntity::class,
+        LocationCacheEntity::class,
+        CacheEntity::class,
     ],
     version = 1,
     exportSchema = true,
@@ -21,6 +24,9 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun memoryDao(): MemoryDao
     abstract fun locationDao(): LocationDao
+    abstract fun memoryCacheDao(): MemoryCacheDao
+    abstract fun locationCacheDao(): LocationCacheDao
+    abstract fun cacheDao(): CacheDao
 
     companion object {
         private val MIGRATION_2_3 = object : Migration(2, 3) {

@@ -90,7 +90,7 @@ class MyAlbumTabFragment: BaseFragment() {
             }
             bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Delete>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 val album = it.album
-                DeleteAlbumWorker.enqueueOneTimeWork(requireContext(), album.id, album.user.id)
+                DeleteAlbumWorker.enqueueOneTimeWork(requireContext(), album.user.id, album.id)
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
             }
         }

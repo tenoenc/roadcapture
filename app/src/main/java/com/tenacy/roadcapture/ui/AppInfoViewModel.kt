@@ -11,7 +11,9 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.data.api.dto.DeleteUserRequest
+import com.tenacy.roadcapture.data.db.LocationCacheDao
 import com.tenacy.roadcapture.data.db.LocationDao
+import com.tenacy.roadcapture.data.db.MemoryCacheDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref

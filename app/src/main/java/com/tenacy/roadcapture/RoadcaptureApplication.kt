@@ -17,6 +17,7 @@ import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.manager.*
+import com.tenacy.roadcapture.worker.CleanupOldCachesWorker
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.EntryPoint
@@ -62,8 +63,9 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         AppEventsLogger.activateApp(this)
 
         initializeBilling()
-        setupSubscriptionCheck()
-        setupLocationCheck()  // 추가
+        setupSubscriptionCheckOneTime()
+        setupCleanupOldCachesPeriodic()
+        setupLocationCheck()
     }
 
     override fun onTerminate() {
@@ -89,7 +91,11 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         }
     }
 
-    private fun setupSubscriptionCheck() {
+    private fun setupCleanupOldCachesPeriodic() {
+        CleanupOldCachesWorker.enqueuePeriodicWork(this)
+    }
+
+    private fun setupSubscriptionCheckOneTime() {
         // 만료 시점에 정확히 체크
         val expiryTime = SubscriptionPref.subscriptionExpiryTime
         val currentTime = System.currentTimeMillis()

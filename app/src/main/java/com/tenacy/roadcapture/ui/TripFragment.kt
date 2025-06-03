@@ -39,7 +39,6 @@ import com.gun0912.tedpermission.normal.TedPermission
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentTripBinding
-import com.tenacy.roadcapture.manager.FreepikNSFWDetector
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
 import com.tenacy.roadcapture.ui.dto.Marker
@@ -72,9 +71,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     private val mapReady = MutableStateFlow(false)
     private val permissionGranted = MutableStateFlow(false)
-
-    @Inject
-    lateinit var freepikNSFWDetector: FreepikNSFWDetector
 
     @Inject
     lateinit var subscriptionManager: SubscriptionManager
@@ -159,7 +155,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
-        /*binding.abcdefg.setQuickTapListener {
+        binding.abcdefg.setQuickTapListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main) {
@@ -190,7 +186,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     }
                 }
             }
-        }*/
+        }
 
         repeatOnLifecycle { vm.fetchData() }
     }
