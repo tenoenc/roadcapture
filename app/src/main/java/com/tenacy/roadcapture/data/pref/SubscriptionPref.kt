@@ -16,7 +16,7 @@ object SubscriptionPref : KotprefModel() {
     var purchaseToken by stringPref("")
     var subscriptionPurchaseTime by longPref(0L)
     var lastSubscriptionCheckTime by longPref(0L)
-    var initialRestrictionShown by booleanPref(false)
+    var lastKnownExpiryTime by longPref(0L)
 
     // 유예 기간 포함 만료 시간 (24시간 추가)
     private fun getGracePeriodExpiryTime(): Long {
@@ -47,7 +47,6 @@ object SubscriptionPref : KotprefModel() {
     // 구독 정보 초기화
     override fun clear() {
         _isSubscriptionActive = false
-        initialRestrictionShown = false
         subscriptionType = ""
         subscriptionExpiryTime = 0L
         isSubscriptionCancelled = false

@@ -232,6 +232,20 @@ class BillingManager @Inject constructor(
         return lastPurchaseType
     }
 
+    // 구독 만료일 조회 (서버 API 연동 필요)
+    fun getSubscriptionExpirationDate(
+        purchase: Purchase,
+        fetchFromServer: (purchaseToken: String, callback: (Long?) -> Unit) -> Unit,
+        resultCallback: (Long?) -> Unit
+    ) {
+        val purchaseToken = purchase.purchaseToken
+
+        // 서버로 purchaseToken을 보내 만료일(ms)를 받아옴
+        fetchFromServer(purchaseToken) { expiryTimeMillis ->
+            resultCallback(expiryTimeMillis)
+        }
+    }
+
     // 구매 확인 처리
     fun acknowledgePurchase(purchaseToken: String, callback: (BillingResult) -> Unit) {
         if (!isClientReady()) {

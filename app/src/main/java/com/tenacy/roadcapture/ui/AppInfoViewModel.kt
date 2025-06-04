@@ -37,14 +37,11 @@ class AppInfoViewModel @Inject constructor(
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
     private val travelingStateManager: TravelingStateManager,
-    private val subscriptionManager: SubscriptionManager,
+    subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
     override val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle
-
-    private val _isLinkedToOtherAccount = subscriptionManager.subscriptionState.map { it.isLinkedToOtherAccount }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
         .stateIn(
@@ -239,23 +236,10 @@ class AppInfoViewModel @Inject constructor(
 
     fun onSubscribeClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            val isLinkedToOtherAccount = _isLinkedToOtherAccount.value
             val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
             if(isSubscriptionActive) {
                 // 정기 구독 관리
                 viewEvent(AppInfoViewEvent.OpenPlayStoreSubscriptionManager)
-            } else if(isLinkedToOtherAccount) {
-                // 구독 제한
-                val checkedSubscriptionState = subscriptionManager.checkSubscriptionStatusSuspend()
-                val isCheckedLinkedToOtherAccount = checkedSubscriptionState.isLinkedToOtherAccount
-                if(isCheckedLinkedToOtherAccount) {
-                    // 여전히 다른 계정과 연결되어 구독 불가능
-                    viewEvent(AppInfoViewEvent.ShowSubscriptionRestriction)
-//                    viewEvent(AppInfoViewEvent.Subscribe)
-                } else {
-                    // 다른 계정에서 해지하여 구독 가능
-                    viewEvent(AppInfoViewEvent.Subscribe)
-                }
             } else {
                 // 정기 구독 하기
                 viewEvent(AppInfoViewEvent.Subscribe)

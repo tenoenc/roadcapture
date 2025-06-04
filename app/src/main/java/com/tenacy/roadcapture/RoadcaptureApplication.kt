@@ -7,19 +7,18 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.chibatching.kotpref.Kotpref
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.maps.MapsInitializer
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
-import com.tenacy.roadcapture.manager.BillingManager
-import com.tenacy.roadcapture.manager.DonationManager
-import com.tenacy.roadcapture.manager.FreepikNSFWDetector
-import com.tenacy.roadcapture.manager.SubscriptionManager
+import com.tenacy.roadcapture.manager.*
 import com.tenacy.roadcapture.worker.CleanupOldCachesWorker
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
@@ -28,6 +27,9 @@ import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -44,6 +46,12 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
     @Inject
     lateinit var donationManager: DonationManager
+
+    @Inject
+    lateinit var googleAccountManager: GoogleAccountManager
+
+    // 앱 코루틴 스코프
+    private val applicationScope = CoroutineScope(Dispatchers.Main)
 
     @EntryPoint
     @InstallIn(SingletonComponent::class)
@@ -68,9 +76,15 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         setupSubscriptionCheckOneTime()
         setupCleanupOldCachesPeriodic()
         setupLocationCheck()
+
+        // Google 계정 변경 감지 시작
+        googleAccountManager.startPeriodicChecks()
     }
 
     override fun onTerminate() {
+        // Google 계정 변경 감지 중지
+        googleAccountManager.stopPeriodicChecks()
+
         freepikNSFWDetector.close()
         super.onTerminate()
     }
@@ -119,6 +133,16 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
                 subscriptionManager.initialize { subscriptionInitSuccess ->
                     if (subscriptionInitSuccess) {
                         Log.d("App", "구독 상품 정보 사전 로드 성공")
+
+                        // 초기화 성공 시 즉시 구독 상태 확인
+                        applicationScope.launch {
+                            try {
+                                val isActive = subscriptionManager.checkSubscriptionStatus()
+                                Log.d("App", "앱 시작 시 구독 상태 확인: $isActive")
+                            } catch (e: Exception) {
+                                Log.e("App", "앱 시작 시 구독 상태 확인 실패", e)
+                            }
+                        }
                     } else {
                         Log.e("App", "구독 상품 정보 사전 로드 실패")
                     }

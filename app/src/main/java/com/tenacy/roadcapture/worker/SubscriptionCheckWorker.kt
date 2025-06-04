@@ -23,8 +23,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 @HiltWorker
 class SubscriptionCheckWorker @AssistedInject constructor(
@@ -35,15 +33,10 @@ class SubscriptionCheckWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = coroutineScope {
         try {
-            val isActive = suspendCoroutine { continuation ->
-                subscriptionManager.checkSubscriptionStatus()
+            val isActive = subscriptionManager.checkSubscriptionStatus()
 
-                // 작업 완료 시간 기록
-                SubscriptionPref.lastSubscriptionCheckTime = System.currentTimeMillis()
-
-                // 결과 전달
-                continuation.resume(SubscriptionPref.isSubscriptionActive)
-            }
+            // 작업 완료 시간 기록
+            SubscriptionPref.lastSubscriptionCheckTime = System.currentTimeMillis()
 
             Log.d("SubscriptionCheck", "구독 상태: $isActive")
 

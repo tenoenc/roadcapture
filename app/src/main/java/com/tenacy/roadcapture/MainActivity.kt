@@ -20,6 +20,7 @@ import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.data.pref.WorkPref
+import com.tenacy.roadcapture.manager.GoogleAccountManager
 import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationTrackingService
@@ -37,6 +38,9 @@ import javax.inject.Inject
 class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     val vm: GlobalViewModel by viewModels()
+
+    @Inject
+    lateinit var googleAccountManager: GoogleAccountManager
 
     @Inject
     lateinit var rewardedAdManager: RewardedAdManager
@@ -400,6 +404,11 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 Log.d("MainActivity", "포어그라운드 복귀 - TripFragment 미표시: 서비스 시작")
             }
         }
+    }
+
+    override fun onResume() {
+        super<AppCompatActivity>.onResume()
+        googleAccountManager.forceCheck()
     }
 
     override fun onStop(owner: LifecycleOwner) {

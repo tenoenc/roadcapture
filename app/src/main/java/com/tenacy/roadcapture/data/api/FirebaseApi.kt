@@ -1,8 +1,6 @@
 package com.tenacy.roadcapture.data.api
 
-import com.tenacy.roadcapture.data.api.dto.DeleteUserDto
-import com.tenacy.roadcapture.data.api.dto.DeleteUserRequest
-import com.tenacy.roadcapture.data.api.dto.ShareDto
+import com.tenacy.roadcapture.data.api.dto.*
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -18,4 +16,9 @@ interface FirebaseApi {
         @Header("Authorization") authToken: String,
         @Path("albumId") albumId: String,
     ): Response<ShareDto>
+
+    @POST("verifySubscription")
+    suspend fun verifySubscription(
+        @Body request: VerificationRequest,
+    ): Response<VerificationDto>
 }

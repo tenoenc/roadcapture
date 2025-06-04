@@ -30,11 +30,6 @@ class HomeViewModel @Inject constructor(
     private val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    val subscriptionState = subscriptionManager.subscriptionState
-        .distinctUntilChanged { old, new ->
-            old.isActive == new.isActive // 활성 상태가 변경된 경우만 처리
-        }
-
     // 앨범 데이터 Flow
     val albums: Flow<PagingData<AlbumItemWithAds>> = isSubscriptionActive.flatMapLatest { isActive ->
         Pager(

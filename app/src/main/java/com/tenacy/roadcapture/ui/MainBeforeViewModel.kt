@@ -86,12 +86,8 @@ class MainBeforeViewModel @Inject constructor(
                     UserPref.photoUrl = user!!.photoUrl.toString()
                 }
 
-                val subscriptionState = subscriptionManager.checkSubscriptionStatusSuspend()
-                Log.d("SubscriptionManager", subscriptionState.toString())
-
-                if(isExistingUser) {
-                    SubscriptionPref.isSubscriptionActive = subscriptionState.isActive
-                }
+                val isSubscriptionActive = subscriptionManager.checkSubscriptionStatus()
+                Log.d("SubscriptionManager", "구독 여부 : $isSubscriptionActive")
 
                 SubscriptionCheckWorker.enqueuePeriodicWork(context)
 
