@@ -72,6 +72,11 @@
 -keepnames class com.facebook.CustomTabActivity
 -keep class com.facebook.login.Login
 
+# Google Maps와 Flogger 관련
+-keep class com.google.maps.** { *; }
+-keep class com.google.android.gms.maps.** { *; }
+-keep class com.google.common.flogger.** { *; }
+
 # Jetbrains Annotations
 -dontwarn org.jetbrains.annotations.NotNull
 -dontwarn org.jetbrains.annotations.Nullable

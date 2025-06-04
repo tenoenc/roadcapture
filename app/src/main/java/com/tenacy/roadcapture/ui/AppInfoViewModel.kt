@@ -11,9 +11,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.data.api.dto.DeleteUserRequest
-import com.tenacy.roadcapture.data.db.LocationCacheDao
 import com.tenacy.roadcapture.data.db.LocationDao
-import com.tenacy.roadcapture.data.db.MemoryCacheDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
@@ -39,11 +37,14 @@ class AppInfoViewModel @Inject constructor(
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
     private val travelingStateManager: TravelingStateManager,
-    subscriptionManager: SubscriptionManager,
+    private val subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
     override val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle
+
+    private val _isLinkedToOtherAccount = subscriptionManager.subscriptionState.map { it.isLinkedToOtherAccount }
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
         .stateIn(
@@ -177,7 +178,6 @@ class AppInfoViewModel @Inject constructor(
                 // 3. 로컬 데이터 정리
                 Log.d("AppInfoViewModel", "로컬 데이터 정리 시작")
 
-                // 로컬 데이터 삭제
                 UserPref.clear()
                 TravelPref.clear()
                 SubscriptionPref.clear()
@@ -239,7 +239,27 @@ class AppInfoViewModel @Inject constructor(
 
     fun onSubscribeClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AppInfoViewEvent.Subscribe)
+            val isLinkedToOtherAccount = _isLinkedToOtherAccount.value
+            val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
+            if(isSubscriptionActive) {
+                // 정기 구독 관리
+                viewEvent(AppInfoViewEvent.OpenPlayStoreSubscriptionManager)
+            } else if(isLinkedToOtherAccount) {
+                // 구독 제한
+                val checkedSubscriptionState = subscriptionManager.checkSubscriptionStatusSuspend()
+                val isCheckedLinkedToOtherAccount = checkedSubscriptionState.isLinkedToOtherAccount
+                if(isCheckedLinkedToOtherAccount) {
+                    // 여전히 다른 계정과 연결되어 구독 불가능
+                    viewEvent(AppInfoViewEvent.ShowSubscriptionRestriction)
+//                    viewEvent(AppInfoViewEvent.Subscribe)
+                } else {
+                    // 다른 계정에서 해지하여 구독 가능
+                    viewEvent(AppInfoViewEvent.Subscribe)
+                }
+            } else {
+                // 정기 구독 하기
+                viewEvent(AppInfoViewEvent.Subscribe)
+            }
         }
     }
 

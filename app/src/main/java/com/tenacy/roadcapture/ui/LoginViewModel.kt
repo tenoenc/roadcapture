@@ -60,7 +60,7 @@ class LoginViewModel @Inject constructor(
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
-                    viewEvent(LoginViewEvent.Login(socialType, credential, true))
+                    viewEvent(LoginViewEvent.Login(socialUserId, socialType, credential, true))
                 }
         }
     }

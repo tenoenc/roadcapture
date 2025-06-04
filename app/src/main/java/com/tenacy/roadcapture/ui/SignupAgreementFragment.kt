@@ -65,8 +65,8 @@ class SignupAgreementFragment: BaseFragment() {
                 findNavController().navigate(SignupAgreementFragmentDirections.actionSignupAgreementToMainBefore(
                     args.authCredential,
                     args.socialType,
-                    false,
-                    socialUserId = args.socialUserId,
+                    args.socialUserId,
+                    isExistingUser = false,
                     username = args.username
                 ))
             }

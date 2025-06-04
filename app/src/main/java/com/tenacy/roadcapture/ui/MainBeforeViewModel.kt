@@ -8,6 +8,7 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.data.pref.UserPref.socialUserId
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.auth
@@ -38,6 +39,7 @@ class MainBeforeViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val args = MainBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle)
             val credential = args.authCredential
+            val socialUserId = args.socialUserId
             val socialType = args.socialType
             val isExistingUser = args.isExistingUser
             flow {
@@ -45,7 +47,6 @@ class MainBeforeViewModel @Inject constructor(
                 val userId = user!!.uid
                 val userRef = db.collection("users").document(userId)
                 if (!isExistingUser) {
-                    val socialUserId = args.socialUserId!!
                     val username = args.username ?: user!!.displayName ?: "unknown"
 
                     // 1. Authentication 프로필 업데이트
@@ -71,6 +72,7 @@ class MainBeforeViewModel @Inject constructor(
 
                     // 3. 로컬 데이터 업데이트
                     UserPref.id = userId
+                    UserPref.socialUserId = socialUserId
                     UserPref.provider = socialType
                     SubscriptionPref.isSubscriptionActive = false
                     UserPref.displayName = username
@@ -78,6 +80,7 @@ class MainBeforeViewModel @Inject constructor(
                 } else {
                     // 1. 로컬 데이터 업데이트
                     UserPref.id = userId
+                    UserPref.socialUserId = socialUserId
                     UserPref.provider = socialType
                     UserPref.displayName = user!!.displayName!!
                     UserPref.photoUrl = user!!.photoUrl.toString()

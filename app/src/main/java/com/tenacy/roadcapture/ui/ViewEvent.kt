@@ -14,7 +14,7 @@ sealed class GlobalViewEvent: ViewEvent {
 }
 
 sealed class LoginViewEvent: ViewEvent {
-    data class Login(val socialType: SocialType, val authCredential: AuthCredential, val isExistingUser: Boolean): LoginViewEvent()
+    data class Login(val socialUserId: String, val socialType: SocialType, val authCredential: AuthCredential, val isExistingUser: Boolean): LoginViewEvent()
     data object GoogleLogin: LoginViewEvent()
     data object FacebookLogin: LoginViewEvent()
     data object KakaoLogin: LoginViewEvent()
@@ -39,6 +39,8 @@ sealed class AppInfoViewEvent: ViewEvent {
     data object Logout: AppInfoViewEvent()
     data object Donate : AppInfoViewEvent()
     data object Subscribe : AppInfoViewEvent()
+    data object ShowSubscriptionRestriction : AppInfoViewEvent()
+    data object OpenPlayStoreSubscriptionManager : AppInfoViewEvent()
     data object WithdrawComplete : AppInfoViewEvent()
     data object ShowWithdrawBefore : AppInfoViewEvent()
     sealed class Error(open val message: String?): AppInfoViewEvent() {

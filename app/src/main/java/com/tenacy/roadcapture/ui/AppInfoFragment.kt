@@ -260,6 +260,15 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 bottomSheet.show(childFragmentManager, WithdrawBeforeBottomSheetFragment.TAG)
             }
 
+            is AppInfoViewEvent.OpenPlayStoreSubscriptionManager -> {
+                openPlayStoreSubscriptionManager()
+            }
+
+            is AppInfoViewEvent.ShowSubscriptionRestriction -> {
+                val bottomSheet = SubscriptionRestrictionBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, SubscriptionRestrictionBottomSheetFragment.TAG)
+            }
+
             is AppInfoViewEvent.Error -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     when(event) {
@@ -271,6 +280,48 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun openPlayStoreSubscriptionManager(): Boolean = with(requireContext()) {
+        return try {
+            // 기본 구독 관리 URL
+            val subscriptionUrl = "https://play.google.com/store/account/subscriptions"
+
+            // 앱 패키지가 있는 경우 해당 앱의 구독으로 바로 이동
+            val appPackage = packageName
+            val urlWithPackage = "$subscriptionUrl?package=${appPackage}"
+
+            // 인텐트 생성
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(urlWithPackage)
+                // Play 스토어 앱으로 열기 시도
+                setPackage("com.android.vending")
+            }
+
+            // 인텐트를 처리할 수 있는 액티비티가 있는지 확인
+            if (intent.resolveActivity(packageManager) != null) {
+                startActivity(intent)
+                true
+            } else {
+                // Play 스토어 앱이 없는 경우 브라우저로 열기
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(urlWithPackage))
+                startActivity(browserIntent)
+                true
+            }
+        } catch (e: Exception) {
+            Log.e("Subscription", "구독 관리 화면 열기 실패", e)
+            // 오류 발생 시 일반 Play 스토어 열기 시도
+            try {
+                val fallbackIntent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("https://play.google.com/store/account/subscriptions")
+                }
+                startActivity(fallbackIntent)
+                true
+            } catch (e2: Exception) {
+                Log.e("Subscription", "일반 구독 관리 화면 열기 실패", e2)
+                false
             }
         }
     }

@@ -92,6 +92,37 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
                 },
             )
         )
+
+        val spanText3_1 = "공유 링크 생성이 불가능해요."
+        val spanText3_2 = "여기"
+        val spanFullText3 = if(isSubscriptionActive) {
+            "공유 링크 생성이 가능해요."
+        } else {
+            "무료 플랜에서는 ${spanText3_1} 생성을 원하시면 ${spanText3_2}를 클릭해주세요."
+        }
+
+        SpannableUtils.setClickableText(
+            requireContext(),
+            binding.txtBSheetTripGuideSpan3,
+            spanFullText3,
+            listOf(
+                SpannableUtils.ClickablePart(
+                    text = spanText3_1,
+                    textColor = ContextCompat.getColor(requireContext(), R.color.warning),
+                ),
+                SpannableUtils.ClickablePart(
+                    text = spanText3_2,
+                    textColor = ContextCompat.getColor(requireContext(), R.color.label_assistive),
+                    isUnderlined = true,
+                ) {
+                    setFragmentResult(
+                        REQUEST_KEY,
+                        bundleOf(KEY_PARAMS_OUT_SHOW_SUBSCRIPTION to ParamsOut.ShowSubscription)
+                    )
+                    dismiss()
+                },
+            )
+        )
     }
 
     private fun setupBottomSheet() {

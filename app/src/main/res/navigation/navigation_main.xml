@@ -165,8 +165,8 @@
               android:label="MainBeforeFragment">
         <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential" />
         <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType" />
+        <argument android:name="socialUserId" app:argType="string" />
         <argument android:name="isExistingUser" app:argType="boolean" />
-        <argument android:name="socialUserId" app:argType="string" app:nullable="true" android:defaultValue="@null" />
         <argument android:name="username" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
         <action android:id="@+id/action_mainBefore_to_main"
                 app:popUpTo="@id/loginFragment"

@@ -20,6 +20,7 @@ import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
@@ -237,11 +238,12 @@ class HomeFragment : BaseFragment() {
         // 구독 상태 변화 감지 및 어댑터 업데이트
         repeatOnLifecycle {
             vm.subscriptionState.collect { state ->
-                // 링크된 계정 처리 (필요 시)
-                if (state.isLinkedToOtherAccount) {
-                    // showLinkedAccountMessage(state.linkedAccountId)
-                } else {
-                    // hideLinkedAccountMessage()
+                // 링크된 계정 처리
+                if (state.isLinkedToOtherAccount && !SubscriptionPref.initialRestrictionShown) {
+                    SubscriptionPref.initialRestrictionShown = true
+
+                    val bottomSheet = SubscriptionRestrictionBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, SubscriptionRestrictionBottomSheetFragment.TAG)
                 }
             }
         }

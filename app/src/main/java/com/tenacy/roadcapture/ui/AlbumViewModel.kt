@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
+import java.time.Instant
 import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -184,7 +185,7 @@ class AlbumViewModel @Inject constructor(
                     locationCacheDao.insertAll(locationCaches)
 
                     // 캐싱 정보 저장
-                    val cache = CacheEntity(type = CacheType.Album, targetId = album.id, createdAt = LocalDateTime.now().toTimestamp())
+                    val cache = CacheEntity(type = CacheType.Album, targetId = album.id, createdAt = Instant.now().toEpochMilli())
                     cacheDao.insert(cache)
 
                     memories to locations

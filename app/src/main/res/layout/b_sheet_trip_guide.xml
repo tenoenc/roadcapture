@@ -164,6 +164,100 @@
 
                 </LinearLayout>
 
+                <TextView android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:text="앨범이 완성되면"
+                          android:layout_marginTop="24dp"/>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="삭제가 가능하지만, 수정은 불가능해요."
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="공개 / 비공개 전환이 가능해요."
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:id="@+id/txt_b_sheet_trip_guide_span_3"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="무료 플랜에서는 공유 링크 생성이 불가능해요. 생성을 원하시면 여기를 클릭해주세요."
+                              android:layout_marginStart="8dp"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:orientation="horizontal"
+                              android:layout_marginTop="12dp">
+
+                    <View android:layout_width="5dp"
+                          android:layout_height="5dp"
+                          android:layout_marginTop="8dp"
+                          android:background="@drawable/circle"/>
+
+                    <TextView android:layout_width="0dp"
+                              android:layout_height="wrap_content"
+                              android:layout_weight="1"
+                              android:layout_marginEnd="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:text="위의 작업들은 ‘내 앨범’ 탭에서 우측에 보이는 모양의 아이콘을 눌러 수행할 수 있어요."
+                              android:layout_marginStart="8dp"/>
+
+                    <ImageView android:layout_width="23dp"
+                               android:layout_height="24dp"
+                               android:src="@drawable/ic_circle_more_vertical_disabled"
+                               android:layout_gravity="center"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

@@ -9,6 +9,7 @@ object UserPref: KotprefModel() {
     var displayName: String by stringPref()
     var photoUrl: String by stringPref()
     private var _provider: String by stringPref()
+    var socialUserId by stringPref()
     var provider: SocialType
         get() = SocialType.of(_provider)
         set(value) {

@@ -147,8 +147,7 @@
                 android:value="${AD_MOB_APP_ID}"/>
 
         <meta-data
-                tools:replace="android:value"
-                android:name="com.google.android.maps.v2.API_KEY"
+                android:name="com.google.android.geo.API_KEY"
                 android:value="${MAPS_API_KEY}"/>
         <meta-data
                 android:name="com.google.android.gms.version"

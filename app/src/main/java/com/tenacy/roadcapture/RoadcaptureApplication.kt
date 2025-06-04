@@ -16,7 +16,10 @@ import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
-import com.tenacy.roadcapture.manager.*
+import com.tenacy.roadcapture.manager.BillingManager
+import com.tenacy.roadcapture.manager.DonationManager
+import com.tenacy.roadcapture.manager.FreepikNSFWDetector
+import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.worker.CleanupOldCachesWorker
 import com.tenacy.roadcapture.worker.LocationCheckWorker
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
@@ -53,10 +56,9 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
-//        freepikNSFWDetector.initialize()
+        FirebaseApp.initializeApp(this)
         MobileAds.initialize(this)
         Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
-        FirebaseApp.initializeApp(this)
         NaverIdLoginSDK.initialize(applicationContext, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, BuildConfig.NAVER_CLIENT_NAME)
         KakaoSdk.init(this, BuildConfig.KAKAO_CLIENT_ID)
         FacebookSdk.sdkInitialize(this)
@@ -93,6 +95,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
     private fun setupCleanupOldCachesPeriodic() {
         CleanupOldCachesWorker.enqueuePeriodicWork(this)
+        CleanupOldCachesWorker.enqueueOneTimeWork(this)
     }
 
     private fun setupSubscriptionCheckOneTime() {

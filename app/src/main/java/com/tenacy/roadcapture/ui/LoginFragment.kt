@@ -137,7 +137,7 @@ class LoginFragment : BaseFragment() {
     private fun handleViewEvents(event: LoginViewEvent) {
         when (event) {
             is LoginViewEvent.Login -> {
-                findNavController().navigate(LoginFragmentDirections.actionLoginToMainBefore(event.authCredential, event.socialType, isExistingUser = true))
+                findNavController().navigate(LoginFragmentDirections.actionLoginToMainBefore(event.authCredential, event.socialType, event.socialUserId, isExistingUser = true))
             }
 
             is LoginViewEvent.GoogleLogin -> {
