@@ -1,5 +1,7 @@
 package com.tenacy.roadcapture.data.db
 
+import android.location.Location
+import android.os.Parcel
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -53,6 +55,33 @@ class RoomConverters {
             "ALBUM" -> CacheType.Album
             null -> null
             else -> throw IllegalArgumentException("Unknown CacheType: $value")
+        }
+    }
+
+    @TypeConverter
+    fun toByteArray(location: Location?): ByteArray? {
+        if (location == null) return null
+
+        val parcel = Parcel.obtain()
+        try {
+            location.writeToParcel(parcel, 0)
+            return parcel.marshall()
+        } finally {
+            parcel.recycle()
+        }
+    }
+
+    @TypeConverter
+    fun toLocation(bytes: ByteArray?): Location? {
+        if (bytes == null) return null
+
+        val parcel = Parcel.obtain()
+        try {
+            parcel.unmarshall(bytes, 0, bytes.size)
+            parcel.setDataPosition(0)
+            return Location.CREATOR.createFromParcel(parcel)
+        } finally {
+            parcel.recycle()
         }
     }
 }

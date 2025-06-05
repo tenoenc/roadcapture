@@ -3,6 +3,7 @@ package com.tenacy.roadcapture.ui
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
 import android.util.Log
@@ -32,7 +33,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class ClusterMarkerItem(
     val id: String,
-    private val position: LatLng,
+    private val position: Location,
     private val title: String,
     private val snippet: String,
     val photoUri: Uri? = null,
@@ -41,7 +42,7 @@ class ClusterMarkerItem(
     @IgnoredOnParcel
     val photoKey = photoUri?.toString() ?: photoUrl
 
-    override fun getPosition(): LatLng = position
+    override fun getPosition(): LatLng = LatLng(position.latitude, position.longitude)
     override fun getTitle(): String = title
     override fun getSnippet(): String = snippet
 }

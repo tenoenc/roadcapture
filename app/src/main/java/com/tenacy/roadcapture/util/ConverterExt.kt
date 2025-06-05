@@ -1,12 +1,14 @@
 package com.tenacy.roadcapture.util
 
 import android.content.res.Resources
+import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
 import android.util.Log
 import android.util.TypedValue
 import androidx.work.Data
 import androidx.work.workDataOf
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
 import com.google.gson.Gson
 import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
@@ -47,4 +49,10 @@ fun Long.toFirebaseTimestamp(): Timestamp {
 fun LocalDateTime.toFirebaseTimestamp(): Timestamp {
     val instant = this.atZone(ZoneId.systemDefault()).toInstant()
     return Timestamp(instant.epochSecond, instant.nano)
+}
+
+fun Location.toLatLng() = LatLng(latitude, longitude)
+fun getCustomLocationFrom(latitude: Double, longitude: Double) = Location("custom_location").apply {
+    this.latitude = latitude
+    this.longitude = longitude
 }

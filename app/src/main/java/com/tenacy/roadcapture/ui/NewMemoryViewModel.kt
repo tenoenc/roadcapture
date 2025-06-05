@@ -7,6 +7,7 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
+import com.tenacy.roadcapture.data.pref.TravelPref.createdAt
 import com.tenacy.roadcapture.di.InputModule
 import com.tenacy.roadcapture.ui.dto.Address
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -123,8 +124,7 @@ class NewMemoryViewModel @Inject constructor(
             val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
 
             val locationEntity = LocationEntity(
-                latitude = address.coordinates.latitude,
-                longitude = address.coordinates.longitude,
+                coordinates = address.coordinates,
                 createdAt = LocalDateTime.now(),
             )
 

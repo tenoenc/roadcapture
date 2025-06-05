@@ -132,8 +132,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val locationsData = locations.map { location ->
                     hashMapOf(
                         "localId" to location.id.toString(),
-                        "latitude" to location.latitude,
-                        "longitude" to location.longitude,
+                        "latitude" to location.coordinates.latitude,
+                        "longitude" to location.coordinates.longitude,
                         "albumRef" to albumRef,
                         "createdAt" to location.createdAt.toFirebaseTimestamp(),
                     )

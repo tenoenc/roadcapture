@@ -1,19 +1,20 @@
 package com.tenacy.roadcapture.ui.dto
 
+import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.util.getCustomLocationFrom
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @Parcelize
 data class Marker(
     val id: String,
-    val latitude: Double,
-    val longitude: Double,
+    val coordinates: Location,
     val createdAt: LocalDateTime,
     val photo: Photo? = null,
 ): Parcelable {
@@ -28,8 +29,7 @@ data class Marker(
     companion object {
         fun from(memory: FirebaseMemory, location: FirebaseLocation) = Marker(
             location.id,
-            location.latitude,
-            location.longitude,
+            getCustomLocationFrom(location.latitude, location.longitude),
             location.createdAt,
             Photo(
                 memory.id,
@@ -39,15 +39,13 @@ data class Marker(
 
         fun of(dto: FirebaseLocation) = Marker(
             dto.id,
-            dto.latitude,
-            dto.longitude,
+            getCustomLocationFrom(dto.latitude, dto.longitude),
             dto.createdAt,
         )
 
         fun of(dto: MemoryWithLocation) = Marker(
             dto.location.id.toString(),
-            dto.location.latitude,
-            dto.location.longitude,
+            dto.location.coordinates,
             dto.location.createdAt,
             Photo(
                 dto.memory.id.toString(),
@@ -57,8 +55,7 @@ data class Marker(
 
         fun of(dto: LocationEntity) = Marker(
             dto.id.toString(),
-            dto.latitude,
-            dto.longitude,
+            dto.coordinates,
             dto.createdAt,
         )
     }

@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.ui
 
 import android.content.Context
+import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
@@ -28,7 +29,7 @@ class NewMemoryBeforeViewModel @Inject constructor(
 ): BaseViewModel() {
 
     private val photoUri: Uri = NewMemoryBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
-    private val coordinates: LatLng = NewMemoryBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle).coordinates
+    private val coordinates: Location = NewMemoryBeforeFragmentArgs.fromSavedStateHandle(savedStateHandle).coordinates
 
     private val _readyState = MutableSharedFlow<MemoryReadyState>()
     val readyState = _readyState.asSharedFlow()

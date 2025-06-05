@@ -2,6 +2,8 @@ package com.tenacy.roadcapture.ui
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -14,22 +16,21 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
 import com.google.maps.android.clustering.ClusterManager
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentAlbumBinding
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
-import com.tenacy.roadcapture.util.consumeOnce
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -178,10 +179,15 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
             // 해당 위치로 카메라 이동
             val bounds = builder.build()
-            val padding = resources.displayMetrics.widthPixels / 6 // 패딩 값
+            val paddingTop = 133.toPx // 패딩 값
+            val paddingBottom = 192.toPx
+            val paddingStart = 52.toPx
+            val paddingEnd = 52.toPx
 
             try {
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+                map.setPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0))
+                map.setPadding(0, 0, 0, 0)
                 true // 이벤트 소비
             } catch (e: Exception) {
                 // 드물게 IllegalStateException 발생 가능
@@ -226,7 +232,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_MEMORY_VIEWER) { bundle ->
                 if (bundle == null) return@consumeOnce
-                val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                val coordinates = bundle.getParcelable<Location?>(RESULT_COORDINATES)
                 vm.viewEvent(AlbumViewEvent.SetCamera(coordinates))
             }
         }
@@ -347,15 +353,12 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
     private fun navigateToMemoryViewer(items: List<ClusterMarkerItem>) {
         viewLifecycleOwner.lifecycleScope.launch {
-            val itemsById = items.associateBy { it.id }
             val memories = vm.getMemoriesIn(items)
             val memoryViewerArguments = MemoryViewerArguments(
                 viewScope = ViewScope.AROUND,
                 memories = memories.map {
-                    MemoryViewerArguments.Memory.from(
-                        it,
-                        itemsById[it.locationRefId]!!.position
-                    )
+                    val coordinates = vm.getCoordinatesByLocationId(it.locationRefId)
+                    MemoryViewerArguments.Memory.from(it, coordinates)
                 },
             )
             findNavController().navigate(AlbumFragmentDirections.actionAlbumToMemoryViewer(memoryViewerArguments))
@@ -375,8 +378,8 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
     // ===== 9. 지도 컨트롤 메서드 그룹 =====
     @SuppressLint("MissingPermission")
-    private fun moveCameraTo(latLng: LatLng? = null, zoom: Float = map.cameraPosition.zoom) {
-        latLng?.let { map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, zoom)) }
+    private fun moveCameraTo(location: Location? = null, zoom: Float = map.cameraPosition.zoom) {
+        location?.let { map.animateCamera(CameraUpdateFactory.newLatLngZoom(it.toLatLng(), zoom)) }
     }
 
     private fun resetCameraPosition() {
@@ -404,30 +407,30 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
     }
 
     // ===== 10. 경로 처리 메서드 그룹 =====
-    private fun updateRouteOnMap(routePoints: List<LatLng>) {
+    private fun updateRouteOnMap(routePoints: List<Location>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
         // 초기 렌더링에서도 간소화와 LOD 적용
         applyRouteOptimization(routePoints)
     }
 
-    private fun applyRouteOptimization(routePoints: List<LatLng>) {
+    private fun applyRouteOptimization(routePoints: List<Location>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
         // 현재 줌 레벨에 따른 간소화 수준 결정
         val zoom = map.cameraPosition.zoom
         val simplificationTolerance = when {
-            zoom >= 18 -> 5.0   // 매우 가까운 줌: 높은 상세도 (적은 간소화)
-            zoom >= 15 -> 10.0  // 가까운 줌: 중간 상세도
-            zoom >= 12 -> 20.0  // 중간 줌: 낮은 상세도
-            zoom >= 9 -> 50.0   // 먼 줌: 매우 낮은 상세도
-            else -> 100.0       // 매우 먼 줌: 극도로 낮은 상세도
+            zoom >= 18 -> 2.0    // 매우 가까운 줌
+            zoom >= 15 -> 10.0   // 가까운 줌
+            zoom >= 12 -> 50.0   // 중간 줌
+            zoom >= 9 -> 250.0   // 먼 줌
+            else -> 750.0        // 매우 먼 줌
         }
 
         // 백그라운드에서 좌표점 간소화 처리
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             // 좌표점 간소화 적용 (Douglas-Peucker 알고리즘)
-            val optimizedPoints = PolyUtil.simplify(routePoints, simplificationTolerance)
+            val optimizedPoints = PolyUtil.simplify(routePoints.map(Location::toLatLng), simplificationTolerance)
 
             Log.d("RouteOptimization", "원본 포인트: ${routePoints.size}, 간소화 후: ${optimizedPoints.size}")
 
@@ -440,8 +443,10 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                 if (optimizedPoints.size < 2) return@withContext
 
                 // 그라데이션 색상 배열 - 시작(파란색)에서 끝(빨간색)까지
-                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
-                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
+//                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
+                val startColor = Color.parseColor("#00857D")
+//                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
+                val endColor = Color.parseColor("#80F0D4")
 
                 // 각 폴리라인 조각을 생성할 세그먼트 수 결정
                 val segmentCount = 20
@@ -458,17 +463,29 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                     // 색상 보간
                     val segmentColor = interpolateColor(startColor, endColor, ratio)
 
-                    // 폴리라인 추가 (둥근 모서리 적용)
-                    val polylineOptions = PolylineOptions()
+                    val backgroundPolylineOptions = PolylineOptions()
                         .addAll(segmentPoints)
-                        .width(4f.toPx.toFloat())
-                        .color(segmentColor)
+                        .width(9f.toPx.toFloat()) // 원래 선보다 넓게 설정 (0.5px 추가)
+                        .color(ContextCompat.getColor(requireContext(), R.color.label_normal))
                         .geodesic(true)
-                        .startCap(RoundCap()) // 시작 부분 둥글게
-                        .endCap(RoundCap())   // 끝 부분 둥글게
+                        .startCap(RoundCap())
+                        .endCap(RoundCap())
+                        .zIndex(1f) // 레이어 순서 설정 (더 낮은 z-index가 아래에 그려짐)
 
-                    // 폴리라인 생성 및 리스트에 추가
-                    vm.addRoutePolyline(map.addPolyline(polylineOptions))
+                    val backgroundPolyline = map.addPolyline(backgroundPolylineOptions)
+                    vm.addRoutePolyline(backgroundPolyline)
+
+                    val foregroundPolylineOptions = PolylineOptions()
+                        .addAll(segmentPoints)
+                        .width(8f.toPx.toFloat()) // 원래 설정한 크기 유지
+                        .color(segmentColor) // 원래 색상 그대로 유지
+                        .geodesic(true)
+                        .startCap(RoundCap())
+                        .endCap(RoundCap())
+                        .zIndex(2f) // 더 높은 z-index로 위에 그려지도록 설정
+
+                    val foregroundPolyline = map.addPolyline(foregroundPolylineOptions)
+                    vm.addRoutePolyline(foregroundPolyline)
 
                     // 마지막 세그먼트에 도달했으면 종료
                     if (endIdx >= optimizedPoints.size - 1) break
@@ -508,7 +525,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         for (location in markers) {
             if (location.photo != null) {
                 val markerId = location.id
-                val position = LatLng(location.latitude, location.longitude)
+                val position = location.coordinates
                 updatedItems.add(markerId)
 
                 if (!vm.containsMarkerId(markerId)) {
@@ -536,7 +553,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
     private fun createPhotoClusterItem(
         markerId: String,
-        position: LatLng,
+        position: Location,
         photoUri: Uri? = null,
         photoUrl: String = ""
     ) {

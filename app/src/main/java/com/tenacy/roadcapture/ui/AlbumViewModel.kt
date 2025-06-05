@@ -1,11 +1,10 @@
 package com.tenacy.roadcapture.ui
 
+import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import java.time.Instant
-import java.time.LocalDateTime
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -65,7 +63,7 @@ class AlbumViewModel @Inject constructor(
 
     val routePoints = _locations.map { locations ->
         locations.sortedBy { it.createdAt }
-            .map { LatLng(it.latitude, it.longitude) }
+            .map { getCustomLocationFrom(it.latitude, it.longitude) }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     private val _album = MutableStateFlow<Album?>(null)
@@ -201,8 +199,10 @@ class AlbumViewModel @Inject constructor(
                     }
                 }
                 .collect { (memories, locations) ->
-                    locations.getOrNull(0)?.let { viewEvent(AlbumViewEvent.SetCamera(LatLng(it.latitude, it.longitude), zoom = 30f)) }
-
+                    locations.getOrNull(0)?.let {
+                        val customLocation = getCustomLocationFrom(it.latitude, it.longitude)
+                        viewEvent(AlbumViewEvent.SetCamera(customLocation, zoom = 30f))
+                    }
                     _memories.emit(memories)
                     _locations.emit(locations)
                 }
@@ -389,9 +389,12 @@ class AlbumViewModel @Inject constructor(
         return memoryIdsByLocationId[item.id]!!
     }
 
-    fun getCoordinatesByLocationId(id: String): LatLng {
+    fun getCoordinatesByLocationId(id: String): Location {
         val currentLocations = _locations.value
-        val coordinatesByLocationId = currentLocations.associate { it.id to LatLng(it.latitude, it.longitude) }
+        val coordinatesByLocationId = currentLocations.associate {
+            val customLocation = getCustomLocationFrom(it.latitude, it.longitude)
+            it.id to customLocation
+        }
         return coordinatesByLocationId[id]!!
     }
 

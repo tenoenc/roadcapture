@@ -1,6 +1,6 @@
 package com.tenacy.roadcapture.ui
 
-import com.google.android.gms.maps.model.LatLng
+import android.location.Location
 import com.google.firebase.auth.AuthCredential
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.dto.Album
@@ -59,7 +59,7 @@ sealed class MyAlbumViewEvent: ViewEvent {
 
 sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()
-    data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null) : TripViewEvent()
+    data class SetCamera(val coordinates: Location? = null, val zoom: Float? = null) : TripViewEvent()
     data object Capture: TripViewEvent()
     data object Back: TripViewEvent()
     data object ShowGuide: TripViewEvent()
@@ -71,7 +71,7 @@ sealed class TripViewEvent: ViewEvent {
 }
 
 sealed class NewMemoryViewEvent: ViewEvent {
-    data class ResultBack(val memoryId: Long, val coordinates: LatLng) : NewMemoryViewEvent()
+    data class ResultBack(val memoryId: Long, val coordinates: Location) : NewMemoryViewEvent()
     data class ShowLocation(val address: String): NewMemoryViewEvent()
     data object ShowAd: NewMemoryViewEvent()
 }
@@ -82,7 +82,7 @@ sealed class MemoryViewerViewEvent: ViewEvent {
     data object MoveToPrevPage: MemoryViewerViewEvent()
     data object MoveToNextPage: MemoryViewerViewEvent()
     data object ShowInfo: MemoryViewerViewEvent()
-    data class ResultBack(val coordinates: LatLng): MemoryViewerViewEvent()
+    data class ResultBack(val coordinates: Location): MemoryViewerViewEvent()
 }
 
 sealed class UserMemoryViewerViewEvent: ViewEvent {
@@ -95,7 +95,7 @@ sealed class ModifiableMemoryViewerViewEvent: ViewEvent {
     data object MoveToPrevPage: ModifiableMemoryViewerViewEvent()
     data object MoveToNextPage: ModifiableMemoryViewerViewEvent()
     data object ShowMore: ModifiableMemoryViewerViewEvent()
-    data class ResultBack(val coordinates: LatLng? = null, val deleted: Boolean = false): ModifiableMemoryViewerViewEvent()
+    data class ResultBack(val coordinates: Location? = null, val deleted: Boolean = false): ModifiableMemoryViewerViewEvent()
 }
 
 sealed class NewAlbumViewEvent: ViewEvent {
@@ -106,7 +106,7 @@ sealed class AlbumViewEvent: ViewEvent {
     data object ResetCameraPosition: AlbumViewEvent()
     data object ZoomIn: AlbumViewEvent()
     data object ZoomOut: AlbumViewEvent()
-    data class SetCamera(val coordinates: LatLng? = null, val zoom: Float? = null): AlbumViewEvent()
+    data class SetCamera(val coordinates: Location? = null, val zoom: Float? = null): AlbumViewEvent()
     data class ShowInfo(val album: Album, val totalMemoryCount: Int): AlbumViewEvent()
     data class Share(val link: String?): AlbumViewEvent()
     data class NavigateToStudio(val userId: String): AlbumViewEvent()

@@ -5,17 +5,19 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.location.Criteria
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -27,6 +29,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
 import com.facebook.FacebookSdk.setCacheDir
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -155,7 +158,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
-        /*binding.abcdefg.setQuickTapListener {
+/*
+        binding.abcdefg.setQuickTapListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main) {
@@ -186,7 +190,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     }
                 }
             }
-        }*/
+        }
+*/
 
         repeatOnLifecycle { vm.fetchData() }
     }
@@ -336,10 +341,15 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
             // 해당 위치로 카메라 이동
             val bounds = builder.build()
-            val padding = resources.displayMetrics.widthPixels / 6 // 패딩 값
+            val paddingTop = 169.toPx // 패딩 값
+            val paddingBottom = 133.toPx
+            val paddingStart = 92.toPx
+            val paddingEnd = 52.toPx
 
             try {
-                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+                map.setPadding(paddingStart, paddingTop, paddingEnd, paddingBottom)
+                map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 0))
+                map.setPadding(0, 0, 0, 0)
                 true // 이벤트 소비
             } catch (e: Exception) {
                 // 드물게 IllegalStateException 발생 가능
@@ -364,17 +374,70 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         isClusterManagerInitialized = true
     }
 
+    // TripFragment.kt의 setupLocationUpdates() 함수 수정
     private fun setupLocationUpdates() {
+        // 위치 업데이트 시작
         repeatOnLifecycle {
-            while (isActive) {
-                delay(1000L)
-                getCurrentLocation()?.let { latLng ->
-                    vm.saveLocation(latLng)
+            // FusedLocationProviderClient 생성
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+
+            // LocationRequest 설정 (서비스와 동일하게)
+            val locationRequest = LocationRequest.Builder(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                Constants.TRACKING_INTERVAL
+            ).apply {
+                setMinUpdateIntervalMillis(Constants.TRACKING_INTERVAL)
+                setIntervalMillis(Constants.TRACKING_INTERVAL)
+                setWaitForAccurateLocation(true)
+                setMinUpdateDistanceMeters(Constants.MIN_DISTANCE_TO_SAVE)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
                 }
-                delay(Constants.TRACKING_INTERVAL - 1000L)
+                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            }.build()
+
+            // 위치 콜백 설정
+            val locationCallback = object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    // 가장 정확한 위치 선택
+                    var bestLocation: Location? = null
+                    for (location in locationResult.locations) {
+                        if (bestLocation == null || location.accuracy < bestLocation.accuracy) {
+                            bestLocation = location
+                        }
+                    }
+
+                    // 최종 선택된 위치 처리
+                    bestLocation?.let(vm::saveLocation)
+                }
+            }
+
+            try {
+                // 위치 업데이트 시작
+                fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+
+                Log.d("TripFragment", "위치 업데이트 시작됨")
+
+                // STARTED 상태를 벗어날 때까지 유지
+                try {
+                    awaitCancellation() // STARTED 상태가 끝날 때까지 기다림
+                } finally {
+                    // 위치 업데이트 중지 (STARTED 상태를 벗어날 때)
+                    fusedLocationClient.removeLocationUpdates(locationCallback)
+                    Log.d("TripFragment", "위치 업데이트 중지됨")
+                }
+            } catch (e: SecurityException) {
+                Log.e("TripFragment", "위치 권한이 없습니다", e)
+            } catch (e: Exception) {
+                Log.e("TripFragment", "위치 업데이트 시작 실패", e)
             }
         }
 
+        // 위치 업데이트와 별도로 여행 기간 업데이트
         repeatOnLifecycle {
             while (isActive) {
                 vm.updateDurationText()
@@ -442,14 +505,14 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             savedStateHandle?.consumeOnce<Bundle?>(KEY_NEW_MEMORY) { bundle ->
                 if (bundle == null) return@consumeOnce
                 val memoryId = bundle.getString(RESULT_MEMORY_ID)
-                val coordinates = bundle.getParcelable<LatLng>(RESULT_COORDINATES)
+                val coordinates = bundle.getParcelable<Location>(RESULT_COORDINATES)
                 coordinates?.let { vm.saveLocation(it, false) }
             }
         }
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_MODIFIABLE_MEMORY_VIEWER) { bundle ->
                 if (bundle == null) return@consumeOnce
-                val coordinates = bundle.getParcelable<LatLng?>(RESULT_COORDINATES)
+                val coordinates = bundle.getParcelable<Location?>(RESULT_COORDINATES)
                 val removed = bundle.getBoolean(RESULT_MEMORY_DELETED, false)
                 vm.viewEvent(TripViewEvent.SetCamera(coordinates))
             }
@@ -488,7 +551,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             }
 
             is TripViewEvent.SetCamera -> {
-                moveCameraTo(latLng = event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
+                moveCameraTo(location = event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
             }
 
             is TripViewEvent.Capture -> {
@@ -603,7 +666,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     // ===== 9. 지도 컨트롤 메서드 그룹 =====
     @SuppressLint("MissingPermission")
-    private fun getCurrentLocation(): LatLng? {
+    private fun getCurrentLocation(): Location? {
         if (!::map.isInitialized) return null
 
         val locationManager = mainActivity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -611,13 +674,13 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         val provider = locationManager.getBestProvider(criteria, true)
         val location = provider?.let(locationManager::getLastKnownLocation)
 
-        return location?.let { LatLng(it.latitude, it.longitude) }
+        return location
     }
 
     @SuppressLint("MissingPermission")
-    private fun moveCameraTo(latLng: LatLng? = null, zoom: Float = map.cameraPosition.zoom) {
-        (latLng ?: getCurrentLocation())?.let {
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(it, zoom))
+    private fun moveCameraTo(location: Location? = null, zoom: Float = map.cameraPosition.zoom) {
+        (location ?: getCurrentLocation())?.let {
+            map.animateCamera(CameraUpdateFactory.newLatLngZoom(it.toLatLng(), zoom))
         }
     }
 
@@ -646,30 +709,30 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     }
 
     // ===== 10. 경로 처리 메서드 그룹 =====
-    private fun updateRouteOnMap(routePoints: List<LatLng>) {
+    private fun updateRouteOnMap(routePoints: List<Location>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
         // 초기 렌더링에서도 간소화와 LOD 적용
         applyRouteOptimization(routePoints)
     }
 
-    private fun applyRouteOptimization(routePoints: List<LatLng>) {
+    private fun applyRouteOptimization(routePoints: List<Location>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
         // 현재 줌 레벨에 따른 간소화 수준 결정
         val zoom = map.cameraPosition.zoom
         val simplificationTolerance = when {
-            zoom >= 18 -> 5.0   // 매우 가까운 줌: 높은 상세도 (적은 간소화)
-            zoom >= 15 -> 10.0  // 가까운 줌: 중간 상세도
-            zoom >= 12 -> 20.0  // 중간 줌: 낮은 상세도
-            zoom >= 9 -> 50.0   // 먼 줌: 매우 낮은 상세도
-            else -> 100.0       // 매우 먼 줌: 극도로 낮은 상세도
+            zoom >= 18 -> 2.0    // 매우 가까운 줌
+            zoom >= 15 -> 10.0   // 가까운 줌
+            zoom >= 12 -> 50.0   // 중간 줌
+            zoom >= 9 -> 250.0   // 먼 줌
+            else -> 750.0        // 매우 먼 줌
         }
 
         // 백그라운드에서 좌표점 간소화 처리
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             // 좌표점 간소화 적용 (Douglas-Peucker 알고리즘)
-            val optimizedPoints = PolyUtil.simplify(routePoints, simplificationTolerance)
+            val optimizedPoints = PolyUtil.simplify(routePoints.map(Location::toLatLng), simplificationTolerance)
 
             Log.d("RouteOptimization", "원본 포인트: ${routePoints.size}, 간소화 후: ${optimizedPoints.size}")
 
@@ -681,9 +744,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 // 포인트가 2개 미만이면 그리지 않음
                 if (optimizedPoints.size < 2) return@withContext
 
-                // 그라데이션 색상 배열 - 시작(파란색)에서 끝(빨간색)까지
-                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
-                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
+//                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
+                val startColor = Color.parseColor("#00857D")
+//                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
+                val endColor = Color.parseColor("#80F0D4")
 
                 // 각 폴리라인 조각을 생성할 세그먼트 수 결정
                 val segmentCount = 20
@@ -700,17 +764,29 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     // 색상 보간
                     val segmentColor = interpolateColor(startColor, endColor, ratio)
 
-                    // 폴리라인 추가 (둥근 모서리 적용)
-                    val polylineOptions = PolylineOptions()
+                    val backgroundPolylineOptions = PolylineOptions()
                         .addAll(segmentPoints)
-                        .width(4f.toPx.toFloat())
-                        .color(segmentColor)
+                        .width(9f.toPx.toFloat()) // 원래 선보다 넓게 설정 (0.5px 추가)
+                        .color(ContextCompat.getColor(requireContext(), R.color.label_normal))
                         .geodesic(true)
-                        .startCap(RoundCap()) // 시작 부분 둥글게
-                        .endCap(RoundCap())   // 끝 부분 둥글게
+                        .startCap(RoundCap())
+                        .endCap(RoundCap())
+                        .zIndex(1f) // 레이어 순서 설정 (더 낮은 z-index가 아래에 그려짐)
 
-                    // 폴리라인 생성 및 리스트에 추가
-                    vm.addRoutePolyline(map.addPolyline(polylineOptions))
+                    val backgroundPolyline = map.addPolyline(backgroundPolylineOptions)
+                    vm.addRoutePolyline(backgroundPolyline)
+
+                    val foregroundPolylineOptions = PolylineOptions()
+                        .addAll(segmentPoints)
+                        .width(8f.toPx.toFloat()) // 원래 설정한 크기 유지
+                        .color(segmentColor) // 원래 색상 그대로 유지
+                        .geodesic(true)
+                        .startCap(RoundCap())
+                        .endCap(RoundCap())
+                        .zIndex(2f) // 더 높은 z-index로 위에 그려지도록 설정
+
+                    val foregroundPolyline = map.addPolyline(foregroundPolylineOptions)
+                    vm.addRoutePolyline(foregroundPolyline)
 
                     // 마지막 세그먼트에 도달했으면 종료
                     if (endIdx >= optimizedPoints.size - 1) break
@@ -750,7 +826,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         for (location in markers) {
             if (location.photo != null) {
                 val markerId = location.id
-                val position = LatLng(location.latitude, location.longitude)
+                val position = location.coordinates
                 updatedItems.add(markerId)
 
                 if (!vm.containsMarkerId(markerId)) {
@@ -773,7 +849,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     private fun createPhotoClusterItem(
         markerId: String,
-        position: LatLng,
+        position: Location,
         photoUri: Uri? = null,
         photoUrl: String = ""
     ) {
@@ -895,8 +971,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     // Triple<소스Uri, 대상Uri, 위치> 형태로 데이터 전달
     private val cropLauncher =
-        registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, LatLng?>, Pair<Uri?, LatLng?>>() {
-            override fun createIntent(context: Context, input: Triple<Uri, Uri, LatLng?>): Intent {
+        registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, Location?>, Pair<Uri?, Location?>>() {
+            override fun createIntent(context: Context, input: Triple<Uri, Uri, Location?>): Intent {
                 val options = UCrop.Options().apply {
                     setCompressionQuality(30)
                     setToolbarTitle("이미지 편집")
@@ -914,7 +990,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     .getIntent(context)
             }
 
-            override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri?, LatLng?> {
+            override fun parseResult(resultCode: Int, intent: Intent?): Pair<Uri?, Location?> {
                 return if (resultCode == Activity.RESULT_OK && intent != null) {
                     val uri = UCrop.getOutput(intent)
                     Pair(uri, getCurrentLocation())

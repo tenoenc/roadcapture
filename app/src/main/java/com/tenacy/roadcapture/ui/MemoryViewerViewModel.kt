@@ -2,7 +2,6 @@ package com.tenacy.roadcapture.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -104,7 +103,7 @@ class MemoryViewerViewModel @Inject constructor(
     fun onBackClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentMemory = currentMemory.value ?: return@launch
-            val coordinates = LatLng(currentMemory.coordinates.latitude, currentMemory.coordinates.longitude)
+            val coordinates = currentMemory.coordinates
             viewEvent(MemoryViewerViewEvent.ResultBack(coordinates))
         }
     }

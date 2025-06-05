@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui.dto
 
+import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
@@ -25,7 +26,7 @@ data class MemoryViewerArguments(
         val placeName: String? = null,
         val addressTags: List<String> = emptyList(),
         val formattedAddress: String = "",
-        val coordinates: LatLng,
+        val coordinates: Location,
         val createdAt: LocalDateTime,
     ) : Parcelable {
         companion object {
@@ -37,10 +38,10 @@ data class MemoryViewerArguments(
                 placeName = dto.memory.placeName,
                 addressTags = dto.memory.addressTags,
                 formattedAddress = dto.memory.formattedAddress,
-                coordinates = LatLng(dto.location.latitude, dto.location.longitude),
+                coordinates = dto.location.coordinates,
                 createdAt = dto.memory.createdAt,
             )
-            fun from(memory: FirebaseMemory, coordinates: LatLng) = Memory(
+            fun from(memory: FirebaseMemory, coordinates: Location) = Memory(
                 id = memory.id,
                 locationId = memory.locationRefId,
                 content = memory.content.takeIf { it.isNotBlank() },

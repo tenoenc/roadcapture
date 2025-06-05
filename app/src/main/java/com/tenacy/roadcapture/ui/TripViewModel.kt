@@ -13,6 +13,7 @@ import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
+import com.tenacy.roadcapture.service.LocationProcessor
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,7 @@ class TripViewModel @Inject constructor(
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
     private val travelingStateManager: TravelingStateManager,
+    val locationProcessor: LocationProcessor,
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
@@ -85,7 +87,7 @@ class TripViewModel @Inject constructor(
 
     val routePoints = _locations.map { locations ->
         locations.sortedBy { it.createdAt }
-            .map { LatLng(it.latitude, it.longitude) }
+            .map { it.coordinates }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     fun fetchData() {
@@ -96,8 +98,8 @@ class TripViewModel @Inject constructor(
             if (locations.isNotEmpty()) {
                 val last = locations.maxByOrNull { it.createdAt }
                 last?.let {
-                    val coordinates = LatLng(it.latitude, it.longitude)
-                    TravelPref.setLastSavedLatLng(coordinates)
+                    val coordinates = it.coordinates
+                    TravelPref.setLastSavedLocation(coordinates)
                 }
             }
             _memories.emit(memories)
@@ -139,11 +141,12 @@ class TripViewModel @Inject constructor(
 
 
     fun stopTraveling() {
-        travelingStateManager.stopTraveling()  // StateManager 사용
+        travelingStateManager.stopTraveling()
 
         viewModelScope.launch(Dispatchers.IO) {
-            // Album.clear() 대신 TravelStatePref.clear() 사용
             TravelPref.clear()
+            // clearLocations 메서드가 현재 LocationProcessor에는 없지만,
+            // 필요하다면 추가할 수 있습니다. 아니면 기존 코드를 유지해도 됩니다.
             memoryDao.clear()
             locationDao.clear()
             context.clearCacheDirectory()
@@ -158,41 +161,29 @@ class TripViewModel @Inject constructor(
         }
     }
 
-    fun saveLocation(latLng: LatLng, insertable: Boolean = true) {
+    fun saveLocation(location: Location, insertable: Boolean = true) {
+        if (!insertable) {
+            TravelPref.setLastSavedLocation(location)
+            return
+        }
+
+        if (!locationProcessor.isLocationQualityAcceptable(location)) {
+            return
+        }
+
         viewModelScope.launch(Dispatchers.IO) {
-            if (shouldSaveLocation(latLng)) {
-                if(insertable) {
-                    val locationEntity = LocationEntity(
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude,
-                        createdAt = LocalDateTime.now()
-                    )
+            // LocationProcessor에 위치 처리 요청
+            val savedEntity = locationProcessor.processLocation(location)
 
-                    val locationId = locationDao.insert(locationEntity)
-
-                    _locations.update {
-                        it.toMutableList().apply { add(locationEntity.copy(id = locationId)) }
+            // 저장 성공 시 직접 _locations 업데이트
+            if (savedEntity != null) {
+                _locations.update { currentList ->
+                    currentList.toMutableList().apply {
+                        add(savedEntity)
                     }
                 }
-                TravelPref.setLastSavedLatLng(latLng)
             }
         }
-    }
-
-    private fun shouldSaveLocation(currentLatLng: LatLng): Boolean {
-        val lastSavedLocation = TravelPref.getLastSavedLatLng() ?: return true
-
-        val lastLat = lastSavedLocation.latitude
-        val lastLng = lastSavedLocation.longitude
-        val results = FloatArray(1)
-
-        Location.distanceBetween(
-            lastLat, lastLng,
-            currentLatLng.latitude, currentLatLng.longitude,
-            results
-        )
-
-        return results[0] >= Constants.MIN_DISTANCE_TO_SAVE
     }
 
     fun clearRoutePolylines() {

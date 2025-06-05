@@ -157,7 +157,7 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             val state = _state.value
             val currentMemory = state.currentMemory ?: return@launch
-            val coordinates = LatLng(currentMemory.coordinates.latitude, currentMemory.coordinates.longitude)
+            val coordinates = currentMemory.coordinates
             val argument: MemoryViewerArguments = MemoryViewerFragmentArgs.fromSavedStateHandle(savedStateHandle).args
             val deleted = state.totalPageCount < argument.memories.size
             viewEvent(ModifiableMemoryViewerViewEvent.ResultBack(coordinates = coordinates, deleted = deleted))

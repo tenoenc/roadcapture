@@ -56,8 +56,7 @@ class LocationDummyGenerator @Inject constructor(
 
             // 로케이션 엔티티 생성
             val locationEntity = LocationEntity(
-                latitude = latitude,
-                longitude = longitude,
+                coordinates = getCustomLocationFrom(latitude, longitude),
                 createdAt = createdAt
             )
 
@@ -132,8 +131,7 @@ class LocationDummyGenerator @Inject constructor(
 
                 // 로케이션 엔티티 생성 및 저장
                 val locationEntity = LocationEntity(
-                    latitude = currentLat,
-                    longitude = currentLng,
+                    coordinates = getCustomLocationFrom(currentLat, currentLng),
                     createdAt = currentTime
                 )
 

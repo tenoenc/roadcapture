@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.data.db
 
+import android.location.Location
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,7 +12,6 @@ import java.time.LocalDateTime
 data class LocationEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val latitude: Double,
-    val longitude: Double,
+    val coordinates: Location,
     val createdAt: LocalDateTime,
 ): Parcelable
