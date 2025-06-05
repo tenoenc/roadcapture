@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Parcelable
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.tenacy.roadcapture.manager.FreepikNSFWDetector
 import com.tenacy.roadcapture.ui.dto.Address
 import com.tenacy.roadcapture.util.*

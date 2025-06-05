@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -7,14 +8,15 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.google.firebase.firestore.FirebaseFirestoreException
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.RetrofitInstance
-import com.tenacy.roadcapture.util.functions
 import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.worker.CreateShareLinkWorker
+import com.tenacy.roadcapture.worker.DeleteAlbumWorker
+import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -27,6 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyAlbumTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
     private val params: MyAlbumTabFragment.ParamsIn? = savedStateHandle.get<MyAlbumTabFragment.ParamsIn>(MyAlbumTabFragment.KEY_PARAMS)
@@ -54,26 +57,49 @@ class MyAlbumTabViewModel @Inject constructor(
         .flowOn(Dispatchers.IO)
         .cachedIn(viewModelScope)
 
-    fun generateShareLink(albumId: String) {
+    fun updateAlbumPublic(albumId: String, isPublic: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val idToken = user!!.getIdToken(false).await().token ?: throw Exception("토큰을 가져올 수 없습니다.")
-                val response = RetrofitInstance.firebaseApi.shareAlbum(
-                    authToken = "Bearer $idToken",
-                    albumId = albumId,
-                )
-                if(!response.isSuccessful) {
-                    throw Exception(response.errorBody()?.string())
-                }
-                val responseDto = response.body() ?: throw Exception()
-                emit(responseDto.shareLink)
+                UpdateAlbumPublicWorker.enqueueOneTimeWork(context, albumId, isPublic)
+                emit(Unit)
             }
                 .catch { excpetion ->
                     Log.e("MyAlbumTabViewModel", "에러", excpetion)
-                    viewEvent(MyAlbumTabViewEvent.Error.GenerateShareLink("공유 링크를 생성하는 중\n 문제가 발생했어요"))
                 }
                 .collect {
-                    viewEvent(MyAlbumTabViewEvent.ShareComplete(it))
+                    val publicText = if(!isPublic) "공개" else "비공개"
+                    viewEvent(MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic(publicText))
+                }
+        }
+    }
+
+    fun deleteAlbum(userId: String, albumId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                DeleteAlbumWorker.enqueueOneTimeWork(context, userId, albumId)
+                emit(Unit)
+            }
+                .catch { excpetion ->
+                    Log.e("MyAlbumTabViewModel", "에러", excpetion)
+                }
+                .collect {
+                    viewEvent(MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum)
+                }
+        }
+    }
+
+    fun createShareLink(albumId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            flow {
+                val idToken = user!!.getIdToken(false).await().token ?: throw Exception("토큰을 가져올 수 없습니다.")
+                CreateShareLinkWorker.enqueueOneTimeWork(context, albumId, idToken)
+                emit(Unit)
+            }
+                .catch { excpetion ->
+                    Log.e("MyAlbumTabViewModel", "에러", excpetion)
+                }
+                .collect {
+                    viewEvent(MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink)
                 }
         }
     }

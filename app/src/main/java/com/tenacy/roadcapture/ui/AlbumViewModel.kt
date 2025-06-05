@@ -12,6 +12,7 @@ import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.db.*
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Marker
@@ -97,12 +98,9 @@ class AlbumViewModel @Inject constructor(
 
     private fun checkDeepLinkAndLoad() {
         viewModelScope.launch {
-            // 딥링크 매개변수 확인
-            val args = AlbumFragmentArgs.fromSavedStateHandle(savedStateHandle)
-
-            if (args.shareId != null) {
-                // shareId 딥링크 처리
-                handleShareIdDeepLink(args.shareId!!)
+            if (AppPrefs.pendingDeepLinkShareId != null) {
+                handleShareIdDeepLink(AppPrefs.pendingDeepLinkShareId!!)
+                AppPrefs.clear()
             } else {
                 // 일반 진입이면 바로 데이터 로드
                 fetchData()
@@ -144,7 +142,7 @@ class AlbumViewModel @Inject constructor(
                     ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
 
                 if(currentUserId != UserPref.id && !firebaseAlbum.isPublic) {
-                    throw FirebaseFirestoreException("접근할 수 없어요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                    throw FirebaseFirestoreException("비공개로 전환된 앨범이에요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
                 val scrapRef = db.collection("scraps")
@@ -460,7 +458,7 @@ class AlbumViewModel @Inject constructor(
     fun onShareClick() {
         viewModelScope.launch(Dispatchers.Default) {
             val currentAlbum = _album.value ?: return@launch
-            val shareLink = getShareLinkOrNull(currentAlbum.shareId)
+            val shareLink = currentAlbum.branchLink
             viewEvent(AlbumViewEvent.Share(shareLink))
         }
     }

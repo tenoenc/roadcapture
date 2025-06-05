@@ -1,8 +1,11 @@
 package com.tenacy.roadcapture.util
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
+import androidx.core.content.FileProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -18,6 +21,8 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
 
 val auth get() = Firebase.auth
 val user get() = auth.currentUser
@@ -76,6 +81,7 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val scrapCount = getLong("scrapCount")?.toInt() ?: 0
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
     val isPublic = getBoolean("isPublic") ?: false
+    val branchLink = getString("branchLink")
     val shareId = getString("shareId")
     val shareCreatedAt = getTimestamp("shareCreatedAt")?.toDate()?.toLocalDateTime()
     val userId = getDocumentReference("userRef")?.id ?: ""
@@ -94,6 +100,7 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
         scrapCount = scrapCount,
         regionTags = regionTags,
         isPublic = isPublic,
+        branchLink = branchLink,
         shareId = shareId,
         shareCreatedAt = shareCreatedAt,
         userId = userId,
@@ -454,5 +461,3 @@ suspend fun Context.uploadImageToStorage(
         throw Exception("Failed to upload image: ${e.message}", e)
     }
 }
-
-fun getShareLinkOrNull(shareId: String?) = shareId?.let { "${BuildConfig.WEB_BASE_URL}/albums/$it" }

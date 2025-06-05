@@ -746,8 +746,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
 //                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
                 val startColor = Color.parseColor("#00857D")
-//                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
-                val endColor = Color.parseColor("#80F0D4")
+                val endColor = ContextCompat.getColor(requireContext(), R.color.primary_normal)
 
                 // 각 폴리라인 조각을 생성할 세그먼트 수 결정
                 val segmentCount = 20

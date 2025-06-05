@@ -7,11 +7,9 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.chibatching.kotpref.Kotpref
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.maps.MapsInitializer
 import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
@@ -27,6 +25,7 @@ import dagger.hilt.EntryPoints
 import dagger.hilt.InstallIn
 import dagger.hilt.android.HiltAndroidApp
 import dagger.hilt.components.SingletonComponent
+import io.branch.referral.Branch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -71,6 +70,12 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         KakaoSdk.init(this, BuildConfig.KAKAO_CLIENT_ID)
         FacebookSdk.sdkInitialize(this)
         AppEventsLogger.activateApp(this)
+
+        // Branch 로깅 활성화 (개발 시에만 활성화)
+        Branch.enableLogging()
+
+        // Branch 초기화 (앱 시작 시 자동 초기화)
+        Branch.getAutoInstance(this)
 
         initializeBilling()
         setupSubscriptionCheckOneTime()

@@ -120,9 +120,10 @@ sealed class SearchViewEvent: ViewEvent {
 }
 
 sealed class MyAlbumTabViewEvent: ViewEvent {
-    data class ShareComplete(val shareLink: String): MyAlbumTabViewEvent()
-    sealed class Error(open val message: String?): MyAlbumTabViewEvent() {
-        data class GenerateShareLink(override val message: String?): Error(message)
+    sealed class EnqueueComplete: MyAlbumTabViewEvent() {
+        data object CreateShareLink: EnqueueComplete()
+        data class UpdateAlbumPublic(val publicText: String): EnqueueComplete()
+        data object DeleteAlbum: EnqueueComplete()
     }
 }
 sealed class MyMemoryTabViewEvent: ViewEvent

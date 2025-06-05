@@ -5,7 +5,6 @@ import android.os.Parcelable
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.pref.TravelPref
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
@@ -61,7 +59,6 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val albumTitle = title
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()
-                // Album.createdAt 대신 TravelStatePref.createdAt 사용
                 val startTime = TravelPref.createdAt.toFirebaseTimestamp()
                 val endTime = LocalDateTime.now().toFirebaseTimestamp()
                 val userId = UserPref.id
@@ -121,6 +118,16 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 val uploadResults = memoryUploadTasks.awaitAll()
                 val photoUrlMap = uploadResults.toMap()
+                
+                // 3 - 4. 오픈 그래프 이미지 업로드
+                sendWithDelay(AlbumSaveState.UploadingThumbnail)
+                val ogImageUri = memories.firstOrNull()?.memory?.photoUri
+                val resizedThumbnailUri = ogImageUri!!.resizeCenterCrop(context)
+                val storagePath = "og-images-$userId-$albumId.jpg"
+                val ogImageUrl = context.uploadImageToStorage(
+                    uri = resizedThumbnailUri,
+                    storagePath = storagePath,
+                )
 
                 // 4. 데이터 생성 및 저장 (배치)
                 sendWithDelay(AlbumSaveState.SavingToFirestore)
@@ -168,6 +175,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                     "createdAt" to startTime,
                     "endedAt" to endTime,
                     "thumbnailUrl" to thumbnailUrl,
+                    "ogImageUrl" to ogImageUrl,
                     "viewCount" to 0,
                     "scrapCount" to 0,
                     "regionTags" to regionTags,
@@ -232,6 +240,7 @@ sealed class AlbumSaveState : Parcelable {
     data object FetchingData : AlbumSaveState()
     data object CreatingTags : AlbumSaveState()
     data class UploadingImages(val current: Int, val total: Int) : AlbumSaveState()
+    data object UploadingThumbnail: AlbumSaveState()
     data object SavingToFirestore : AlbumSaveState()
     data object ClearingLocalData : AlbumSaveState()
     data object Completed : AlbumSaveState()

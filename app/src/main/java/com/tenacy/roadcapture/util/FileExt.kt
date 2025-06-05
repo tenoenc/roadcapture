@@ -9,7 +9,11 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.FileProvider
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.*
+
+val Context.fileProviderAuthority get() = "${packageName}.fileprovider"
 
 fun Context.clearCacheDirectory() {
     // 메인 캐시 디렉터리에서 "cropped"로 시작하는 jpg 파일들 삭제
@@ -29,7 +33,6 @@ fun Context.clearCacheDirectory() {
 fun Context.compressImage(
     contentUri: Uri,
     quality: Int = 30,
-    authority: String = "${packageName}.fileprovider"
 ): Uri {
     // Content URI에서 InputStream 가져오기
     val inputStream: InputStream? = contentResolver.openInputStream(contentUri)
@@ -94,7 +97,7 @@ fun Context.compressImage(
     fileOutputStream.close()
 
     // FileProvider를 사용하여 파일의 URI 생성
-    return FileProvider.getUriForFile(this, authority, file)
+    return FileProvider.getUriForFile(this, fileProviderAuthority, file)
 }
 
 // 비트맵 회전 함수
@@ -247,4 +250,89 @@ fun Uri.toBitmapEfficiently(context: Context, requiredWidth: Int, requiredHeight
     }
 }
 
-val Context.fileProviderAuthority get() = "${packageName}.fileprovider"
+suspend fun Uri.resizeCenterCrop(
+    context: Context,
+    width: Int = 1200,
+    height: Int = 630,
+    quality: Int = 70,
+): Uri = withContext(Dispatchers.IO) {
+    try {
+        // 원본 이미지 불러오기
+        val inputStream = context.contentResolver.openInputStream(this@resizeCenterCrop)
+        val originalBitmap = BitmapFactory.decodeStream(inputStream)
+        inputStream?.close()
+
+        // 리사이징 및 센터 크롭
+        val resizedBitmap = originalBitmap.resizeCenterCrop(width, height)
+
+        // 임시 파일에 저장
+        val file = File(context.cacheDir, "resized_${System.currentTimeMillis()}.jpg")
+        FileOutputStream(file).use { outputStream ->
+            resizedBitmap.compress(Bitmap.CompressFormat.JPEG, quality, outputStream)
+        }
+
+        // 비트맵 메모리 해제
+        resizedBitmap.recycle()
+        originalBitmap.recycle()
+
+        // FileProvider로 URI 생성
+        return@withContext FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file
+        )
+    } catch (e: Exception) {
+        Log.e("ImageResize", "Error resizing image", e)
+        throw e
+    }
+}
+
+/**
+ * 이미지를 센터 크롭하고 원하는 크기로 리사이징
+ */
+private fun Bitmap.resizeCenterCrop(targetWidth: Int, targetHeight: Int): Bitmap {
+    val sourceWidth = width
+    val sourceHeight = height
+
+    // 원본 비율과 목표 비율 계산
+    val sourceRatio = sourceWidth.toFloat() / sourceHeight
+    val targetRatio = targetWidth.toFloat() / targetHeight
+
+    // 센터 크롭할 영역 계산
+    val srcWidth: Int
+    val srcHeight: Int
+    val srcX: Int
+    val srcY: Int
+
+    if (sourceRatio > targetRatio) {
+        // 원본이 더 넓은 경우 - 높이를 맞추고 양옆을 크롭
+        srcHeight = sourceHeight
+        srcWidth = (sourceHeight * targetRatio).toInt()
+        srcY = 0
+        srcX = (sourceWidth - srcWidth) / 2
+    } else {
+        // 원본이 더 좁은 경우 - 너비를 맞추고 위아래를 크롭
+        srcWidth = sourceWidth
+        srcHeight = (sourceWidth / targetRatio).toInt()
+        srcX = 0
+        srcY = (sourceHeight - srcHeight) / 2
+    }
+
+    // 크롭하고 리사이징
+    val croppedBitmap = Bitmap.createBitmap(this, srcX, srcY, srcWidth, srcHeight)
+
+    // 원본과 사이즈가 같으면 바로 반환
+    if (srcWidth == targetWidth && srcHeight == targetHeight) {
+        return croppedBitmap
+    }
+
+    // 크기가 다르면 리사이징
+    val scaledBitmap = Bitmap.createScaledBitmap(croppedBitmap, targetWidth, targetHeight, true)
+
+    // 중간 비트맵 메모리 해제
+    if (croppedBitmap != scaledBitmap) {
+        croppedBitmap.recycle()
+    }
+
+    return scaledBitmap
+}

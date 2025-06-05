@@ -54,16 +54,36 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="roadcapturenaverauthcallbackscheme"/>
             </intent-filter>
-            <!-- 웹 URL 딥링크 처리 -->
-            <intent-filter android:autoVerify="true">
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-                <!-- 호스팅된 웹사이트 URL로 열기 -->
-                <data
-                        android:scheme="https"
-                        android:host="${WEB_HOST}"/>
+
+            <!-- Branch URI Scheme - 플래그 추가 -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="roadcapture" android:host="open" />
             </intent-filter>
+
+            <!-- Branch App Links -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+<!--                <data android:scheme="https" android:host="${BRANCH_LIVE_DEFAULT_LINK_DOMAIN}" />-->
+<!--                <data android:scheme="https" android:host="${BRANCH_LIVE_ALTERNATIVE_LINK_DOMAIN}" />-->
+                <data android:scheme="https" android:host="${BRANCH_TEST_DEFAULT_LINK_DOMAIN}" />
+<!--                <data android:scheme="https" android:host="${BRANCH_TEST_ALTERNATIVE_LINK_DOMAIN}" />-->
+            </intent-filter>
+
+            <!-- Branch App Links - Test App -->
+<!--
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="${BRANCH_TEST_DEFAULT_LINK_DOMAIN}" />
+                <data android:scheme="https" android:host="${BRANCH_TEST_ALTERNATIVE_LINK_DOMAIN}" />
+            </intent-filter>
+-->
         </activity>
         <activity
                 android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -142,10 +162,24 @@
                 android:resource="@xml/gma_ad_services_config"
                 tools:replace="android:resource"/>
 
+        <receiver android:name="io.branch.referral.InstallListener" android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+                android:name="io.branch.sdk.BranchKey"
+                android:value="${BRANCH_LIVE_KEY}" />
+        <meta-data
+                android:name="io.branch.sdk.BranchKey.test"
+                android:value="${BRANCH_TEST_KEY}" />
+        <meta-data
+                android:name="io.branch.sdk.TestMode"
+                android:value="true" />
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="${AD_MOB_APP_ID}"/>
-
         <meta-data
                 android:name="com.google.android.geo.API_KEY"
                 android:value="${MAPS_API_KEY}"/>

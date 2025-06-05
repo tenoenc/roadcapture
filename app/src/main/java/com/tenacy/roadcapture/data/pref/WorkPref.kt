@@ -15,6 +15,9 @@ object WorkPref : KotprefModel() {
     // 처리된 사용자명 업데이트 작업 ID 저장소
     val processedAlbumPublicUpdateWorkIds by stringSetPref(default = setOf())
 
+    // 처리된 사용자명 업데이트 작업 ID 저장소
+    val processedShareLinkCreateWorkIds by stringSetPref(default = setOf())
+
     // 마지막 작업 정리 시간 (pruneWork 호출 시간)
     var lastWorkPruneTime by longPref(default = 0L)
 
@@ -47,6 +50,13 @@ object WorkPref : KotprefModel() {
         processedAlbumPublicUpdateWorkIds += currentIds
     }
 
+    fun addProcessedCreateShareLinkWorkId(workId: String) {
+        val currentIds = processedShareLinkCreateWorkIds.toMutableSet()
+        currentIds.add(workId)
+        processedShareLinkCreateWorkIds.clear()
+        processedShareLinkCreateWorkIds += currentIds
+    }
+
     // 사용하지 않는 오래된 작업 ID 정리
     fun cleanupOldWorkIds() {
         // 일정 개수(예: 100개) 이상이면 오래된 것부터 삭제
@@ -76,6 +86,13 @@ object WorkPref : KotprefModel() {
             updateAlbumPublicIds.clear()
             processedAlbumPublicUpdateWorkIds.clear()
             processedAlbumPublicUpdateWorkIds += updateUsernameIds
+        }
+
+        val createShareLinkIds = processedShareLinkCreateWorkIds.toMutableSet()
+        if (createShareLinkIds.size > 100) {
+            createShareLinkIds.clear()
+            processedShareLinkCreateWorkIds.clear()
+            processedShareLinkCreateWorkIds += createShareLinkIds
         }
 
         // 마지막 정리 시간 업데이트

@@ -107,7 +107,13 @@ class UpdateUsernameWorker @AssistedInject constructor(
 
             // 앨범 업데이트
             albumRefs.forEach {
-                allOperations.add(UpdateDocumentOperation(it, mapOf("userDisplayName" to username)))
+                allOperations.add(UpdateDocumentOperation(
+                    it,
+                    mapOf(
+                        "userDisplayName" to username,
+                        "updatedAt" to FieldValue.serverTimestamp(),
+                    )
+                ))
             }
 
             // 스크랩 업데이트

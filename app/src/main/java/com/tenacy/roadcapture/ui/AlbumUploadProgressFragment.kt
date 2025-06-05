@@ -84,8 +84,11 @@ class AlbumUploadProgressFragment: BaseFragment() {
                         binding.pbUploadProgress.max = it.total * ANIMATION_SMOOTHNESS_FACTOR
                         progressUpdateFlow.emit(it.current * ANIMATION_SMOOTHNESS_FACTOR)
                     }
-                    is AlbumSaveState.SavingToFirestore -> {
+                    is AlbumSaveState.UploadingThumbnail -> {
                         binding.txtUploadProgress.visibility = View.GONE
+                        binding.txtUploadProgressStatus.text = "썸네일 업로드 중"
+                    }
+                    is AlbumSaveState.SavingToFirestore -> {
                         binding.txtUploadProgressStatus.text = "앨범 저장하는 중"
                     }
                     is AlbumSaveState.ClearingLocalData -> {}

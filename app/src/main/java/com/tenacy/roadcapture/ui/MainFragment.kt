@@ -11,6 +11,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
 import com.tenacy.roadcapture.util.mainActivity
@@ -58,6 +59,7 @@ class MainFragment: BaseFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setupFragmentResultListeners()
         vm
     }
@@ -76,6 +78,16 @@ class MainFragment: BaseFragment() {
 
         setupViews()
         setupObservers()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if(!AppPrefs.pendingDeepLinkShareId.isNullOrBlank()) {
+            if(!AppPrefs.isDirectDeepLink) {
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이전에 공유받은 앨범으로 이동할게요", ToastMessageType.Info)))
+            }
+            findNavController().navigate(MainFragmentDirections.actionMainToAlbum())
+        }
     }
 
     override fun onResume() {

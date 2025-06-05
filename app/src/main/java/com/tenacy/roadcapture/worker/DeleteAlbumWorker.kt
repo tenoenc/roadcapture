@@ -136,6 +136,9 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val successCount = deleteResults.count { it }
             val totalCount = deleteResults.size
 
+            // 오픈 그래프 이미지 삭제
+            storage.getReference("og-images-$userId-$albumId.jpg").delete().await()
+
             Log.d(TAG, "앨범 삭제 완료: $successCount/$totalCount 파일 삭제됨")
 
             if (successCount == totalCount) {

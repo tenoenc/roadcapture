@@ -76,7 +76,7 @@ class UpdateUserPhotoWorker @AssistedInject constructor(
             val albumRefs = db.collection("albums")
                 .whereEqualTo("userRef", userRef).getAllReferences()
 
-            val compressedUri = context.compressImage(quality = 10, contentUri = photoUri)
+            val compressedUri = photoUri.resizeCenterCrop(context, 512, 512, quality = 30)
 
             val storagePath = "images/users/$userId/profile.jpg"
             val imageUrl = context.uploadImageToStorage(compressedUri, storagePath)
@@ -89,7 +89,13 @@ class UpdateUserPhotoWorker @AssistedInject constructor(
 
             val allOperations = mutableListOf<BatchOperation>()
             albumRefs.forEach {
-                allOperations.add(UpdateDocumentOperation(it, mapOf("userPhotoUrl" to imageUrl)))
+                allOperations.add(UpdateDocumentOperation(
+                    it,
+                    mapOf(
+                        "userPhotoUrl" to imageUrl,
+                        "updatedAt" to FieldValue.serverTimestamp(),
+                    )
+                ))
             }
             allOperations.add(UpdateDocumentOperation(userRef, mapOf(
                 "photoName" to storagePath,

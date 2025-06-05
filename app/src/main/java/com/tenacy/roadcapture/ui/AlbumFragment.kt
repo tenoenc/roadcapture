@@ -15,6 +15,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -313,9 +314,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.ReportComplete -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                   mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
-                }
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
             }
         }
     }
@@ -445,8 +444,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
                 // 그라데이션 색상 배열 - 시작(파란색)에서 끝(빨간색)까지
 //                val startColor = ContextCompat.getColor(requireContext(), R.color.line_neutral)
                 val startColor = Color.parseColor("#00857D")
-//                val endColor = ContextCompat.getColor(requireContext(), R.color.line_strong)
-                val endColor = Color.parseColor("#80F0D4")
+                val endColor = ContextCompat.getColor(requireContext(), R.color.primary_normal)
 
                 // 각 폴리라인 조각을 생성할 세그먼트 수 결정
                 val segmentCount = 20

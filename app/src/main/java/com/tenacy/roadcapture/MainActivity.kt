@@ -19,6 +19,7 @@ import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.WorkPref
 import com.tenacy.roadcapture.manager.GoogleAccountManager
 import com.tenacy.roadcapture.manager.RewardedAdManager
@@ -26,9 +27,11 @@ import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationTrackingService
 import com.tenacy.roadcapture.ui.*
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.CreateShareLinkWorker
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
 import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
 import dagger.hilt.android.AndroidEntryPoint
+import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -50,6 +53,67 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     private var destinationChangedListener: NavController.OnDestinationChangedListener? = null
 
+    private val branchListener = Branch.BranchReferralInitListener { linkProperties, error ->
+        if (error == null) {
+            // 성공적으로 딥링크 데이터를 받음
+            Log.d("BranchSDK", "딥링크 초기화 성공: $linkProperties")
+
+            if (linkProperties != null) {
+                // 모든 속성 로깅 (디버깅용)
+                val clickedBranchLink = linkProperties.optBoolean("+clicked_branch_link", false)
+                val nonBranchLink = linkProperties.optString("+non_branch_link", "")
+                Log.d("BranchSDK", "브랜치 링크 클릭 여부: $clickedBranchLink")
+                Log.d("BranchSDK", "non-branch 링크: $nonBranchLink")
+
+                // 브랜치 링크 클릭 처리
+                if (clickedBranchLink) {
+                    val shareId = linkProperties.optString("share_id", "")
+                    if (shareId.isNotEmpty()) {
+                        Log.d("BranchSDK", "브랜치 링크에서 shareId 발견: $shareId")
+                        AppPrefs.pendingDeepLinkShareId = shareId
+                        navigateToAlbumSafely()
+                    }
+                }
+                // 브랜치가 아닌 링크 처리
+                else if(!nonBranchLink.isNullOrBlank()) {
+                    val shareId = Regex("roadcapture://open/albums/([^/?]+)").find(nonBranchLink)?.groupValues?.get(1)
+                    if (!shareId.isNullOrBlank()) {
+                        Log.d("BranchSDK", "브랜치 링크에서 shareId 발견: $shareId")
+                        AppPrefs.pendingDeepLinkShareId = shareId
+                        navigateToAlbumSafely()
+                    } else {
+                        Log.e("BranchSDK", "논브랜치 링크에서 shareId 추출 오류: $nonBranchLink")
+                    }
+                }
+            }
+        } else {
+            // 에러 처리
+            Log.e("BranchSDK", "Branch 초기화 에러: ${error.message}, 에러 코드: ${error.errorCode}")
+        }
+    }
+
+    private fun navigateToAlbumSafely() {
+        if(user != null || isMainFragmentInBackStack()) {
+            val options = NavOptions.Builder()
+                .setPopUpTo(R.id.mainFragment, true)
+                .build()
+            navController?.navigate(R.id.mainFragment, null, options)
+        } else {
+            vm.viewEvent(GlobalViewEvent.Toast(ToastModel("로그인 후에 앨범을 공유받을 수 있어요")))
+            navController?.popBackStack(R.id.loginFragment, false)
+        }
+    }
+
+    private fun isMainFragmentInBackStack(): Boolean {
+        // 현재에서 main으로 popUpTo가 가능한지 확인
+        return try {
+            navController?.getBackStackEntry(R.id.mainFragment) ?: return false
+            true
+        } catch (e: IllegalArgumentException) {
+            false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -58,6 +122,18 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         setupNavigationListener()
         setupWorkManagerCleaning()
         checkTravelingStateOnStartup()
+
+        // Branch 세션 초기화 (브랜치 링크용)
+        Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).init()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        this.intent = intent
+        Log.d("DeepLink", "onNewIntent 호출됨: ${intent.data}")
+
+        // Branch에 새 인텐트 전달
+        Branch.sessionBuilder(this).withCallback(branchListener).withData(intent.data).reInit()
     }
 
     private fun observeUpdateUserPhoto() {
@@ -94,8 +170,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
                             WorkPref.addProcessedUserPhotoUpdateWorkId(workInfo.id.toString())
 
-                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+                            val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                                ?: navHostFragment?.childFragmentManager?.fragments?.firstOrNull() ?: return@collect
 
                             (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
                             (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
@@ -154,8 +230,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
                             WorkPref.addProcessedUsernameUpdateWorkId(workInfo.id.toString())
 
-                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+                            val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                                ?: navHostFragment?.childFragmentManager?.fragments?.firstOrNull() ?: return@collect
 
                             (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
                             (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
@@ -184,6 +260,77 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         }
     }
 
+    private fun observeCreateShareLink() {
+        repeatOnLifecycle {
+            // 성공 및 실패 상태의 작업 관찰
+            WorkManager.getInstance(this@MainActivity)
+                .getWorkInfosFlow(
+                    WorkQuery.Builder
+                        .fromStates(listOf(WorkInfo.State.SUCCEEDED, WorkInfo.State.FAILED))
+                        .build()
+                )
+                .collect { workInfoList ->
+                    // 앨범 삭제 작업만 필터링
+                    val createShareLinkWorks = workInfoList.filter { workInfo ->
+                        val isNotProcessed = !WorkPref.processedShareLinkCreateWorkIds.contains(workInfo.id.toString())
+                        val isShareLinkCreateWork = workInfo.tags.any { tag ->
+                            tag.startsWith(CreateShareLinkWorker.TAG)
+                        }
+
+                        isNotProcessed && isShareLinkCreateWork
+                    }
+
+                    // 새로운 작업이 있는지 확인 및 처리
+                    if (createShareLinkWorks.isNotEmpty()) {
+                        // 작업 상태별로 처리
+                        val hasSucceededWork = createShareLinkWorks.any { it.state == WorkInfo.State.SUCCEEDED }
+                        val hasFailedWork = createShareLinkWorks.any { it.state == WorkInfo.State.FAILED }
+
+                        // 성공 메시지 (한 번만)
+                        if (hasSucceededWork) {
+                            createShareLinkWorks.forEach { Log.d("MainActivity", it.toString()) }
+                            val workInfo = createShareLinkWorks.first()
+                            val shareLink = workInfo.outputData.getString(CreateShareLinkWorker.RESULT_SHARE_LINK) ?: ""
+
+                            // 성공 처리
+                            handleViewEvents(GlobalViewEvent.CopyToClipboard(shareLink))
+
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "성공적으로 공유 링크가 생성되었어요.",
+                                        ToastMessageType.Success
+                                    )
+                                )
+                            )
+
+                            val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                                ?: navHostFragment?.childFragmentManager?.fragments?.firstOrNull() ?: return@collect
+
+                            (findFragmentByClass(currentFragment, MyAlbumTabFragment::class.java) as? MyAlbumTabFragment)?.refreshData(includeParent = false)
+                        }
+
+                        // 실패 메시지 (한 번만)
+                        if (hasFailedWork) {
+                            handleViewEvents(
+                                GlobalViewEvent.Toast(
+                                    ToastModel(
+                                        "공유 링크 생성 중에 문제가 발생했어요",
+                                        ToastMessageType.Warning
+                                    )
+                                )
+                            )
+                        }
+
+                        // 처리된 작업 ID 저장
+                        createShareLinkWorks.forEach { workInfo ->
+                            WorkPref.addProcessedCreateShareLinkWorkId(workInfo.id.toString())
+                        }
+                    }
+                }
+        }
+    }
+
     private fun observeUpdateAlbumPublic() {
         repeatOnLifecycle {
             // 성공 및 실패 상태의 작업 관찰
@@ -197,11 +344,11 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                     // 앨범 삭제 작업만 필터링
                     val updateAlbumPublicWorks = workInfoList.filter { workInfo ->
                         val isNotProcessed = !WorkPref.processedAlbumPublicUpdateWorkIds.contains(workInfo.id.toString())
-                        val isAlbumDeleteWork = workInfo.tags.any { tag ->
+                        val isAlbumPublicUpdateWork = workInfo.tags.any { tag ->
                             tag.startsWith(UpdateAlbumPublicWorker.TAG)
                         }
 
-                        isNotProcessed && isAlbumDeleteWork
+                        isNotProcessed && isAlbumPublicUpdateWork
                     }
 
                     // 새로운 작업이 있는지 확인 및 처리
@@ -228,8 +375,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 )
                             )
 
-                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+                            val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                                ?: navHostFragment?.childFragmentManager?.fragments?.firstOrNull() ?: return@collect
 
                             (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
                             (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
@@ -254,7 +401,6 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                         }
                     }
                 }
-
         }
     }
 
@@ -296,8 +442,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             )
 
                             // 데이터 새로고침 (한 번만)
-                            val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
-                                ?: navHostFragment.childFragmentManager.fragments.firstOrNull() ?: return@collect
+                            val currentFragment = navHostFragment?.childFragmentManager?.primaryNavigationFragment
+                                ?: navHostFragment?.childFragmentManager?.fragments?.firstOrNull() ?: return@collect
                             (findFragmentByClass(currentFragment, HomeFragment::class.java) as? HomeFragment)?.refreshData(requireNoShimmer = true)
                             (findFragmentByClass(currentFragment, ScrapFragment::class.java) as? ScrapFragment)?.refreshData(requireNoShimmer = true)
                             getFragmentViewModel<MyAlbumViewModel>(R.id.container, MyAlbumFragment::class.java)?.refreshAll()
@@ -350,7 +496,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     private fun checkTravelingStateOnStartup() {
         // 앱 시작 시 여행 상태 확인
         if (travelingStateManager.isTraveling.value) {
-            val isTripFragmentVisible = navController.currentDestination?.id == R.id.tripFragment
+            val isTripFragmentVisible = navController?.currentDestination?.id == R.id.tripFragment
 
             if (!isTripFragmentVisible && !LocationTrackingService.isServiceRunning()) {
                 // 여행 중이지만 TripFragment가 아니고 서비스도 실행 중이지 않으면 서비스 시작
@@ -365,7 +511,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             handleDestinationChange(destination.id)
         }
 
-        navController.addOnDestinationChangedListener(destinationChangedListener!!)
+        navController?.addOnDestinationChangedListener(destinationChangedListener!!)
     }
 
     private fun handleDestinationChange(destinationId: Int) {
@@ -391,7 +537,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         super<DefaultLifecycleObserver>.onStart(owner)
 
         // 포어그라운드 복귀 시 상태 확인
-        val isTripFragmentVisible = navController.currentDestination?.id == R.id.tripFragment
+        val isTripFragmentVisible = navController?.currentDestination?.id == R.id.tripFragment
 
         if (travelingStateManager.isTraveling.value) {
             if (isTripFragmentVisible) {
@@ -423,21 +569,17 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     override fun onDestroy() {
         destinationChangedListener?.let {
-            navController.removeOnDestinationChangedListener(it)
+            navController?.removeOnDestinationChangedListener(it)
         }
         ProcessLifecycleOwner.get().lifecycle.removeObserver(this)
         super<AppCompatActivity>.onDestroy()
-    }
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        navController.handleDeepLink(intent)
     }
 
     private fun setupObservers() {
         observeUpdateUsername()
         observeUpdateUserPhoto()
         observeUpdateAlbumPublic()
+        observeCreateShareLink()
         observeDeleteAlbum()
         observeViewEventState()
     }
