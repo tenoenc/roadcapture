@@ -25,21 +25,26 @@ val Number.toPx
 val Number.toDp
     get() = this.toFloat() / Resources.getSystem().displayMetrics.density
 
-fun Long.toLocalDateTime(zoneId: ZoneId = ZoneId.of("UTC")): LocalDateTime =
+fun Long.toLocalDateTime(): LocalDateTime =
     Instant
         .ofEpochMilli(this)
-        .atZone(zoneId)
+        .atZone(ZoneId.systemDefault())
         .toLocalDateTime()
 
-fun LocalDateTime.toTimestamp(zoneId: ZoneId = ZoneId.of("UTC")): Long =
-    this.atZone(zoneId)
+fun LocalDateTime.toTimestamp(): Long =
+    this.atZone(ZoneId.systemDefault())
         .toInstant()
         .toEpochMilli()
 
-fun Date.toLocalDateTime(zoneId: ZoneId = ZoneId.of("UTC")): LocalDateTime =
-    LocalDateTime.ofInstant(this.toInstant(), zoneId)
+fun Date.toLocalDateTime(): LocalDateTime =
+    LocalDateTime.ofInstant(this.toInstant(), ZoneId.systemDefault())
 
 fun Long.toFirebaseTimestamp(): Timestamp {
     val instant = Instant.ofEpochMilli(this)
+    return Timestamp(instant.epochSecond, instant.nano)
+}
+
+fun LocalDateTime.toFirebaseTimestamp(): Timestamp {
+    val instant = this.atZone(ZoneId.systemDefault()).toInstant()
     return Timestamp(instant.epochSecond, instant.nano)
 }

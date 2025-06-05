@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -275,6 +276,7 @@ class AlbumViewModel @Inject constructor(
                                 "albumMemoryAddressTags" to album.memoryAddressTags,
                                 "albumMemoryPlaceNames" to album.memoryPlaceNames,
                                 "albumPublic" to album.isPublic,
+                                "albumCreatedAt" to album.createdAt.toFirebaseTimestamp(),
                                 "createdAt" to FieldValue.serverTimestamp(),
                             ))
 

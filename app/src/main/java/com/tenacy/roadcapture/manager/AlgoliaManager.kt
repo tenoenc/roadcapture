@@ -222,6 +222,7 @@ class AlgoliaManager @Inject constructor() {
                 // Firebase에서 앨범 데이터 가져오기
                 val scrapsSnapshot = db.collection("scraps")
                     .whereIn(FieldPath.documentId(), chunk)
+                    .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                     .get()
                     .await()
 
@@ -231,10 +232,13 @@ class AlgoliaManager @Inject constructor() {
                     .get().await()
                     .map { Album.from(it.toAlbum(), true) }
 
-                allAlbums.addAll(chunkAlbums)
+                val albumIdToIndex = albumIds.withIndex().associate { it.value to it.index }
+                val albumsToAdd = chunkAlbums.sortedBy { albumIdToIndex[it.id] ?: Int.MAX_VALUE }
+
+                allAlbums.addAll(albumsToAdd)
             }
 
-            allAlbums.sortedByDescending { it.createdAt }
+            allAlbums
         }
     }
 }

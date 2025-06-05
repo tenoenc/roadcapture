@@ -62,8 +62,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val memories = memoryDao.selectAll()
                 val locations = locationDao.selectAll()
                 // Album.createdAt 대신 TravelStatePref.createdAt 사용
-                val startTime = TravelPref.createdAt.toLocalDateTime()
-                val endTime = LocalDateTime.now()
+                val startTime = TravelPref.createdAt.toFirebaseTimestamp()
+                val endTime = LocalDateTime.now().toFirebaseTimestamp()
                 val userId = UserPref.id
                 val userRef = db.collection("users").document(userId)
                 val user = userRef.get().await().toUser()
@@ -135,7 +135,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                         "latitude" to location.latitude,
                         "longitude" to location.longitude,
                         "albumRef" to albumRef,
-                        "createdAt" to Timestamp(location.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
+                        "createdAt" to location.createdAt.toFirebaseTimestamp(),
                     )
                 }
 
@@ -159,14 +159,14 @@ class AlbumUploadProgressViewModel @Inject constructor(
                         "albumRef" to albumRef,
                         "userRef" to userRef,
                         "locationRef" to locationRefByMemoryId[memoryWithLocation.location.id]!!,
-                        "createdAt" to Timestamp(memory.createdAt.toEpochSecond(ZoneOffset.UTC), 0)
+                        "createdAt" to memory.createdAt.toFirebaseTimestamp()
                     )
                 }
 
                 val albumData = hashMapOf(
                     "title" to albumTitle,
-                    "createdAt" to Timestamp(startTime.toEpochSecond(ZoneOffset.UTC), 0),
-                    "endedAt" to Timestamp(endTime.toEpochSecond(ZoneOffset.UTC), 0),
+                    "createdAt" to startTime,
+                    "endedAt" to endTime,
                     "thumbnailUrl" to thumbnailUrl,
                     "viewCount" to 0,
                     "scrapCount" to 0,

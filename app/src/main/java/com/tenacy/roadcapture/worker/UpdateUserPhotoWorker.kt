@@ -14,7 +14,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -76,7 +76,7 @@ class UpdateUserPhotoWorker @AssistedInject constructor(
             val albumRefs = db.collection("albums")
                 .whereEqualTo("userRef", userRef).getAllReferences()
 
-            val compressedUri = context.compressImage(photoUri)
+            val compressedUri = context.compressImage(quality = 10, contentUri = photoUri)
 
             val storagePath = "images/users/$userId/profile.jpg"
             val imageUrl = context.uploadImageToStorage(compressedUri, storagePath)
