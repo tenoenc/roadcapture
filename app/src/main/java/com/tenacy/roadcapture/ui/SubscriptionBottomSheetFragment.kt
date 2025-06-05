@@ -16,7 +16,7 @@ import com.tenacy.roadcapture.databinding.BSheetSubscriptionBinding
 import com.tenacy.roadcapture.util.Constants
 import kotlinx.parcelize.Parcelize
 
-class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
+class SubscriptionBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetSubscriptionBinding? = null
     private val binding get() = _binding!!
@@ -37,29 +37,12 @@ class SubscriptionBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViews()
-        setupBottomSheet()
         setupListeners()
     }
 
     private fun setupViews() {
         binding.premiumPricePerMonthText = "USD ${Constants.PREMIUM_PRICE_PER_MONTH} / 월"
         binding.row2Text = "앨범 당 최대 ${Constants.PREMIUM_MEMORY_MAX_SIZE}개의 추억 생성"
-    }
-
-    private fun setupBottomSheet() {
-        // 다이얼로그가 보여진 후에 바텀시트를 완전히 펼치기
-        dialog?.setOnShowListener { dialogInterface ->
-            // BottomSheet의 배경 레이아웃 참조 가져오기
-            val bottomSheet =
-                (dialogInterface as BottomSheetDialog).findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                // BottomSheetBehavior 가져오기
-                val behavior = BottomSheetBehavior.from(it)
-
-                // 바텀시트를 완전히 펼치도록 상태 설정
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
     }
 
     private fun setupListeners() {

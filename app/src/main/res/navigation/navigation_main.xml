@@ -30,6 +30,8 @@
         <action android:id="@+id/action_main_to_html" app:destination="@id/htmlFragment"/>
         <action android:id="@+id/action_main_to_debugSettings"
                 app:destination="@id/debugSettingsFragment"/>
+        <action android:id="@+id/action_main_to_withdrawBefore"
+                app:destination="@id/withdrawBeforeFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -145,16 +147,16 @@
               tools:layout="@layout/fragment_signup_username">
         <action android:id="@+id/action_signupUsername_to_signupAgreement"
                 app:destination="@id/signupAgreementFragment"/>
-        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential" />
-        <argument android:name="socialUserId" app:argType="string" />
-        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType" />
+        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
+        <argument android:name="socialUserId" app:argType="string"/>
+        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
     </fragment>
     <fragment android:id="@+id/signupAgreementFragment" android:name="com.tenacy.roadcapture.ui.SignupAgreementFragment"
               android:label="SignupAgreementFragment"
               tools:layout="@layout/fragment_signup_agreement">
-        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential" />
-        <argument android:name="socialUserId" app:argType="string" />
-        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType" />
+        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
+        <argument android:name="socialUserId" app:argType="string"/>
+        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
         <argument android:name="username" app:argType="string"/>
         <action android:id="@+id/action_signupAgreement_to_html" app:destination="@id/htmlFragment"/>
         <action android:id="@+id/action_signupAgreement_to_mainBefore"
@@ -163,14 +165,18 @@
     <fragment android:id="@+id/mainBeforeFragment" android:name="com.tenacy.roadcapture.ui.MainBeforeFragment"
               tools:layout="@layout/fragment_main_before"
               android:label="MainBeforeFragment">
-        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential" />
-        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType" />
-        <argument android:name="socialUserId" app:argType="string" />
-        <argument android:name="isExistingUser" app:argType="boolean" />
+        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
+        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
+        <argument android:name="socialUserId" app:argType="string"/>
+        <argument android:name="isExistingUser" app:argType="boolean"/>
         <argument android:name="username" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
         <action android:id="@+id/action_mainBefore_to_main"
                 app:popUpTo="@id/loginFragment"
                 app:popUpToInclusive="true"
                 app:destination="@id/mainFragment"/>
     </fragment>
+    <fragment android:id="@+id/withdrawBeforeFragment"
+              android:name="com.tenacy.roadcapture.ui.WithdrawBeforeFragment"
+              tools:layout="@layout/fragment_withdraw_before"
+              android:label="WithdrawBeforeFragment"/>
 </navigation>

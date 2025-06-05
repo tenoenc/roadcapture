@@ -14,7 +14,7 @@ sealed class GlobalViewEvent: ViewEvent {
 }
 
 sealed class LoginViewEvent: ViewEvent {
-    data class Login(val socialUserId: String, val socialType: SocialType, val authCredential: AuthCredential, val isExistingUser: Boolean): LoginViewEvent()
+    data class Login(val socialUserId: String, val socialType: SocialType, val authCredential: AuthCredential): LoginViewEvent()
     data object GoogleLogin: LoginViewEvent()
     data object FacebookLogin: LoginViewEvent()
     data object KakaoLogin: LoginViewEvent()
@@ -38,14 +38,13 @@ sealed class AppInfoViewEvent: ViewEvent {
     data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
     data object ShowLogoutBefore: AppInfoViewEvent()
     data object Donate : AppInfoViewEvent()
-    data object Subscribe : AppInfoViewEvent()
+    data object ShowSubscription : AppInfoViewEvent()
     data object ShowSubscriptionRestriction : AppInfoViewEvent()
     data object OpenPlayStoreSubscriptionManager : AppInfoViewEvent()
-    data object WithdrawComplete : AppInfoViewEvent()
     data object ShowWithdrawBefore : AppInfoViewEvent()
+    data object Withdraw : AppInfoViewEvent()
     sealed class Error(open val message: String?): AppInfoViewEvent() {
         data class Reauth(override val message: String?, val socialType: SocialType) : Error(message)
-        data class Withdraw(override val message: String?): Error(message)
     }
 }
 
@@ -147,5 +146,12 @@ sealed class MainBeforeViewEvent : ViewEvent {
     data object Complete : MainBeforeViewEvent()
     sealed class Error(open val message: String?): MainBeforeViewEvent() {
         data class Login(override val message: String?) : Error(message)
+    }
+}
+
+sealed class WithdrawBeforeViewEvent : ViewEvent {
+    data object Complete : WithdrawBeforeViewEvent()
+    sealed class Error(open val message: String?): WithdrawBeforeViewEvent() {
+        data class Withdraw(override val message: String?) : Error(message)
     }
 }

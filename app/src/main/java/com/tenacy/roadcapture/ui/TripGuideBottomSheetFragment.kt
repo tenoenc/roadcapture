@@ -19,7 +19,7 @@ import com.tenacy.roadcapture.util.SpannableUtils
 import com.tenacy.roadcapture.util.SubscriptionValues
 import kotlinx.parcelize.Parcelize
 
-class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
+class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetTripGuideBinding? = null
     private val binding get() = _binding!!
@@ -40,7 +40,6 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupViews()
-        setupBottomSheet()
         setupListeners()
     }
 
@@ -111,7 +110,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
         val spanText4_1 = "공유 링크 생성이 불가능해요."
         val spanText4_2 = "여기"
         val spanFullText4 = if(isSubscriptionActive) {
-            "공유 링크 생성이 가능해요."
+            "공개 앨범은 공유 링크 생성이 가능해요."
         } else {
             "무료 플랜에서는 ${spanText4_1} 생성을 원하시면 ${spanText4_2}를 클릭해주세요."
         }
@@ -138,22 +137,6 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
                 },
             )
         )
-    }
-
-    private fun setupBottomSheet() {
-        // 다이얼로그가 보여진 후에 바텀시트를 완전히 펼치기
-        dialog?.setOnShowListener { dialogInterface ->
-            // BottomSheet의 배경 레이아웃 참조 가져오기
-            val bottomSheet =
-                (dialogInterface as BottomSheetDialog).findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                // BottomSheetBehavior 가져오기
-                val behavior = BottomSheetBehavior.from(it)
-
-                // 바텀시트를 완전히 펼치도록 상태 설정
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
     }
 
     private fun setupListeners() {

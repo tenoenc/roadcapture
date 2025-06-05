@@ -16,7 +16,6 @@ import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
 import com.facebook.CallbackManager
@@ -26,11 +25,11 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.tenacy.roadcapture.BuildConfig
-import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
 import com.tenacy.roadcapture.data.SocialType
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
 import com.tenacy.roadcapture.manager.DonationManager
@@ -209,6 +208,18 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 mainActivity.vm.logout()
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            SubscriptionBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<SubscriptionBottomSheetFragment.ParamsOut.Positive>(SubscriptionBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE)?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                // 정기구독
+                // 구독 시작
+                subscriptionManager.setPurchaseCallback(this)
+                subscriptionManager.subscribe(mainActivity, this)
+            }
+        }
     }
 
     private fun observeViewEvents() {
@@ -241,30 +252,13 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 bottomSheet.show(childFragmentManager, DonateBeforeBottomSheetFragment.TAG)
             }
 
-            is AppInfoViewEvent.Subscribe -> {
-                // 구독 시작
-                subscriptionManager.setPurchaseCallback(this)
-                requireActivity().let { activity ->
-                    subscriptionManager.subscribe(activity, this)
-                }
+            is AppInfoViewEvent.ShowSubscription -> {
+                val bottomSheet = SubscriptionBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
             }
 
-            is AppInfoViewEvent.WithdrawComplete -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴가 완료되었어요", ToastMessageType.Success)))
-
-                    val navOptions = NavOptions.Builder().setPopUpTo(
-                        R.id.mainFragment,
-                        true
-                    ).build()
-                    mainActivity.currentFragment?.findNavController()?.run {
-                        navigate(
-                            R.id.loginFragment,
-                            null,
-                            navOptions
-                        )
-                    }
-                }
+            is AppInfoViewEvent.Withdraw -> {
+                findNavController().navigate(MainFragmentDirections.actionMainToWithdrawBefore())
             }
 
             is AppInfoViewEvent.ShowWithdrawBefore -> {
@@ -286,9 +280,6 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     when(event) {
                         is AppInfoViewEvent.Error.Reauth -> {
                             mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("계정이 일치하지 않아요", ToastMessageType.Warning)))
-                        }
-                        is AppInfoViewEvent.Error.Withdraw -> {
-                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴 중 오류가 발생했어요", ToastMessageType.Warning)))
                         }
                     }
                 }
