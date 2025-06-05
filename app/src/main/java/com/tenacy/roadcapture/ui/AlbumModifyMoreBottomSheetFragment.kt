@@ -14,7 +14,7 @@ import com.tenacy.roadcapture.databinding.BSheetAlbumModifyMoreBinding
 import com.tenacy.roadcapture.ui.dto.Album
 import kotlinx.parcelize.Parcelize
 
-class AlbumModifyMoreBottomSheetFragment: BottomSheetDialogFragment() {
+class AlbumModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetAlbumModifyMoreBinding? = null
     private val binding get() = _binding!!

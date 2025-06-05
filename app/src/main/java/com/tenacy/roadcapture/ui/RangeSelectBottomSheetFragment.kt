@@ -13,7 +13,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetRangeSelectBinding
 import kotlinx.parcelize.Parcelize
 
-class RangeSelectBottomSheetFragment: BottomSheetDialogFragment() {
+class RangeSelectBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetRangeSelectBinding? = null
     private val binding get() = _binding!!

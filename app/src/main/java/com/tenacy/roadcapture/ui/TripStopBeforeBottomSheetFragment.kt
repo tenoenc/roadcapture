@@ -14,7 +14,7 @@ import com.tenacy.roadcapture.databinding.BSheetTripStopBeforeBinding
 import com.tenacy.roadcapture.util.SpannableUtils
 import kotlinx.parcelize.Parcelize
 
-class TripStopBeforeBottomSheetFragment : BottomSheetDialogFragment() {
+class TripStopBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetTripStopBeforeBinding? = null
     private val binding get() = _binding!!

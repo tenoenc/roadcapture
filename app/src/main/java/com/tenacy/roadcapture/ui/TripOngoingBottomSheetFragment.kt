@@ -12,7 +12,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetTripOngoingBinding
 import kotlinx.parcelize.Parcelize
 
-class TripOngoingBottomSheetFragment: BottomSheetDialogFragment() {
+class TripOngoingBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetTripOngoingBinding? = null
     private val binding get() = _binding!!

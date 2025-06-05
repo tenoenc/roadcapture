@@ -17,7 +17,7 @@ import com.tenacy.roadcapture.databinding.BSheetWithdrawBeforeBinding
 import com.tenacy.roadcapture.util.SpannableUtils
 import kotlinx.parcelize.Parcelize
 
-class WithdrawBeforeBottomSheetFragment : BottomSheetDialogFragment() {
+class WithdrawBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetWithdrawBeforeBinding? = null
     private val binding get() = _binding!!
@@ -37,7 +37,6 @@ class WithdrawBeforeBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupBottomSheet()
         setupViews()
         setupListeners()
     }
@@ -74,22 +73,6 @@ class WithdrawBeforeBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun setupBottomSheet() {
-        // 다이얼로그가 보여진 후에 바텀시트를 완전히 펼치기
-        dialog?.setOnShowListener { dialogInterface ->
-            // BottomSheet의 배경 레이아웃 참조 가져오기
-            val bottomSheet =
-                (dialogInterface as BottomSheetDialog).findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                // BottomSheetBehavior 가져오기
-                val behavior = BottomSheetBehavior.from(it)
-
-                // 바텀시트를 완전히 펼치도록 상태 설정
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
     }
 
     @Parcelize

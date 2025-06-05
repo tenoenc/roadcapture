@@ -12,7 +12,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetAlbumCompleteBeforeBinding
 import kotlinx.parcelize.Parcelize
 
-class AlbumCompeteBeforeBottomSheetFragment: BottomSheetDialogFragment() {
+class AlbumCompeteBeforeBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetAlbumCompleteBeforeBinding? = null
     private val binding get() = _binding!!

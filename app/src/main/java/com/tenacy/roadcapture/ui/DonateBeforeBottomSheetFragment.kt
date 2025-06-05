@@ -12,7 +12,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetDonateBeforeBinding
 import kotlinx.parcelize.Parcelize
 
-class DonateBeforeBottomSheetFragment: BottomSheetDialogFragment() {
+class DonateBeforeBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetDonateBeforeBinding? = null
     private val binding get() = _binding!!

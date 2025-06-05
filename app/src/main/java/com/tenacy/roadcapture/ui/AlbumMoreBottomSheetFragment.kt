@@ -15,7 +15,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetAlbumMoreBinding
 import kotlinx.parcelize.Parcelize
 
-class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
+class AlbumMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetAlbumMoreBinding? = null
     private val binding get() = _binding!!
@@ -44,24 +44,7 @@ class AlbumMoreBottomSheetFragment: BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupBottomSheet()
         setupListeners()
-    }
-
-    private fun setupBottomSheet() {
-        // 다이얼로그가 보여진 후에 바텀시트를 완전히 펼치기
-        dialog?.setOnShowListener { dialogInterface ->
-            // BottomSheet의 배경 레이아웃 참조 가져오기
-            val bottomSheet =
-                (dialogInterface as BottomSheetDialog).findViewById<FrameLayout>(com.google.android.material.R.id.design_bottom_sheet)
-            bottomSheet?.let {
-                // BottomSheetBehavior 가져오기
-                val behavior = BottomSheetBehavior.from(it)
-
-                // 바텀시트를 완전히 펼치도록 상태 설정
-                behavior.state = BottomSheetBehavior.STATE_EXPANDED
-            }
-        }
     }
 
     private fun setupListeners() {

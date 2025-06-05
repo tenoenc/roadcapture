@@ -11,7 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetSubscribeAfterBinding
 
-class SubscribeAfterBottomSheetFragment : BottomSheetDialogFragment() {
+class SubscribeAfterBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetSubscribeAfterBinding? = null
     private val binding get() = _binding!!
@@ -31,7 +31,6 @@ class SubscribeAfterBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupBottomSheet()
         setupListeners()
     }
 

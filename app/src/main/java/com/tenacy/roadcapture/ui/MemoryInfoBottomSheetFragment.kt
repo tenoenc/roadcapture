@@ -16,7 +16,7 @@ import com.tenacy.roadcapture.util.toTimestamp
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
-class MemoryInfoBottomSheetFragment : BottomSheetDialogFragment() {
+class MemoryInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetMemoryInfoBinding? = null
     private val binding get() = _binding!!

@@ -13,7 +13,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetSubscriptionRestrictionBinding
 import kotlinx.parcelize.Parcelize
 
-class SubscriptionRestrictionBottomSheetFragment : BottomSheetDialogFragment() {
+class SubscriptionRestrictionBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetSubscriptionRestrictionBinding? = null
     private val binding get() = _binding!!
@@ -33,7 +33,6 @@ class SubscriptionRestrictionBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupBottomSheet()
         setupListeners()
     }
 

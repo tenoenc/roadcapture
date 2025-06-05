@@ -12,7 +12,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetLocationBinding
 import kotlinx.parcelize.Parcelize
 
-class LocationBottomSheetFragment: BottomSheetDialogFragment() {
+class LocationBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private var _binding: BSheetLocationBinding? = null
     private val binding get() = _binding!!
