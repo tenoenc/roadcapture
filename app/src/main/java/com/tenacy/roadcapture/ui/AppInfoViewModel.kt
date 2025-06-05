@@ -122,7 +122,6 @@ class AppInfoViewModel @Inject constructor(
 
                 UserPref.displayName = user.displayName
                 UserPref.photoUrl = user.photoUrl
-                SubscriptionPref.isSubscriptionActive = user.isSubscriptionActive
 
                 emit(user)
             }
@@ -249,7 +248,7 @@ class AppInfoViewModel @Inject constructor(
 
     fun onLogoutClick() {
         viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(AppInfoViewEvent.Logout)
+            viewEvent(AppInfoViewEvent.ShowLogoutBefore)
         }
     }
 

@@ -84,7 +84,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범은 자동으로 삭제돼요."
+                              android:text="앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범을 생성할 수 없어요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -104,10 +104,11 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="작성중인 앨범 외 다른 앨범은 만들 수 없어요."
+                              android:text="추억을 1개 이상 만들어야 앨범을 완성할 수 있어요."
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
+
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
@@ -183,6 +184,7 @@
 
                     <TextView android:layout_width="0dp"
                               android:layout_height="wrap_content"
+                              android:id="@+id/txt_b_sheet_trip_guide_span_3"
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
@@ -224,7 +226,7 @@
                     <TextView android:layout_width="0dp"
                               android:layout_height="wrap_content"
                               android:layout_weight="1"
-                              android:id="@+id/txt_b_sheet_trip_guide_span_3"
+                              android:id="@+id/txt_b_sheet_trip_guide_span_4"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
                               android:text="무료 플랜에서는 공유 링크 생성이 불가능해요. 생성을 원하시면 여기를 클릭해주세요."

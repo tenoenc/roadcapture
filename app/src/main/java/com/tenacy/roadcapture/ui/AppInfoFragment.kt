@@ -198,6 +198,17 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 reauthenticate()
             }
         }
+        childFragmentManager.setFragmentResultListener(
+            LogoutBeforeBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<LogoutBeforeBottomSheetFragment.ParamsOut.Positive>(
+                LogoutBeforeBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE
+            )?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                mainActivity.vm.logout()
+            }
+        }
     }
 
     private fun observeViewEvents() {
@@ -220,8 +231,9 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
             }
 
-            is AppInfoViewEvent.Logout -> {
-                mainActivity.vm.logout()
+            is AppInfoViewEvent.ShowLogoutBefore -> {
+                val bottomSheet = LogoutBeforeBottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, LogoutBeforeBottomSheetFragment.TAG)
             }
 
             is AppInfoViewEvent.Donate -> {

@@ -10,7 +10,6 @@ object SubscriptionPref : KotprefModel() {
             _isSubscriptionActive = value
         }
         get() = _isSubscriptionActive && System.currentTimeMillis() < getGracePeriodExpiryTime()
-    var subscriptionType by stringPref("")
     var subscriptionExpiryTime by longPref(0L)
     var isSubscriptionCancelled by booleanPref(false)
     var purchaseToken by stringPref("")
@@ -47,7 +46,6 @@ object SubscriptionPref : KotprefModel() {
     // 구독 정보 초기화
     override fun clear() {
         _isSubscriptionActive = false
-        subscriptionType = ""
         subscriptionExpiryTime = 0L
         isSubscriptionCancelled = false
         purchaseToken = ""

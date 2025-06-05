@@ -167,8 +167,6 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
         photoUrl = photoUrl,
         provider = provider,
         scrapCount = scrapCount,
-        isSubscriptionActive = isSubscriptionActive,
-        lastSubscribedAt = lastSubscribedAt,
         createdAt = createdAt,
         updatedAt = updatedAt,
     )

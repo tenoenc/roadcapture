@@ -12,8 +12,6 @@ data class FirebaseUser(
     val photoUrl: String,
     val provider: String,
     val scrapCount: Long,
-    val isSubscriptionActive: Boolean,
-    val lastSubscribedAt: LocalDateTime?,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 ): Parcelable

@@ -74,7 +74,6 @@ class MainBeforeViewModel @Inject constructor(
                     UserPref.id = userId
                     UserPref.socialUserId = socialUserId
                     UserPref.provider = socialType
-                    SubscriptionPref.isSubscriptionActive = false
                     UserPref.displayName = username
                     UserPref.photoUrl = photoUrl
                 } else {

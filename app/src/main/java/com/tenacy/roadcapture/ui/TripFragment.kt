@@ -155,7 +155,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         setupViews()
         setupPermissions()
         setupObservers()
-        binding.abcdefg.setQuickTapListener {
+        /*binding.abcdefg.setQuickTapListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                 try {
                     withContext(Dispatchers.Main) {
@@ -186,7 +186,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     }
                 }
             }
-        }
+        }*/
 
         repeatOnLifecycle { vm.fetchData() }
     }
@@ -971,9 +971,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     // ===== 14. 데이터 클래스 및 상수 정의 그룹 =====
     companion object {
         const val KEY_NEW_MEMORY = "new_memory"
+        const val KEY_MODIFIABLE_MEMORY_VIEWER = "modifiable_memory_viewer"
         const val RESULT_MEMORY_ID = "memory_id"
         const val RESULT_COORDINATES = "coordinates"
         const val RESULT_MEMORY_DELETED = "memory_deleted"
-        const val KEY_MODIFIABLE_MEMORY_VIEWER = "modifiable_memory_viewer"
     }
 }

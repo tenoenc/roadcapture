@@ -45,7 +45,7 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText1 = "앨범이 유효하지 않게 되어 생성 시도 시 삭제돼요."
+        val spanText1 = "앨범을 생성할 수 없어요."
         val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 ${spanText1}"
 
         SpannableUtils.setClickableText(
@@ -93,13 +93,8 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
             )
         )
 
-        val spanText3_1 = "공유 링크 생성이 불가능해요."
-        val spanText3_2 = "여기"
-        val spanFullText3 = if(isSubscriptionActive) {
-            "공유 링크 생성이 가능해요."
-        } else {
-            "무료 플랜에서는 ${spanText3_1} 생성을 원하시면 ${spanText3_2}를 클릭해주세요."
-        }
+        val spanText3 = "수정은 불가능해요."
+        val spanFullText3 = "삭제가 가능하지만, $spanText3"
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -107,11 +102,31 @@ class TripGuideBottomSheetFragment : BottomSheetDialogFragment() {
             spanFullText3,
             listOf(
                 SpannableUtils.ClickablePart(
-                    text = spanText3_1,
+                    text = spanText3,
+                    textColor = ContextCompat.getColor(requireContext(), R.color.warning),
+                ),
+            )
+        )
+
+        val spanText4_1 = "공유 링크 생성이 불가능해요."
+        val spanText4_2 = "여기"
+        val spanFullText4 = if(isSubscriptionActive) {
+            "공유 링크 생성이 가능해요."
+        } else {
+            "무료 플랜에서는 ${spanText4_1} 생성을 원하시면 ${spanText4_2}를 클릭해주세요."
+        }
+
+        SpannableUtils.setClickableText(
+            requireContext(),
+            binding.txtBSheetTripGuideSpan4,
+            spanFullText4,
+            listOf(
+                SpannableUtils.ClickablePart(
+                    text = spanText4_1,
                     textColor = ContextCompat.getColor(requireContext(), R.color.warning),
                 ),
                 SpannableUtils.ClickablePart(
-                    text = spanText3_2,
+                    text = spanText4_2,
                     textColor = ContextCompat.getColor(requireContext(), R.color.label_assistive),
                     isUnderlined = true,
                 ) {

@@ -24,6 +24,8 @@ object Constants {
     const val TRACKING_REPEAT_INTERVAL_MINUTES = 15L
     const val TRACKING_INITIAL_DELAY_MINUTES = 1L
 
+    const val SUBSCRIPTION_PREMIUM_PRODUCT_ID = "subscription_premium"
+
     // 구독 상태 확인 워커
     const val SUBSCRIPTION_REPEAT_INTERVAL_MINUTES = 15L
     const val SUBSCRIPTION_INITIAL_DELAY_MINUTES = 1L

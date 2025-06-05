@@ -39,10 +39,6 @@ class SubscriptionManager @Inject constructor(
     companion object {
         private const val TAG = "SubscriptionManager"
 
-        // 구독 관련 상수
-        private const val SUBSCRIPTION_PRODUCT_ID = "subscription_premium"
-        private const val SUBSCRIPTION_TYPE = "premium"
-
         // 테스트 모드 시간 설정
         private const val TEST_SUBSCRIPTION_DURATION_MINUTES = 5
     }
@@ -55,7 +51,7 @@ class SubscriptionManager @Inject constructor(
     val isSubscriptionActive: StateFlow<Boolean> = _isSubscriptionActive.asStateFlow()
 
     // 구독 상품 설정
-    private val subscriptionProductIds = listOf(SUBSCRIPTION_PRODUCT_ID)
+    private val subscriptionProductIds = listOf(Constants.SUBSCRIPTION_PREMIUM_PRODUCT_ID)
     private val subscriptionProductList = subscriptionProductIds.map {
         QueryProductDetailsParams.Product.newBuilder()
             .setProductId(it)
@@ -266,7 +262,7 @@ class SubscriptionManager @Inject constructor(
                 retryCount++
 
                 // 재시도 전 짧게 대기
-                kotlinx.coroutines.delay(1000)
+                delay(1000)
             }
         }
 
@@ -368,7 +364,7 @@ class SubscriptionManager @Inject constructor(
     private suspend fun getExpiryTimeMillis(purchase: Purchase): Long {
         try {
             // 1. 먼저 서버에서 구독 정보 확인 시도
-            val request = VerificationRequest(BuildConfig.APPLICATION_ID, "subscription_premium", purchase.purchaseToken)
+            val request = VerificationRequest(BuildConfig.APPLICATION_ID, Constants.SUBSCRIPTION_PREMIUM_PRODUCT_ID, purchase.purchaseToken)
             val response = RetrofitInstance.firebaseApi.verifySubscription(request)
 
             if (response.isSuccessful && response.body()?.expiryTimeMillis != null) {
@@ -429,7 +425,6 @@ class SubscriptionManager @Inject constructor(
                 this.isSubscriptionCancelled = !purchase.isAutoRenewing
                 this.purchaseToken = purchase.purchaseToken
                 this.subscriptionPurchaseTime = purchase.purchaseTime
-                this.subscriptionType = SUBSCRIPTION_TYPE
             }
 
             if (!isActive) {
@@ -438,7 +433,6 @@ class SubscriptionManager @Inject constructor(
                 this.isSubscriptionCancelled = false
                 this.purchaseToken = ""
                 this.subscriptionPurchaseTime = 0
-                this.subscriptionType = ""
             }
 
             this.lastSubscriptionCheckTime = System.currentTimeMillis()
@@ -478,7 +472,7 @@ class SubscriptionManager @Inject constructor(
      * 구매 흐름 시작
      */
     private fun launchBillingFlow(activity: Activity) {
-        val details = productDetails[SUBSCRIPTION_PRODUCT_ID]
+        val details = productDetails[Constants.SUBSCRIPTION_PREMIUM_PRODUCT_ID]
         if (details == null) {
             purchaseCallback?.onSubscriptionPurchaseFailed(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
