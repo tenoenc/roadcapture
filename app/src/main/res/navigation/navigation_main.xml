@@ -22,10 +22,15 @@
               tools:layout="@layout/fragment_main">
         <action android:id="@+id/action_main_to_trip" app:destination="@id/tripFragment"/>
         <action android:id="@+id/action_main_to_album" app:destination="@id/albumFragment"/>
-        <action android:id="@+id/action_main_to_search" app:destination="@id/searchFragment"/>
+        <action android:id="@+id/action_main_to_search"
+                app:destination="@id/searchFragment"/>
         <action android:id="@+id/action_main_to_userMemoryViewer"
                 app:destination="@id/userMemoryViewerFragment"/>
         <action android:id="@+id/action_main_to_modifyUsername"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right"
                 app:destination="@id/modifyUsernameFragment"/>
         <action android:id="@+id/action_main_to_html" app:destination="@id/htmlFragment"/>
         <action android:id="@+id/action_main_to_debugSettings"
@@ -38,7 +43,12 @@
               tools:layout="@layout/fragment_trip">
         <action android:id="@+id/action_trip_to_modifiableMemoryViewer"
                 app:destination="@id/modifiableMemoryViewerFragment"/>
-        <action android:id="@+id/action_trip_to_newAlbum" app:destination="@id/newAlbumFragment"/>
+        <action android:id="@+id/action_trip_to_newAlbum"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right"
+                app:destination="@id/newAlbumFragment"/>
         <action android:id="@+id/action_trip_to_loading"
                 app:enterAnim="@anim/from_right"
                 app:exitAnim="@anim/to_left"
@@ -62,8 +72,6 @@
               android:label="NewAlbumFragment"
               tools:layout="@layout/fragment_new_album">
         <action android:id="@+id/action_newAlbum_to_uploadProgress"
-                app:enterAnim="@anim/from_right"
-                app:exitAnim="@anim/to_left"
                 app:destination="@id/albumUploadProgressFragment"/>
     </fragment>
     <fragment android:id="@+id/modifiableMemoryViewerFragment"
@@ -79,8 +87,6 @@
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
         <argument android:name="coordinates" app:argType="com.google.android.gms.maps.model.LatLng"/>
         <action android:id="@+id/action_loading_to_newMemory"
-                app:enterAnim="@anim/from_right"
-                app:exitAnim="@anim/to_left"
                 app:popUpTo="@id/tripFragment"
                 app:destination="@id/newMemoryFragment"/>
     </fragment>
@@ -146,6 +152,10 @@
               android:label="SignupUsernameFragment"
               tools:layout="@layout/fragment_signup_username">
         <action android:id="@+id/action_signupUsername_to_signupAgreement"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right"
                 app:destination="@id/signupAgreementFragment"/>
         <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
         <argument android:name="socialUserId" app:argType="string"/>
@@ -162,7 +172,8 @@
         <action android:id="@+id/action_signupAgreement_to_mainBefore"
                 app:destination="@id/mainBeforeFragment"/>
     </fragment>
-    <fragment android:id="@+id/mainBeforeFragment" android:name="com.tenacy.roadcapture.ui.MainBeforeFragment"
+    <fragment android:id="@+id/mainBeforeFragment"
+              android:name="com.tenacy.roadcapture.ui.MainBeforeFragment"
               tools:layout="@layout/fragment_main_before"
               android:label="MainBeforeFragment">
         <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>

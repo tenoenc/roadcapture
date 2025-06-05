@@ -1,5 +1,4 @@
 package com.tenacy.roadcapture.ui
-
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
