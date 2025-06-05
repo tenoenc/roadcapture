@@ -60,25 +60,6 @@
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
-                              android:orientation="horizontal">
-
-                    <View android:layout_width="5dp"
-                          android:layout_height="5dp"
-                          android:layout_marginTop="8dp"
-                          android:background="@drawable/circle"/>
-
-                    <TextView android:layout_width="0dp"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:textAppearance="@style/Body_15_M"
-                              android:textColor="@color/label_normal"
-                              android:text="앨범 무제한 생성"
-                              android:layout_marginStart="8dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
                               android:orientation="horizontal"
                               android:layout_marginTop="12dp">
 
@@ -123,7 +104,7 @@
                                   android:layout_height="wrap_content"
                                   android:textAppearance="@style/Body_12_M"
                                   android:textColor="@color/label_neutral"
-                                  android:text="링크를 활용하여 외부의 누군가에게 앨범을 공유할 수 있어요. 웹 페이지에서는 추억을 순서대로 확인할 수 있어요."
+                                  android:text="링크를 활용하여 외부에 앨범을 공유할 수 있어요"
                                   android:layout_marginStart="8dp"/>
 
 

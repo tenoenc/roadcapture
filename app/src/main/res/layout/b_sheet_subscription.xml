@@ -109,26 +109,6 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_15_M"
                               android:textColor="@color/label_normal"
-                              android:text="앨범 무제한 생성"
-                              android:layout_marginStart="8dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="horizontal"
-                              android:layout_marginTop="12dp">
-
-                    <View android:layout_width="5dp"
-                          android:layout_height="5dp"
-                          android:layout_marginTop="8dp"
-                          android:background="@drawable/circle"/>
-
-                    <TextView android:layout_width="0dp"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:textAppearance="@style/Body_15_M"
-                              android:textColor="@color/label_normal"
                               android:text="@{row2Text}"
                               tools:text="앨범 당 최대 100개의 추억 생성"
                               android:layout_marginStart="8dp"/>
@@ -212,7 +192,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_15_M"
                               android:textColor="@color/label_normal"
-                              android:text="결제한 Play Store 계정 단위로 혜택이 공유돼요"
+                              android:text="결제한 Play Store 계정 단위이므로 앱 내 어떤 계정에서도 혜택이 공유돼요"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>

@@ -105,8 +105,8 @@ class MyMemoryTabFragment: BaseFragment() {
             addItemDecoration(
                 GridItemSpacingDecoration(
                     spanCount = spanCount,
-                    horizontalSpacing = 6.toPx,
-                    verticalSpacing = 6.toPx,
+                    horizontalSpacing = 1.toPx,
+                    verticalSpacing = 1.toPx,
                 )
             )
             setHasFixedSize(true)

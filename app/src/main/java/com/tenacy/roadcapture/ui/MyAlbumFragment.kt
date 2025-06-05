@@ -69,6 +69,7 @@ class MyAlbumFragment: BaseFragment() {
     private fun setupImagePicker() {
         imagePickerLauncher = registerImagePicker { result: List<Image> ->
             result.getOrNull(0)?.let {
+
                 UpdateUserPhotoWorker.enqueueOneTimeWork(requireContext(), it.uri)
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프로필 사진을 변경하고 있어요\n반영되는 데 시간이 걸려요")))
             }

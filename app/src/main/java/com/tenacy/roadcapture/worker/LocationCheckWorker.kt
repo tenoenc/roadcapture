@@ -109,7 +109,7 @@ class LocationCheckWorker @AssistedInject constructor(
             WorkManager.getInstance(context)
                 .enqueueUniquePeriodicWork(
                     Constants.TRACKING_WORK_NAME,
-                    ExistingPeriodicWorkPolicy.UPDATE,
+                    ExistingPeriodicWorkPolicy.KEEP,
                     periodicWorkRequest
                 )
 
