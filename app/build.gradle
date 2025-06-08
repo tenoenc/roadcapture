@@ -31,8 +31,8 @@ android {
         javaCompileOptions {
             annotationProcessorOptions {
                 arguments += [
-                        "room.schemaLocation": "$projectDir/schemas".toString(),
-                        "room.incremental": "true",
+                        "room.schemaLocation"  : "$projectDir/schemas".toString(),
+                        "room.incremental"     : "true",
                         "room.expandProjection": "true"
                 ]
             }
@@ -126,7 +126,10 @@ dependencies {
      * **********************************************************
      */
     implementation libs.billing
-    implementation libs.ads
+    implementation libs.play.services.ads
+    implementation libs.play.services.ads.identifier
+    implementation libs.google.play.review
+    implementation libs.google.play.review.ktx
 
     /**
      * **********************************************************
@@ -270,9 +273,8 @@ dependencies {
     implementation libs.tensorflow.lite.support
     implementation libs.onnxruntime
 
-    implementation 'io.branch.sdk.android:library:5.+'
-    implementation 'com.google.android.gms:play-services-ads-identifier:17.1.0+'
-    implementation 'androidx.browser:browser:1.0.0'
+    implementation libs.branch
+    implementation libs.browser
 
     /**
      * **********************************************************

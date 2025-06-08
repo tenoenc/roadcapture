@@ -7,7 +7,8 @@
     <color name="primary_strong">#70E3CF</color>
     <color name="primary_strong_a50">#7F70E3CF</color>
     <color name="background_normal">#FCFEFF</color>
-    <color name="background_normal_a">#80FCFEFF</color>
+    <color name="background_normal_a50">#80FCFEFF</color>
+    <color name="background_normal_a80">#CCFCFEFF</color>
     <color name="background_alternative">#F2FFFC</color>
     <color name="line_normal">#BFDFD7</color>
     <color name="line_strong">#4D9B87</color>

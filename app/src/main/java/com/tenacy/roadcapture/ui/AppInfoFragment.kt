@@ -29,9 +29,9 @@ import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
 import com.tenacy.roadcapture.data.SocialType
-import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentAppInfoBinding
+import com.tenacy.roadcapture.manager.AppReviewManager
 import com.tenacy.roadcapture.manager.DonationManager
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCallback
@@ -52,6 +52,9 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     val binding get() = _binding!!
 
     private val vm: AppInfoViewModel by viewModels()
+
+    @Inject
+    lateinit var appReviewManager: AppReviewManager
 
     @Inject
     lateinit var subscriptionManager: SubscriptionManager
@@ -240,6 +243,14 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
 
             is AppInfoViewEvent.NavigateToHtml -> {
                 findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
+            }
+
+            is AppInfoViewEvent.ReviewApp -> {
+                appReviewManager.requestReview(
+                    onReviewCompleted = {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앱 평가를 완료했어요", ToastMessageType.Info)))
+                    }
+                )
             }
 
             is AppInfoViewEvent.ShowLogoutBefore -> {

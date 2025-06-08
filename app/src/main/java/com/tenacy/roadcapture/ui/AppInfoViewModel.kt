@@ -136,6 +136,12 @@ class AppInfoViewModel @Inject constructor(
         }
     }
 
+    fun onAppReviewClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AppInfoViewEvent.ReviewApp)
+        }
+    }
+
     fun onDonateClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(AppInfoViewEvent.Donate)

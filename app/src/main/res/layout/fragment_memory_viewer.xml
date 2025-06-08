@@ -79,7 +79,7 @@
                                                    app:contentPaddingTop="4dp"
                                                    app:contentPaddingBottom="4dp"
                                                    app:cardElevation="0dp"
-                                                   app:cardBackgroundColor="@color/background_normal_a"
+                                                   app:cardBackgroundColor="@color/background_normal_a80"
                                                    android:layout_marginBottom="10dp"
                                                    app:layout_constraintStart_toStartOf="parent"
                                                    app:layout_constraintEnd_toEndOf="parent"
