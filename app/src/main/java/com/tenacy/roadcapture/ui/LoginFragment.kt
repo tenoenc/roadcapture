@@ -159,13 +159,12 @@ class LoginFragment : BaseFragment() {
             // 추가된 에러 처리
             is LoginViewEvent.SocialError -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    val message = event.message ?: "로그인에 실패했어요"
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(message, ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("로그인 중에 문제가 발생했어요", ToastMessageType.Warning)))
                 }
             }
 
             is LoginViewEvent.Signup -> {
-                findNavController().navigate(LoginFragmentDirections.actionLoginToSignupUsername(event.authCredential, event.socialUserId, event.socialType))
+                findNavController().navigate(LoginFragmentDirections.actionLoginToSignupUsername(event.authCredential, event.socialUserId, event.socialProfileUrl, event.socialType))
             }
         }
     }

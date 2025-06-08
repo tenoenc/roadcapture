@@ -4,8 +4,10 @@ import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.manager.FreepikNSFWDetector
 import com.tenacy.roadcapture.ui.dto.Address
 import com.tenacy.roadcapture.util.*
@@ -64,7 +66,8 @@ class NewMemoryBeforeViewModel @Inject constructor(
                 val excludePatterns = listOf("ISO", "country_code")
 
                 val address = try {
-                    val nominatimReverseResponse = RetrofitInstance.nominatimApi.reverse(
+                    val nominatimReverseResponse = RetrofitInstance.locationIqApi.reverse(
+                        apiKey = BuildConfig.LOCATION_IQ_ACCESS_TOKEN,
                         lat = coordinates.latitude,
                         lon = coordinates.longitude,
                     )
@@ -79,7 +82,7 @@ class NewMemoryBeforeViewModel @Inject constructor(
                             ?.map { it.value }
                             ?.toList()
                             ?.distinct()
-                            ?.reversed() ?: emptyList(),
+                            ?.reversed() ?: throw Exception(),
                         coordinates = coordinates,
                     )
                 } catch (exception: Exception) {

@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.auth
 
-import android.os.Build.VERSION_CODES.O
 import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -11,7 +10,6 @@ import com.kakao.sdk.user.UserApiClient
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.LoginViewModel
 import com.tenacy.roadcapture.util.TagConstants
-import com.tenacy.roadcapture.util.user
 
 class KakaoOAuthLoginCallback(
     private val fragment: Fragment,
@@ -56,9 +54,9 @@ class KakaoOAuthLoginCallback(
                 user?.kakaoAccount?.email
             } else if (user != null) {
                 val kakaoUserId = user.id
-                val profilePicUrl = user.kakaoAccount?.profile?.thumbnailImageUrl
+                val profileUrl = user.kakaoAccount?.profile?.thumbnailImageUrl ?: ""
 
-                proceedWithFirebaseAuth(token, kakaoUserId.toString(), profilePicUrl)
+                proceedWithFirebaseAuth(token, kakaoUserId.toString(), profileUrl)
             }
         }
     }
@@ -69,7 +67,7 @@ class KakaoOAuthLoginCallback(
         viewModel.onLoginCancelled(SocialType.Kakao)
     }
 
-    private fun proceedWithFirebaseAuth(token: OAuthToken, kakaoUserId: String, profilePicUrl: String?) {
+    private fun proceedWithFirebaseAuth(token: OAuthToken, kakaoUserId: String, profileUrl: String) {
         try {
             val providerId = "oidc.roadcapture"
             val authCredential = oAuthCredential(providerId) {
@@ -77,7 +75,7 @@ class KakaoOAuthLoginCallback(
                 accessToken = token.accessToken
             }
 
-            viewModel.signInWithCredential(authCredential, kakaoUserId, SocialType.Kakao)
+            viewModel.signInWithCredential(authCredential, kakaoUserId, profileUrl, SocialType.Kakao)
         } catch (e: Exception) {
             Log.e(TagConstants.AUTH, "Firebase 인증 실패", e)
             viewModel.onLoginError(e, SocialType.Kakao)

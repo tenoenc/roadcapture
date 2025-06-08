@@ -14,6 +14,30 @@
       },
       "oauth_client": [
         {
+          "client_id": "697233839299-42k4sthscec71h74ipsdbj426s89mcp3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tenacy.roadcapture",
+            "certificate_hash": "71f457f985f43a64c0c6cf11a906c3ec64189ee0"
+          }
+        },
+        {
+          "client_id": "697233839299-dn8cfgi9utmfr5vob87e1l9j5e5bv3rt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tenacy.roadcapture",
+            "certificate_hash": "be1a10e5216a765bc2fb52475dc87cd5a896910e"
+          }
+        },
+        {
+          "client_id": "697233839299-h98hefa5811n3koh4pskkgjgdb5e282o.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tenacy.roadcapture",
+            "certificate_hash": "9c5ce881fcae14bcc0dd3e6b69a58e1b7571c8f7"
+          }
+        },
+        {
           "client_id": "697233839299-jb2unnvbu9phj3mi9cci3blok06sctem.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

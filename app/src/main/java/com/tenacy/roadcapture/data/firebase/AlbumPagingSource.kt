@@ -9,6 +9,7 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toAlbum
 import com.tenacy.roadcapture.util.whereInWithFilters
@@ -19,7 +20,7 @@ class AlbumPagingSource(
 ): PagingSource<DocumentSnapshot, Album>() {
 
     companion object {
-        const val PAGE_SIZE = 3
+        const val PAGE_SIZE = 20
         private const val TAG = "AlbumPagingSource"
     }
 
@@ -61,7 +62,7 @@ class AlbumPagingSource(
                 is AlbumFilter.All -> {
                     // 기존 ALL 필터 로직
                     // 기본 쿼리 생성
-                    var query = db.collection("albums")
+                    var query = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
 
                     query = query.whereEqualTo("isPublic", true)
@@ -99,10 +100,10 @@ class AlbumPagingSource(
 
                     val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                         // 특정 앨범들에 대한 스크랩 상태만 조회
-                        val albumRefs = albumIds.map { db.collection("albums").document(it) }
-                        val userRef = db.collection("users").document(UserPref.id)
+                        val albumRefs = albumIds.map { db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(it) }
+                        val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
 
-                        val scrapRefs = db.collection("scraps")
+                        val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                             .whereInWithFilters("albumRef", albumRefs) { query ->
                                 query.whereEqualTo("userRef", userRef)
                             }
@@ -134,13 +135,13 @@ class AlbumPagingSource(
                     Log.d(TAG, "SCRAP 필터 로드 요청")
 
                     // 현재 사용자 참조
-                    val userRef = db.collection("users").document(UserPref.id)
+                    val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
 
                     // 커서 기반 페이징을 위한 시작점 설정
                     val startAfterDoc = params.key
 
                     // 먼저 사용자의 스크랩 목록 가져오기 (createdAt 기준 정렬)
-                    var scrapQuery = db.collection("scraps")
+                    var scrapQuery = db.collection(FirebaseConstants.COLLECTION_REPORTS)
                         .whereEqualTo("userRef", userRef)
                         .whereEqualTo("albumPublic", true)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -180,7 +181,7 @@ class AlbumPagingSource(
                     val albums = mutableListOf<Album>()
                     albumRefs.chunked(10).forEach { chunk ->
                         // whereIn으로 앨범 문서 가져오기
-                        val albumDocs = db.collection("albums")
+                        val albumDocs = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                             .whereIn(FieldPath.documentId(), chunk.map { it.id })
                             .get().await().documents
 
@@ -214,10 +215,10 @@ class AlbumPagingSource(
                 is AlbumFilter.User -> {
                     // 기존 ALL 필터 로직
                     // 기본 쿼리 생성
-                    var query = db.collection("albums")
+                    var query = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
 
-                    val userRef = db.collection("users").document(filter.id)
+                    val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(filter.id)
 
                     filter.isPublic?.let {
                         query = query.whereEqualTo("isPublic", it)
@@ -259,9 +260,9 @@ class AlbumPagingSource(
 
                     val scrapedByAlbumId = if (albumIds.isNotEmpty()) {
                         // 특정 앨범들에 대한 스크랩 상태만 조회
-                        val albumRefs = albumIds.map { db.collection("albums").document(it) }
+                        val albumRefs = albumIds.map { db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(it) }
 
-                        val scrapRefs = db.collection("scraps")
+                        val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                             .whereInWithFilters("albumRef", albumRefs) { query ->
                                 query.whereEqualTo("userRef", userRef)
                             }

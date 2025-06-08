@@ -65,7 +65,7 @@
                                android:id="@+id/ibtn_i_album_row_1_profile"
                                app:url="@{profileImageUrl}"
                                app:radius="@{100}"
-                               tools:src="@drawable/profile_image"
+                               tools:src="@drawable/profile"
                                app:layout_constraintStart_toStartOf="parent"
                                app:layout_constraintBottom_toBottomOf="parent"
                                app:layout_constraintTop_toTopOf="parent"/>

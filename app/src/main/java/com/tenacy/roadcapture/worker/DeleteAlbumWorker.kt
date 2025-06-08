@@ -80,15 +80,15 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val albumId = inputData.getString(KEY_ALBUM_ID) ?: return@withContext Result.failure()
 
             // 참조 불러오기
-            val albumRef = db.collection("albums").document(albumId)
+            val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
 
-            val memoryRefs = db.collection("memories")
+            val memoryRefs = db.collection(FirebaseConstants.COLLECTION_MEMORIES)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
-            val locationRefs = db.collection("locations")
+            val locationRefs = db.collection(FirebaseConstants.COLLECTION_LOCATIONS)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
-            val scrapRefs = db.collection("scraps")
+            val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
             val allOperations = mutableListOf<BatchOperation>()

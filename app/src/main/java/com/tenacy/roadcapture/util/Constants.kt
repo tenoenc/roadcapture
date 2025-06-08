@@ -48,4 +48,5 @@ object Constants {
     const val CACHE_REPEAT_INTERVAL_DAYS = 1L
     const val CACHE_EXPIRATION_DAYS = 30L
     const val CACHE_CLEANUP_WORK_NAME = "cleanup_cache"
+    const val CACHE_PHOTO_WORK_NAME = "cache_photo"
 }

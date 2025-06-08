@@ -11,6 +11,7 @@ import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.data.firebase.dto.SearchResponse
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toAlbum
 import kotlinx.coroutines.Dispatchers
@@ -34,11 +35,11 @@ class AlgoliaManager @Inject constructor() {
     }
 
     private val albumIndex: Index by lazy {
-        client.getIndex("albums")
+        client.getIndex(FirebaseConstants.COLLECTION_ALBUMS)
     }
 
     private val scrapIndex: Index by lazy {
-        client.getIndex("scraps")
+        client.getIndex(FirebaseConstants.COLLECTION_SCRAPS)
     }
 
     private suspend fun searchAlbums(
@@ -165,7 +166,7 @@ class AlgoliaManager @Inject constructor() {
 
             for (chunk in chunkedAlbumIds) {
                 // Firebase에서 앨범 데이터 가져오기
-                val albumsSnapshot = db.collection("albums")
+                val albumsSnapshot = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                     .whereIn(FieldPath.documentId(), chunk)
                     .get()
                     .await()
@@ -177,9 +178,9 @@ class AlgoliaManager @Inject constructor() {
 
                 // 스크랩 정보 가져오기
                 val scrapedIds = if (chunk.isNotEmpty()) {
-                    val scrapSnapshot = db.collection("scraps")
-                        .whereIn("albumRef", chunk.map { db.collection("albums").document(it) })
-                        .whereEqualTo("userRef", db.collection("users").document(UserPref.id))
+                    val scrapSnapshot = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
+                        .whereIn("albumRef", chunk.map { db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(it) })
+                        .whereEqualTo("userRef", db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id))
                         .get()
                         .await()
 
@@ -220,14 +221,14 @@ class AlgoliaManager @Inject constructor() {
 
             for (chunk in chunkedScrapIds) {
                 // Firebase에서 앨범 데이터 가져오기
-                val scrapsSnapshot = db.collection("scraps")
+                val scrapsSnapshot = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                     .whereIn(FieldPath.documentId(), chunk)
                     .orderBy("createdAt", com.google.firebase.firestore.Query.Direction.DESCENDING)
                     .get()
                     .await()
 
                 val albumIds = scrapsSnapshot.documents.mapNotNull { it.getDocumentReference("albumRef")?.id }
-                val chunkAlbums = db.collection("albums")
+                val chunkAlbums = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                     .whereIn(FieldPath.documentId(), albumIds)
                     .get().await()
                     .map { Album.from(it.toAlbum(), true) }

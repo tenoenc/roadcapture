@@ -11,6 +11,7 @@ import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.PhotoCacheWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -62,10 +63,10 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val startTime = TravelPref.createdAt.toFirebaseTimestamp()
                 val endTime = LocalDateTime.now().toFirebaseTimestamp()
                 val userId = UserPref.id
-                val userRef = db.collection("users").document(userId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
                 val user = userRef.get().await().toUser()
 
-                val albumRef = db.collection("albums").document()
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document()
                 val albumId = albumRef.id
 
                 // 2. 지역 태그 생성
@@ -119,6 +120,11 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 val uploadResults = memoryUploadTasks.awaitAll()
                 val photoUrlMap = uploadResults.toMap()
                 
+                // 이미지 캐싱
+                val uploadedPhotoUrls = photoUrlMap.values.map { (_, downloadUrl) -> downloadUrl }
+                PhotoCacheWorker.enqueueOneTimeWork(context, uploadedPhotoUrls)
+                Log.d("AlbumSave", "이미지 캐싱 작업 예약 완료: ${uploadedPhotoUrls.size}개")
+                
                 // 3 - 4. 오픈 그래프 이미지 업로드
                 sendWithDelay(AlbumSaveState.UploadingThumbnail)
                 val ogImageUri = memories.firstOrNull()?.memory?.photoUri
@@ -147,7 +153,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                     )
                 }
 
-                val locationRefByMemoryId = locations.associateBy { it.id }.mapValues { db.collection("locations").document() }
+                val locationRefByMemoryId = locations.associateBy { it.id }.mapValues { db.collection(FirebaseConstants.COLLECTION_LOCATIONS).document() }
                 val memoriesData = memories.map { memoryWithLocation ->
                     val memory = memoryWithLocation.memory
                     val (storagePath, uploadedPhotoUrl) = photoUrlMap[memory.id]
@@ -197,7 +203,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
 
                 // 메모리 작업 추가
                 memoriesData.forEach { memoryData ->
-                    val memoryRef = db.collection("memories").document()
+                    val memoryRef = db.collection(FirebaseConstants.COLLECTION_MEMORIES).document()
                     allOperations.add(SetDocumentOperation(memoryRef, memoryData))
                 }
 

@@ -74,8 +74,8 @@ class UpdateAlbumPublicWorker @AssistedInject constructor(
 
             Log.d(TAG, "앨범 공개 여부 업데이트 시작: albumId=$albumId, isPublic=$isPublic")
 
-            val albumRef = db.collection("albums").document(albumId)
-            val scrapRefs = db.collection("scraps")
+            val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
+            val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
             val allOperations = mutableListOf<BatchOperation>()

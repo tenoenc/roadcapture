@@ -92,14 +92,14 @@ class UpdateUsernameWorker @AssistedInject constructor(
 
             // Firestore 데이터베이스 업데이트
             val db = FirebaseFirestore.getInstance()
-            val userRef = db.collection("users").document(userId)
+            val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
 
             // 사용자가 소유한 모든 앨범 찾기
-            val albumRefs = db.collection("albums")
+            val albumRefs = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                 .whereEqualTo("userRef", userRef).getAllReferences()
 
             // 해당 앨범을 스크랩한 항목 찾기
-            val scrapRefs = db.collection("scraps")
+            val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                 .whereInAllReferences("albumRefs", albumRefs)
 
             // 일괄 업데이트 작업 준비

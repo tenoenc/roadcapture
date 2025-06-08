@@ -89,7 +89,7 @@ class SignupUsernameFragment: BaseFragment() {
         val args: SignupUsernameFragmentArgs by navArgs()
         when (event) {
             is SignupUsernameViewEvent.Next -> {
-                findNavController().navigate(SignupUsernameFragmentDirections.actionSignupUsernameToSignupAgreement(args.authCredential, args.socialUserId, args.socialType, event.username))
+                findNavController().navigate(SignupUsernameFragmentDirections.actionSignupUsernameToSignupProfile(args.authCredential, args.socialUserId, args.socialProfileUrl, args.socialType, event.username))
             }
         }
     }

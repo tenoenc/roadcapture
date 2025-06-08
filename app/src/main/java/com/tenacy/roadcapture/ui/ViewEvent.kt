@@ -19,7 +19,7 @@ sealed class LoginViewEvent: ViewEvent {
     data object FacebookLogin: LoginViewEvent()
     data object KakaoLogin: LoginViewEvent()
     data object NaverLogin: LoginViewEvent()
-    data class Signup(val socialUserId: String, val socialType: SocialType, val authCredential: AuthCredential): LoginViewEvent()
+    data class Signup(val socialUserId: String, val socialType: SocialType, val socialProfileUrl: String, val authCredential: AuthCredential): LoginViewEvent()
     data class SocialError(val message: String?, val socialType: SocialType): LoginViewEvent()
 }
 
@@ -137,6 +137,10 @@ sealed class HtmlViewEvent
 
 sealed class SignupUsernameViewEvent: ViewEvent {
     data class Next(val username: String): SignupUsernameViewEvent()
+}
+
+sealed class SignupProfileViewEvent: ViewEvent {
+    data class Next(val defaultProfile: DefaultProfile): SignupProfileViewEvent()
 }
 
 sealed class SignupAgreementViewEvent : ViewEvent {

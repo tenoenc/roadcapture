@@ -316,7 +316,7 @@
                                android:layout_height="36dp"
                                app:url="@{vm.profileUrl}"
                                app:radius="@{100}"
-                               tools:src="@drawable/profile_image"/>
+                               tools:src="@drawable/profile"/>
 
                     <TextView android:layout_width="0dp"
                               android:layout_height="wrap_content"

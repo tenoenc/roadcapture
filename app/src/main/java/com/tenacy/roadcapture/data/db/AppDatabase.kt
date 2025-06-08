@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LocationCacheEntity::class,
         CacheEntity::class,
     ],
-    version = 4,
+    version = 1,
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class, UriConverter::class)
@@ -94,9 +94,9 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getInstance(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "app_db")
-                .addMigrations(MIGRATION_1_2)
-                .addMigrations(MIGRATION_2_3)
-                .addMigrations(MIGRATION_3_4)
+//                .addMigrations(MIGRATION_1_2)
+//                .addMigrations(MIGRATION_2_3)
+//                .addMigrations(MIGRATION_3_4)
                 .build()
     }
 }

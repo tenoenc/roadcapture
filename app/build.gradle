@@ -21,12 +21,10 @@ android {
         applicationId "com.tenacy.roadcapture"
         minSdk 26
         targetSdk 35
-        versionCode 7
-        versionName "0.8.3"
+        versionCode 8
+        versionName "0.9.0"
 
         multiDexEnabled true
-
-        resValue "string", "deeplink_albums", properties.getProperty("WEB_BASE_URL") + "/albums/{shareId}"
 
         javaCompileOptions {
             annotationProcessorOptions {

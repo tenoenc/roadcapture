@@ -10,6 +10,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignupUsernameViewModel @Inject constructor(
+
 ) : BaseViewModel() {
 
     val username = MutableStateFlow("")

@@ -13,7 +13,7 @@ class AlgoliaPagingSource(
 ) : PagingSource<Int, Album>() {
 
     companion object {
-        const val PAGE_SIZE = 3
+        const val PAGE_SIZE = 20
         private const val TAG = "AlgoliaPagingSource"
     }
 

@@ -6,9 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
-import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
-import com.tenacy.roadcapture.data.pref.UserPref.socialUserId
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.auth
@@ -45,9 +43,10 @@ class MainBeforeViewModel @Inject constructor(
             flow {
                 auth.signInWithCredential(credential).await()
                 val userId = user!!.uid
-                val userRef = db.collection("users").document(userId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
                 if (!isExistingUser) {
                     val username = args.username ?: user!!.displayName ?: "unknown"
+                    val defaultProfile = args.defaultProfile!!
 
                     // 1. Authentication 프로필 업데이트
                     val profileUpdates = UserProfileChangeRequest.Builder()
@@ -56,17 +55,18 @@ class MainBeforeViewModel @Inject constructor(
                     user!!.updateProfile(profileUpdates).await()
 
                     // 2. 파이어스토어 업데이트
-                    val photoPath = /*"images/users/$userId/profile.jpg"*/ FirebaseConstants.DEFAULT_PROFILE_PATH
-                    val photoUrl = /*setDefaultProfileImage(photoPath)*/ FirebaseConstants.DEFAULT_PROFILE_URL
-
+                    val defaultProfilePath  = when(defaultProfile) {
+                        is DefaultProfile.Social -> "images/users/$userId/profile.jpg"
+                        is DefaultProfile.App -> FirebaseConstants.DEFAULT_PROFILE_PATH
+                    }
                     val userData = mapOf(
                         "displayName" to username,
                         "socialUserId" to socialUserId,
                         "provider" to socialType.name,
                         "createdAt" to FieldValue.serverTimestamp(),
                         "updatedAt" to FieldValue.serverTimestamp(),
-                        "photoUrl" to photoUrl,
-                        "photoName" to photoPath,
+                        "photoUrl" to defaultProfile.url,
+                        "photoName" to defaultProfilePath,
                     )
                     userRef.set(userData).await()
 
@@ -75,7 +75,7 @@ class MainBeforeViewModel @Inject constructor(
                     UserPref.socialUserId = socialUserId
                     UserPref.provider = socialType
                     UserPref.displayName = username
-                    UserPref.photoUrl = photoUrl
+                    UserPref.photoUrl = defaultProfile.url
                 } else {
                     // 1. 로컬 데이터 업데이트
                     UserPref.id = userId

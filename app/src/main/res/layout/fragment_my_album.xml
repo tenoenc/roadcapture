@@ -32,7 +32,7 @@
                 <ImageView android:layout_width="60dp"
                            android:layout_height="60dp"
                            android:id="@+id/cl_my_album_hedaer_profile"
-                           tools:src="@drawable/profile_image"
+                           tools:src="@drawable/profile"
                            app:url="@{vm.photoUrl}"
                            app:radius="@{100}"
                            app:layout_constraintTop_toTopOf="parent"

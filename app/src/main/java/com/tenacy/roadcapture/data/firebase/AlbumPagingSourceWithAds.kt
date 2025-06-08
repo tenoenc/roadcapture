@@ -10,6 +10,7 @@ import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toAlbum
 import com.tenacy.roadcapture.util.whereInWithFilters
@@ -154,7 +155,7 @@ class AlbumPagingSourceWithAds(
     // 모든 앨범 로드 로직
     private suspend fun loadAllAlbums(startAfterDoc: DocumentSnapshot?): AlbumQueryResult {
         // 기본 쿼리 생성
-        var query = db.collection("albums")
+        var query = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
             .whereEqualTo("isPublic", true)
             .limit(PAGE_SIZE.toLong())
@@ -187,10 +188,10 @@ class AlbumPagingSourceWithAds(
     // 스크랩된 앨범 로드 로직
     private suspend fun loadScrapAlbums(startAfterDoc: DocumentSnapshot?): AlbumQueryResult {
         // 현재 사용자 참조
-        val userRef = db.collection("users").document(UserPref.id)
+        val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
 
         // 스크랩 쿼리 생성
-        var scrapQuery = db.collection("scraps")
+        var scrapQuery = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
             .whereEqualTo("userRef", userRef)
             .whereEqualTo("albumPublic", true)
             .orderBy("createdAt", Query.Direction.DESCENDING)
@@ -220,7 +221,7 @@ class AlbumPagingSourceWithAds(
         val albums = mutableListOf<Album>()
         albumRefs.chunked(10).forEach { chunk ->
             // whereIn으로 앨범 문서 가져오기
-            val albumDocs = db.collection("albums")
+            val albumDocs = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                 .whereIn(FieldPath.documentId(), chunk.map { it.id })
                 .get().await().documents
 
@@ -245,10 +246,10 @@ class AlbumPagingSourceWithAds(
     // 사용자별 앨범 로드 로직
     private suspend fun loadUserAlbums(filter: AlbumFilter.User, startAfterDoc: DocumentSnapshot?): AlbumQueryResult {
         // 기본 쿼리 생성
-        var query = db.collection("albums")
+        var query = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
             .orderBy("createdAt", Query.Direction.DESCENDING)
 
-        val userRef = db.collection("users").document(filter.id)
+        val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(filter.id)
 
         filter.isPublic?.let {
             query = query.whereEqualTo("isPublic", it)
@@ -287,13 +288,13 @@ class AlbumPagingSourceWithAds(
         if (albumIds.isEmpty()) return emptySet()
 
         // 앨범 참조 생성
-        val albumRefs = albumIds.map { db.collection("albums").document(it) }
+        val albumRefs = albumIds.map { db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(it) }
 
         // 사용자 참조 (지정되지 않은 경우 현재 사용자)
-        val userReference = userRef ?: db.collection("users").document(UserPref.id)
+        val userReference = userRef ?: db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
 
         // 스크랩 쿼리 실행
-        val scrapRefs = db.collection("scraps")
+        val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
             .whereInWithFilters("albumRef", albumRefs) { query ->
                 query.whereEqualTo("userRef", userReference)
             }

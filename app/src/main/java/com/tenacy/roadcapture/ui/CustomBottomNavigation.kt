@@ -41,12 +41,12 @@ class CustomBottomNavigation @JvmOverloads constructor(
 
     private fun setupClickListeners() {
         // 홈 버튼 클릭 리스너
-        binding.bnHome.setSafeClickListener {
+        binding.bnHome.setOnClickListener {
             navigateTo(R.id.homeFragment)
         }
 
         // 북마크 버튼 클릭 리스너
-        binding.bnScrap.setSafeClickListener {
+        binding.bnScrap.setOnClickListener {
             navigateTo(R.id.scrapFragment)
         }
 
@@ -56,12 +56,12 @@ class CustomBottomNavigation @JvmOverloads constructor(
         }
 
         // 앨범 버튼 클릭 리스너
-        binding.bnMyAlbum.setSafeClickListener {
+        binding.bnMyAlbum.setOnClickListener {
             navigateTo(R.id.myAlbumFragment)
         }
 
         // 검색 버튼 클릭 리스너
-        binding.bnAppInfo.setSafeClickListener {
+        binding.bnAppInfo.setOnClickListener {
             navigateTo(R.id.appInfoFragment)
         }
     }

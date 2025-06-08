@@ -6,6 +6,7 @@ import androidx.paging.PagingState
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.Query
 import com.tenacy.roadcapture.ui.dto.Memory
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.toMemory
 import kotlinx.coroutines.tasks.await
@@ -15,7 +16,7 @@ class MemoryPagingSource(
 ): PagingSource<DocumentSnapshot, Memory>() {
 
     companion object {
-        const val PAGE_SIZE = 10
+        const val PAGE_SIZE = 20
         private const val TAG = "MemoryPagingSource"
     }
 
@@ -55,9 +56,9 @@ class MemoryPagingSource(
 
             when(filter) {
                 is MemoryFilter.User -> {
-                    val userRef = db.collection("users").document(filter.id)
+                    val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(filter.id)
 
-                    var query = db.collection("memories")
+                    var query = db.collection(FirebaseConstants.COLLECTION_MEMORIES)
                         .whereEqualTo("userRef", userRef)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
 

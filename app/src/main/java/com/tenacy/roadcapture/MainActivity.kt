@@ -304,7 +304,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "성공적으로 공유 링크가 생성되었어요.",
+                                        "성공적으로 공유 링크가 생성되었어요",
                                         ToastMessageType.Success
                                     )
                                 )

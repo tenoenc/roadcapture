@@ -131,13 +131,13 @@ class AlbumViewModel @Inject constructor(
             val currentUserId = albumUserId.value
 
             flow {
-                val albumUserRef = db.collection("users").document(currentUserId)
+                val albumUserRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId)
                 if(!albumUserRef.get().await().exists()) {
                     throw FirebaseFirestoreException("존재하지 않는 사용자예요", FirebaseFirestoreException.Code.NOT_FOUND)
                 }
 
-                val userRef = db.collection("users").document(UserPref.id)
-                val albumRef = db.collection("albums").document(currentAlbumId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(currentAlbumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
                     ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
 
@@ -145,7 +145,7 @@ class AlbumViewModel @Inject constructor(
                     throw FirebaseFirestoreException("비공개로 전환된 앨범이에요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
-                val scrapRef = db.collection("scraps")
+                val scrapRef = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                 val isScraped = scrapRef
                     .whereEqualTo("userRef", userRef)
                     .whereEqualTo("albumRef", albumRef)
@@ -165,7 +165,7 @@ class AlbumViewModel @Inject constructor(
                         locationCacheDao.selectByAlbumId(album.id).map(LocationCacheEntity::toFirebaseLocation)
                     memories to locations
                 } else {
-                    val memories = db.collection("memories")
+                    val memories = db.collection(FirebaseConstants.COLLECTION_MEMORIES)
                         .whereEqualTo("albumRef", albumRef)
                         .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toMemory() }
 
@@ -173,7 +173,7 @@ class AlbumViewModel @Inject constructor(
                     val memoryCaches = memories.map(MemoryCacheEntity::of)
                     memoryCacheDao.insertAll(memoryCaches)
 
-                    val locations = db.collection("locations")
+                    val locations = db.collection(FirebaseConstants.COLLECTION_LOCATIONS)
                         .whereEqualTo("albumRef", albumRef)
                         .orderBy("createdAt", Query.Direction.ASCENDING).getAll { it.toLocation() }
 
@@ -212,7 +212,7 @@ class AlbumViewModel @Inject constructor(
 
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                val albumRef = db.collection("albums").document(currentAlbumId)
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(currentAlbumId)
                 albumRef.update("viewCount", FieldValue.increment(1)).await()
                 emit(Unit)
             }.catch { exception ->
@@ -237,11 +237,11 @@ class AlbumViewModel @Inject constructor(
                 val userId = UserPref.id
 
                 // 참조 생성
-                val albumRef = db.collection("albums").document(currentAlbumId)
-                val userRef = db.collection("users").document(userId)
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(currentAlbumId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
 
                 // 트랜잭션 밖에서 먼저 scraps 문서 ID를 찾아두기
-                val scrapToDelete = db.collection("scraps")
+                val scrapToDelete = db.collection(FirebaseConstants.COLLECTION_SCRAPS )
                     .whereEqualTo("userRef", userRef)
                     .whereEqualTo("albumRef", albumRef)
                     .limit(1)
@@ -253,7 +253,7 @@ class AlbumViewModel @Inject constructor(
                 val isScraped = suspendCancellableCoroutine<Boolean> { continuation ->
                     db.runTransaction { transaction ->
                         val album = transaction.get(albumRef).toAlbum()
-                        val albumUserRef = db.collection("users").document(album.userId)
+                        val albumUserRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(album.userId)
 
                         if (scrapToDelete?.exists() == true) {
                             // 스크랩 취소
@@ -265,7 +265,7 @@ class AlbumViewModel @Inject constructor(
                             false
                         } else {
                             // 스크랩하기
-                            val newScrapRef = db.collection("scraps").document()
+                            val newScrapRef = db.collection(FirebaseConstants.COLLECTION_SCRAPS).document()
                             transaction.set(newScrapRef, mapOf(
                                 "albumRef" to albumRef,
                                 "userRef" to userRef,
@@ -315,8 +315,8 @@ class AlbumViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userId = UserPref.id
-                val userRef = db.collection("users").document(userId)
-                val albumRef = db.collection("albums").document(albumId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
 
                 val reportData = mapOf(
                     "userRef" to userRef,
@@ -325,7 +325,7 @@ class AlbumViewModel @Inject constructor(
                     "createdAt" to FieldValue.serverTimestamp(),
                 )
 
-                db.collection("reports")
+                db.collection(FirebaseConstants.COLLECTION_REPORTS)
                     .document()
                     .set(reportData)
                     .await()
@@ -345,7 +345,7 @@ class AlbumViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 // shareId로 앨범 정보 가져오기
-                val snapshot = db.collection("albums")
+                val snapshot = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                     .whereEqualTo("shareId", shareId)
                     .limit(1)
                     .get()

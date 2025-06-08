@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,7 +10,9 @@ import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.util.TagConstants
 import com.tenacy.roadcapture.util.functions
+import com.tenacy.roadcapture.worker.PhotoCacheWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -20,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val _savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
 ) : BaseViewModel(), Loginable {
 
     override val savedStateHandle: SavedStateHandle
@@ -44,7 +48,7 @@ class LoginViewModel @Inject constructor(
         }
     }*/
 
-    override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialType: SocialType) {
+    override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialProfileUrl: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 if(!checkUserExists(socialUserId, socialType)) throw FirebaseFirestoreException("사용자가 존재하지 않아요", FirebaseFirestoreException.Code.NOT_FOUND)
@@ -53,7 +57,8 @@ class LoginViewModel @Inject constructor(
                 .catch { exception ->
                     Log.e(TagConstants.AUTH, "파이어베이스 로그인 실패", exception)
                     if(exception is FirebaseFirestoreException && exception.code == FirebaseFirestoreException.Code.NOT_FOUND) {
-                        viewEvent(LoginViewEvent.Signup(socialUserId, socialType, credential))
+                        PhotoCacheWorker.enqueueOneTimeWork(context, listOf(socialProfileUrl))
+                        viewEvent(LoginViewEvent.Signup(socialUserId, socialType, socialProfileUrl, credential))
                     } else {
                         viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
                     }

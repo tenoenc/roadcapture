@@ -12,6 +12,7 @@ import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -54,8 +55,8 @@ class ScrapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userId = UserPref.id
-                val userRef = db.collection("users").document(userId)
-                val albumRef = db.collection("albums").document(albumId)
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
 
                 val reportData = mapOf(
                     "userRef" to userRef,
@@ -64,7 +65,7 @@ class ScrapViewModel @Inject constructor(
                     "createdAt" to FieldValue.serverTimestamp(),
                 )
 
-                db.collection("reports")
+                db.collection(FirebaseConstants.COLLECTION_REPORTS)
                     .document()
                     .set(reportData)
                     .await()

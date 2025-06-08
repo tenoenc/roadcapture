@@ -5,10 +5,13 @@ import android.net.Uri
 import android.util.Log
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.PhotoCacheWorker.Companion
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
@@ -70,16 +73,28 @@ class UpdateUserPhotoWorker @AssistedInject constructor(
 
             Log.d(TAG, "프로필 사진 업데이트 시작: userId=$userId, photoUri=$photoUri")
 
-            val userRef = db.collection("users")
+            val userRef = db.collection(FirebaseConstants.COLLECTION_USERS)
                 .document(userId)
 
-            val albumRefs = db.collection("albums")
+            val albumRefs = db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                 .whereEqualTo("userRef", userRef).getAllReferences()
 
             val compressedUri = photoUri.resizeCenterCrop(context, 512, 512, quality = 30)
 
             val storagePath = "images/users/$userId/profile.jpg"
             val imageUrl = context.uploadImageToStorage(compressedUri, storagePath)
+
+            // 이미지 캐싱
+            try {
+                Glide.with(context)
+                    .load(imageUrl)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .preload()
+
+                Log.d(TAG, "이미지 캐싱 완료: $imageUrl")
+            } catch (e: Exception) {
+                Log.e(TAG, "이미지 캐싱 실패: $imageUrl", e)
+            }
 
             val profileUpdates = UserProfileChangeRequest.Builder()
                 .setPhotoUri(Uri.parse(imageUrl))

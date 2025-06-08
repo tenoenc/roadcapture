@@ -6,10 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.User
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.toFormattedDecimalText
-import com.tenacy.roadcapture.util.toReadableUnit
-import com.tenacy.roadcapture.util.toUser
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -70,18 +67,18 @@ class MyAlbumViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userId = UserPref.id
-                val userRef = db.collection("users")
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS)
                     .document(userId)
                 val user = userRef.get().await().toUser()
 
                 val associate = listOf(
                     async {
-                        KEY_ALBUM_COUNT to db.collection("albums")
+                        KEY_ALBUM_COUNT to db.collection(FirebaseConstants.COLLECTION_ALBUMS)
                             .whereEqualTo("userRef", userRef)
                             .count().get(AggregateSource.SERVER).await().count
                     },
                     async {
-                        KEY_MEMORY_COUNT to db.collection("memories")
+                        KEY_MEMORY_COUNT to db.collection(FirebaseConstants.COLLECTION_MEMORIES)
                             .whereEqualTo("userRef", userRef)
                             .count().get(AggregateSource.SERVER).await().count
                     },

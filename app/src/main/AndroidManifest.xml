@@ -68,10 +68,10 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-<!--                <data android:scheme="https" android:host="${BRANCH_LIVE_DEFAULT_LINK_DOMAIN}" />-->
-<!--                <data android:scheme="https" android:host="${BRANCH_LIVE_ALTERNATIVE_LINK_DOMAIN}" />-->
+                <data android:scheme="https" android:host="${BRANCH_LIVE_DEFAULT_LINK_DOMAIN}" />
+                <data android:scheme="https" android:host="${BRANCH_LIVE_ALTERNATIVE_LINK_DOMAIN}" />
                 <data android:scheme="https" android:host="${BRANCH_TEST_DEFAULT_LINK_DOMAIN}" />
-<!--                <data android:scheme="https" android:host="${BRANCH_TEST_ALTERNATIVE_LINK_DOMAIN}" />-->
+                <data android:scheme="https" android:host="${BRANCH_TEST_ALTERNATIVE_LINK_DOMAIN}" />
             </intent-filter>
 
             <!-- Branch App Links - Test App -->
@@ -176,7 +176,7 @@
                 android:value="${BRANCH_TEST_KEY}" />
         <meta-data
                 android:name="io.branch.sdk.TestMode"
-                android:value="true" />
+                android:value="false" />
         <meta-data
                 android:name="com.google.android.gms.ads.APPLICATION_ID"
                 android:value="${AD_MOB_APP_ID}"/>

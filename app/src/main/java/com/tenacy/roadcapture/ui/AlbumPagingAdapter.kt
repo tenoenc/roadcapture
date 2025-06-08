@@ -285,6 +285,11 @@ sealed class AlbumViewHolder<out T: AlbumItem>(binding: ViewDataBinding): Recycl
                                     binding.numericalText = getNumericalText(item)
                                 }
                             }
+                            "shareId" -> {
+                                binding.ibtnIMyAlbumMore.setSafeClickListener {
+                                    item.onMoreClick(item.value)
+                                }
+                            }
 
                             "time", "scraped" -> {
                                 binding.numericalText = getNumericalText(item)

@@ -15,7 +15,6 @@ import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.databinding.ItemNativeAdBinding
-import com.tenacy.roadcapture.util.toPx
 import java.util.concurrent.ConcurrentHashMap
 
 class AdmobContainerAdapter(
@@ -268,7 +267,7 @@ class AdmobContainerAdapter(
         val adUnitId = if (BuildConfig.DEBUG) {
             BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
         } else {
-            BuildConfig.AD_MOB_APP_HOME_ALBUM_TEST_ID
+            BuildConfig.AD_MOB_APP_HOME_ALBUM_ID
         }
 
         AdLoader.Builder(context, adUnitId)

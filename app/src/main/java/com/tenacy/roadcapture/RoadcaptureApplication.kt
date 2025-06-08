@@ -61,8 +61,6 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-
         FirebaseApp.initializeApp(this)
         MobileAds.initialize(this)
         Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)

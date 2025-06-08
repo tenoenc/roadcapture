@@ -45,10 +45,10 @@ class GoogleOAuthLoginCallback(
 
                         // ID 토큰에서 사용자 ID 추출
                         val googleUserId = extractUidFromIdToken(idToken)
-                        val profilePicUrl = googleIdTokenCredential.profilePictureUri?.toString()
+                        val profileUrl = googleIdTokenCredential.profilePictureUri?.toString() ?: ""
 
                         Log.d(TagConstants.AUTH, "구글 로그인 성공: $authCredential")
-                        viewModel.signInWithCredential(authCredential, googleUserId, SocialType.Google)
+                        viewModel.signInWithCredential(authCredential, googleUserId, profileUrl, SocialType.Google)
                     } else {
                         val error = IllegalStateException("Unsupported credential type: ${credential.type}")
                         viewModel.onLoginError(error, SocialType.Google)

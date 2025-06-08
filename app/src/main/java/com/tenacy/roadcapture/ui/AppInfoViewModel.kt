@@ -66,7 +66,7 @@ class AppInfoViewModel @Inject constructor(
 //    override fun signInWithCustomToken(customToken: String) {
 //     }
 
-    override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialType: SocialType) {
+    override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialProfileUrl: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 user!!.reauthenticate(credential).await()
@@ -104,7 +104,7 @@ class AppInfoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 val userId = UserPref.id
-                val userRef = db.collection("users")
+                val userRef = db.collection(FirebaseConstants.COLLECTION_USERS)
                     .document(userId)
                 val user = userRef.get().await().toUser()
 
