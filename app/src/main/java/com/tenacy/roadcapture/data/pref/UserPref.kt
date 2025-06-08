@@ -15,4 +15,5 @@ object UserPref: KotprefModel() {
         set(value) {
             _provider = value.name
         }
+    var todayMemoryCount by longPref()
 }

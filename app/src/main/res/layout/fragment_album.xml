@@ -37,7 +37,7 @@
                           android:background="@drawable/ol_gradient"
                           android:orientation="horizontal"
                           android:gravity="center"
-                          android:paddingHorizontal="20dp"
+                          android:paddingHorizontal="16dp"
                           android:paddingVertical="8dp"
                           app:layout_constraintTop_toTopOf="parent"
                           app:layout_constraintEnd_toEndOf="parent"

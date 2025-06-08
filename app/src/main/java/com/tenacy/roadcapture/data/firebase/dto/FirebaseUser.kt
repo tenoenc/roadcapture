@@ -12,6 +12,7 @@ data class FirebaseUser(
     val photoUrl: String,
     val provider: String,
     val scrapCount: Long,
+    val todayMemoryCount: Long,
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 ): Parcelable

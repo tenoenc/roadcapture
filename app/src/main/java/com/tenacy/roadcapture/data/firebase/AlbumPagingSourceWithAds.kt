@@ -20,10 +20,10 @@ import kotlin.random.Random
 class AlbumPagingSourceWithAds(
     private val filter: AlbumFilter = AlbumFilter.All,
     private val minAdPosition: Int = 3,      // 첫 광고가 나타날 수 있는 최소 위치
-    private val maxAdPosition: Int = 6,      // 첫 광고가 나타날 수 있는 최대 위치
+    private val maxAdPosition: Int = 5,      // 첫 광고가 나타날 수 있는 최대 위치
     private val minAdInterval: Int = 4,      // 광고 간격 최소값
     private val maxAdInterval: Int = 8,      // 광고 간격 최대값
-    private val adDensity: Float = 0.5f,     // 광고 밀도 (0.0 ~ 1.0, 높을수록 광고가 더 자주 등장)
+    private val adDensity: Float = 0.4f,     // 광고 밀도 (0.0 ~ 1.0, 높을수록 광고가 더 자주 등장)
     private val showAds: Boolean = true      // 구독 상태를 전달받는 파라미터
 ) : PagingSource<DocumentSnapshot, AlbumItemWithAds>() {
 

@@ -57,9 +57,11 @@
     <fragment android:id="@+id/newMemoryFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryFragment"
               android:label="NewMemoryFragment"
               tools:layout="@layout/fragment_new_memory">
-
-        <argument android:name="address" app:argType="com.tenacy.roadcapture.ui.dto.Address"/>
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
+        <argument android:name="coordinates" app:argType="android.location.Location"/>
+        <action android:id="@+id/action_newMemory_to_newMemoryAfter"
+                app:popUpTo="@id/tripFragment"
+                app:destination="@id/newMemoryAfterFragment"/>
 
     </fragment>
     <fragment android:id="@+id/memoryViewerFragment" android:name="com.tenacy.roadcapture.ui.MemoryViewerFragment"
@@ -83,10 +85,10 @@
     </fragment>
     <fragment android:id="@+id/newMemoryBeforeFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryBeforeFragment"
               android:label="NewMemoryBeforeFragment"
-              tools:layout="@layout/fragment_loading">
+              tools:layout="@layout/fragment_new_memory_before">
         <argument android:name="photoUri" app:argType="android.net.Uri"/>
         <argument android:name="coordinates" app:argType="android.location.Location"/>
-        <action android:id="@+id/action_loading_to_newMemory"
+        <action android:id="@+id/action_newMemoryBefore_to_newMemory"
                 app:popUpTo="@id/tripFragment"
                 app:destination="@id/newMemoryFragment"/>
     </fragment>
@@ -189,5 +191,13 @@
         <argument android:name="username" app:argType="string"/>
         <action android:id="@+id/action_signupProfile_to_signupAgreement"
                 app:destination="@id/signupAgreementFragment"/>
+    </fragment>
+    <fragment android:id="@+id/newMemoryAfterFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryAfterFragment"
+              android:label="NewMemoryAfterFragment"
+              tools:layout="@layout/fragment_new_memory_after">
+        <argument android:name="photoUri" app:argType="android.net.Uri"/>
+        <argument android:name="coordinates" app:argType="android.location.Location"/>
+        <argument android:name="placeName" app:argType="string"/>
+        <argument android:name="content" app:argType="string"/>
     </fragment>
 </navigation>

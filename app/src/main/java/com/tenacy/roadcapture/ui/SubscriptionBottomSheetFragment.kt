@@ -42,7 +42,7 @@ class SubscriptionBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private fun setupViews() {
         binding.premiumPricePerMonthText = "USD ${Constants.PREMIUM_PRICE_PER_MONTH} / 월"
-        binding.row2Text = "앨범 당 최대 ${Constants.PREMIUM_MEMORY_MAX_SIZE}개의 추억 생성"
+        binding.row2Text = "일 ${Constants.PREMIUM_TODAY_MEMORY_MAX_SIZE}개 추억 생성"
     }
 
     private fun setupListeners() {

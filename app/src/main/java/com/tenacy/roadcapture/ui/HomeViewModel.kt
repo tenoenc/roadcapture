@@ -44,11 +44,11 @@ class HomeViewModel @Inject constructor(
             pagingSourceFactory = {
                 AlbumPagingSourceWithAds(
                     filter = AlbumFilter.All,
-                    minAdPosition = 2,
-                    maxAdPosition = 4,
-                    minAdInterval = 3,
-                    maxAdInterval = 6,
-                    adDensity = 0.7f,
+                    minAdPosition = 3,
+                    maxAdPosition = 5,
+                    minAdInterval = 4,
+                    maxAdInterval = 8,
+                    adDensity = 0.4f,
                     showAds = !isActive
                 )
             }

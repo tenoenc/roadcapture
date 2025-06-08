@@ -3,9 +3,10 @@ package com.tenacy.roadcapture.util
 import com.tenacy.roadcapture.BuildConfig
 
 object Constants {
-    val BASIC_MEMORY_MAX_SIZE = if (BuildConfig.DEBUG) 3 else 10
-    const val PREMIUM_MEMORY_MAX_SIZE = 100
-    const val PREMIUM_PRICE_PER_MONTH = "1.99"
+    val MEMORY_MAX_SIZE = if (BuildConfig.DEBUG) 3 else 100
+    const val BASIC_TODAY_MEMORY_MAX_SIZE = 10
+    const val PREMIUM_TODAY_MEMORY_MAX_SIZE = 30
+    const val PREMIUM_PRICE_PER_MONTH = "4.99"
 
     const val MILLIS_PER_DAY = 24 * 60 * 60 * 1000L
     const val MILLIS_PER_HOUR = 60 * 60 * 1000L

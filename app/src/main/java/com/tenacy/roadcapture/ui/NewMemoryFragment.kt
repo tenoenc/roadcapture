@@ -8,21 +8,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.annotation.RequiresApi
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.tenacy.roadcapture.R
+import androidx.navigation.fragment.navArgs
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBinding
-import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.di.ContentFilter
 import com.tenacy.roadcapture.di.PlaceNameFilter
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toPx
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -63,7 +60,6 @@ class NewMemoryFragment: BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        setupViews()
         setListeners()
         setupObservers()
     }
@@ -86,10 +82,6 @@ class NewMemoryFragment: BaseFragment() {
                 }
             }
         }
-    }
-
-    private fun setupViews() {
-        addItemsToLayout(vm.addressTags)
     }
 
     private fun setupObservers() {
@@ -141,14 +133,6 @@ class NewMemoryFragment: BaseFragment() {
 
     private fun handleViewEvents(event: NewMemoryViewEvent) {
         when (event) {
-            is NewMemoryViewEvent.ResultBack -> {
-                val destinationId = R.id.tripFragment
-                findNavController().getBackStackEntry(destinationId).savedStateHandle[TripFragment.KEY_NEW_MEMORY] = bundleOf(
-                    TripFragment.RESULT_MEMORY_ID to event.memoryId,
-                    TripFragment.RESULT_COORDINATES to event.coordinates,
-                )
-                findNavController().popBackStack()
-            }
             is NewMemoryViewEvent.ShowLocation -> {
                 val bottomSheet = LocationBottomSheetFragment.newInstance(
                     bundle = bundleOf(
@@ -158,45 +142,22 @@ class NewMemoryFragment: BaseFragment() {
                 bottomSheet.show(childFragmentManager, LocationBottomSheetFragment.TAG)
             }
             is NewMemoryViewEvent.ShowAd -> {
+                val args: NewMemoryFragmentArgs by navArgs()
+                val currentPlaceName = vm.placeName.value
+                val currentContent = vm.content.value
                 if(SubscriptionPref.isSubscriptionActive) {
-                    vm.saveMemory()
+                    findNavController().navigate(NewMemoryFragmentDirections.actionNewMemoryToNewMemoryAfter(args.photoUri, args.coordinates, currentPlaceName, currentContent))
                 } else {
                     mainActivity.rewardedAdManager.showAd(
                         mainActivity = mainActivity,
                         onRewarded = {
-                            vm.saveMemory()
+                            findNavController().navigate(NewMemoryFragmentDirections.actionNewMemoryToNewMemoryAfter(args.photoUri, args.coordinates, currentPlaceName, currentContent))
                         },
                         onFailed = {
                         }
                     )
                 }
             }
-        }
-    }
-
-    private fun addItemsToLayout(items: List<String>) {
-        val linearLayout = binding.llNewMemoryTags
-        // 인플레이터 준비
-        val inflater = LayoutInflater.from(requireContext())
-
-        // 각 문자열에 대해 반복
-        for (item in items) {
-            // 항목 뷰바인딩 인플레이트
-            val itemBinding = ItemTagBinding.inflate(inflater, linearLayout, false)
-
-            // 텍스트 설정
-            itemBinding.name = item
-
-            // 레이아웃 파라미터 설정 (8dp 마진 추가)
-            val layoutParams = LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply {
-                setMargins(8f.toPx, 0, 0, 0)
-            }
-
-            // 레이아웃에 뷰 추가
-            linearLayout.addView(itemBinding.root, layoutParams)
         }
     }
 }

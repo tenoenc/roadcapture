@@ -158,9 +158,8 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
     val photoName = getString("photoName") ?: ""
     val photoUrl = getString("photoUrl") ?: ""
     val provider = getString("provider") ?: ""
+    val todayMemoryCount = getLong("todayMemoryCount") ?: 0L
     val scrapCount = getLong("scrapCount") ?: 0L
-    val isSubscriptionActive = getBoolean("isSubscriptionActive") ?: false
-    val lastSubscribedAt = getTimestamp("lastSubscribedAt")?.toDate()?.toLocalDateTime()
     val createdAt = getTimestamp("createdAt")!!.toDate().toLocalDateTime()
     val updatedAt = getTimestamp("updatedAt")!!.toDate().toLocalDateTime()
 
@@ -170,6 +169,7 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
         photoName = photoName,
         photoUrl = photoUrl,
         provider = provider,
+        todayMemoryCount = todayMemoryCount,
         scrapCount = scrapCount,
         createdAt = createdAt,
         updatedAt = updatedAt,

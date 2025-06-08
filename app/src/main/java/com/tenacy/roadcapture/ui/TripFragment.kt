@@ -504,7 +504,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
             savedStateHandle?.consumeOnce<Bundle?>(KEY_NEW_MEMORY) { bundle ->
                 if (bundle == null) return@consumeOnce
-                val memoryId = bundle.getString(RESULT_MEMORY_ID)
+                val memoryId = bundle.getLong(RESULT_MEMORY_ID)
                 val coordinates = bundle.getParcelable<Location>(RESULT_COORDINATES)
                 coordinates?.let { vm.saveLocation(it, false) }
             }
@@ -605,6 +605,14 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
             is TripViewEvent.ShowStopBefore -> {
                 showTripStopBeforeDialog()
+            }
+            
+            is TripViewEvent.Error -> {
+                when(event) {
+                    is TripViewEvent.Error.Fetch -> {}
+                }
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("문제가 발생했어요", ToastMessageType.Warning)))
+                findNavController().popBackStack()
             }
         }
     }

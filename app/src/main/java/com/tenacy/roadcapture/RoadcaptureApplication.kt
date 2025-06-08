@@ -63,7 +63,7 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
 
         FirebaseApp.initializeApp(this)
         MobileAds.initialize(this)
-        Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
+//        Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
         NaverIdLoginSDK.initialize(applicationContext, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, BuildConfig.NAVER_CLIENT_NAME)
         KakaoSdk.init(this, BuildConfig.KAKAO_CLIENT_ID)
         FacebookSdk.sdkInitialize(this)

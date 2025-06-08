@@ -3,29 +3,18 @@ package com.tenacy.roadcapture.ui
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
-import com.tenacy.roadcapture.data.db.LocationDao
-import com.tenacy.roadcapture.data.db.LocationEntity
-import com.tenacy.roadcapture.data.db.MemoryDao
-import com.tenacy.roadcapture.data.db.MemoryEntity
-import com.tenacy.roadcapture.data.pref.TravelPref
-import com.tenacy.roadcapture.data.pref.TravelPref.createdAt
 import com.tenacy.roadcapture.di.InputModule
-import com.tenacy.roadcapture.ui.dto.Address
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class NewMemoryViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val memoryDao: MemoryDao,
-    private val locationDao: LocationDao,
 ) : BaseViewModel() {
 
-    val addressTags: List<String>
     val photoUri: Uri = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).photoUri
 
     val placeName = MutableStateFlow("")
@@ -84,11 +73,6 @@ class NewMemoryViewModel @Inject constructor(
         initialValue = EditTextState.Normal,
     )
 
-    init {
-        val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
-        addressTags = listOfNotNull(address.country) + address.components
-    }
-
     fun setPlaceNameFocus(hasFocus: Boolean) {
         _placeNameFocus.update { hasFocus }
     }
@@ -105,49 +89,9 @@ class NewMemoryViewModel @Inject constructor(
         _contentInputAttemptOverflow.update{ currentLength >= InputModule.MAX_LENGTH_CONTENT }
     }
 
-    fun onLocationClick() {
-        viewModelScope.launch(Dispatchers.Default) {
-            val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
-            address.formattedAddress?.let { viewEvent(NewMemoryViewEvent.ShowLocation(it)) }
-        }
-    }
-
     fun onNewClick() {
         viewModelScope.launch(Dispatchers.Main) {
             viewEvent(NewMemoryViewEvent.ShowAd)
-        }
-    }
-
-    fun saveMemory() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currentPlaceName = placeName.value
-            val currentContent = content.value
-            val address: Address = NewMemoryFragmentArgs.fromSavedStateHandle(savedStateHandle).address
-
-            val locationEntity = LocationEntity(
-                coordinates = address.coordinates,
-                createdAt = LocalDateTime.now(),
-            )
-
-            val locationId = locationDao.insert(locationEntity)
-
-            val memoryEntity = MemoryEntity(
-                placeName = currentPlaceName.takeIf { it.isNotBlank() },
-                content = currentContent.takeIf { it.isNotBlank() },
-                photoUri = photoUri,
-                addressTags = addressTags,
-                formattedAddress = address.formattedAddress ?: "",
-                locationId = locationId,
-                createdAt = LocalDateTime.now(),
-            )
-
-            val memoryId = memoryDao.insert(memoryEntity)
-
-            if(TravelPref.thumbnailMemoryId == null) {
-                TravelPref.thumbnailMemoryId = memoryId
-            }
-
-            viewEvent(NewMemoryViewEvent.ResultBack(memoryId, address.coordinates))
         }
     }
 }

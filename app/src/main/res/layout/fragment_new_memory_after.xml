@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_new_memory_after_container"
+                                                       android:layout_width="match_parent"
+                                                       android:layout_height="match_parent"
+                                                       android:background="@color/background_normal">
+
+                <com.airbnb.lottie.LottieAnimationView android:layout_width="144dp"
+                                                       android:layout_height="144dp"
+                                                       android:id="@+id/lottie_new_memory_after_search_locations"
+                                                       android:scaleType="fitXY"
+                                                       app:lottie_autoPlay="true"
+                                                       app:lottie_loop="true"
+                                                       app:lottie_fileName="search_locations.lottie"
+                                                       app:layout_constraintBottom_toTopOf="@id/txt_new_memory_after_status"
+                                                       app:layout_constraintStart_toStartOf="parent"
+                                                       app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_new_memory_after_status"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textColor="@color/label_normal"
+                  tools:text="위치 정보 불러오는 중"
+                  app:layout_constraintBottom_toBottomOf="parent"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintTop_toTopOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -7,37 +7,39 @@
 
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_loading_container"
+    <androidx.constraintlayout.widget.ConstraintLayout android:id="@+id/cl_new_memory_before_container"
                                                        android:layout_width="match_parent"
                                                        android:layout_height="match_parent"
                                                        android:background="@color/background_normal">
 
         <com.airbnb.lottie.LottieAnimationView android:layout_width="256dp"
                                                android:layout_height="144dp"
-                                               android:id="@+id/lottie_loading_layers"
+                                               android:id="@+id/lottie_new_memory_before_layers"
                                                android:scaleType="fitXY"
                                                app:lottie_autoPlay="true"
                                                app:lottie_loop="true"
                                                app:lottie_fileName="layers.lottie"
-                                               app:layout_constraintBottom_toTopOf="@id/txt_loading_status"
+                                               app:layout_constraintBottom_toTopOf="@id/txt_new_memory_before_status"
                                                app:layout_constraintStart_toStartOf="parent"
                                                app:layout_constraintEnd_toEndOf="parent"/>
 
+<!--
         <com.airbnb.lottie.LottieAnimationView android:layout_width="144dp"
                                                android:layout_height="144dp"
-                                               android:id="@+id/lottie_loading_search_locations"
+                                               android:id="@+id/lottie_new_memory_before_search_locations"
                                                android:visibility="invisible"
                                                android:scaleType="fitXY"
                                                app:lottie_autoPlay="true"
                                                app:lottie_loop="true"
                                                app:lottie_fileName="search_locations.lottie"
-                                               app:layout_constraintBottom_toTopOf="@id/txt_loading_status"
+                                               app:layout_constraintBottom_toTopOf="@id/txt_new_memory_before_status"
                                                app:layout_constraintStart_toStartOf="parent"
                                                app:layout_constraintEnd_toEndOf="parent"/>
+-->
 
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:id="@+id/txt_loading_status"
+                  android:id="@+id/txt_new_memory_before_status"
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_normal"
                   tools:text="준비하는 중"

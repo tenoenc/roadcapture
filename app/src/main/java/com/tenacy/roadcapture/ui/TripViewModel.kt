@@ -2,8 +2,8 @@ package com.tenacy.roadcapture.ui
 
 import android.content.Context
 import android.location.Location
+import android.util.Log
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
@@ -11,6 +11,8 @@ import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
+import com.tenacy.roadcapture.data.pref.UserPref
+import com.tenacy.roadcapture.data.pref.UserPref.todayMemoryCount
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationProcessor
@@ -21,6 +23,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDateTime
 import javax.inject.Inject
 
@@ -58,18 +61,30 @@ class TripViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val memoryLoaded = combine(_memories, _durationText) { memories, durationText -> memories != null && durationText != null }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     val memoryCountText = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
         val currentMemorySize = memories?.size ?: 0
-        val maxMemorySize = SubscriptionValues.memoryMaxSize
-        "추억 $currentMemorySize / $maxMemorySize"
-    }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+        val maxMemorySize = Constants.MEMORY_MAX_SIZE
+        "$currentMemorySize / $maxMemorySize"
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     val exceedLimitedMemorySize = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
         if(memories == null) return@combine false
-        memories.size >= SubscriptionValues.memoryMaxSize
+        memories.size >= Constants.MEMORY_MAX_SIZE
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
+    private val _todayMemoryCount = MutableStateFlow<Long?>(null)
+
+    val todayMemoryCountText = combine(_todayMemoryCount, subscriptionManager.isSubscriptionActive) { todayMemoryCount, _ ->
+        val currentMemorySize = todayMemoryCount ?: 0
+        val maxMemorySize = SubscriptionValues.todayMemoryMaxSize
+        "추억 $currentMemorySize / $maxMemorySize"
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
+
+    val exceedTodayLimitedMemorySize = combine(_todayMemoryCount, subscriptionManager.isSubscriptionActive) { todayMemoryCount, _ ->
+        if(todayMemoryCount == null) return@combine false
+        todayMemoryCount >= SubscriptionValues.todayMemoryMaxSize
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     val markers = combine(_locations, _memories) { locations, memories ->
@@ -92,18 +107,37 @@ class TripViewModel @Inject constructor(
 
     fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
-            val locations = locationDao.selectAll()
-            val memories = memoryDao.selectAll()
-            // 마지막 저장 위치 설정
-            if (locations.isNotEmpty()) {
-                val last = locations.maxByOrNull { it.createdAt }
-                last?.let {
-                    val coordinates = it.coordinates
-                    TravelPref.setLastSavedLocation(coordinates)
+            flow {
+                val todayMemoryCount = if (_todayMemoryCount.value == null) {
+                    val userId = UserPref.id
+                    val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
+                    userRef.get().await().toUser().todayMemoryCount.also { UserPref.todayMemoryCount = it }
+                } else {
+                    UserPref.todayMemoryCount
                 }
+
+                _todayMemoryCount.update { todayMemoryCount }
+
+                val locations = locationDao.selectAll()
+                val memories = memoryDao.selectAll()
+                // 마지막 저장 위치 설정
+                if (locations.isNotEmpty()) {
+                    val last = locations.maxByOrNull { it.createdAt }
+                    last?.let {
+                        val coordinates = it.coordinates
+                        TravelPref.setLastSavedLocation(coordinates)
+                    }
+                }
+                emit(memories to locations)
             }
-            _memories.emit(memories)
-            _locations.emit(locations)
+                .catch { exception ->
+                    Log.e("TripViewModel", "에러", exception)
+                    viewEvent(TripViewEvent.Error.Fetch(exception.message))
+                }
+                .collect { (memories, locations) ->
+                    _memories.emit(memories)
+                    _locations.emit(locations)
+                }
         }
     }
 

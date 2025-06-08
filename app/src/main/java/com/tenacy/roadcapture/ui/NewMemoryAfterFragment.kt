@@ -6,21 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.tenacy.roadcapture.databinding.FragmentNewMemoryBeforeBinding
+import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.databinding.FragmentNewMemoryAfterBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class NewMemoryBeforeFragment: BaseFragment() {
+class NewMemoryAfterFragment: BaseFragment() {
 
-    private var _binding: FragmentNewMemoryBeforeBinding? = null
+    private var _binding: FragmentNewMemoryAfterBinding? = null
     val binding get() = _binding!!
 
-    private val vm: NewMemoryBeforeViewModel by viewModels()
+    private val vm: NewMemoryAfterViewModel by viewModels()
 
     private lateinit var onBackPressedCallback: OnBackPressedCallback
 
@@ -38,7 +40,7 @@ class NewMemoryBeforeFragment: BaseFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentNewMemoryBeforeBinding.inflate(inflater, container, false)
+        _binding = FragmentNewMemoryAfterBinding.inflate(inflater, container, false)
 
         binding.lifecycleOwner = this
 
@@ -60,18 +62,22 @@ class NewMemoryBeforeFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.readyState.collect {
                 when(it) {
-                    is NsfwDetectionState.Loading -> {}
-                    is NsfwDetectionState.ProcessingImage -> {
-                        binding.txtNewMemoryBeforeStatus.text = "이미지 처리 중"
+                    is SaveMemoryState.Loading -> {}
+                    is SaveMemoryState.CountMemory -> {
+                        binding.txtNewMemoryAfterStatus.text = "위치 정보 불러오는 중"
                     }
-                    is NsfwDetectionState.DetectingNsfw -> {
-                        binding.txtNewMemoryBeforeStatus.text = "이미지 검토 중"
+                    is SaveMemoryState.ReversingGeocoding -> {}
+                    is SaveMemoryState.SavingMemory -> {}
+                    is SaveMemoryState.Completed -> {
+                        val args: NewMemoryAfterFragmentArgs by navArgs()
+                        val destinationId = R.id.tripFragment
+                        findNavController().getBackStackEntry(destinationId).savedStateHandle[TripFragment.KEY_NEW_MEMORY] = bundleOf(
+                            TripFragment.RESULT_MEMORY_ID to it.memoryId,
+                            TripFragment.RESULT_COORDINATES to args.coordinates,
+                        )
+                        findNavController().popBackStack()
                     }
-                    is NsfwDetectionState.Completed -> {
-                        val args: NewMemoryBeforeFragmentArgs by navArgs()
-                        findNavController().navigate(NewMemoryBeforeFragmentDirections.actionNewMemoryBeforeToNewMemory(args.photoUri, args.coordinates))
-                    }
-                    is NsfwDetectionState.Error -> {
+                    is SaveMemoryState.Error -> {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(it.message, ToastMessageType.Warning)))
                         findNavController().popBackStack()
                     }

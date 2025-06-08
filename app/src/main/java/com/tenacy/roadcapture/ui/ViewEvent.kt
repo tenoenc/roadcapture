@@ -69,10 +69,12 @@ sealed class TripViewEvent: ViewEvent {
     data object ZoomOut: TripViewEvent()
     data object ShowAfter: TripViewEvent()
     data object ShowStopBefore: TripViewEvent()
+    sealed class Error(open val message: String?): TripViewEvent() {
+        data class Fetch(override val message: String?): Error(message)
+    }
 }
 
 sealed class NewMemoryViewEvent: ViewEvent {
-    data class ResultBack(val memoryId: Long, val coordinates: Location) : NewMemoryViewEvent()
     data class ShowLocation(val address: String): NewMemoryViewEvent()
     data object ShowAd: NewMemoryViewEvent()
 }

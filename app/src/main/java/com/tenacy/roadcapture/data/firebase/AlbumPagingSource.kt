@@ -141,7 +141,7 @@ class AlbumPagingSource(
                     val startAfterDoc = params.key
 
                     // 먼저 사용자의 스크랩 목록 가져오기 (createdAt 기준 정렬)
-                    var scrapQuery = db.collection(FirebaseConstants.COLLECTION_REPORTS)
+                    var scrapQuery = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                         .whereEqualTo("userRef", userRef)
                         .whereEqualTo("albumPublic", true)
                         .orderBy("createdAt", Query.Direction.DESCENDING)
