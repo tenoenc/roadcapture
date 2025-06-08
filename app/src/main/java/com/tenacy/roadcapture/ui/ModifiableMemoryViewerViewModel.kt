@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
+import com.tenacy.roadcapture.data.db.MemoryEntity
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -46,6 +48,9 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
     val currentMemory = _state.map { it.currentMemory }
         .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
+    val isThumbnail = _state.map { it.currentMemory?.isThumbnail }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
     val tags = _state.mapNotNull { it.currentMemory?.addressTags }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())
 
@@ -85,6 +90,20 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
                     memories = memories,
                     currentIndex = currentMemoryIndex,
                     viewScope = viewScope
+                )
+            }
+        }
+    }
+
+    fun updateThumbnail() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val currentState = _state.value
+            val currentMemory = currentState.currentMemory ?: return@launch
+            TravelPref.thumbnailMemoryId = currentMemory.id.toLong()
+
+            _state.update {
+                it.copy(
+                    memories = it.memories.map { memory -> memory.copy(isThumbnail = memory.id.toLong() == TravelPref.thumbnailMemoryId) },
                 )
             }
         }

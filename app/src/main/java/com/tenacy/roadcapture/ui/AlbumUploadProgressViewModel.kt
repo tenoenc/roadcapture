@@ -132,7 +132,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
                 // 4. 데이터 생성 및 저장 (배치)
                 sendWithDelay(AlbumSaveState.SavingToFirestore)
 
-                val (_, thumbnailUrl) = photoUrlMap[memories.firstOrNull()?.memory?.id]!!
+                val thumbnailUrlId = memories.find { it.memory.id == TravelPref.thumbnailMemoryId }?.memory?.id ?: memories.firstOrNull()?.memory?.id
+                val (_, thumbnailUrl) = photoUrlMap[thumbnailUrlId]!!
                 val memoryAddressTags = hashSetOf<String>()
                 val memoryPlaceNames = hashSetOf<String>()
 
@@ -156,6 +157,7 @@ class AlbumUploadProgressViewModel @Inject constructor(
                     memory.placeName?.let(memoryPlaceNames::add)
 
                     mapOf(
+                        "isThumbnail" to (memory.id == TravelPref.thumbnailMemoryId),
                         "content" to memory.content,
                         "photoUrl" to uploadedPhotoUrl,
                         "photoName" to storagePath,

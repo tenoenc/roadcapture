@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         LocationCacheEntity::class,
         CacheEntity::class,
     ],
-    version = 1,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(RoomConverters::class, UriConverter::class)
@@ -29,46 +29,74 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun cacheDao(): CacheDao
 
     companion object {
+        // isThumbnail 컬럼 추가
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE memories ADD COLUMN isThumbnail INTEGER NOT NULL DEFAULT 0"
+                )
+            }
+        }
+
+        // memory_caches에 isThumbnail 컬럼 추가
         private val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                // 임시 테이블 생성
-                db.execSQL("CREATE TABLE IF NOT EXISTS memories_temp AS SELECT * FROM memories")
+                db.execSQL(
+                    "ALTER TABLE memory_caches ADD COLUMN isThumbnail INTEGER NOT NULL DEFAULT 0"
+                )
+            }
+        }
 
-                // 기존 테이블 삭제
-                db.execSQL("DROP TABLE memories")
+        // isThumbnail 컬럼 제거
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.beginTransaction()
+                try {
+                    // 백업 테이블 생성 (외래키 포함)
+                    database.execSQL("""
+                        CREATE TABLE memories_new (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                            content TEXT,
+                            photoUri TEXT NOT NULL,
+                            placeName TEXT,
+                            formattedAddress TEXT NOT NULL,
+                            addressTags TEXT NOT NULL,
+                            locationId INTEGER NOT NULL,
+                            createdAt INTEGER NOT NULL,
+                            FOREIGN KEY(locationId) REFERENCES locations(id) ON UPDATE NO ACTION ON DELETE CASCADE
+                        )
+                    """)
 
-                // 새 스키마로 테이블 재생성 (변경할 필드를 nullable로 설정)
-                db.execSQL("""
-                    CREATE TABLE memories (
-                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                        content TEXT,
-                        photoUri TEXT NOT NULL,
-                        placeName TEXT,
-                        locationName TEXT,
-                        country TEXT NOT NULL,
-                        region TEXT,
-                        city TEXT,
-                        district TEXT,
-                        street TEXT,
-                        details TEXT,
-                        formattedAddress TEXT NOT NULL,
-                        locationId INTEGER NOT NULL,
-                        createdAt TEXT NOT NULL,
-                        FOREIGN KEY (locationId) REFERENCES locations(id) ON DELETE CASCADE
-                    )
-                """)
+                    // 데이터 복사
+                    database.execSQL("""
+                        INSERT INTO memories_new (id, content, photoUri, placeName, formattedAddress, addressTags, locationId, createdAt)
+                        SELECT id, content, photoUri, placeName, formattedAddress, addressTags, locationId, createdAt
+                        FROM memories
+                    """)
 
-                // 데이터 복원
-                db.execSQL("INSERT INTO memories SELECT * FROM memories_temp")
+                    // 기존 테이블 삭제
+                    database.execSQL("DROP TABLE memories")
 
-                // 임시 테이블 삭제
-                db.execSQL("DROP TABLE memories_temp")
+                    // 테이블 이름 변경
+                    database.execSQL("ALTER TABLE memories_new RENAME TO memories")
+
+                    // 최종 테이블에 인덱스 생성 (중요!)
+                    database.execSQL("""
+                        CREATE INDEX index_memories_locationId ON memories(locationId)
+                    """)
+
+                    database.setTransactionSuccessful()
+                } finally {
+                    database.endTransaction()
+                }
             }
         }
 
         fun getInstance(context: Context): AppDatabase =
             Room.databaseBuilder(context, AppDatabase::class.java, "app_db")
-                .fallbackToDestructiveMigration()
+                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_2_3)
+                .addMigrations(MIGRATION_3_4)
                 .build()
     }
 }

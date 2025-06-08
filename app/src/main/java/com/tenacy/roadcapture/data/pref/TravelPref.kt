@@ -16,6 +16,13 @@ import java.time.temporal.ChronoUnit
 
 object TravelPref : KotprefModel() {
     var isTraveling by booleanPref(default = false, key = "is_traveling")
+    private var _thumbnailMemoryId by longPref(default = -1L, key = "thumbnail_memory_id")
+    var thumbnailMemoryId: Long?
+        set(value) {
+            _thumbnailMemoryId = value ?: -1L
+        }
+        get() = _thumbnailMemoryId.takeIf { it > -1L }
+
     var lastSavedLatitude by stringPref(default = "0.0", key = "last_saved_latitude")
     var lastSavedLongitude by stringPref(default = "0.0", key = "last_saved_longitude")
     var lastSavedTime by longPref(default = 0L, key = "last_saved_time")
@@ -36,6 +43,7 @@ object TravelPref : KotprefModel() {
 
     fun stopTravel() {
         isTraveling = false
+        _thumbnailMemoryId = -1L
         lastSavedLatitude = "0.0"
         lastSavedLongitude = "0.0"
         lastSavedTime = 0L

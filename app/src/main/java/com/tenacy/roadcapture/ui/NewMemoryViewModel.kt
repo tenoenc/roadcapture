@@ -7,6 +7,7 @@ import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.TravelPref.createdAt
 import com.tenacy.roadcapture.di.InputModule
 import com.tenacy.roadcapture.ui.dto.Address
@@ -141,6 +142,10 @@ class NewMemoryViewModel @Inject constructor(
             )
 
             val memoryId = memoryDao.insert(memoryEntity)
+
+            if(TravelPref.thumbnailMemoryId == null) {
+                TravelPref.thumbnailMemoryId = memoryId
+            }
 
             viewEvent(NewMemoryViewEvent.ResultBack(memoryId, address.coordinates))
         }

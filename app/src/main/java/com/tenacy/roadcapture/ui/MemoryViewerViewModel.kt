@@ -30,6 +30,9 @@ class MemoryViewerViewModel @Inject constructor(
         memories[currentPage]
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
+    val isThumbnail = currentMemory.map { it?.isThumbnail }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
+
     val tags = currentMemory.mapNotNull { currentMemory ->
         currentMemory?.addressTags
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), emptyList())

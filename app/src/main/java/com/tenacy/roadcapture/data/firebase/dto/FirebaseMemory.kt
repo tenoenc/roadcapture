@@ -9,6 +9,7 @@ data class FirebaseMemory(
     val id: String = "",
     val albumId: String = "",
     val userId: String = "",
+    val isThumbnail: Boolean = false,
     val content: String = "",
     val photoUrl: String = "",
     val photoName: String = "",

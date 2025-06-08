@@ -3,6 +3,7 @@
     <color name="white">#ffffff</color>
 
     <color name="primary_normal">#80F0D4</color>
+<!--    <color name="primary_normal_a80">#CC80F0D4</color>-->
     <color name="primary_strong">#70E3CF</color>
     <color name="primary_strong_a50">#7F70E3CF</color>
     <color name="background_normal">#FCFEFF</color>

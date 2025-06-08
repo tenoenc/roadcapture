@@ -51,6 +51,13 @@ class MemoryModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
             )
             dismiss()
         }
+        binding.btnBSheetMemoryModifyMoreThumbnail.setSafeClickListener {
+            setFragmentResult(
+                REQUEST_KEY,
+                bundleOf(KEY_PARAMS_OUT_THUMBNAIL to ParamsOut.Thumbnail)
+            )
+            dismiss()
+        }
         binding.btnBSheetMemoryModifyMoreDelete.setSafeClickListener {
             setFragmentResult(
                 REQUEST_KEY,
@@ -66,6 +73,8 @@ class MemoryModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
         data object Info: ParamsOut()
         @Parcelize
         data object Delete: ParamsOut()
+        @Parcelize
+        data object Thumbnail: ParamsOut()
     }
 
     companion object {
@@ -74,6 +83,7 @@ class MemoryModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
         const val REQUEST_KEY = "memory_modify_more"
         const val KEY_PARAMS_OUT_INFO = "params_out_info"
+        const val KEY_PARAMS_OUT_THUMBNAIL = "params_out_thumbnail"
         const val KEY_PARAMS_OUT_DELETE = "params_out_delete"
 
         fun newInstance(bundle: Bundle? = null): MemoryModifyMoreBottomSheetFragment {

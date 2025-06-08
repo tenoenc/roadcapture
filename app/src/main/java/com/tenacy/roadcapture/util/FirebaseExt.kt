@@ -1,11 +1,8 @@
 package com.tenacy.roadcapture.util
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
-import androidx.core.content.FileProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -21,8 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import java.io.File
-import java.io.FileOutputStream
 
 val auth get() = Firebase.auth
 val user get() = auth.currentUser
@@ -115,6 +110,7 @@ fun DocumentSnapshot.toMemory(): FirebaseMemory {
     val id = id
     val albumId = getDocumentReference("albumRef")?.id ?: ""
     val userId = getDocumentReference("userRef")?.id ?: ""
+    val isThumbnail = getBoolean("isThumbnail") ?: false
     val content = getString("content") ?: ""
     val photoUrl = getString("photoUrl") ?: ""
     val photoName = getString("photoName") ?: ""
@@ -129,6 +125,7 @@ fun DocumentSnapshot.toMemory(): FirebaseMemory {
         id = id,
         albumId = albumId,
         userId = userId,
+        isThumbnail = isThumbnail,
         content = content,
         photoUrl = photoUrl,
         photoName = photoName,

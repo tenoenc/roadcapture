@@ -89,6 +89,9 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
                 )
                 bottomSheet.show(childFragmentManager, MemoryInfoBottomSheetFragment.TAG)
             }
+            bundle.getParcelable<MemoryModifyMoreBottomSheetFragment.ParamsOut.Thumbnail>(MemoryModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_THUMBNAIL)?.let {
+                vm.updateThumbnail()
+            }
             bundle.getParcelable<MemoryModifyMoreBottomSheetFragment.ParamsOut.Delete>(MemoryModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 vm.deleteCurrentMemory()
             }

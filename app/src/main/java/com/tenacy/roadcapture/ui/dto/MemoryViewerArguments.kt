@@ -6,6 +6,7 @@ import android.os.Parcelable
 import com.google.android.gms.maps.model.LatLng
 import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.ui.ViewScope
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
@@ -19,6 +20,7 @@ data class MemoryViewerArguments(
     @Parcelize
     data class Memory(
         val id: String = "",
+        val isThumbnail: Boolean = false,
         val locationId: String = "",
         val content: String? = null,
         val photoUri: Uri? = null,
@@ -32,6 +34,7 @@ data class MemoryViewerArguments(
         companion object {
             fun of(dto: MemoryWithLocation) = Memory(
                 id = dto.memory.id.toString(),
+                isThumbnail = TravelPref.thumbnailMemoryId == dto.memory.id,
                 locationId = dto.location.id.toString(),
                 content = dto.memory.content,
                 photoUri = dto.memory.photoUri,
@@ -43,6 +46,7 @@ data class MemoryViewerArguments(
             )
             fun from(memory: FirebaseMemory, coordinates: Location) = Memory(
                 id = memory.id,
+                isThumbnail = memory.isThumbnail,
                 locationId = memory.locationRefId,
                 content = memory.content.takeIf { it.isNotBlank() },
                 photoUrl = memory.photoUrl,

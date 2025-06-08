@@ -192,7 +192,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_15_M"
                               android:textColor="@color/label_normal"
-                              android:text="결제한 Play Store 계정 단위이므로 앱 내 어떤 계정에서도 혜택이 공유돼요"
+                              android:text="결제한 Play Store 계정으로 접속한 어떤 앱 내 계정에서도 혜택이 공유돼요"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
