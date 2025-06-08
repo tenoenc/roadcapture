@@ -169,34 +169,6 @@
 
                 </LinearLayout>
 
-                <TextView android:layout_width="match_parent"
-                          android:layout_height="wrap_content"
-                          android:layout_marginTop="24dp"
-                          android:textAlignment="textStart"
-                          android:textAppearance="@style/Title_20"
-                          android:textColor="@color/label_normal"
-                          android:text="유의사항"/>
-
-                <LinearLayout android:layout_width="match_parent"
-                              android:layout_height="wrap_content"
-                              android:orientation="horizontal"
-                              android:layout_marginTop="12dp">
-
-                    <View android:layout_width="5dp"
-                          android:layout_height="5dp"
-                          android:layout_marginTop="8dp"
-                          android:background="@drawable/circle"/>
-
-                    <TextView android:layout_width="0dp"
-                              android:layout_height="wrap_content"
-                              android:layout_weight="1"
-                              android:textAppearance="@style/Body_15_M"
-                              android:textColor="@color/label_normal"
-                              android:text="결제한 Play Store 계정으로 접속한 어떤 앱 내 계정에서도 혜택이 공유돼요"
-                              android:layout_marginStart="8dp"/>
-
-                </LinearLayout>
-
             </LinearLayout>
 
         </androidx.core.widget.NestedScrollView>

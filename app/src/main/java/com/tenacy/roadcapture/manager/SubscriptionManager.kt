@@ -8,14 +8,19 @@ import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
 import com.chibatching.kotpref.Kotpref
+import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.api.dto.VerificationRequest
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.util.Constants
+import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.RetrofitInstance
+import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.tasks.await
 import java.util.Calendar
 import java.util.Date
 import javax.inject.Inject
@@ -48,7 +53,7 @@ class SubscriptionManager @Inject constructor(
 
     // 구독 상태 Flow
     private val _isSubscriptionActive = MutableStateFlow(false)
-    val isSubscriptionActive: StateFlow<Boolean> = _isSubscriptionActive.asStateFlow()
+    val isSubscriptionActive: Flow<Boolean> = _isSubscriptionActive
 
     // 구독 상품 설정
     private val subscriptionProductIds = listOf(Constants.SUBSCRIPTION_PREMIUM_PRODUCT_ID)
@@ -222,6 +227,10 @@ class SubscriptionManager @Inject constructor(
                                         // Flow 업데이트
                                         _isSubscriptionActive.value = isActive
 
+                                        if(!isActive) {
+                                            updateFirebaseUserPurchaseToken(null)
+                                        }
+
                                         cont.resume(isActive)
                                     } else {
                                         Log.d(TAG, "활성 구독 찾을 수 없음")
@@ -229,6 +238,7 @@ class SubscriptionManager @Inject constructor(
                                         // 구독 비활성화
                                         updateLocalSubscription(false, null, 0)
                                         _isSubscriptionActive.value = false
+                                        updateFirebaseUserPurchaseToken(null)
 
                                         cont.resume(false)
                                     }
@@ -340,6 +350,9 @@ class SubscriptionManager @Inject constructor(
                             // 구독 완료 콜백 호출
                             purchaseCallback?.onSubscriptionPurchaseCompleted(purchase)
 
+                            // 파이어스토어 업데이트
+                            updateFirebaseUserPurchaseToken(purchase.purchaseToken)
+
                             cont.resume(Unit)
                         } catch (e: Exception) {
                             Log.e(TAG, "구독 확인 후 처리 중 오류 발생", e)
@@ -353,6 +366,12 @@ class SubscriptionManager @Inject constructor(
                 }
             }
         }
+    }
+
+    private suspend fun updateFirebaseUserPurchaseToken(purchaseToken: String?) {
+        val userId = UserPref.id
+        val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
+        userRef.update("purchaseToken", purchaseToken ?: FieldValue.delete()).await()
     }
 
     /**

@@ -26,6 +26,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
 import com.facebook.FacebookSdk.setCacheDir
@@ -155,9 +156,12 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         super.onViewCreated(view, savedInstanceState)
         resetInitializationState()
 
+        repeatOnLifecycle { vm.fetchData() }
+
         setupViews()
         setupPermissions()
         setupObservers()
+        setupListeners()
 /*
         binding.abcdefg.setQuickTapListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
@@ -192,8 +196,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             }
         }
 */
-
-        repeatOnLifecycle { vm.fetchData() }
     }
 
     override fun onDestroyView() {
@@ -249,7 +251,15 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         ) { _, bundle ->
             bundle.getParcelable<TripGuideBottomSheetFragment.ParamsOut.ShowSubscription>(TripGuideBottomSheetFragment.KEY_PARAMS_OUT_SHOW_SUBSCRIPTION)?.let {
                 Log.d("TAG", "Positive Button Clicked!")
-                showSubscriptionDialog()
+                val linkedAccountExists = SubscriptionPref.linkedAccountExists
+                when {
+                    linkedAccountExists -> {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("다른 계정에서 이미 혜택을 받고 있어요", ToastMessageType.Info)))
+                    }
+                    else -> {
+                        showSubscriptionDialog()
+                    }
+                }
             }
         }
         childFragmentManager.setFragmentResultListener(
@@ -289,6 +299,30 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     private fun setupViews() {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+    }
+
+    private fun setupListeners() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                delay(1000L)
+                binding.fabTripCapture.setSafeClickListener {
+                    val location = getCurrentLocation()
+                    if (location == null) {
+                        mainActivity.vm.viewEvent(
+                            GlobalViewEvent.Toast(
+                                ToastModel(
+                                    "위치 정보가 없기 때문에 사진을 찍을 수 없어요",
+                                    ToastMessageType.Warning
+                                )
+                            )
+                        )
+                        return@setSafeClickListener
+                    }
+                    captureImageWithCameraApp()
+                }
+            }
+            binding.fabTripCapture.setOnClickListener(null)
+        }
     }
 
     private fun setupObservers() {
@@ -554,24 +588,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 moveCameraTo(location = event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
             }
 
-            is TripViewEvent.Capture -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
-                    val location = getCurrentLocation()
-                    if (location == null) {
-                        mainActivity.vm.viewEvent(
-                            GlobalViewEvent.Toast(
-                                ToastModel(
-                                    "위치 정보가 없기 때문에 사진을 찍을 수 없어요",
-                                    ToastMessageType.Warning
-                                )
-                            )
-                        )
-                        return@launch
-                    }
-                    captureImageWithCameraApp()
-                }
-            }
-
             is TripViewEvent.Back -> {
                 findNavController().popBackStack()
             }
@@ -590,12 +606,17 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
             is TripViewEvent.ShowSubscription -> {
                 val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
-                if(isSubscriptionActive) {
-                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                val linkedAccountExists = SubscriptionPref.linkedAccountExists
+                when {
+                    linkedAccountExists -> {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("다른 계정에서 이미 혜택을 받고 있어요", ToastMessageType.Info)))
+                    }
+                    isSubscriptionActive -> {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프리미엄 플랜을 구독 중이에요", ToastMessageType.Info)))
                     }
-                } else {
-                    showSubscriptionDialog()
+                    else -> {
+                        showSubscriptionDialog()
+                    }
                 }
             }
 

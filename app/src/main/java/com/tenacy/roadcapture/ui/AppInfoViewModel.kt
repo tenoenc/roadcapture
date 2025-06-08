@@ -32,6 +32,7 @@ class AppInfoViewModel @Inject constructor(
         get() = _savedStateHandle
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .map { it && !SubscriptionPref.linkedAccountExists }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -44,9 +45,16 @@ class AppInfoViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), UserPref.photoUrl.let(Uri::parse))
     val profileDisplayName = _user.mapNotNull { it?.displayName }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), UserPref.displayName)
-    val subscriptionText = isSubscriptionActive.map {
-        if(it) "프리미엄 플랜 구독중" else "구독하고 더 많은\n혜택을 누려보세요!"
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "구독하고 더 많은\n혜택을 누려보세요!")
+    val subscriptionButtonEnabled = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
+        !SubscriptionPref.linkedAccountExists
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
+    val subscriptionDescriptionText = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
+        when {
+            SubscriptionPref.linkedAccountExists -> "다른 계정에서\n이미 혜택을 받고 있어요"
+            isSubscriptionActive -> "프리미엄 플랜 구독중"
+            else -> "구독하고 더 많은\n혜택을 누려보세요!"
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     val providerDrawable = _user.mapNotNull {
         it?.provider?.let {

@@ -11,6 +11,7 @@ import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSourceWithAds
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
@@ -29,6 +30,7 @@ class HomeViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     private val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .map { it && !SubscriptionPref.linkedAccountExists }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     // 앨범 데이터 Flow

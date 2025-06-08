@@ -61,7 +61,6 @@ sealed class MyAlbumViewEvent: ViewEvent {
 sealed class TripViewEvent: ViewEvent {
     data object ResetCameraPosition: TripViewEvent()
     data class SetCamera(val coordinates: Location? = null, val zoom: Float? = null) : TripViewEvent()
-    data object Capture: TripViewEvent()
     data object Back: TripViewEvent()
     data object ShowGuide: TripViewEvent()
     data object ShowSubscription: TripViewEvent()

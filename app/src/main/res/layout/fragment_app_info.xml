@@ -302,6 +302,7 @@
                               android:layout_height="wrap_content"
                               app:safeClick="@{() -> vm.onSubscribeClick()}"
                               app:debounceTime="@{2000L}"
+                              app:enabled="@{vm.subscriptionButtonEnabled}"
                               android:orientation="horizontal"
                               android:paddingVertical="20dp"
                               android:gravity="center_vertical"
@@ -314,7 +315,7 @@
                               android:layout_height="wrap_content"
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
-                              android:textColor="@color/label_normal"
+                              android:textColor="@color/text"
                               android:text="@{vm.isSubscriptionActive ? `정기구독 관리` : `정기구독하기`}"
                               tools:text="정기구독하기"/>
 
@@ -336,7 +337,7 @@
                                   android:textColor="@{vm.isSubscriptionActive ? @color/special : @color/label_assistive}"
                                   tools:textColor="@color/special"
                                   android:textAlignment="textEnd"
-                                  android:text="@{vm.subscriptionText}"
+                                  android:text="@{vm.subscriptionDescriptionText}"
                                   tools:text="프리미엄 구독중"/>
 
                     </LinearLayout>

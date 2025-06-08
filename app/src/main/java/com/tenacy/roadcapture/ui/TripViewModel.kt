@@ -38,6 +38,7 @@ class TripViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
+        .map { it && !SubscriptionPref.linkedAccountExists }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000L),
@@ -63,26 +64,26 @@ class TripViewModel @Inject constructor(
     val memoryLoaded = combine(_memories, _durationText) { memories, durationText -> memories != null && durationText != null }
         .stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
-    val memoryCountText = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
+    val memoryCountText = combine(_memories, isSubscriptionActive) { memories, _ ->
         val currentMemorySize = memories?.size ?: 0
         val maxMemorySize = Constants.MEMORY_MAX_SIZE
         "$currentMemorySize / $maxMemorySize"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    val exceedLimitedMemorySize = combine(_memories, subscriptionManager.isSubscriptionActive) { memories, _ ->
+    val exceedLimitedMemorySize = combine(_memories, isSubscriptionActive) { memories, _ ->
         if(memories == null) return@combine false
         memories.size >= Constants.MEMORY_MAX_SIZE
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
 
     private val _todayMemoryCount = MutableStateFlow<Long?>(null)
 
-    val todayMemoryCountText = combine(_todayMemoryCount, subscriptionManager.isSubscriptionActive) { todayMemoryCount, _ ->
+    val todayMemoryCountText = combine(_todayMemoryCount, isSubscriptionActive) { todayMemoryCount, _ ->
         val currentMemorySize = todayMemoryCount ?: 0
         val maxMemorySize = SubscriptionValues.todayMemoryMaxSize
         "추억 $currentMemorySize / $maxMemorySize"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
-    val exceedTodayLimitedMemorySize = combine(_todayMemoryCount, subscriptionManager.isSubscriptionActive) { todayMemoryCount, _ ->
+    val exceedTodayLimitedMemorySize = combine(_todayMemoryCount, isSubscriptionActive) { todayMemoryCount, _ ->
         if(todayMemoryCount == null) return@combine false
         todayMemoryCount >= SubscriptionValues.todayMemoryMaxSize
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
@@ -252,12 +253,6 @@ class TripViewModel @Inject constructor(
     fun onResetCameraClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(TripViewEvent.SetCamera())
-        }
-    }
-
-    fun onCaptureClick() {
-        viewModelScope.launch(Dispatchers.Default) {
-            viewEvent(TripViewEvent.Capture)
         }
     }
 

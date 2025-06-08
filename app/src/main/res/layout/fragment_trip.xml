@@ -165,7 +165,6 @@
                                                                                android:layout_height="wrap_content"
                                                                                android:id="@+id/fab_trip_capture"
                                                                                tools:enabled="false"
-                                                                               app:safeClick="@{() -> vm.onCaptureClick()}"
                                                                                android:visibility="@{(vm.memoryLoaded == false || vm.exceedLimitedMemorySize || vm.exceedTodayLimitedMemorySize) ? View.GONE : View.VISIBLE}"
                                                                                android:layout_marginBottom="20dp"
                                                                                app:shapeAppearance="@style/ShapeAppearance.App.LargeComponent"

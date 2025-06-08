@@ -5,7 +5,10 @@ import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.data.pref.SubscriptionPref
+import com.tenacy.roadcapture.data.pref.SubscriptionPref.linkedAccountExists
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.FirebaseConstants
@@ -89,6 +92,15 @@ class MainBeforeViewModel @Inject constructor(
                 Log.d("SubscriptionManager", "구독 여부 : $isSubscriptionActive")
 
                 SubscriptionCheckWorker.enqueuePeriodicWork(context)
+
+                if(isSubscriptionActive) {
+                    // 이미 구독 혜택을 받고 있는 계정이 있는지 확인
+                    val linkedAccountExists = db.collection(FirebaseConstants.COLLECTION_USERS)
+                        .whereNotEqualTo(FieldPath.documentId(), userId)
+                        .whereEqualTo("purchaseToken", SubscriptionPref.purchaseToken)
+                        .get().await().documents.size > 0
+                    SubscriptionPref.linkedAccountExists = linkedAccountExists
+                }
 
                 emit(Unit)
             }

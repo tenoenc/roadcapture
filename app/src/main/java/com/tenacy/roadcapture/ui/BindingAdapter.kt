@@ -197,3 +197,17 @@ fun View.setSafeClickListener(debounceTime: Long? = null, clickListener: View.On
         }
     }
 }
+
+@BindingAdapter("enabled")
+fun View.setEnabled(enabled: Boolean?) {
+    setEnabledIncludingChildren(enabled ?: true)
+}
+
+fun View.setEnabledIncludingChildren(enabled: Boolean) {
+    isEnabled = enabled
+    if (this is ViewGroup) {
+        children.forEach { child ->
+            child.setEnabledIncludingChildren(enabled)
+        }
+    }
+}

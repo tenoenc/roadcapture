@@ -9,13 +9,14 @@ object SubscriptionPref : KotprefModel() {
         set(value) {
             _isSubscriptionActive = value
         }
-        get() = _isSubscriptionActive && System.currentTimeMillis() < getGracePeriodExpiryTime()
+        get() = _isSubscriptionActive && !linkedAccountExists && System.currentTimeMillis() < getGracePeriodExpiryTime()
     var subscriptionExpiryTime by longPref(0L)
     var isSubscriptionCancelled by booleanPref(false)
     var purchaseToken by stringPref("")
     var subscriptionPurchaseTime by longPref(0L)
     var lastSubscriptionCheckTime by longPref(0L)
     var lastKnownExpiryTime by longPref(0L)
+    var linkedAccountExists by booleanPref(false)
 
     // 유예 기간 포함 만료 시간 (24시간 추가)
     private fun getGracePeriodExpiryTime(): Long {
@@ -49,6 +50,10 @@ object SubscriptionPref : KotprefModel() {
         subscriptionExpiryTime = 0L
         isSubscriptionCancelled = false
         purchaseToken = ""
+        subscriptionPurchaseTime = 0L
+        lastSubscriptionCheckTime = 0L
+        lastKnownExpiryTime = 0L
+        linkedAccountExists = false
         super.clear()
     }
 }
