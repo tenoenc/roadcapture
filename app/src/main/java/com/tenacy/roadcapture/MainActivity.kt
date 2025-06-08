@@ -123,8 +123,14 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         setupWorkManagerCleaning()
         checkTravelingStateOnStartup()
 
-        // Branch 세션 초기화 (브랜치 링크용)
-        Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).init()
+        try {
+            // 초기화 시도
+            Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).init()
+        } catch (e: Exception) {
+            // 이미 초기화된 경우 reInit 사용
+            Log.d("BranchSDK", "Branch init failed, using reInit: ${e.message}")
+            Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).reInit()
+        }
     }
 
     override fun onNewIntent(intent: Intent) {
