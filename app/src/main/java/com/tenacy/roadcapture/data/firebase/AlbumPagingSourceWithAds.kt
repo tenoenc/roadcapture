@@ -182,6 +182,12 @@ class AlbumPagingSourceWithAds(
             Album.from(album, scrapedByAlbumId.contains(album.id))
         }
 
+        // 다음 페이지의 광고 위치도 미리 계산해둠
+        if (showAds && adPositionsCache.isEmpty()) {
+            // 현재 페이지 + 다음 페이지의 아이템 수를 기준으로 광고 위치 미리 계산
+            generateAdPositions(albums.size * 2)
+        }
+
         return AlbumQueryResult(albums, albumDocuments.lastOrNull())
     }
 
