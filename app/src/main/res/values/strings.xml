@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">roadcapture</string>
+    <string name="app_name">로드캡처</string>
 
     <!-- General UI -->
     <string name="app">앱</string> <!-- {216} -->
