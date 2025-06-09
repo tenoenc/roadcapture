@@ -304,7 +304,7 @@ class HomeFragment : BaseFragment() {
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                "신고 내용이 접수되었어요",
+                                getString(R.string.report_submit_success),
                                 ToastMessageType.Success
                             )
                         )

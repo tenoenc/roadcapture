@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -8,6 +9,7 @@ import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.db.*
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
@@ -18,6 +20,7 @@ import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -31,7 +34,8 @@ import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class AlbumViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     private val memoryCacheDao: MemoryCacheDao,
     private val locationCacheDao: LocationCacheDao,
     private val cacheDao: CacheDao,
@@ -74,8 +78,7 @@ class AlbumViewModel @Inject constructor(
 
     private val _scrapCount = MutableStateFlow(0)
     val scrapCountText = _scrapCount.map {
-        val (value, unit) = it.toLong().toReadableUnit()
-        "${value.toFormattedDecimalText()}${unit}"
+        it.toLocalizedString(context).takeUnless { it == "0" } ?: "없음"
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val _scraped = MutableStateFlow(false)
@@ -109,22 +112,6 @@ class AlbumViewModel @Inject constructor(
         }
     }
 
-    /*private fun fetchData() {
-        viewModelScope.launch(Dispatchers.IO) {
-            val locations = locationDao.selectAll()
-            val memories = memoryDao.selectAll()
-            // 마지막 저장 위치 설정
-            if (locations.isNotEmpty()) {
-                val last = locations.maxByOrNull { it.createdAt }
-                last?.let {
-                    _lastLocation.emit(LatLng(it.latitude, it.longitude))
-                }
-            }
-            _memories.emit(memories)
-            _locations.emit(locations)
-        }
-    }*/
-
     private fun fetchData() {
         viewModelScope.launch(Dispatchers.IO) {
             val currentAlbumId = albumId.value
@@ -133,16 +120,16 @@ class AlbumViewModel @Inject constructor(
             flow {
                 val albumUserRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId)
                 if(!albumUserRef.get().await().exists()) {
-                    throw FirebaseFirestoreException("존재하지 않는 사용자예요", FirebaseFirestoreException.Code.NOT_FOUND)
+                    throw FirebaseFirestoreException(context.getString(R.string.user_not_exist), FirebaseFirestoreException.Code.NOT_FOUND)
                 }
 
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
                 val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(currentAlbumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
-                    ?: throw FirebaseFirestoreException("존재하지 않는 앨범이에요", FirebaseFirestoreException.Code.NOT_FOUND))
+                    ?: throw FirebaseFirestoreException(context.getString(R.string.album_not_exist), FirebaseFirestoreException.Code.NOT_FOUND))
 
                 if(currentUserId != UserPref.id && !firebaseAlbum.isPublic) {
-                    throw FirebaseFirestoreException("비공개로 전환된 앨범이에요", FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                    throw FirebaseFirestoreException(context.getString(R.string.album_switched_private), FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
                 val scrapRef = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
@@ -193,7 +180,7 @@ class AlbumViewModel @Inject constructor(
                     Log.e("AlbumViewModel", "에러", exception)
 
                     (exception as? FirebaseFirestoreException)?.let { firestoreException ->
-                        viewEvent(AlbumViewEvent.Forbidden(firestoreException.message ?: "예기치 않은 오류가 발생했어요"))
+                        viewEvent(AlbumViewEvent.Forbidden(firestoreException.message ?: context.getString(R.string.unexpected_error)))
                     }
                 }
                 .collect { (memories, locations) ->
@@ -368,7 +355,7 @@ class AlbumViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("AlbumViewModel", "shareId 처리 오류", e)
-                viewEvent(AlbumViewEvent.Forbidden("공유 링크를 통한 접근에 실패했어요"))
+                viewEvent(AlbumViewEvent.Forbidden(context.getString(R.string.share_link_access_error)))
             }
         }
     }

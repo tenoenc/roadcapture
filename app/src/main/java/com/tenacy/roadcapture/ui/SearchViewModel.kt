@@ -1,6 +1,8 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -8,6 +10,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.AlgoliaPagingSource
 import com.tenacy.roadcapture.data.firebase.SearchFilter
@@ -17,6 +20,7 @@ import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -26,13 +30,14 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     private val algoliaManager: AlgoliaManager,
 ) : BaseViewModel() {
 
     private val filter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
     val title = when(filter) {
-        SearchFilter.All -> "홈"
-        SearchFilter.Scrap -> "스크랩"
+        SearchFilter.All -> ContextCompat.getString(context, R.string.home_tab)
+        SearchFilter.Scrap -> ContextCompat.getString(context, R.string.scrap_tab)
     }
 
     val searchQuery = MutableStateFlow("")

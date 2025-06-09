@@ -25,6 +25,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
@@ -124,7 +125,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
-                    ToastModel("구독에 실패했습니다: $errorMessage", ToastMessageType.Warning)
+                    ToastModel(getString(R.string.subscription_process_error), ToastMessageType.Warning)
                 )
             )
         }
@@ -134,10 +135,10 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         if (!isAdded) return
 
         val message = when (productId) {
-            "donation_small" -> "소중한 후원에 감사드립니다! 더 좋은 서비스로 보답하겠습니다."
-            "donation_medium" -> "귀중한 후원에 진심으로 감사드립니다! 더 나은 앱을 만들도록 노력하겠습니다."
-            "donation_large" -> "큰 후원에 정말 감사드립니다! 앱 개발과 유지보수에 큰 도움이 됩니다."
-            else -> "후원에 감사드립니다! 앱 개선에 큰 도움이 됩니다."
+            "donation_small" -> getString(R.string.donation_thanks_small)
+            "donation_medium" -> getString(R.string.donation_thanks_medium)
+            "donation_large" -> getString(R.string.donation_thanks_large)
+            else -> getString(R.string.donation_thanks_general)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -159,7 +160,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
-                    ToastModel("후원에 실패했습니다: $errorMessage", ToastMessageType.Warning)
+                    ToastModel(getString(R.string.donation_process_error), ToastMessageType.Warning)
                 )
             )
         }
@@ -248,7 +249,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             is AppInfoViewEvent.ReviewApp -> {
                 appReviewManager.requestReview(
                     onReviewCompleted = {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앱 평가를 완료했어요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.app_rating_complete), ToastMessageType.Info)))
                     }
                 )
             }
@@ -281,16 +282,11 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 openPlayStoreSubscriptionManager()
             }
 
-            is AppInfoViewEvent.ShowSubscriptionRestriction -> {
-                val bottomSheet = SubscriptionRestrictionBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, SubscriptionRestrictionBottomSheetFragment.TAG)
-            }
-
             is AppInfoViewEvent.Error -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     when(event) {
                         is AppInfoViewEvent.Error.Reauth -> {
-                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("계정이 일치하지 않아요", ToastMessageType.Warning)))
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.account_mismatch), ToastMessageType.Warning)))
                         }
                     }
                 }
@@ -434,18 +430,13 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:")
                     putExtra(Intent.EXTRA_EMAIL, arrayOf("tentenacy@gmail.com"))
-                    putExtra(Intent.EXTRA_SUBJECT, "[로드캡처] 문의하기")
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.contact_email_subject))
+
+                    val `0` = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
+                    val `1` = Build.MODEL
+                    val `2` = Build.VERSION.RELEASE
                     putExtra(
-                        Intent.EXTRA_TEXT, """
-                    안녕하세요, 로드캡처 개발팀에 문의합니다.
-                    
-                    앱 버전: ${requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName}
-                    기기 모델: ${Build.MODEL}
-                    안드로이드 버전: ${Build.VERSION.RELEASE}
-                    
-                    문의 내용:
-                    
-                """.trimIndent()
+                        Intent.EXTRA_TEXT, getString(R.string.contact_template, `0`, `1`, `2`).trimIndent()
                     )
                 }
                 startActivity(emailIntent)
@@ -457,7 +448,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
-                                ToastModel("이메일을 보낼 수 없습니다: ${e.localizedMessage}", ToastMessageType.Warning)
+                                ToastModel(getString(R.string.email_send_error), ToastMessageType.Warning)
                             )
                         )
                     }
@@ -465,13 +456,13 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     // 대체 방법 제공
                     val clipboardManager =
                         requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clipData = ClipData.newPlainText("개발자 이메일", "tentenacy@gmail.com")
+                    val clipData = ClipData.newPlainText("developer email", "tentenacy@gmail.com")
                     clipboardManager.setPrimaryClip(clipData)
 
                     viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
-                                ToastModel("개발자 이메일이 클립보드에 복사되었습니다.", ToastMessageType.Info)
+                                ToastModel(getString(R.string.dev_email_copied), ToastMessageType.Info)
                             )
                         )
                     }

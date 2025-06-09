@@ -164,10 +164,10 @@ class LocationTrackingService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 Constants.TRACKING_NOTIFICATION_CHANNEL_ID,
-                "위치 추적",
+                getString(R.string.location_tracking),
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "백그라운드에서 위치를 추적합니다"
+                description = getString(R.string.background_location_tracking)
                 setShowBadge(false)
             }
 
@@ -189,8 +189,8 @@ class LocationTrackingService : Service() {
         )
 
         val builder = NotificationCompat.Builder(this, Constants.TRACKING_NOTIFICATION_CHANNEL_ID)
-            .setContentTitle("위치 추적 중")
-            .setContentText("여행 경로를 기록하고 있습니다")
+            .setContentTitle(getString(R.string.location_tracking_active))
+            .setContentText(getString(R.string.travel_route_recording))
             .setSmallIcon(R.drawable.ic_pin)
             .setColor(ContextCompat.getColor(this, R.color.primary_normal))
             .setContentIntent(pendingIntent)
@@ -199,7 +199,7 @@ class LocationTrackingService : Service() {
             .setCategory(NotificationCompat.CATEGORY_SERVICE)
             .addAction(
                 R.drawable.ic_stop,
-                "추적 중지",
+                getString(R.string.stop_tracking),
                 createStopServicePendingIntent()
             )
 

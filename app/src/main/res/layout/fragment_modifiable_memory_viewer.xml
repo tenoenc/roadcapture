@@ -89,7 +89,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Body_12_SB"
                               android:textColor="@color/label_neutral"
-                              android:text="썸네일"/>
+                              android:text="@string/thumbnail"/>
 
                 </androidx.cardview.widget.CardView>
 
@@ -134,7 +134,7 @@
                                   android:textColor="@color/label_neutral"
                                   android:textAlignment="center"
                                   android:visibility="@{vm.viewScope == ViewScope.WHOLE ? View.GONE : View.VISIBLE}"
-                                  android:text="@{`근처에 ` + vm.totalPageCount + `개의 추억이 있어요`}"
+                                  android:text="@{vm.aroundDescriptionText}"
                                   tools:text="근처에 3개의 추억이 있어요"/>
 
                         <TextView android:layout_width="match_parent"

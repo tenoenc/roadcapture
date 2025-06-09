@@ -8,6 +8,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
@@ -67,7 +68,7 @@ class MyAlbumTabViewModel @Inject constructor(
                     Log.e("MyAlbumTabViewModel", "에러", excpetion)
                 }
                 .collect {
-                    val publicText = if(!isPublic) "공개" else "비공개"
+                    val publicText = if(!isPublic) context.getString(R.string.visibility_public) else context.getString(R.string.visibility_private)
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic(publicText))
                 }
         }
@@ -95,8 +96,8 @@ class MyAlbumTabViewModel @Inject constructor(
                 CreateShareLinkWorker.enqueueOneTimeWork(context, albumId, idToken)
                 emit(Unit)
             }
-                .catch { excpetion ->
-                    Log.e("MyAlbumTabViewModel", "에러", excpetion)
+                .catch { exception ->
+                    Log.e("MyAlbumTabViewModel", "에러", exception)
                 }
                 .collect {
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink)

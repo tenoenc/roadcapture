@@ -31,7 +31,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
-                          android:text="앱"
+                          android:text="@string/app"
                           android:layout_marginHorizontal="20dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="로드캡처"
+                              android:text="@string/app_name"
                               android:layout_marginHorizontal="10dp"/>
 
                     <TextView android:layout_width="wrap_content"
@@ -98,7 +98,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="최근 업데이트"/>
+                              android:text="@string/recently_updated"/>
 
                     <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
@@ -129,7 +129,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="앱 평가하기"/>
+                              android:text="@string/rate_app"/>
 
                 </LinearLayout>
 
@@ -154,7 +154,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="개발자에게 후원하기"/>
+                              android:text="@string/donate_to_developer"/>
 
                 </LinearLayout>
 
@@ -167,7 +167,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
-                          android:text="사용자 지원"
+                          android:text="@string/user_support"
                           android:layout_marginHorizontal="20dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -187,7 +187,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="개발자에게 문의하기"/>
+                              android:text="@string/contact_developer"/>
 
                 </LinearLayout>
 
@@ -200,7 +200,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
-                          android:text="약관 및 정책"
+                          android:text="@string/terms_and_policies"
                           android:layout_marginHorizontal="20dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -220,7 +220,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="서비스 이용약관"/>
+                              android:text="@string/terms_of_service_menu"/>
 
                 </LinearLayout>
 
@@ -245,7 +245,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="개인정보 처리방침"/>
+                              android:text="@string/privacy_policy_menu"/>
 
                 </LinearLayout>
 
@@ -258,7 +258,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
-                          android:text="계정 관리"
+                          android:text="@string/account_management"
                           android:layout_marginHorizontal="20dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -316,7 +316,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/text"
-                              android:text="@{vm.isSubscriptionActive ? `정기구독 관리` : `정기구독하기`}"
+                              android:text="@{vm.isSubscriptionActive ? @string/manage_subscription : @string/subscribe}"
                               tools:text="정기구독하기"/>
 
                     <LinearLayout android:layout_width="wrap_content"
@@ -365,7 +365,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="로그아웃"/>
+                              android:text="@string/logout"/>
 
                 </LinearLayout>
 
@@ -390,7 +390,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="서비스 탈퇴"/>
+                              android:text="@string/withdrawal"/>
 
                 </LinearLayout>
 

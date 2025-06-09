@@ -1,11 +1,14 @@
 package com.tenacy.roadcapture.manager
 
 import android.app.Activity
+import android.content.Context
 import android.util.Log
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.ProductDetails
 import com.android.billingclient.api.Purchase
 import com.android.billingclient.api.QueryProductDetailsParams
+import com.tenacy.roadcapture.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -16,6 +19,7 @@ import javax.inject.Singleton
 
 @Singleton
 class DonationManager @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val billingManager: BillingManager
 ) {
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
@@ -153,7 +157,7 @@ class DonationManager @Inject constructor(
                         Log.e(TAG, "후원 구매 확인 실패: ${billingResult.debugMessage}")
                         donationCallback?.onDonationFailed(
                             billingResult.responseCode,
-                            "구매 확인에 실패했습니다: ${billingResult.debugMessage}"
+                            context.getString(R.string.purchase_verification_failed),
                         )
                     }
                 }
@@ -177,7 +181,7 @@ class DonationManager @Inject constructor(
                 Log.e(TAG, "소비 처리 실패: ${billingResult.debugMessage}")
                 donationCallback?.onDonationFailed(
                     billingResult.responseCode,
-                    "소비 처리에 실패했습니다: ${billingResult.debugMessage}"
+                    context.getString(R.string.consumption_processing_failed),
                 )
             }
         }
@@ -193,7 +197,7 @@ class DonationManager @Inject constructor(
             queryDonationProducts()
             donationCallback?.onDonationFailed(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                "후원 상품 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요."
+                context.getString(R.string.donation_loading),
             )
             return
         }
@@ -202,7 +206,7 @@ class DonationManager @Inject constructor(
         if (details == null) {
             donationCallback?.onDonationFailed(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                "후원 상품 정보를 찾을 수 없습니다"
+                context.getString(R.string.donation_product_not_found),
             )
             return
         }

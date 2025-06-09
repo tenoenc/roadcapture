@@ -23,7 +23,7 @@
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="로그아웃"
+                  android:text="@string/logout"
                   android:layout_marginTop="20dp"/>
 
         <TextView android:layout_width="wrap_content"
@@ -32,7 +32,7 @@
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"
                   android:textAlignment="center"
-                  tools:text="작성 중인 앨범은 자동으로 삭제돼요\n정말 로그아웃 하시겠어요?"
+                  android:text="@string/logout_confirmation_full"
                   android:layout_marginTop="4dp"/>
 
         <ImageView android:layout_width="168dp"
@@ -45,7 +45,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="다시 생각해볼게요"
+                android:text="@string/reconsider"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
@@ -58,7 +58,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/background_normal"
-                android:text="로그아웃 하기"
+                android:text="@string/logout_action"
                 android:backgroundTint="@color/warning"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

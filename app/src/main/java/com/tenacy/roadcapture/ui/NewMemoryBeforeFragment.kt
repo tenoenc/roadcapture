@@ -9,6 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentNewMemoryBeforeBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -62,10 +63,10 @@ class NewMemoryBeforeFragment: BaseFragment() {
                 when(it) {
                     is NsfwDetectionState.Loading -> {}
                     is NsfwDetectionState.ProcessingImage -> {
-                        binding.txtNewMemoryBeforeStatus.text = "이미지 처리 중"
+                        binding.txtNewMemoryBeforeStatus.text = getString(R.string.processing_image)
                     }
                     is NsfwDetectionState.DetectingNsfw -> {
-                        binding.txtNewMemoryBeforeStatus.text = "이미지 검토 중"
+                        binding.txtNewMemoryBeforeStatus.text = getString(R.string.reviewing_image)
                     }
                     is NsfwDetectionState.Completed -> {
                         val args: NewMemoryBeforeFragmentArgs by navArgs()

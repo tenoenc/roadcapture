@@ -2,6 +2,7 @@ package com.tenacy.roadcapture.manager
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -11,6 +12,7 @@ import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd
 import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAdLoadCallback
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.MainActivity
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.ui.ToastMessageType
 import com.tenacy.roadcapture.ui.ToastModel
@@ -110,7 +112,7 @@ class RewardedAdManager @Inject constructor(
         } else {
             // 광고가 로드되지 않은 경우
             mainActivity.lifecycleScope.launch {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("잠시 후 다시 시도해주세요.", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(ContextCompat.getString(context, R.string.try_again_later), ToastMessageType.Warning)))
             }
 
             // 실패 콜백 호출

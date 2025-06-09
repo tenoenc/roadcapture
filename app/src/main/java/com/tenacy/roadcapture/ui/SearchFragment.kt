@@ -17,6 +17,7 @@ import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -273,7 +274,7 @@ class SearchFragment: BaseFragment() {
         when(event) {
             is SearchViewEvent.ReportComplete -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submitted), ToastMessageType.Success)))
                 }
             }
         }

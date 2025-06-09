@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentModifyUsernameBinding
 import com.tenacy.roadcapture.di.UsernameFilter
 import com.tenacy.roadcapture.util.mainActivity
@@ -93,7 +94,7 @@ class ModifyUsernameFragment: BaseFragment() {
     private fun handleViewEvents(event: ModifyUsernameViewEvent) {
         when (event) {
             is ModifyUsernameViewEvent.Complete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이름을 변경하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.name_changing), ToastMessageType.Info)))
                 findNavController().popBackStack()
             }
         }

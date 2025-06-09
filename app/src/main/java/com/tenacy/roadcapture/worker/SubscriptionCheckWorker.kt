@@ -59,7 +59,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         // 알림 채널 생성
         val channel = NotificationChannel(
             Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID,
-            Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_NAME,
+            context.getString(R.string.subscription_notification),
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -68,10 +68,11 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         val daysLeft = SubscriptionPref.daysUntilExpiry()
 
         // 알림 생성
+        val `0` = daysLeft
         val builder = NotificationCompat.Builder(context, Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle("구독 만료 예정")
-            .setContentText("구독이 ${daysLeft}일 후에 만료됩니다. 계속 이용하시려면 갱신하세요.")
+            .setContentTitle(context.getString(R.string.subscription_expiring))
+            .setContentText(context.getString(R.string.subscription_expiry_notice, `0`))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
 

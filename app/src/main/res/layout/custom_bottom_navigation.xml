@@ -31,7 +31,7 @@
                           android:includeFontPadding="false"
                           android:textAppearance="@style/Body_10_M"
                           android:textColor="@color/label_normal"
-                          android:text="홈"
+                          android:text="@string/home_tab"
                           android:layout_marginTop="2dp"/>
 
             </LinearLayout>
@@ -55,7 +55,7 @@
                           android:includeFontPadding="false"
                           android:textAppearance="@style/Body_10_M"
                           android:textColor="@color/label_normal"
-                          android:text="스크랩"
+                          android:text="@string/scrap_tab"
                           android:layout_marginTop="2dp"/>
 
             </LinearLayout>
@@ -101,7 +101,7 @@
                           android:includeFontPadding="false"
                           android:textAppearance="@style/Body_10_M"
                           android:textColor="@color/label_normal"
-                          android:text="내 앨범"
+                          android:text="@string/my_album"
                           android:layout_marginTop="2dp"/>
 
             </LinearLayout>
@@ -125,7 +125,7 @@
                           android:includeFontPadding="false"
                           android:textAppearance="@style/Body_10_M"
                           android:textColor="@color/label_normal"
-                          android:text="앱 정보"
+                          android:text="@string/app_info"
                           android:layout_marginTop="2dp"/>
 
             </LinearLayout>

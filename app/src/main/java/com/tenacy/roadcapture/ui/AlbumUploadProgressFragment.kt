@@ -74,29 +74,29 @@ class AlbumUploadProgressFragment: BaseFragment() {
                     is AlbumSaveState.Loading -> {}
                     is AlbumSaveState.FetchingData -> {
                         binding.llUploadProgressContainer.visibility = View.VISIBLE
-                        binding.txtUploadProgressStatus.text = "준비하는 중"
+                        binding.txtUploadProgressStatus.text = getString(R.string.preparing)
                     }
                     is AlbumSaveState.CreatingTags -> {}
                     is AlbumSaveState.UploadingImages -> {
                         binding.txtUploadProgress.visibility = View.VISIBLE
                         binding.txtUploadProgress.text = "${it.current} / ${it.total}"
-                        binding.txtUploadProgressStatus.text = "이미지 업로드 중"
+                        binding.txtUploadProgressStatus.text = getString(R.string.uploading_image)
                         binding.pbUploadProgress.max = it.total * ANIMATION_SMOOTHNESS_FACTOR
                         progressUpdateFlow.emit(it.current * ANIMATION_SMOOTHNESS_FACTOR)
                     }
                     is AlbumSaveState.UploadingThumbnail -> {
                         binding.txtUploadProgress.visibility = View.GONE
-                        binding.txtUploadProgressStatus.text = "썸네일 업로드 중"
+                        binding.txtUploadProgressStatus.text = getString(R.string.uploading_thumbnail)
                     }
                     is AlbumSaveState.SavingToFirestore -> {
-                        binding.txtUploadProgressStatus.text = "앨범 저장하는 중"
+                        binding.txtUploadProgressStatus.text = getString(R.string.saving_album)
                     }
                     is AlbumSaveState.ClearingLocalData -> {}
                     is AlbumSaveState.Completed -> {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "앨범을 성공적으로 생성했어요",
+                                    getString(R.string.album_create_success),
                                     ToastMessageType.Success
                                 )
                             )
@@ -108,7 +108,7 @@ class AlbumUploadProgressFragment: BaseFragment() {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "작업 중 오류가 발생했어요\n다시 시도해주세요",
+                                    getString(R.string.operation_error),
                                     ToastMessageType.Warning
                                 )
                             )

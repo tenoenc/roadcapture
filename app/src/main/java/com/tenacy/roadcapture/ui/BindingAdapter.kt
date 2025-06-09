@@ -138,7 +138,7 @@ fun ViewGroup.setupSelectionContainer(
 ) {
     for (i in 0 until childCount) {
         val child = getChildAt(i)
-        child.setSafeClickListener { clickedView ->
+        child.setOnClickListener { clickedView ->
             if (singleSelection) {
                 for (j in 0 until childCount) {
                     val otherChild = getChildAt(j)

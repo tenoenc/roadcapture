@@ -64,7 +64,7 @@ class NewMemoryAfterFragment: BaseFragment() {
                 when(it) {
                     is SaveMemoryState.Loading -> {}
                     is SaveMemoryState.CountMemory -> {
-                        binding.txtNewMemoryAfterStatus.text = "위치 정보 불러오는 중"
+                        binding.txtNewMemoryAfterStatus.text = getString(R.string.loading_location)
                     }
                     is SaveMemoryState.ReversingGeocoding -> {}
                     is SaveMemoryState.SavingMemory -> {}

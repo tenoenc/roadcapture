@@ -18,7 +18,7 @@
                   android:textAppearance="@style/Body_14_M"
                   android:textColor="@color/warning"
                   android:textAlignment="center"
-                  android:text="작업이 끝나기 전까지는\n여기에 머물러주세요"
+                  android:text="@string/stay_until_completion"
                   android:layout_marginTop="80dp"
                   app:layout_constraintTop_toTopOf="parent"
                   app:layout_constraintStart_toStartOf="parent"
@@ -49,7 +49,7 @@
                           android:layout_weight="1"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_normal"
-                          android:text="이미지 업로드 중"
+                          android:text="@string/uploading_image"
                           android:maxLines="1"
                           android:ellipsize="end"
                           android:layout_marginBottom="4dp" />

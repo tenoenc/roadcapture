@@ -21,7 +21,7 @@
                   android:layout_height="wrap_content"
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
-                  android:text="여행 끝내기"
+                  android:text="@string/end_travel"
                   android:layout_marginTop="20dp"/>
 
         <TextView android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"
                   android:textAlignment="center"
-                  android:text="여행을 마쳤다면 앨범을 완성하기 위해\n다음 화면으로 이동해주세요"
+                  android:text="@string/travel_completion_guide"
                   android:layout_marginTop="4dp"/>
 
         <ImageView android:layout_width="168dp"
@@ -43,7 +43,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="다음으로 이동"
+                android:text="@string/next_step"
                 android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
@@ -56,7 +56,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="아직 여행 중이에요"
+                android:text="@string/still_traveling"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

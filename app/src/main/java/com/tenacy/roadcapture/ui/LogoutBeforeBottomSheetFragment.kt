@@ -42,8 +42,9 @@ class LogoutBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = "자동으로 삭제돼요"
-        val fullText = "작성 중인 앨범은 ${spanText}\n정말 로그아웃 하시겠어요?"
+        val spanText = getString(R.string.auto_deleted)
+        val `0` = spanText
+        val fullText = getString(R.string.logout_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetLogoutBeforeDescription,

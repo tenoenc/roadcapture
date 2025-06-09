@@ -24,7 +24,7 @@
                                                            style="@style/Button"
                                                            android:textAppearance="@style/Body_16_SB"
                                                            android:textColor="@color/label_normal"
-                                                           android:text="신고하기"
+                                                           android:text="@string/report"
                                                            android:backgroundTint="@color/background_normal"
                                                            app:strokeWidth="1dp"
                                                            app:strokeColor="@color/line_normal"

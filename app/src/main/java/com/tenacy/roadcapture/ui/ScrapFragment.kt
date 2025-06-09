@@ -293,7 +293,7 @@ class ScrapFragment: BaseFragment() {
             }
             is ScrapViewEvent.ReportComplete -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submitted), ToastMessageType.Success)))
                 }
             }
         }

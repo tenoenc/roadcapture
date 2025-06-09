@@ -34,7 +34,7 @@
                           android:textAppearance="@style/Title_24"
                           android:textColor="@color/label_normal"
                           android:textAlignment="center"
-                          android:text="신고하기"
+                          android:text="@string/report"
                           android:layout_marginTop="12dp"/>
 
                 <TextView android:layout_width="wrap_content"
@@ -42,7 +42,7 @@
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_neutral"
                           android:textAlignment="center"
-                          android:text="신고 사유를 선택해주세요"
+                          android:text="@string/select_report_reason"
                           android:layout_marginTop="4dp"/>
 
 
@@ -74,7 +74,7 @@
                                       android:layout_height="wrap_content"
                                       android:textAppearance="@style/Body_14_SB"
                                       android:textColor="@color/label_normal"
-                                      android:text="부적절한 콘텐츠"/>
+                                      android:text="@string/inappropriate_content_report"/>
 
                             <LinearLayout android:layout_width="match_parent"
                                           android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="음란물, 노출 사진"/>
+                                          android:text="@string/adult_content"/>
 
                             </LinearLayout>
 
@@ -110,91 +110,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="욕설, 비속어"/>
-
-                            </LinearLayout>
-
-
-                            <LinearLayout android:layout_width="match_parent"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginTop="2dp"
-                                          android:orientation="horizontal"
-                                          android:gravity="center_vertical">
-
-                                <View android:layout_width="3dp"
-                                      android:layout_height="3dp"
-                                      android:background="@drawable/circle"/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginStart="4dp"
-                                          android:textAppearance="@style/Body_12_M"
-                                          android:textColor="@color/label_normal"
-                                          android:text="폭력적이거나 혐오스러운 내용"/>
-
-                            </LinearLayout>
-
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
-
-                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
-                                                                       android:layout_height="wrap_content"
-                                                                       android:layout_marginTop="12dp"
-                                                                       app:rippleColor="@android:color/transparent"
-                                                                       app:contentPadding="12sp"
-                                                                       app:cardBackgroundColor="@color/chip_choice_range_background"
-                                                                       app:cardElevation="0dp"
-                                                                       app:cardCornerRadius="12dp"
-                                                                       app:strokeWidth="2dp"
-                                                                       app:strokeColor="@color/chip_choice_range_stroke">
-
-                        <LinearLayout android:layout_width="match_parent"
-                                      android:layout_height="wrap_content"
-                                      android:orientation="vertical">
-
-                            <TextView android:layout_width="match_parent"
-                                      android:layout_height="wrap_content"
-                                      android:textAppearance="@style/Body_14_SB"
-                                      android:textColor="@color/label_normal"
-                                      android:text="스팸 및 광고"/>
-
-                            <LinearLayout android:layout_width="match_parent"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginTop="2dp"
-                                          android:orientation="horizontal"
-                                          android:gravity="center_vertical">
-
-                                <View android:layout_width="3dp"
-                                      android:layout_height="3dp"
-                                      android:background="@drawable/circle"/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginStart="4dp"
-                                          android:textAppearance="@style/Body_12_M"
-                                          android:textColor="@color/label_normal"
-                                          android:text="상업적 광고, 홍보"/>
-
-                            </LinearLayout>
-
-                            <LinearLayout android:layout_width="match_parent"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginTop="2dp"
-                                          android:orientation="horizontal"
-                                          android:gravity="center_vertical">
-
-                                <View android:layout_width="3dp"
-                                      android:layout_height="3dp"
-                                      android:background="@drawable/circle"/>
-
-                                <TextView android:layout_width="wrap_content"
-                                          android:layout_height="wrap_content"
-                                          android:layout_marginStart="4dp"
-                                          android:textAppearance="@style/Body_12_M"
-                                          android:textColor="@color/label_normal"
-                                          android:text="반복적인 도배"/>
+                                          android:text="@string/abusive_language"/>
 
                             </LinearLayout>
 
@@ -214,7 +130,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="관련 없는 링크 또는 콘텐츠"/>
+                                          android:text="@string/violent_content"/>
 
                             </LinearLayout>
 
@@ -242,7 +158,7 @@
                                       android:layout_height="wrap_content"
                                       android:textAppearance="@style/Body_14_SB"
                                       android:textColor="@color/label_normal"
-                                      android:text="개인정보 노출"/>
+                                      android:text="@string/spam_ads"/>
 
                             <LinearLayout android:layout_width="match_parent"
                                           android:layout_height="wrap_content"
@@ -259,7 +175,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="타인의 개인정보 무단 공개"/>
+                                          android:text="@string/commercial_ads"/>
 
                             </LinearLayout>
 
@@ -278,7 +194,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="전화번호, 주소, 신분증 등"/>
+                                          android:text="@string/repetitive_content"/>
 
                             </LinearLayout>
 
@@ -298,7 +214,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="초상권 침해 (얼굴, 차량번호 등)"/>
+                                          android:text="@string/irrelevant_links"/>
 
                             </LinearLayout>
 
@@ -326,7 +242,7 @@
                                       android:layout_height="wrap_content"
                                       android:textAppearance="@style/Body_14_SB"
                                       android:textColor="@color/label_normal"
-                                      android:text="잘못된 정보"/>
+                                      android:text="@string/personal_info_exposure"/>
 
                             <LinearLayout android:layout_width="match_parent"
                                           android:layout_height="wrap_content"
@@ -343,7 +259,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="허위 정보, 가짜 뉴스"/>
+                                          android:text="@string/unauthorized_info_disclosure"/>
 
                             </LinearLayout>
 
@@ -362,7 +278,7 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="오해의 소지가 있는 내용"/>
+                                          android:text="@string/sensitive_info"/>
 
                             </LinearLayout>
 
@@ -382,7 +298,91 @@
                                           android:layout_marginStart="4dp"
                                           android:textAppearance="@style/Body_12_M"
                                           android:textColor="@color/label_normal"
-                                          android:text="잘못된 위치 태그"/>
+                                          android:text="@string/portrait_rights_violation"/>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                       android:layout_height="wrap_content"
+                                                                       android:layout_marginTop="12dp"
+                                                                       app:rippleColor="@android:color/transparent"
+                                                                       app:contentPadding="12sp"
+                                                                       app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                       app:cardElevation="0dp"
+                                                                       app:cardCornerRadius="12dp"
+                                                                       app:strokeWidth="2dp"
+                                                                       app:strokeColor="@color/chip_choice_range_stroke">
+
+                        <LinearLayout android:layout_width="match_parent"
+                                      android:layout_height="wrap_content"
+                                      android:orientation="vertical">
+
+                            <TextView android:layout_width="match_parent"
+                                      android:layout_height="wrap_content"
+                                      android:textAppearance="@style/Body_14_SB"
+                                      android:textColor="@color/label_normal"
+                                      android:text="@string/false_information"/>
+
+                            <LinearLayout android:layout_width="match_parent"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginTop="2dp"
+                                          android:orientation="horizontal"
+                                          android:gravity="center_vertical">
+
+                                <View android:layout_width="3dp"
+                                      android:layout_height="3dp"
+                                      android:background="@drawable/circle"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginStart="4dp"
+                                          android:textAppearance="@style/Body_12_M"
+                                          android:textColor="@color/label_normal"
+                                          android:text="@string/fake_news"/>
+
+                            </LinearLayout>
+
+                            <LinearLayout android:layout_width="match_parent"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginTop="2dp"
+                                          android:orientation="horizontal"
+                                          android:gravity="center_vertical">
+
+                                <View android:layout_width="3dp"
+                                      android:layout_height="3dp"
+                                      android:background="@drawable/circle"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginStart="4dp"
+                                          android:textAppearance="@style/Body_12_M"
+                                          android:textColor="@color/label_normal"
+                                          android:text="@string/misleading_content"/>
+
+                            </LinearLayout>
+
+
+                            <LinearLayout android:layout_width="match_parent"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginTop="2dp"
+                                          android:orientation="horizontal"
+                                          android:gravity="center_vertical">
+
+                                <View android:layout_width="3dp"
+                                      android:layout_height="3dp"
+                                      android:background="@drawable/circle"/>
+
+                                <TextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:layout_marginStart="4dp"
+                                          android:textAppearance="@style/Body_12_M"
+                                          android:textColor="@color/label_normal"
+                                          android:text="@string/wrong_location_tag"/>
 
                             </LinearLayout>
 
@@ -404,7 +404,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="접수하기"
+                android:text="@string/submit"
                 android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
@@ -416,7 +416,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="닫기"
+                android:text="@string/close"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

@@ -41,7 +41,7 @@
                       android:textAppearance="@style/Title_18"
                       android:textColor="@color/label_normal"
                       android:textAlignment="center"
-                      android:text="이름 변경"/>
+                      android:text="@string/name_change"/>
 
             <ImageButton
                     android:id="@+id/ibtn_modify_username_complete"
@@ -62,7 +62,7 @@
                   android:textAppearance="@style/Title_20"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="이름을 입력해주세요"
+                  android:text="@string/enter_name"
                   app:layout_constraintTop_toBottomOf="@id/ll_modify_username_a_bar_container"
                   app:layout_constraintStart_toStartOf="parent"
                   app:layout_constraintEnd_toEndOf="parent"/>

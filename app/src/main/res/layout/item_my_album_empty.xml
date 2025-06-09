@@ -13,14 +13,14 @@
                   android:textAppearance="@style/Body_16_M"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="앨범이 존재하지 않아요" />
+                  android:text="@string/no_album_exists" />
 
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:textAppearance="@style/Body_14_M"
                   android:textColor="@color/label_alternative"
                   android:textAlignment="center"
-                  android:text="여행을 떠나 첫 앨범을 만들어 보세요!"
+                  android:text="@string/create_first_album"
                   android:layout_marginTop="6dp"/>
 
     </LinearLayout>

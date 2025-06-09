@@ -5,14 +5,11 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetMemoryInfoBinding
 import com.tenacy.roadcapture.ui.dto.Memory
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
-import com.tenacy.roadcapture.util.formatWithPattern
-import com.tenacy.roadcapture.util.getFormattedDuration
-import com.tenacy.roadcapture.util.toTimestamp
+import com.tenacy.roadcapture.util.*
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
@@ -66,7 +63,7 @@ class MemoryInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     private fun getDescriptionText(): String? {
         return paramsIn?.let {
             val placeName = it.placeName
-            val formattedText = it.createdAt.formatWithPattern("yyyy-MM-dd HH:mm:ss")
+            val formattedText = it.createdAt.toDate().toLocalizedDateTimeString(requireContext(), includeTime = true, includeSeconds = true)
             if (placeName != null) {
                 "${getDurationFormattedText()}\n(${formattedText})"
             } else {
@@ -77,10 +74,10 @@ class MemoryInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private fun getDurationFormattedText(): String? {
         return paramsIn?.let {
-            val currentTimeStamp = LocalDateTime.now().toTimestamp()
-            val (value, unit) = getFormattedDuration(it.createdAt.toTimestamp(), currentTimeStamp)
+            val localizedTimeAgoText = it.createdAt.toUtcTimestamp().toLocalizedTimeAgo(binding.root.context)
 
-            "${value}${unit} 전에 남긴 추억이에요"
+            val `0` = localizedTimeAgoText
+            getString(R.string.memory_creation_time, `0`)
         }
     }
 

@@ -46,7 +46,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Title_24"
                           android:textColor="@color/label_normal"
-                          android:text="여행 중에"/>
+                          android:text="@string/during_travel"/>
 
                 <LinearLayout android:layout_width="match_parent"
                               android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="사진을 찍어 추억을 만들 수 있어요."
+                              android:text="@string/take_photo_guide"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -84,7 +84,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범을 생성할 수 없어요."
+                              android:text="@string/travel_continuation_notice_full"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -104,7 +104,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="추억을 1개 이상 만들어야 앨범을 완성할 수 있어요."
+                              android:text="@string/memory_minimum_requirement"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -127,7 +127,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_2"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="무료 플랜에서는 추억을 10개까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 여기를 클릭해주세요."
+                              android:text="@string/free_plan_limit_notice"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -136,7 +136,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Title_24"
                           android:textColor="@color/label_normal"
-                          android:text="여행이 끝나면"
+                          android:text="@string/when_travel_ends"
                           android:layout_marginTop="24dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -155,7 +155,7 @@
                               android:layout_marginEnd="10dp"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="우측에 보이는 모양의 아이콘을 지도에서 눌러 앨범을 완성시켜주세요."
+                              android:text="@string/complete_album_guide"
                               android:layout_marginStart="8dp"/>
 
                     <ImageView android:layout_width="23dp"
@@ -169,7 +169,7 @@
                           android:layout_height="wrap_content"
                           android:textAppearance="@style/Title_24"
                           android:textColor="@color/label_normal"
-                          android:text="앨범이 완성되면"
+                          android:text="@string/when_album_completed"
                           android:layout_marginTop="24dp"/>
 
                 <LinearLayout android:layout_width="match_parent"
@@ -188,7 +188,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="삭제가 가능하지만, 수정은 불가능해요."
+                              android:text="@string/delete_only_edit_impossible"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -208,7 +208,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="공개 / 비공개 전환이 가능해요."
+                              android:text="@string/visibility_toggle_available"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -229,7 +229,7 @@
                               android:id="@+id/txt_b_sheet_trip_guide_span_4"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="무료 플랜에서는 공유 링크 생성이 불가능해요. 생성을 원하시면 여기를 클릭해주세요."
+                              android:text="@string/free_plan_share_limitation"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -250,7 +250,7 @@
                               android:layout_marginEnd="10dp"
                               android:textAppearance="@style/Body_14_M"
                               android:textColor="@color/label_normal"
-                              android:text="위의 작업들은 ‘내 앨범’ 탭에서 우측에 보이는 모양의 아이콘을 눌러 수행할 수 있어요."
+                              android:text="@string/album_management_guide"
                               android:layout_marginStart="8dp"/>
 
                     <ImageView android:layout_width="23dp"
@@ -270,7 +270,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="닫기"
+                android:text="@string/close"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"/>

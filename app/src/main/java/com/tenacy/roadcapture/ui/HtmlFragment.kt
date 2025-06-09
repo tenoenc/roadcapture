@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentHtmlBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -39,10 +40,10 @@ class HtmlFragment: BaseFragment() {
 
     private fun setupViews() {
         binding.title = when (args.type) {
-            HtmlType.PrivacyPolicy -> "개인정보 처리방침"
-            HtmlType.TermsOfService -> "서비스 이용약관"
-            HtmlType.PrivacyPolicyAgreement -> "개인정보 수집 · 이용 동의서"
-            HtmlType.TermsOfServiceAgreement -> "서비스 이용약관 동의서"
+            HtmlType.PrivacyPolicy -> getString(R.string.privacy_policy)
+            HtmlType.TermsOfService -> getString(R.string.terms_of_service)
+            HtmlType.PrivacyPolicyAgreement -> getString(R.string.privacy_collection_consent)
+            HtmlType.TermsOfServiceAgreement -> getString(R.string.terms_consent)
         }
 
         setupWebView()
@@ -65,7 +66,7 @@ class HtmlFragment: BaseFragment() {
                 val htmlContent = loadHtmlFromAssets()
                 binding.webHtml.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
             } catch (exception: Exception) {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("불러올 수 없어요", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.load_error), ToastMessageType.Warning)))
                 findNavController().popBackStack()
             }
         }

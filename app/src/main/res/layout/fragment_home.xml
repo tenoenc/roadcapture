@@ -21,17 +21,6 @@
                                                            app:layout_constraintTop_toTopOf="parent"
                                                            app:layout_constraintStart_toStartOf="parent">
 
-            <!--
-                        <TextView android:layout_width="wrap_content"
-                                  android:layout_height="wrap_content"
-                                  android:textAppearance="@style/Title_20"
-                                  android:textColor="@color/label_normal"
-                                  android:text="R_"
-                                  app:layout_constraintStart_toStartOf="parent"
-                                  app:layout_constraintBottom_toBottomOf="parent"
-                                  app:layout_constraintTop_toTopOf="parent"/>
-            -->
-
             <ImageView android:layout_width="wrap_content"
                        android:layout_height="24dp"
                        android:id="@+id/img_logo"
@@ -40,26 +29,6 @@
                        app:layout_constraintStart_toStartOf="parent"
                        app:layout_constraintBottom_toBottomOf="parent"
                        app:layout_constraintTop_toTopOf="parent"/>
-
-<!--
-            <com.google.android.material.button.MaterialButton android:layout_width="wrap_content"
-                                                               android:layout_height="wrap_content"
-                                                               android:id="@+id/btn_home_test_subscription"
-                                                               style="@style/Button"
-                                                               android:paddingHorizontal="8dp"
-                                                               android:paddingVertical="4dp"
-                                                               android:textAppearance="@style/Body_12_M"
-                                                               android:textColor="@color/label_normal"
-                                                               android:backgroundTint="@color/background_normal"
-                                                               app:cornerRadius="12dp"
-                                                               app:strokeWidth="1dp"
-                                                               app:strokeColor="@color/line_normal"
-                                                               android:text="구독 상태 진단"
-                                                               app:layout_constraintBottom_toBottomOf="parent"
-                                                               app:layout_constraintTop_toTopOf="parent"
-                                                               app:layout_constraintStart_toStartOf="parent"
-                                                               app:layout_constraintEnd_toEndOf="parent"/>
--->
 
             <ImageButton android:layout_width="24dp"
                          android:layout_height="24dp"

@@ -70,7 +70,7 @@
                           android:layout_marginStart="2dp"
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_neutral"
-                          android:text="여행중"/>
+                          android:text="@string/traveling"/>
 
 
                 <ImageView android:layout_width="14dp"
@@ -110,7 +110,7 @@
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@{vm.exceedTodayLimitedMemorySize ? @color/warning : @color/label_neutral}"
                           tools:textColor="@color/label_neutral"
-                          android:text="오늘" />
+                          android:text="@string/today" />
 
 
                 <TextView android:layout_width="wrap_content"
@@ -205,7 +205,7 @@
                           android:textAppearance="@style/Title_20"
                           android:textColor="@{vm.exceedLimitedMemorySize ? @color/warning : @color/label_neutral}"
                           tools:textColor="@color/label_neutral"
-                          android:text="추억"/>
+                          android:text="@string/memory_tab"/>
 
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"

@@ -225,13 +225,14 @@ class MyAlbumTabFragment: BaseFragment() {
             is MyAlbumTabViewEvent.EnqueueComplete -> {
                 when(event) {
                     is MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.deleting_album), ToastMessageType.Info)))
                     }
                     is MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 ${event.publicText}로 전환하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
+                        val `0` = event.publicText
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
                     }
                     is MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("공유 링크를 생성하고 있어요\n반영되는 데 시간이 걸려요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.create_share_link), ToastMessageType.Info)))
                     }
                 }
             }

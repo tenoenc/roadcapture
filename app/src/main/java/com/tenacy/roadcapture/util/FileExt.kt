@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.core.content.FileProvider
+import com.tenacy.roadcapture.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
@@ -70,7 +71,7 @@ fun Context.compressImage(
 
     val (bitmap, orientation) = exifOrientation
     if (bitmap == null) {
-        throw IllegalArgumentException("이미지를 디코딩할 수 없습니다")
+        throw IllegalArgumentException(getString(R.string.image_decode_error))
     }
 
     // 이미지 회전 처리 - 공통 함수 사용

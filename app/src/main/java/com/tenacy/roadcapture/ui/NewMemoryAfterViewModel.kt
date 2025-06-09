@@ -1,12 +1,15 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
@@ -16,6 +19,7 @@ import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Address
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.*
@@ -30,6 +34,7 @@ import kotlin.time.toKotlinDuration
 @HiltViewModel
 class NewMemoryAfterViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
 ): BaseViewModel() {
@@ -90,9 +95,9 @@ class NewMemoryAfterViewModel @Inject constructor(
                 .timeout(Duration.ofMillis(30 * Constants.MILLIS_PER_SECONDS).toKotlinDuration())
                 .catch { exception ->
                     if(exception is TimeoutCancellationException) {
-                        emit(SaveMemoryState.Error("다시 시도해주세요"))
+                        emit(SaveMemoryState.Error(ContextCompat.getString(context, R.string.try_again)))
                     } else {
-                        emit(SaveMemoryState.Error(exception.message ?: "문제가 발생했어요"))
+                        emit(SaveMemoryState.Error(exception.message ?: context.getString(R.string.general_error)))
                     }
                 }
                 .collect { state ->
@@ -124,7 +129,7 @@ class NewMemoryAfterViewModel @Inject constructor(
                 coordinates = coordinates,
             )
         } catch (exception: Exception) {
-            throw RuntimeException("위치 정보를 불러오는 중에\n문제가 발생했어요")
+            throw RuntimeException(context.getString(R.string.location_loading_error))
         }
     }
 

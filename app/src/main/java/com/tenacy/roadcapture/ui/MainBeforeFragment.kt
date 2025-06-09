@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentMainBeforeBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -73,7 +74,7 @@ class MainBeforeFragment: BaseFragment() {
                 findNavController().navigate(MainBeforeFragmentDirections.actionMainBeforeToMain())
             }
             is MainBeforeViewEvent.Error -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("문제가 발생했어요", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.general_error), ToastMessageType.Warning)))
                 mainActivity.vm.viewEvent(GlobalViewEvent.Logout)
             }
         }

@@ -40,7 +40,6 @@ sealed class AppInfoViewEvent: ViewEvent {
     data object ShowLogoutBefore: AppInfoViewEvent()
     data object Donate : AppInfoViewEvent()
     data object ShowSubscription : AppInfoViewEvent()
-    data object ShowSubscriptionRestriction : AppInfoViewEvent()
     data object OpenPlayStoreSubscriptionManager : AppInfoViewEvent()
     data object ShowWithdrawBefore : AppInfoViewEvent()
     data object Withdraw : AppInfoViewEvent()

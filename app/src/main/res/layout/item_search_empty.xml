@@ -13,14 +13,14 @@
                   android:textAppearance="@style/Body_16_M"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="검색 결과가 없어요" />
+                  android:text="@string/no_search_results" />
 
         <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
                   android:textAppearance="@style/Body_14_M"
                   android:textColor="@color/label_alternative"
                   android:textAlignment="center"
-                  android:text="다른 키워드로 검색해보세요"
+                  android:text="@string/search_different_keyword"
                   android:layout_marginTop="6dp"/>
 
     </LinearLayout>

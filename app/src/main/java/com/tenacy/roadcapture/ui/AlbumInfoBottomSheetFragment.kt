@@ -94,7 +94,7 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
                             activity?.vm?.viewEvent(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        params.album.createdAt.formatToLocalizedDateTime(requireContext()),
+                                        params.album.createdAt.toDate().toLocalizedDateTimeString(requireContext(), includeTime = true, includeSeconds = true),
                                         ToastMessageType.Info
                                     )
                                 )
@@ -111,7 +111,7 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
                             activity?.vm?.viewEvent(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        params.album.endedAt.formatToLocalizedDateTime(requireContext()),
+                                        params.album.endedAt.toDate().toLocalizedDateTimeString(requireContext(), includeTime = true, includeSeconds = true),
                                         ToastMessageType.Info
                                     )
                                 )
@@ -125,8 +125,8 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private fun getContentRow1Elements(): Pair<String, String>? {
         return params?.let {
-            val startDateText = it.album.createdAt.formatToLocalizedDate(requireContext())
-            val endDateText = it.album.endedAt.formatToLocalizedDate(requireContext())
+            val startDateText = it.album.createdAt.toDate().toLocalizedDateString(requireContext())
+            val endDateText = it.album.endedAt.toDate().toLocalizedDateTimeString(requireContext())
             startDateText to endDateText
         }
     }
@@ -137,11 +137,35 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     private fun getContentRow2Text(): String? {
         return params?.let {
-            val durationFormattedText =
+            val (days, hours, minutes) =
                 getDurationFormattedText(it.album.createdAt.toTimestamp(), it.album.endedAt.toTimestamp())
+
             val sb = StringBuilder()
-            sb.append(if(durationFormattedText == "0분") "" else "${durationFormattedText} 동안 ")
-            sb.append("${it.totalMemoryCount}개의 추억을 남겼어요")
+            val sb2 = StringBuilder()
+
+            if(days > 0) {
+                val `0` = days.toInt()
+                sb2.append(getString(R.string.time_days, `0`))
+                sb.append(" ")
+            }
+
+            if(hours > 0) {
+                val `0` = hours.toInt()
+                sb2.append(getString(R.string.time_hours, `0`))
+                sb.append(" ")
+            }
+
+            if(minutes > 0) {
+                val `0` = minutes.toInt()
+                sb2.append(getString(R.string.time_minutes, `0`))
+                sb.append(" ")
+            }
+
+            val `0` = sb2.toString()
+            sb.append(if(minutes == 0L) "" else getString(R.string.duration_format, `0`))
+            sb.append(" ")
+            val `1` = it.totalMemoryCount
+            sb.append(getString(R.string.memory_count_created, `1`))
             return sb.toString()
         }
     }

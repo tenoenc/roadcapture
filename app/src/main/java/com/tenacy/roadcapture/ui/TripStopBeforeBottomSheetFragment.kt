@@ -38,8 +38,9 @@ class TripStopBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = "복구할 수 없어요"
-        val fullText = "앨범을 삭제하면 추억들을 ${spanText}\n정말 삭제하시겠어요?"
+        val spanText = getString(R.string.cannot_recover)
+        val `0` = spanText
+        val fullText = getString(R.string.delete_album_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetTripStopBeforeDescription,

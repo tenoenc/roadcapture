@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.util.TagConstants
@@ -51,7 +52,7 @@ class LoginViewModel @Inject constructor(
     override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialProfileUrl: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                if(!checkUserExists(socialUserId, socialType)) throw FirebaseFirestoreException("사용자가 존재하지 않아요", FirebaseFirestoreException.Code.NOT_FOUND)
+                if(!checkUserExists(socialUserId, socialType)) throw FirebaseFirestoreException(context.getString(R.string.user_not_found), FirebaseFirestoreException.Code.NOT_FOUND)
                 emit(Unit)
             }
                 .catch { exception ->

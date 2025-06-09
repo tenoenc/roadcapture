@@ -45,7 +45,7 @@
                         android:textAppearance="@style/Title_18"
                         android:textColor="@color/label_normal"
                         android:textAlignment="center"
-                        android:text="추억 생성"/>
+                        android:text="@string/create_memory"/>
 
                 <ImageButton
                         android:id="@+id/ibtn_new_memory_complete"
@@ -145,7 +145,7 @@
                             android:textAppearance="@style/Body_14_M"
                             android:textColor="@color/label_normal"
                             android:textAlignment="textStart"
-                            android:hint="(선택) 장소명을 입력해주세요"
+                            android:hint="@string/place_name_optional"
                             android:textColorHint="@color/fill_neutral"
                             android:background="@drawable/input_normal"
                             android:paddingVertical="12dp"
@@ -183,7 +183,7 @@
                             android:textAppearance="@style/Body_14_M"
                             android:textColor="@color/label_normal"
                             android:textAlignment="textStart"
-                            android:hint="(선택) 내용을 자유롭게 입력해주세요"
+                            android:hint="@string/content_optional"
                             android:textColorHint="@color/fill_neutral"
                             android:background="@drawable/input_normal"
                             android:layout_marginTop="12dp"

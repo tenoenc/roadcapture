@@ -1,15 +1,18 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.LatLng
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -17,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ModifiableMemoryViewerViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val savedStateHandle: SavedStateHandle,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
@@ -41,6 +45,12 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
 
     val totalPageCount = _state.map { it.totalPageCount }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
+
+    val aroundDescriptionText = _state.map {
+        val totalPageCount = it.totalPageCount
+        val `0` = totalPageCount
+        context.getString(R.string.nearby_memories_count, `0`)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     val viewScope = _state.map { it.viewScope }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)

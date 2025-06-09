@@ -49,7 +49,7 @@ class AlbumModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private fun setupViews() {
         params?.let {
-            binding.toggleText = if (it.album.isPublic) "비공개로 전환하기" else "공개로 전환하기"
+            binding.toggleText = if (it.album.isPublic) getString(R.string.switch_to_private) else getString(R.string.switch_to_public)
             binding.shareVisible = it.album.shareId.isNullOrBlank() && it.album.isPublic && SubscriptionPref.isSubscriptionActive
         }
     }

@@ -76,7 +76,7 @@
                               android:textColor="@color/label_normal"
                               android:textAlignment="textStart"
                               android:text="@={vm.searchQuery}"
-                              android:hint="제목, 사용자, 지역, 장소 검색"
+                              android:hint="@string/search_hint"
                               android:textColorHint="@color/fill_neutral"/>
 
                     <ImageButton android:layout_width="16dp"

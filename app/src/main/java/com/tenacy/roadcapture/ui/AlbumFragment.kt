@@ -283,7 +283,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
             is AlbumViewEvent.Share -> {
                 if(event.link.isNullOrBlank()) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("공유 링크가 존재하지 않아요", ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.share_link_not_exist), ToastMessageType.Warning)))
                     return
                 }
                 shareLink(event.link)
@@ -314,12 +314,12 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.ReportComplete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("신고 내용이 접수되었어요", ToastMessageType.Success)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submit_success), ToastMessageType.Success)))
             }
         }
     }
 
-    private fun shareLink(link: String, title: String = "앨범 공유하기") {
+    private fun shareLink(link: String, title: String = getString(R.string.album_share)) {
         // 공유할 텍스트 메시지 (제목과 링크 포함)
         val shareText = "$link"
 
@@ -558,7 +558,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         try {
             // Create cluster item
             val clusterItem =
-                ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
+                ClusterMarkerItem(markerId, position, "Photo: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
             // Add to cluster manager
             clusterManager.addItem(clusterItem)

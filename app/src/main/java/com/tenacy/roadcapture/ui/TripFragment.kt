@@ -95,7 +95,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 mainActivity.vm.viewEvent(
                     GlobalViewEvent.Toast(
                         ToastModel(
-                            "카메라 권한이 없어\n앨범을 만들 수 없습니다",
+                            getString(R.string.camera_permission_denied),
                             ToastMessageType.Warning
                         )
                     )
@@ -127,7 +127,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 mainActivity.vm.viewEvent(
                     GlobalViewEvent.Toast(
                         ToastModel(
-                            "위치 권한이 없어\n앨범을 만들 수 없습니다",
+                            getString(R.string.location_permission_denied),
                             ToastMessageType.Warning
                         )
                     )
@@ -149,8 +149,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         return binding.root
     }
 
-    @Inject
-    lateinit var locationDummyGenerator: LocationDummyGenerator
+//    @Inject
+//    lateinit var locationDummyGenerator: LocationDummyGenerator
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -254,7 +254,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val linkedAccountExists = SubscriptionPref.linkedAccountExists
                 when {
                     linkedAccountExists -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("다른 계정에서 이미 혜택을 받고 있어요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
                     }
                     else -> {
                         showSubscriptionDialog()
@@ -290,7 +290,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 Log.d("TAG", "Positive Button Clicked!")
                 viewLifecycleOwner.lifecycleScope.launch {
                     vm.stopTraveling()
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("앨범을 삭제했어요", ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.album_deleted), ToastMessageType.Success)))
                 }
             }
         }
@@ -311,7 +311,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "위치 정보가 없기 때문에 사진을 찍을 수 없어요",
+                                    getString(R.string.no_location_photo_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -500,10 +500,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             .setPermissionListener(locationPermissionListener)
             .setPermissions(*permissions.toTypedArray())
             .setGotoSettingButton(true)
-            .setDeniedTitle("위치 권한 필요")
-            .setDeniedMessage("지도에 현재 위치를 표시하고 백그라운드에서 경로를 기록하기 위해 위치 권한이 필요합니다. 설정에서 위치 권한을 항상 허용으로 선택해주세요.")
-            .setDeniedCloseButtonText("취소")
-            .setGotoSettingButtonText("설정")
+            .setDeniedTitle(getString(R.string.location_permission_required))
+            .setDeniedMessage(getString(R.string.location_permission_rationale))
+            .setDeniedCloseButtonText(getString(R.string.cancel))
+            .setGotoSettingButtonText(getString(R.string.settings))
             .check()
     }
 
@@ -512,10 +512,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             .setPermissionListener(cameraPermissionListener)
             .setPermissions(Manifest.permission.CAMERA)
             .setGotoSettingButton(true)
-            .setDeniedTitle("카메라 권한 필요")
-            .setDeniedMessage("사진을 촬영하기 위해 카메라 권한이 필요합니다. 설정에서 권한을 허용해주세요.")
-            .setDeniedCloseButtonText("취소")
-            .setGotoSettingButtonText("설정")
+            .setDeniedTitle(getString(R.string.camera_permission_required))
+            .setDeniedMessage(getString(R.string.camera_permission_rationale))
+            .setDeniedCloseButtonText(getString(R.string.cancel))
+            .setGotoSettingButtonText(getString(R.string.settings))
             .check()
 
     // ===== 7. 데이터 관찰 메서드 그룹 =====
@@ -609,10 +609,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val linkedAccountExists = SubscriptionPref.linkedAccountExists
                 when {
                     linkedAccountExists -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("다른 계정에서 이미 혜택을 받고 있어요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
                     }
                     isSubscriptionActive -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프리미엄 플랜을 구독 중이에요", ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.premium_subscription_active), ToastMessageType.Info)))
                     }
                     else -> {
                         showSubscriptionDialog()
@@ -632,7 +632,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 when(event) {
                     is TripViewEvent.Error.Fetch -> {}
                 }
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("문제가 발생했어요", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.general_error), ToastMessageType.Warning)))
                 findNavController().popBackStack()
             }
         }
@@ -884,7 +884,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         try {
             // Create cluster item
             val clusterItem =
-                ClusterMarkerItem(markerId, position, "사진: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
+                ClusterMarkerItem(markerId, position, "Photo: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
             // Add to cluster manager
             clusterManager.addItem(clusterItem)
@@ -919,7 +919,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "카메라 앱을 실행할 수 없어요",
+                                    getString(R.string.camera_app_launch_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -984,7 +984,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    "이미지 편집을 시작할 수 없습니다",
+                                    getString(R.string.image_edit_start_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -1003,7 +1003,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             override fun createIntent(context: Context, input: Triple<Uri, Uri, Location?>): Intent {
                 val options = UCrop.Options().apply {
                     setCompressionQuality(30)
-                    setToolbarTitle("이미지 편집")
+                    setToolbarTitle(getString(R.string.image_edit))
                     setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setToolbarWidgetColor(ContextCompat.getColor(context, R.color.background_normal))
@@ -1042,7 +1042,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                "이미지 편집 중 오류가 발생했습니다",
+                                getString(R.string.image_edit_error),
                                 ToastMessageType.Warning
                             )
                         )
@@ -1054,7 +1054,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                "현재 위치를 확인할 수 없어요",
+                                getString(R.string.current_location_unavailable),
                                 ToastMessageType.Warning
                             )
                         )

@@ -45,7 +45,7 @@
                           android:textAppearance="@style/Title_24"
                           android:textColor="@color/label_normal"
                           android:textAlignment="center"
-                          android:text="정기구독 혜택"
+                          android:text="@string/subscription_benefits"
                           android:layout_marginTop="20dp"/>
 
                 <TextView android:layout_width="wrap_content"
@@ -53,7 +53,7 @@
                           android:textAppearance="@style/Body_12_M"
                           android:textColor="@color/label_neutral"
                           android:textAlignment="center"
-                          android:text="구독하고 더 많은 혜택을 누려보세요!"
+                          android:text="@string/subscribe_benefits_prompt"
                           android:layout_marginTop="4dp"/>
 
                 <ImageView android:layout_width="168dp"
@@ -70,7 +70,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Title_24"
                               android:textColor="@color/label_normal"
-                              android:text="프리미엄"/>
+                              android:text="@string/premium_label"/>
 
                     <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                                        android:layout_height="wrap_content"
@@ -134,14 +134,14 @@
                                   android:layout_height="wrap_content"
                                   android:textAppearance="@style/Body_15_M"
                                   android:textColor="@color/label_normal"
-                                  android:text="앨범 링크(웹 페이지) 생성"
+                                  android:text="@string/album_link_creation"
                                   android:layout_marginStart="8dp"/>
 
                         <TextView android:layout_width="match_parent"
                                   android:layout_height="wrap_content"
                                   android:textAppearance="@style/Body_12_M"
                                   android:textColor="@color/label_neutral"
-                                  android:text="링크를 활용하여 외부에 앨범을 공유할 수 있어요"
+                                  android:text="@string/link_sharing_benefit"
                                   android:layout_marginStart="8dp"/>
 
 
@@ -164,7 +164,7 @@
                               android:layout_weight="1"
                               android:textAppearance="@style/Body_15_M"
                               android:textColor="@color/label_normal"
-                              android:text="광고 제거"
+                              android:text="@string/ad_removal"
                               android:layout_marginStart="8dp"/>
 
                 </LinearLayout>
@@ -179,7 +179,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="프리미엄 구독하기"
+                android:text="@string/subscribe_premium"
                 android:backgroundTint="#FFD700"
                 app:cornerRadius="12dp"
                 android:padding="12dp"/>
@@ -190,7 +190,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="닫기"
+                android:text="@string/close"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:layout_marginTop="12dp"

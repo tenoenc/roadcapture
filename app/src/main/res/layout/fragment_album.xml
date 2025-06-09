@@ -193,7 +193,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Body_10_SB"
                               android:textColor="@color/label_normal"
-                              android:text="신고"/>
+                              android:text="@string/report_title"/>
 
                 </LinearLayout>
 
@@ -230,7 +230,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Body_10_SB"
                               android:textColor="@color/label_normal"
-                              android:text="공유"/>
+                              android:text="@string/share"/>
 
                 </LinearLayout>
 

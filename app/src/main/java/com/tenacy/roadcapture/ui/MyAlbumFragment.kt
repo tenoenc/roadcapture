@@ -23,6 +23,7 @@ import com.tenacy.roadcapture.databinding.FragmentMyAlbumBinding
 import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.util.toLocalizedString
 import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -71,7 +72,7 @@ class MyAlbumFragment: BaseFragment() {
             result.getOrNull(0)?.let {
 
                 UpdateUserPhotoWorker.enqueueOneTimeWork(requireContext(), it.uri)
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("프로필 사진을 변경하고 있어요\n반영되는 데 시간이 걸려요")))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.profile_photo_changing))))
             }
         }
     }
@@ -109,9 +110,11 @@ class MyAlbumFragment: BaseFragment() {
         TabLayoutMediator(binding.tlMyAlbum, binding.vpMyAlbum) { tab, position ->
             val albumCount = vm.totalCounts.value[MyAlbumViewModel.KEY_ALBUM_COUNT] ?: 0L
             val memoryCount = vm.totalCounts.value[MyAlbumViewModel.KEY_MEMORY_COUNT] ?: 0L
+            val `0` = albumCount.toLocalizedString(requireContext())
+            val `1` = memoryCount.toLocalizedString(requireContext())
             when (position) {
-                0 -> tab.text = createTabText("앨범", "${albumCount}개")
-                1 -> tab.text = createTabText("추억", "${memoryCount}개")
+                0 -> tab.text = createTabText(getString(R.string.album_tab), getString(R.string.item_count, `0`))
+                1 -> tab.text = createTabText(getString(R.string.memory_tab), getString(R.string.item_count, `1`))
             }
         }.attach()
     }
@@ -182,9 +185,11 @@ class MyAlbumFragment: BaseFragment() {
     private fun updateTabTexts(albumCount: Long, memoryCount: Long) {
         // 각 탭의 텍스트만 업데이트
         val tabLayout = binding.tlMyAlbum
+        val `0` = albumCount.toLocalizedString(requireContext())
+        val `1` = memoryCount.toLocalizedString(requireContext())
         if (tabLayout.tabCount >= 2) {
-            tabLayout.getTabAt(0)?.text = createTabText("앨범", "${albumCount}개")
-            tabLayout.getTabAt(1)?.text = createTabText("추억", "${memoryCount}개")
+            tabLayout.getTabAt(0)?.text = createTabText(getString(R.string.album_tab), getString(R.string.item_count, `0`))
+            tabLayout.getTabAt(1)?.text = createTabText(getString(R.string.memory_tab), getString(R.string.item_count, `1`))
         }
     }
 

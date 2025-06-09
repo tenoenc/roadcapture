@@ -2,8 +2,10 @@ package com.tenacy.roadcapture.ui
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
@@ -55,8 +57,9 @@ class MyAlbumViewModel @Inject constructor(
 //        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
 
     val scrapText = _user.filterNotNull().map {
-        val (scrapCount, scrapCountUnit) = it.scrapCount.toReadableUnit()
-        "앨범이 ${scrapCount.toFormattedDecimalText(hasZeroText = false)}${scrapCountUnit}번 스크랩 되었어요"
+        val localizedText = it.scrapCount.toLocalizedString(context)
+        val `0` = localizedText
+        context.getString(R.string.album_scrap_count, `0`)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     init {

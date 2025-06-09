@@ -72,7 +72,7 @@ class WithdrawBeforeFragment: BaseFragment() {
     private fun handleViewEvents(event: WithdrawBeforeViewEvent) {
         when (event) {
             is WithdrawBeforeViewEvent.Complete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴가 완료되었어요", ToastMessageType.Success)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.withdrawal_complete), ToastMessageType.Success)))
 
                 val navOptions = NavOptions.Builder().setPopUpTo(
                     R.id.mainFragment,
@@ -87,7 +87,7 @@ class WithdrawBeforeFragment: BaseFragment() {
                 }
             }
             is WithdrawBeforeViewEvent.Error.Withdraw -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("서비스 탈퇴 중 오류가 발생했어요", ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.withdrawal_error), ToastMessageType.Warning)))
                 mainActivity.vm.logout()
             }
         }

@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 .build()
             navController?.navigate(R.id.mainFragment, null, options)
         } else {
-            vm.viewEvent(GlobalViewEvent.Toast(ToastModel("로그인 후에 앨범을 공유받을 수 있어요")))
+            vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.login_album_share_message))))
             navController?.popBackStack(R.id.loginFragment, false)
         }
     }
@@ -167,7 +167,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 handleViewEvents(
                                     GlobalViewEvent.Toast(
                                         ToastModel(
-                                            "성공적으로 프로필 사진이 변경되었어요",
+                                            getString(R.string.profile_photo_change_success),
                                             ToastMessageType.Success
                                         )
                                     )
@@ -190,7 +190,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 handleViewEvents(
                                     GlobalViewEvent.Toast(
                                         ToastModel(
-                                            "프로필 사진 변경 중에 문제가 발생했어요",
+                                            getString(R.string.profile_photo_change_error),
                                             ToastMessageType.Warning
                                         )
                                     )
@@ -227,7 +227,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 handleViewEvents(
                                     GlobalViewEvent.Toast(
                                         ToastModel(
-                                            "성공적으로 이름이 변경되었어요",
+                                            getString(R.string.name_change_success),
                                             ToastMessageType.Success
                                         )
                                     )
@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                                 handleViewEvents(
                                     GlobalViewEvent.Toast(
                                         ToastModel(
-                                            "이름 변경 중에 문제가 발생했어요",
+                                            getString(R.string.name_change_error),
                                             ToastMessageType.Warning
                                         )
                                     )
@@ -304,7 +304,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "성공적으로 공유 링크가 생성되었어요",
+                                        getString(R.string.share_link_create_success),
                                         ToastMessageType.Success
                                     )
                                 )
@@ -321,7 +321,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "공유 링크 생성 중에 문제가 발생했어요",
+                                        getString(R.string.share_link_create_error),
                                         ToastMessageType.Warning
                                     )
                                 )
@@ -371,11 +371,12 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             val isPublic = workInfo.outputData.getBoolean(UpdateAlbumPublicWorker.KEY_PUBLIC, false)
 
                             // 성공 처리
-                            val publicText = if(isPublic) "공개" else "비공개"
+                            val publicText = if(isPublic) getString(R.string.visibility_public) else getString(R.string.visibility_private)
+                            val `0` = publicText
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "성공적으로 앨범이 ${publicText}로 전환되었어요",
+                                        getString(R.string.album_visibility_change_success, `0`),
                                         ToastMessageType.Success
                                     )
                                 )
@@ -394,7 +395,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "공개 여부 전환 중에 문제가 발생했어요",
+                                        getString(R.string.visibility_change_error),
                                         ToastMessageType.Warning
                                     )
                                 )
@@ -441,7 +442,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "앨범이 성공적으로 삭제되었어요",
+                                        getString(R.string.album_delete_success),
                                         ToastMessageType.Success
                                     )
                                 )
@@ -460,7 +461,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                             handleViewEvents(
                                 GlobalViewEvent.Toast(
                                     ToastModel(
-                                        "앨범 삭제 중에 문제가 발생했어요",
+                                        getString(R.string.album_delete_error),
                                         ToastMessageType.Warning
                                     )
                                 )

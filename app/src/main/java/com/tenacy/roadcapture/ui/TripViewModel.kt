@@ -5,6 +5,7 @@ import android.location.Location
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.maps.model.Polyline
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
@@ -80,7 +81,9 @@ class TripViewModel @Inject constructor(
     val todayMemoryCountText = combine(_todayMemoryCount, isSubscriptionActive) { todayMemoryCount, _ ->
         val currentMemorySize = todayMemoryCount ?: 0
         val maxMemorySize = SubscriptionValues.todayMemoryMaxSize
-        "추억 $currentMemorySize / $maxMemorySize"
+        val `0` = currentMemorySize.toInt()
+        val `1` = maxMemorySize
+        context.getString(R.string.memory_count, `0`, `1`)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     val exceedTodayLimitedMemorySize = combine(_todayMemoryCount, isSubscriptionActive) { todayMemoryCount, _ ->
@@ -192,7 +195,25 @@ class TripViewModel @Inject constructor(
 
     fun updateDurationText() {
         _durationText.update {
-            getDurationFormattedText(TravelPref.createdAt, LocalDateTime.now().toTimestamp())
+            val (days, hours, minutes) = getDurationFormattedText(TravelPref.createdAt, LocalDateTime.now().toTimestamp())
+            val sb = StringBuilder()
+
+            if(days > 0) {
+                val `0` = days.toInt()
+                sb.append(context.getString(R.string.time_days, `0`))
+            }
+
+            if(hours > 0) {
+                val `0` = hours.toInt()
+                sb.append(context.getString(R.string.time_hours, `0`))
+            }
+
+            if(minutes >= 0) {
+                val `0` = minutes.toInt()
+                sb.append(context.getString(R.string.time_minutes, `0`))
+            }
+
+            sb.toString()
         }
     }
 

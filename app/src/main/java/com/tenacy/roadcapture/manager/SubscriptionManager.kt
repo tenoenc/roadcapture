@@ -10,6 +10,7 @@ import com.android.billingclient.api.QueryProductDetailsParams
 import com.chibatching.kotpref.Kotpref
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.api.dto.VerificationRequest
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
@@ -478,7 +479,7 @@ class SubscriptionManager @Inject constructor(
                 } else {
                     purchaseCallback?.onSubscriptionPurchaseFailed(
                         BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                        "구독 상품 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요."
+                        context.getString(R.string.subscription_loading),
                     )
                 }
             }
@@ -495,7 +496,7 @@ class SubscriptionManager @Inject constructor(
         if (details == null) {
             purchaseCallback?.onSubscriptionPurchaseFailed(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                "구독 상품 정보를 찾을 수 없습니다"
+                context.getString(R.string.subscription_product_not_found),
             )
             return
         }

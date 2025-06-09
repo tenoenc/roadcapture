@@ -44,8 +44,9 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText1 = "앨범을 생성할 수 없어요."
-        val spanFullText1 = "앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 ${spanText1}"
+        val spanText1 = getString(R.string.cannot_create_album)
+        val `0` = spanText1
+        val spanFullText1 = getString(R.string.travel_continuation_notice, `0`)
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -61,12 +62,15 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
         val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
 
-        val spanText2_1 = "하루에 ${SubscriptionValues.todayMemoryMaxSize}개"
-        val spanText2_2 = "여기"
+        val `1` = SubscriptionValues.todayMemoryMaxSize
+        val spanText2_1 = getString(R.string.daily_limit, `1`)
+        val spanText2_2 = getString(R.string.click_here)
+        val `1-0` = spanText2_1
+        val `1-1` = spanText2_2
         val spanFullText2 = if(isSubscriptionActive) {
-            "추억은 하루에 ${spanText2_1}까지만 만들 수 있어요."
+            getString(R.string.daily_memory_limit_notice, `1-0`)
         } else {
-            "무료 플랜에서는 추억을 ${spanText2_1}까지만 만들 수 있어요. 더 많은 추억을 만들기 원하시면 ${spanText2_2}를 클릭해주세요."
+            getString(R.string.free_plan_memory_limit, `1-0`, `1-1`)
         }
 
         SpannableUtils.setClickableText(
@@ -92,8 +96,9 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             )
         )
 
-        val spanText3 = "수정은 불가능해요."
-        val spanFullText3 = "삭제가 가능하지만, $spanText3"
+        val spanText3 = getString(R.string.no_editing_possible)
+        val `2` = spanText3
+        val spanFullText3 = getString(R.string.delete_only_notice, `2`)
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -107,12 +112,14 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             )
         )
 
-        val spanText4_1 = "공유 링크 생성이 불가능해요."
-        val spanText4_2 = "여기"
+        val spanText4_1 = getString(R.string.share_link_creation_unavailable)
+        val spanText4_2 = getString(R.string.click_here)
+        val `3-0` = spanText4_1
+        val `3-1` = spanText4_2
         val spanFullText4 = if(isSubscriptionActive) {
-            "공개 앨범은 공유 링크 생성이 가능해요."
+            getString(R.string.public_album_share_available)
         } else {
-            "무료 플랜에서는 ${spanText4_1} 생성을 원하시면 ${spanText4_2}를 클릭해주세요."
+            getString(R.string.free_plan_feature_limit, `3-0`,`3-1`)
         }
 
         SpannableUtils.setClickableText(

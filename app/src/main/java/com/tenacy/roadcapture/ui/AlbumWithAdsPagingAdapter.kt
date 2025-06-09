@@ -20,6 +20,7 @@ import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.LoadAdError
 import com.google.android.gms.ads.nativead.NativeAd
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.ItemAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemMyAlbumBinding
 import com.tenacy.roadcapture.databinding.ItemNativeAdBinding
@@ -473,7 +474,7 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    sealed class AlbumWithAdsViewHolder<out T : AlbumItemWithAds>(binding: ViewDataBinding) :
+    sealed class AlbumWithAdsViewHolder<out T : AlbumItemWithAds>(private val binding: ViewDataBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         abstract fun bind(item: @UnsafeVariance T)
@@ -635,17 +636,21 @@ class AlbumWithAdsPagingAdapter(
         }
 
         protected fun getNumericalText(album: AlbumItemWithAds.Album): String {
-            val currentTimeStamp = LocalDateTime.now().toTimestamp()
-            val (duration, durationUnit) = getFormattedDuration(album.value.endedAt.toTimestamp(), currentTimeStamp)
-            val (viewCount, viewCountUnit) = album.value.viewCount.toLong().toReadableUnit()
+            val localizedTimeAgoText = album.value.endedAt.toUtcTimestamp().toLocalizedTimeAgo(binding.root.context)
+            val localizedText = album.value.viewCount.toLocalizedString(binding.root.context).takeUnless { it == "0" } ?: "없음"
             return StringBuilder().let { sb ->
                 if (!album.value.isPublic) {
-                    sb.append("비공개 · ")
+                    sb.append(binding.root.context.getString(R.string.visibility_private))
+                    sb.append(" · ")
                 }
                 if (album.value.isScraped) {
-                    sb.append("스크랩됨 · ")
+                    sb.append(binding.root.context.getString(R.string.scrap_status))
+                    sb.append(" · ")
                 }
-                sb.append("조회수 ${viewCount.toFormattedDecimalText()}${viewCountUnit} · ${duration}${durationUnit} 전")
+                val `0` = localizedText
+                sb.append(binding.root.context.getString(R.string.view_count, `0`))
+                sb.append(" · ")
+                sb.append(localizedTimeAgoText)
                 sb.toString()
             }
         }

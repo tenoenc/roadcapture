@@ -22,7 +22,7 @@
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="앨범 만들기"
+                  android:text="@string/create_album"
                   android:layout_marginTop="20dp"/>
 
         <TextView android:layout_width="wrap_content"
@@ -30,7 +30,7 @@
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"
                   android:textAlignment="center"
-                  android:text="여행 중에 아름다운 추억들을 캡처하고\n앨범을 만들어보세요!"
+                  android:text="@string/travel_capture_guide"
                   android:layout_marginTop="4dp"/>
 
         <ImageView android:layout_width="168dp"
@@ -43,7 +43,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="여행 시작"
+                android:text="@string/start_journey"
                 android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
@@ -56,7 +56,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="아직 준비되지 않았어요"
+                android:text="@string/not_ready_yet"
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

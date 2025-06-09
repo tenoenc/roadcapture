@@ -41,8 +41,10 @@ class SubscriptionBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        binding.premiumPricePerMonthText = "USD ${Constants.PREMIUM_PRICE_PER_MONTH} / 월"
-        binding.row2Text = "일 ${Constants.PREMIUM_TODAY_MEMORY_MAX_SIZE}개 추억 생성"
+        val `0` = Constants.PREMIUM_PRICE_PER_MONTH
+        binding.premiumPricePerMonthText = getString(R.string.subscription_price, `0`)
+        val `1` = Constants.PREMIUM_TODAY_MEMORY_MAX_SIZE
+        binding.row2Text = getString(R.string.daily_memory_limit, `1`)
     }
 
     private fun setupListeners() {

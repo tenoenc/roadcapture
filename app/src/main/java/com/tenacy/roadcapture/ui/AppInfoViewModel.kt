@@ -1,5 +1,6 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -15,6 +16,7 @@ import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -25,6 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppInfoViewModel @Inject constructor(
     private val _savedStateHandle: SavedStateHandle,
+    @ApplicationContext private val context: Context,
     subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
@@ -50,9 +53,9 @@ class AppInfoViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
     val subscriptionDescriptionText = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
         when {
-            SubscriptionPref.linkedAccountExists -> "다른 계정에서\n이미 혜택을 받고 있어요"
-            isSubscriptionActive -> "프리미엄 플랜 구독중"
-            else -> "구독하고 더 많은\n혜택을 누려보세요!"
+            SubscriptionPref.linkedAccountExists -> context.getString(R.string.benefit_already_received)
+            isSubscriptionActive -> context.getString(R.string.premium_plan_active)
+            else -> context.getString(R.string.subscribe_benefit_prompt)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 

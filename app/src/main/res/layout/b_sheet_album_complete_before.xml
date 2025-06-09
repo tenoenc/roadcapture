@@ -22,7 +22,7 @@
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
-                  android:text="공개 여부"
+                  android:text="@string/visibility_setting"
                   android:layout_marginTop="20dp"/>
 
         <ImageView android:layout_width="168dp"
@@ -42,13 +42,13 @@
                                                    android:layout_height="wrap_content"
                                                    android:id="@+id/chip_b_sheet_album_complete_before_public"
                                                    style="@style/Chip.Choice.Range"
-                                                   android:text="공개"/>
+                                                   android:text="@string/visibility_public"/>
 
             <com.google.android.material.chip.Chip android:layout_width="match_parent"
                                                    android:layout_height="wrap_content"
                                                    android:id="@+id/chip_b_sheet_album_complete_before_private"
                                                    style="@style/Chip.Choice.Range"
-                                                   android:text="비공개"/>
+                                                   android:text="@string/visibility_private"/>
 
         </com.google.android.material.chip.ChipGroup>
 
@@ -59,7 +59,7 @@
                 style="@style/Button"
                 android:textAppearance="@style/Body_16_SB"
                 android:textColor="@color/label_normal"
-                android:text="완성하기"
+                android:text="@string/complete"
                 android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"

@@ -84,7 +84,7 @@ class MainFragment: BaseFragment() {
         super.onStart()
         if(!AppPrefs.pendingDeepLinkShareId.isNullOrBlank()) {
             if(!AppPrefs.isDirectDeepLink) {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("이전에 공유받은 앨범으로 이동할게요", ToastMessageType.Info)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.move_to_shared_album), ToastMessageType.Info)))
             }
             findNavController().navigate(MainFragmentDirections.actionMainToAlbum())
         }

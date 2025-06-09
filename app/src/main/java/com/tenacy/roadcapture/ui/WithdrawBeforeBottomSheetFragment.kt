@@ -42,8 +42,9 @@ class WithdrawBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = "모든 데이터가 삭제돼요"
-        val fullText = "현재 계정의 ${spanText}\n정말 탈퇴하시겠어요?"
+        val spanText = getString(R.string.all_data_deleted)
+        val `0` = spanText
+        val fullText = getString(R.string.withdrawal_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetWithdrawBeforeDescription,

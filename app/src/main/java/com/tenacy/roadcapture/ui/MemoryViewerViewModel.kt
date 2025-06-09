@@ -1,9 +1,12 @@
 package com.tenacy.roadcapture.ui
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -11,6 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MemoryViewerViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val savedStateHandle: SavedStateHandle,
 ) : BaseViewModel() {
 
@@ -21,6 +25,12 @@ class MemoryViewerViewModel @Inject constructor(
 
     val totalPageCount = _memories.map { it.size }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
+
+    val aroundDescriptionText = _memories.map {
+        val totalPageCount = it.size
+        val `0` = totalPageCount
+        context.getString(R.string.nearby_memories_count, `0`)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val _viewScope = MutableStateFlow<ViewScope?>(null)
     val viewScope = _viewScope.asStateFlow()

@@ -25,6 +25,7 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.tenacy.roadcapture.BuildConfig
+import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.FacebookOAuthLoginCallback
 import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
@@ -159,7 +160,7 @@ class LoginFragment : BaseFragment() {
             // 추가된 에러 처리
             is LoginViewEvent.SocialError -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel("로그인 중에 문제가 발생했어요", ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.login_error), ToastMessageType.Warning)))
                 }
             }
 
