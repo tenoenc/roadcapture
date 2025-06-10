@@ -1,6 +1,323 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">roadcapture</string>
+
+    <!-- General UI -->
+    <string name="app">ऐप</string> <!-- {216} -->
+    <string name="cancel">रद्द करें</string> <!-- {85} -->
+    <string name="close">बंद करें</string> <!-- {150} -->
+    <string name="complete">पूरा करें</string> <!-- {192} -->
+    <string name="check">जांचें</string> <!-- {171} -->
+    <string name="delete">हटाएं</string> <!-- {195} -->
+    <string name="later">बाद में करूंगा</string> <!-- {153} -->
+    <string name="next_step">आगे बढ़ें</string> <!-- {279} -->
+    <string name="none">कोई नहीं</string> <!-- {78} -->
+    <string name="reconsider">मैं फिर से विचार करूंगा</string> <!-- {193} -->
+    <string name="settings">सेटिंग्स</string> <!-- {86} -->
+    <string name="share">शेयर करें</string> <!-- {253} -->
+    <string name="submit">जमा करें</string> <!-- {271} -->
+    <string name="try_again">कृपया फिर से प्रयास करें</string> <!-- {124} -->
+    <string name="try_again_later">कृपया बाद में फिर से प्रयास करें</string> <!-- {99} -->
+    <string name="today">आज</string> <!-- {204} -->
+    <string name="all">सभी</string> <!-- {170} -->
+    <string name="click_here">यहां</string> <!-- {138} -->
+    <string name="preparing">तैयारी हो रही है</string> <!-- {109} -->
+    <string name="recently_updated">हाल ही में अपडेट किया गया</string> <!-- {205} -->
+
+    <!-- Navigation -->
+    <string name="home_tab">होम</string> <!-- {131} -->
+    <string name="album_tab">एल्बम</string> <!-- {62} -->
+    <string name="memory_tab">यादें</string> <!-- {63} -->
+    <string name="scrap_tab">स्क्रैप</string> <!-- {132} -->
+
+    <!-- Album Management -->
+    <string name="create_album">एल्बम बनाएं</string> <!-- {165} -->
+    <string name="my_album">मेरा एल्बम</string> <!-- {154} -->
+    <string name="album_share">एल्बम शेयर करें</string> <!-- {17} -->
+    <string name="create_share_link">शेयर लिंक बनाएं</string> <!-- {224} -->
+    <string name="delete_album">एल्बम हटाएं</string> <!-- {196} -->
+    <string name="album_deleted">एल्बम हटा दिया गया</string> <!-- {81} -->
+    <string name="view_album">एल्बम देखें</string> <!-- {249} -->
+    <string name="thumbnail">थंबनेल</string> <!-- {202} -->
+    <string name="set_as_thumbnail">थंबनेल के रूप में सेट करें</string> <!-- {217} -->
+    <string name="album_scrap_count">एल्बम को %1$s बार स्क्रैप किया गया</string> <!-- {20} -->
+    <string name="continue_writing">लिखना जारी रखें</string> <!-- {152} -->
+    <string name="enter_title">कृपया शीर्षक दर्ज करें</string> <!-- {197} -->
+    <string name="visibility_setting">दृश्यता सेटिंग</string> <!-- {191} -->
+    <string name="switch_to_private">निजी पर स्विच करें</string> <!-- {107} -->
+    <string name="switch_to_public">सार्वजनिक पर स्विच करें</string> <!-- {108} -->
+    <string name="scrap_status">स्क्रैप किया गया</string> <!-- {59} -->
+    <string name="view_count">दृश्य: %1$s</string> <!-- {60} -->
+    <string name="item_count">%1$s आइटम</string> <!-- {64} -->
+
+    <!-- Album States -->
+    <string name="visibility_public">सार्वजनिक</string> <!-- {9} -->
+    <string name="visibility_private">निजी</string> <!-- {10} -->
+    <string name="album_visibility_change_success">एल्बम को सफलतापूर्वक %1$s पर स्विच किया गया</string> <!-- {11} -->
+    <string name="album_switched_private">इस एल्बम को निजी पर स्विच किया गया है</string> <!-- {22} -->
+    <string name="album_delete_success">एल्बम सफलतापूर्वक हटा दिया गया</string> <!-- {14} -->
+    <string name="album_create_success">एल्बम सफलतापूर्वक बनाया गया</string> <!-- {113} -->
+    <string name="share_link_create_success">शेयर लिंक सफलतापूर्वक बनाया गया</string> <!-- {6} -->
+    <string name="album_not_exist">यह एल्बम मौजूद नहीं है</string> <!-- {21} -->
+    <string name="no_album">कोई एल्बम मौजूद नहीं है...</string> <!-- {237} -->
+    <string name="no_album_exists">कोई एल्बम मौजूद नहीं है</string> <!-- {225} -->
+    <string name="create_first_album">यात्रा पर जाएं और अपना पहला एल्बम बनाएं!</string> <!-- {226} -->
+    <string name="no_scraped_albums">आपके पास कोई स्क्रैप किया गया एल्बम नहीं है</string> <!-- {220} -->
+    <string name="scrap_encouragement">पसंदीदा एल्बम को स्क्रैप करने का प्रयास करें!</string> <!-- {221} -->
+
+    <!-- Memory Management -->
+    <string name="create_memory">याद बनाएं</string> <!-- {156} -->
+    <string name="memory_count">याद %1$d / %2$d</string> <!-- {79} -->
+    <string name="memory_count_created">आपने %1$d यादें बनाई हैं</string> <!-- {106} -->
+    <string name="memory_creation_time">याद %1$s पर बनाई गई</string> <!-- {119} -->
+    <string name="memory_minimum_requirement">एल्बम पूरा करने के लिए आपको कम से कम एक याद बनानी होगी।</string> <!-- {175} -->
+    <string name="nearby_memories_count">आस-पास %1$d यादें हैं</string> <!-- {203} -->
+    <string name="nearby_only">केवल आस-पास</string> <!-- {169} -->
+    <string name="no_memories">कोई यादें मौजूद नहीं हैं</string> <!-- {232} -->
+    <string name="no_memories_exist">कोई यादें मौजूद नहीं हैं...</string> <!-- {227} -->
+    <string name="create_memory_prompt">यात्रा पर जाएं और यादें बनाएं!</string> <!-- {233} -->
+    <string name="multiple_memories_nearby">आस-पास कई यादें हैं\nकृपया उस सीमा का चयन करें जिसे आप देखना चाहते हैं</string> <!-- {168} -->
+    <string name="select_range">सीमा चुनें</string> <!-- {167} -->
+    <string name="take_photo_guide">आप फोटो लेकर यादें बना सकते हैं।</string> <!-- {172} -->
+
+    <!-- Travel Related -->
+    <string name="traveling">यात्रा कर रहे हैं</string> <!-- {157} -->
+    <string name="destination">गंतव्य</string> <!-- {151} -->
+    <string name="start_journey">यात्रा शुरू करें</string> <!-- {159} -->
+    <string name="end_travel">यात्रा समाप्त करें</string> <!-- {201} -->
+    <string name="still_traveling">अभी भी यात्रा कर रहे हैं</string> <!-- {200} -->
+    <string name="during_travel">यात्रा के दौरान</string> <!-- {173} -->
+    <string name="when_travel_ends">जब यात्रा समाप्त होती है</string> <!-- {177} -->
+    <string name="travel_capture_guide">अपनी यात्रा के दौरान सुंदर यादें कैप्चर करें\nऔर एल्बम बनाएं!</string> <!-- {166} -->
+    <string name="travel_continuation_notice">आप ऐप बंद करने पर भी आपकी यात्रा समाप्त नहीं होती है।\nहालांकि, यदि आपकी यात्रा एक महीने से अधिक की है, तो %1$s</string> <!-- {136} -->
+    <string name="travel_continuation_notice_full">आप ऐप बंद करने पर भी आपकी यात्रा समाप्त नहीं होती है।\nहालांकि, यदि आपकी यात्रा एक महीने से अधिक की है, तो आप एल्बम नहीं बना पाएंगे।</string> <!-- {174} -->
+    <string name="travel_completion_guide">यदि आपने अपनी यात्रा पूरी कर ली है, तो कृपया अपना एल्बम पूरा करने के लिए\nअगली स्क्रीन पर जाएं</string> <!-- {198} -->
+
+    <!-- Location Related -->
+    <string name="location_tracking">स्थान ट्रैकिंग</string> <!-- {72} -->
+    <string name="location_tracking_active">स्थान ट्रैक कर रहे हैं</string> <!-- {102} -->
+    <string name="stop_tracking">ट्रैकिंग बंद करें</string> <!-- {104} -->
+    <string name="travel_route_recording">आपके यात्रा मार्ग को रिकॉर्ड कर रहे हैं</string> <!-- {103} -->
+    <string name="background_location_tracking">बैकग्राउंड में स्थान ट्रैक कर रहे हैं</string> <!-- {73} -->
+    <string name="location_loading_error">स्थान जानकारी लोड करते समय\nएक समस्या हुई</string> <!-- {125} -->
+    <string name="loading_location">स्थान जानकारी लोड हो रही है</string> <!-- {123} -->
+    <string name="current_location_unavailable">वर्तमान स्थान निर्धारित नहीं किया जा सकता</string> <!-- {95} -->
+    <string name="copy_address">पता कॉपी करें</string> <!-- {158} -->
+
+    <!-- Processing States -->
+    <string name="uploading_image">छवि अपलोड हो रही है</string> <!-- {110} -->
+    <string name="uploading_thumbnail">थंबनेल अपलोड हो रहा है</string> <!-- {111} -->
+    <string name="saving_album">एल्बम सहेजा जा रहा है</string> <!-- {112} -->
+    <string name="deleting_album">एल्बम हटाया जा रहा है\nइसमें कुछ समय लग सकता है</string> <!-- {120} -->
+    <string name="changing_album_visibility">एल्बम को %1$s में बदला जा रहा है\nइसमें कुछ समय लग सकता है</string> <!-- {121} -->
+    <string name="creating_share_link">शेयर लिंक बनाया जा रहा है\nइसमें कुछ समय लग सकता है</string> <!-- {122} -->
+    <string name="processing_image">छवि प्रोसेस हो रही है</string> <!-- {126} -->
+    <string name="reviewing_image">छवि की समीक्षा हो रही है</string> <!-- {127} -->
+    <string name="stay_until_completion">कृपया प्रक्रिया पूरी होने तक\nयहीं रहें</string> <!-- {219} -->
+
+    <!-- Profile Management -->
+    <string name="profile_photo_change_success">प्रोफाइल फोटो सफलतापूर्वक बदल दिया गया</string> <!-- {2} -->
+    <string name="name_change_success">नाम सफलतापूर्वक बदल दिया गया</string> <!-- {4} -->
+    <string name="change_profile_photo">प्रोफाइल फोटो बदलें</string> <!-- {228} -->
+    <string name="change_name">नाम बदलें</string> <!-- {229} -->
+    <string name="enter_name">कृपया अपना नाम दर्ज करें</string> <!-- {230} -->
+    <string name="name_change">नाम बदलें</string> <!-- {231} -->
+    <string name="profile_photo_changing">प्रोफाइल फोटो बदला जा रहा है\nइसमें कुछ समय लग सकता है</string> <!-- {52} -->
+    <string name="name_changing">नाम बदला जा रहा है\nइसमें कुछ समय लग सकता है</string> <!-- {67} -->
+    <string name="profile_name_description">यह वह नाम है जो ऐप का उपयोग करते समय दिखाई देगा</string> <!-- {248} -->
+    <string name="select_basic_profile">कृपया बेसिक प्रोफाइल चुनें</string> <!-- {278} -->
+    <string name="profile_setup_later">आप अतिरिक्त प्रोफाइल बाद में सेट कर सकते हैं</string> <!-- {277} -->
+
+    <!-- Account Management -->
+    <string name="account_management">खाता प्रबंधन</string> <!-- {213} -->
+    <string name="login_album_share_message">शेयर किए गए एल्बम प्राप्त करने के लिए आपको लॉगिन करना होगा</string> <!-- {1} -->
+    <string name="account_mismatch">खाते मेल नहीं खाते</string> <!-- {36} -->
+    <string name="logout">लॉगआउट</string> <!-- {214} -->
+    <string name="logout_action">लॉगआउट करें</string> <!-- {251} -->
+    <string name="withdrawal">सेवा से हटना</string> <!-- {215} -->
+    <string name="withdraw">हटें</string> <!-- {241} -->
+    <string name="service_withdrawal">सेवा से हटें</string> <!-- {242} -->
+    <string name="withdrawal_complete">सेवा से हटना पूरा हुआ</string> <!-- {148} -->
+    <string name="logout_confirmation">प्रगति में एल्बम %1$s\nक्या आप वाकई लॉगआउट करना चाहते हैं?</string> <!-- {118} -->
+    <string name="logout_confirmation_full">प्रगति में एल्बम स्वचालित रूप से हटा दिए जाएंगे\nक्या आप वाकई लॉगआउट करना चाहते हैं?</string> <!-- {252} -->
+    <string name="withdrawal_confirmation">इस खाते के सभी %1$s\nक्या आप वाकई हटना चाहते हैं?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation_full">इस खाते के सभी डेटा हटा दिए जाएंगे\nक्या आप वाकई हटना चाहते हैं?</string> <!-- {243} -->
+    <string name="delete_album_confirmation">यदि आप इस एल्बम को हटाते हैं, तो आप इसकी यादों को %1$s\nक्या आप वाकई हटाना चाहते हैं?</string> <!-- {116} -->
+    <string name="delete_album_confirmation_full">यदि आप इस एल्बम को हटाते हैं, तो आप इसकी यादों को पुनर्प्राप्त नहीं कर पाएंगे\nक्या आप वाकई हटाना चाहते हैं?</string> <!-- {194} -->
+    <string name="auto_deleted">स्वचालित रूप से हटा दिया जाएगा</string> <!-- {117} -->
+    <string name="all_data_deleted">सभी डेटा हटा दिए जाएंगे</string> <!-- {146} -->
+    <string name="cannot_recover">पुनर्प्राप्त नहीं कर सकते</string> <!-- {115} -->
+
+    <!-- Authentication -->
+    <string name="sign_in_google">Google से साइन इन करें</string> <!-- {161} -->
+    <string name="sign_in_facebook">Facebook से साइन इन करें</string> <!-- {162} -->
+    <string name="sign_in_kakao">KakaoTalk से साइन इन करें</string> <!-- {163} -->
+    <string name="quick_start">त्वरित प्रारंभ</string> <!-- {164} -->
+    <string name="get_started">शुरू करें</string> <!-- {276} -->
+    <string name="service_registration">सेवा पंजीकरण</string> <!-- {272} -->
+    <string name="user_not_exist">उपयोगकर्ता मौजूद नहीं है</string> <!-- {19} -->
+    <string name="user_not_found">उपयोगकर्ता नहीं मिला</string> <!-- {47} -->
+
+    <!-- Subscription -->
+    <string name="subscription_notification">सदस्यता सूचना</string> <!-- {12} -->
+    <string name="premium_plan_active">प्रीमियम प्लान सक्रिय</string> <!-- {38} -->
+    <string name="premium_subscription_active">आपके पास सक्रिय प्रीमियम प्लान सदस्यता है</string> <!-- {89} -->
+    <string name="subscription_expiring">सदस्यता समाप्त हो रही है</string> <!-- {69} -->
+    <string name="subscription_expiry_notice">आपकी सदस्यता %1$d दिनों में समाप्त हो जाएगी। सेवा का उपयोग जारी रखने के लिए कृपया नवीनीकरण करें।</string> <!-- {70} -->
+    <string name="subscription_price">USD %1$s / माह</string> <!-- {133} -->
+    <string name="subscribe">सदस्यता लें</string> <!-- {223} -->
+    <string name="subscribe_premium">प्रीमियम की सदस्यता लें</string> <!-- {190} -->
+    <string name="manage_subscription">सदस्यता प्रबंधित करें</string> <!-- {222} -->
+    <string name="subscription_complete">सदस्यता पूरी हुई</string> <!-- {245} -->
+    <string name="subscription_complete_congrats">बधाई हो! आपकी सदस्यता पूरी हो गई है\nअब अपने प्रीमियम लाभों का आनंद लें</string> <!-- {244} -->
+    <string name="premium_label">प्रीमियम</string> <!-- {185} -->
+    <string name="subscription_benefits">सदस्यता लाभ</string> <!-- {186} -->
+    <string name="subscribe_benefits_prompt">सदस्यता लें और अधिक लाभ प्राप्त करें!</string> <!-- {184} -->
+    <string name="subscribe_benefit_prompt">सदस्यता लें और\nअधिक लाभ प्राप्त करें!</string> <!-- {39} -->
+
+    <!-- Subscription Benefits -->
+    <string name="album_link_creation">एल्बम लिंक (वेब पेज) बनाएं</string> <!-- {187} -->
+    <string name="link_sharing_benefit">लिंक का उपयोग करके अपने एल्बम बाहरी रूप से शेयर करें</string> <!-- {188} -->
+    <string name="ad_removal">विज्ञापन हटाना</string> <!-- {189} -->
+    <string name="daily_memory_limit">प्रति दिन %1$s यादें बनाएं</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">प्रति दिन 30 यादें बनाएं</string> <!-- {246} -->
+
+    <!-- Free Plan Limits -->
+    <string name="daily_limit">प्रति दिन %1$d</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">आप केवल %1$s तक ही यादें बना सकते हैं।</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">फ्री प्लान के साथ, आप केवल %1$s तक ही यादें बना सकते हैं। यदि आप अधिक यादें बनाना चाहते हैं, तो कृपया %2$s पर क्लिक करें।</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">फ्री प्लान के साथ, आप केवल 10 यादें ही बना सकते हैं।\nयदि आप अधिक यादें बनाना चाहते हैं, तो कृपया यहां क्लिक करें।</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">फ्री प्लान के साथ, यदि आप %1$s बनाना चाहते हैं, तो कृपया %2$s पर क्लिक करें।</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">फ्री प्लान में शेयर लिंक बनाना उपलब्ध नहीं है। यदि आप एक बनाना चाहते हैं, तो कृपया यहां क्लिक करें।</string> <!-- {182} -->
+    <string name="share_link_creation_unavailable">शेयर लिंक बनाना उपलब्ध नहीं है।</string> <!-- {143} -->
+    <string name="public_album_share_available">सार्वजनिक एल्बम के लिए शेयर लिंक बनाए जा सकते हैं।</string> <!-- {144} -->
+
+    <!-- Donation -->
+    <string name="donate_to_developer">डेवलपर को दान करें</string> <!-- {207} -->
+    <string name="donation_thanks_small">आपके मूल्यवान दान के लिए धन्यवाद! हम बेहतर सेवा के साथ आपको पुरस्कृत करेंगे।</string> <!-- {30} -->
+    <string name="donation_thanks_medium">आपके मूल्यवान दान के लिए हार्दिक धन्यवाद! हम एक बेहतर ऐप बनाने का प्रयास करेंगे।</string> <!-- {31} -->
+    <string name="donation_thanks_large">आपके उदार दान के लिए बहुत धन्यवाद! यह ऐप विकास और रखरखाव में बहुत मदद करता है।</string> <!-- {32} -->
+    <string name="donation_thanks_general">आपके दान के लिए धन्यवाद! यह ऐप को बेहतर बनाने में बहुत मदद करता है।</string> <!-- {33} -->
+    <string name="buy_coffee">एक कॉफी खरीदें</string> <!-- {236} -->
+    <string name="buy_snack">एक स्नैक खरीदें</string> <!-- {234} -->
+    <string name="buy_meal">एक भोजन खरीदें</string> <!-- {235} -->
+
+    <!-- Support -->
+    <string name="user_support">उपयोगकर्ता सहायता</string> <!-- {208} -->
+    <string name="contact_developer">डेवलपर से संपर्क करें</string> <!-- {209} -->
+    <string name="rate_app">ऐप रेट करें</string> <!-- {206} -->
+    <string name="app_rating_complete">ऐप रेटिंग पूरी हुई</string> <!-- {35} -->
+    <string name="dev_email_copied">डेवलपर का ईमेल क्लिपबोर्ड पर कॉपी किया गया</string> <!-- {66} -->
+    <string name="contact_email_subject">[रोडकैप्चर] पूछताछ</string> <!-- {51} -->
+    <string name="contact_template">नमस्ते, मैं रोडकैप्चर डेवलपमेंट टीम से संपर्क कर रहा हूं।\n\nऐप वर्शन: %1$s\nडिवाइस मॉडल: %2$s\nएंड्रॉइड वर्शन: %3$s\n\nपूछताछ सामग्री:\n</string> <!-- {49} -->
+    <string name="app_info">ऐप जानकारी</string> <!-- {155} -->
+
+    <!-- Terms and Policies -->
+    <string name="terms_and_policies">नियम और नीतियां</string> <!-- {210} -->
+    <string name="privacy_policy">गोपनीयता नीति</string> <!-- {41} -->
+    <string name="terms_of_service">सेवा की शर्तें</string> <!-- {42} -->
+    <string name="privacy_collection_consent">व्यक्तिगत जानकारी संग्रह और उपयोग समझौता</string> <!-- {43} -->
+    <string name="terms_consent">सेवा की शर्तें समझौता</string> <!-- {44} -->
+    <string name="privacy_policy_menu">गोपनीयता नीति</string> <!-- {212} -->
+    <string name="terms_of_service_menu">सेवा की शर्तें</string> <!-- {211} -->
+    <string name="agree_all_terms">सभी शर्तों से सहमत</string> <!-- {273} -->
+    <string name="terms_required_consent">सेवा की शर्तें (आवश्यक)</string> <!-- {274} -->
+    <string name="privacy_required_consent">व्यक्तिगत जानकारी संग्रह और उपयोग (आवश्यक)</string> <!-- {275} -->
+
+    <!-- Reporting -->
+    <string name="report">रिपोर्ट करें</string> <!-- {238} -->
+    <string name="report_title">रिपोर्ट</string> <!-- {247} -->
+    <string name="report_submit_success">आपकी रिपोर्ट जमा कर दी गई है</string> <!-- {16} -->
+    <string name="report_submitted">आपकी रिपोर्ट जमा कर दी गई है</string> <!-- {130} -->
+    <string name="select_report_reason">कृपया रिपोर्ट करने का कारण चुनें</string> <!-- {254} -->
+    <string name="inappropriate_content_report">अनुचित सामग्री</string> <!-- {255} -->
+    <string name="adult_content">वयस्क सामग्री, स्पष्ट छवियां</string> <!-- {256} -->
+    <string name="abusive_language">अपमानजनक भाषा, अश्लील शब्द</string> <!-- {257} -->
+    <string name="violent_content">हिंसक या घृणित सामग्री</string> <!-- {258} -->
+    <string name="spam_ads">स्पैम और विज्ञापन</string> <!-- {259} -->
+    <string name="commercial_ads">वाणिज्यिक विज्ञापन, प्रचार</string> <!-- {260} -->
+    <string name="repetitive_content">दोहराव वाली सामग्री</string> <!-- {261} -->
+    <string name="irrelevant_links">अप्रासंगिक लिंक या सामग्री</string> <!-- {262} -->
+    <string name="personal_info_exposure">व्यक्तिगत जानकारी प्रकटीकरण</string> <!-- {263} -->
+    <string name="unauthorized_info_disclosure">दूसरों की व्यक्तिगत जानकारी का अनधिकृत प्रकटीकरण</string> <!-- {264} -->
+    <string name="sensitive_info">फोन नंबर, पते, पहचान पत्र आदि</string> <!-- {265} -->
+    <string name="portrait_rights_violation">पोर्ट्रेट अधिकारों का उल्लंघन (चेहरे, नंबर प्लेट आदि)</string> <!-- {266} -->
+    <string name="false_information">गलत जानकारी</string> <!-- {267} -->
+    <string name="fake_news">गलत जानकारी, फेक न्यूज</string> <!-- {268} -->
+    <string name="misleading_content">भ्रामक सामग्री</string> <!-- {269} -->
+    <string name="wrong_location_tag">गलत स्थान टैग</string> <!-- {270} -->
+
+    <!-- Form Fields -->
+    <string name="place_name_optional">(वैकल्पिक) स्थान का नाम दर्ज करें</string> <!-- {281} -->
+    <string name="content_optional">(वैकल्पिक) सामग्री दर्ज करें</string> <!-- {282} -->
+    <string name="search_hint">शीर्षक, उपयोगकर्ता, क्षेत्र, स्थान खोजें</string> <!-- {280} -->
+    <string name="no_search_results">कोई खोज परिणाम नहीं</string> <!-- {239} -->
+    <string name="search_different_keyword">अलग कीवर्ड से खोजने का प्रयास करें</string> <!-- {240} -->
+    <string name="view_info">जानकारी देखें</string> <!-- {250} -->
+    <string name="check_info">जानकारी जांचें</string> <!-- {218} -->
+
+    <!-- Time Related -->
+    <string name="time_days">%1$d दिन</string> <!-- {27} -->
+    <string name="time_hours">%1$d घंटे</string> <!-- {28} -->
+    <string name="time_minutes">%1$d मिनट</string> <!-- {29} -->
+    <string name="duration_format">%1$s के लिए</string> <!-- {105} -->
+
+    <!-- Error Messages -->
+    <string name="general_error">एक समस्या हुई</string> <!-- {48} -->
+    <string name="unexpected_error">एक अनपेक्षित त्रुटि हुई</string> <!-- {24} -->
+    <string name="load_error">लोड नहीं किया जा सकता</string> <!-- {45} -->
+    <string name="operation_error">ऑपरेशन के दौरान एक समस्या हुई\nकृपया फिर से प्रयास करें</string> <!-- {114} -->
+    <string name="profile_photo_change_error">प्रोफाइल फोटो बदलते समय एक समस्या हुई</string> <!-- {3} -->
+    <string name="name_change_error">नाम बदलते समय एक समस्या हुई</string> <!-- {5} -->
+    <string name="share_link_create_error">शेयर लिंक बनाते समय एक समस्या हुई</string> <!-- {8} -->
+    <string name="visibility_change_error">दृश्यता बदलते समय एक समस्या हुई</string> <!-- {13} -->
+    <string name="album_delete_error">एल्बम हटाते समय एक समस्या हुई</string> <!-- {15} -->
+    <string name="login_error">लॉगिन के दौरान एक समस्या हुई</string> <!-- {46} -->
+    <string name="email_send_error">ईमेल नहीं भेजा जा सकता</string> <!-- {65} -->
+    <string name="share_link_access_error">शेयर लिंक के माध्यम से पहुंचने में विफल</string> <!-- {26} -->
+    <string name="share_link_not_exist">शेयर लिंक मौजूद नहीं है</string> <!-- {7} -->
+    <string name="image_decode_error">छवि को डीकोड नहीं किया जा सकता</string> <!-- {18} -->
+    <string name="camera_app_launch_error">कैमरा ऐप लॉन्च नहीं किया जा सकता</string> <!-- {91} -->
+    <string name="image_edit_start_error">छवि संपादन प्रारंभ नहीं किया जा सकता</string> <!-- {92} -->
+    <string name="image_edit_error">छवि संपादन के दौरान एक त्रुटि हुई</string> <!-- {94} -->
+    <string name="image_processing_error">छवि प्रोसेसिंग के दौरान एक समस्या हुई</string> <!-- {128} -->
+    <string name="inappropriate_content">अनुचित सामग्री का पता चला\nकृपया दूसरी फोटो लें</string> <!-- {129} -->
+    <string name="withdrawal_error">सेवा से हटने के दौरान एक त्रुटि हुई</string> <!-- {149} -->
+    <string name="view_type_not_exist">व्यू प्रकार मौजूद नहीं है</string> <!-- {23} -->
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">कैमरा अनुमति के बिना\nएल्बम नहीं बना सकते</string> <!-- {68} -->
+    <string name="location_permission_denied">स्थान अनुमति के बिना\nएल्बम नहीं बना सकते</string> <!-- {71} -->
+    <string name="no_location_photo_error">स्थान जानकारी के बिना फोटो नहीं ले सकते</string> <!-- {82} -->
+    <string name="location_permission_required">स्थान अनुमति आवश्यक</string> <!-- {83} -->
+    <string name="location_permission_rationale">मानचित्र पर आपके वर्तमान स्थान को दिखाने और बैकग्राउंड में आपके मार्ग को रिकॉर्ड करने के लिए स्थान अनुमति आवश्यक है। कृपया सेटिंग्स में स्थान अनुमति के लिए \"हमेशा अनुमति दें\" चुनें।</string> <!-- {84} -->
+    <string name="camera_permission_required">कैमरा अनुमति आवश्यक</string> <!-- {87} -->
+    <string name="camera_permission_rationale">फोटो लेने के लिए कैमरा अनुमति आवश्यक है। कृपया सेटिंग्स में अनुमति दें।</string> <!-- {88} -->
+
+    <!-- Purchase/Payment Related -->
+    <string name="subscription_process_error">सदस्यता प्रोसेसिंग के दौरान\nएक समस्या हुई</string> <!-- {25} -->
+    <string name="donation_process_error">दान प्रोसेसिंग के दौरान\nएक समस्या हुई</string> <!-- {34} -->
+    <string name="benefit_already_received">लाभ पहले से ही\nकिसी अन्य खाते पर प्राप्त किए जा रहे हैं</string> <!-- {37} -->
+    <string name="benefit_already_received_account">लाभ पहले से ही किसी अन्य खाते पर प्राप्त किए जा रहे हैं</string> <!-- {80} -->
+    <string name="purchase_verification_failed">खरीदारी सत्यापन विफल</string> <!-- {90} -->
+    <string name="consumption_processing_failed">खपत प्रोसेसिंग विफल</string> <!-- {96} -->
+    <string name="donation_loading">दान उत्पाद जानकारी लोड हो रही है\nकृपया बाद में फिर से प्रयास करें</string> <!-- {97} -->
+    <string name="donation_product_not_found">दान उत्पाद जानकारी नहीं मिली</string> <!-- {98} -->
+    <string name="subscription_loading">सदस्यता उत्पाद जानकारी लोड हो रही है\nकृपया बाद में फिर से प्रयास करें</string> <!-- {100} -->
+    <string name="subscription_product_not_found">सदस्यता उत्पाद जानकारी नहीं मिली</string> <!-- {101} -->
+
+    <!-- Album Management -->
+    <string name="when_album_completed">जब एल्बम पूरा हो जाए</string> <!-- {179} -->
+    <string name="complete_album_guide">अपना एल्बम पूरा करने के लिए मानचित्र पर दाईं ओर दिखाए गए आइकन पर टैप करें।</string> <!-- {178} -->
+    <string name="no_editing_possible">संपादन संभव नहीं है।</string> <!-- {141} -->
+    <string name="delete_only_notice">हटाना संभव है, लेकिन %1$s</string> <!-- {142} -->
+    <string name="delete_only_edit_impossible">हटाना संभव है, लेकिन संपादन संभव नहीं है।</string> <!-- {180} -->
+    <string name="visibility_toggle_available">सार्वजनिक/निजी टॉगल किया जा सकता है।</string> <!-- {181} -->
+    <string name="album_management_guide">उपरोक्त कार्य \'मेरा एल्बम\' टैब में दाईं ओर दिखाए गए आइकन पर टैप करके किए जा सकते हैं।</string> <!-- {183} -->
+    <string name="cannot_create_album">एल्बम नहीं बना सकते।</string> <!-- {135} -->
+    <string name="image_edit">छवि संपादित करें</string> <!-- {93} -->
+    <string name="move_to_shared_album">पहले से शेयर किए गए एल्बम पर जा रहे हैं</string> <!-- {50} -->
+    <string name="not_ready_yet">अभी तैयार नहीं है</string> <!-- {160} -->```xml
+    <string name="app_name">रोडकैप्चर</string>
 
     <string name="time_just_now">अभी अभी</string>
 
