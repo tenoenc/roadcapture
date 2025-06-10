@@ -1,6 +1,323 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">roadcapture</string>
+    <string name="app_name">RoadCapture</string>
+
+    <!-- General UI -->
+    <string name="app">Приложение</string> <!-- {216} -->
+    <string name="cancel">Отмена</string> <!-- {85} -->
+    <string name="close">Закрыть</string> <!-- {150} -->
+    <string name="complete">Завершить</string> <!-- {192} -->
+    <string name="check">Проверить</string> <!-- {171} -->
+    <string name="delete">Удалить</string> <!-- {195} -->
+    <string name="later">Сделаю позже</string> <!-- {153} -->
+    <string name="next_step">Далее</string> <!-- {279} -->
+    <string name="none">Нет</string> <!-- {78} -->
+    <string name="reconsider">Я подумаю еще</string> <!-- {193} -->
+    <string name="settings">Настройки</string> <!-- {86} -->
+    <string name="share">Поделиться</string> <!-- {253} -->
+    <string name="submit">Отправить</string> <!-- {271} -->
+    <string name="try_again">Пожалуйста, попробуйте снова</string> <!-- {124} -->
+    <string name="try_again_later">Пожалуйста, попробуйте позже</string> <!-- {99} -->
+    <string name="today">Сегодня</string> <!-- {204} -->
+    <string name="all">Все</string> <!-- {170} -->
+    <string name="click_here">здесь</string> <!-- {138} -->
+    <string name="preparing">Подготовка</string> <!-- {109} -->
+    <string name="recently_updated">Недавно обновлено</string> <!-- {205} -->
+
+    <!-- Navigation -->
+    <string name="home_tab">Главная</string> <!-- {131} -->
+    <string name="album_tab">Альбом</string> <!-- {62} -->
+    <string name="memory_tab">Воспоминание</string> <!-- {63} -->
+    <string name="scrap_tab">Сохраненное</string> <!-- {132} -->
+
+    <!-- Album Management -->
+    <string name="create_album">Создать альбом</string> <!-- {165} -->
+    <string name="my_album">Мой альбом</string> <!-- {154} -->
+    <string name="album_share">Поделиться альбомом</string> <!-- {17} -->
+    <string name="create_share_link">Создать ссылку для обмена</string> <!-- {224} -->
+    <string name="delete_album">Удалить альбом</string> <!-- {196} -->
+    <string name="album_deleted">Альбом удален</string> <!-- {81} -->
+    <string name="view_album">Просмотреть альбом</string> <!-- {249} -->
+    <string name="thumbnail">Миниатюра</string> <!-- {202} -->
+    <string name="set_as_thumbnail">Установить как миниатюру</string> <!-- {217} -->
+    <string name="album_scrap_count">Альбом был сохранен %1$s раз</string> <!-- {20} -->
+    <string name="continue_writing">Продолжить написание</string> <!-- {152} -->
+    <string name="enter_title">Пожалуйста, введите заголовок</string> <!-- {197} -->
+    <string name="visibility_setting">Настройка видимости</string> <!-- {191} -->
+    <string name="switch_to_private">Переключить на приватный</string> <!-- {107} -->
+    <string name="switch_to_public">Переключить на публичный</string> <!-- {108} -->
+    <string name="scrap_status">Сохранено</string> <!-- {59} -->
+    <string name="view_count">Просмотры: %1$s</string> <!-- {60} -->
+    <string name="item_count">%1$s элементов</string> <!-- {64} -->
+
+    <!-- Album States -->
+    <string name="visibility_public">Публичный</string> <!-- {9} -->
+    <string name="visibility_private">Приватный</string> <!-- {10} -->
+    <string name="album_visibility_change_success">Альбом успешно переключен на %1$s</string> <!-- {11} -->
+    <string name="album_switched_private">Этот альбом был переключен на приватный</string> <!-- {22} -->
+    <string name="album_delete_success">Альбом был успешно удален</string> <!-- {14} -->
+    <string name="album_create_success">Альбом был успешно создан</string> <!-- {113} -->
+    <string name="share_link_create_success">Ссылка для обмена была успешно создана</string> <!-- {6} -->
+    <string name="album_not_exist">Этот альбом не существует</string> <!-- {21} -->
+    <string name="no_album">Альбомов не существует...</string> <!-- {237} -->
+    <string name="no_album_exists">Альбомов не существует</string> <!-- {225} -->
+    <string name="create_first_album">Отправляйтесь в путешествие и создайте свой первый альбом!</string> <!-- {226} -->
+    <string name="no_scraped_albums">У вас нет сохраненных альбомов</string> <!-- {220} -->
+    <string name="scrap_encouragement">Попробуйте сохранить альбомы, которые вам нравятся!</string> <!-- {221} -->
+
+    <!-- Memory Management -->
+    <string name="create_memory">Создать воспоминание</string> <!-- {156} -->
+    <string name="memory_count">Воспоминание %1$d / %2$d</string> <!-- {79} -->
+    <string name="memory_count_created">Вы создали %1$d воспоминаний</string> <!-- {106} -->
+    <string name="memory_creation_time">Воспоминание создано в %1$s</string> <!-- {119} -->
+    <string name="memory_minimum_requirement">Вам нужно создать хотя бы одно воспоминание, чтобы завершить альбом.</string> <!-- {175} -->
+    <string name="nearby_memories_count">Поблизости %1$d воспоминаний</string> <!-- {203} -->
+    <string name="nearby_only">Только поблизости</string> <!-- {169} -->
+    <string name="no_memories">Воспоминаний не существует</string> <!-- {232} -->
+    <string name="no_memories_exist">Воспоминаний не существует...</string> <!-- {227} -->
+    <string name="create_memory_prompt">Отправляйтесь в путешествие и создавайте воспоминания!</string> <!-- {233} -->
+    <string name="multiple_memories_nearby">Поблизости несколько воспоминаний\nПожалуйста, выберите диапазон, который вы хотите проверить</string> <!-- {168} -->
+    <string name="select_range">Выбрать диапазон</string> <!-- {167} -->
+    <string name="take_photo_guide">Вы можете создавать воспоминания, делая фотографии.</string> <!-- {172} -->
+
+    <!-- Travel Related -->
+    <string name="traveling">В путешествии</string> <!-- {157} -->
+    <string name="destination">Пункт назначения</string> <!-- {151} -->
+    <string name="start_journey">Начать путешествие</string> <!-- {159} -->
+    <string name="end_travel">Завершить путешествие</string> <!-- {201} -->
+    <string name="still_traveling">Все еще в пути</string> <!-- {200} -->
+    <string name="during_travel">Во время путешествия</string> <!-- {173} -->
+    <string name="when_travel_ends">Когда путешествие закончится</string> <!-- {177} -->
+    <string name="travel_capture_guide">Запечатлейте прекрасные воспоминания во время путешествия\nи создайте альбом!</string> <!-- {166} -->
+    <string name="travel_continuation_notice">Ваше путешествие не заканчивается, когда вы закрываете приложение.\nОднако, если ваше путешествие превышает один месяц, %1$s</string> <!-- {136} -->
+    <string name="travel_continuation_notice_full">Ваше путешествие не заканчивается, когда вы закрываете приложение.\nОднако, если ваше путешествие превышает один месяц, вы не сможете создать альбом.</string> <!-- {174} -->
+    <string name="travel_completion_guide">Если вы завершили путешествие, пожалуйста, перейдите к следующему экрану\nдля завершения вашего альбома</string> <!-- {198} -->
+
+    <!-- Location Related -->
+    <string name="location_tracking">Отслеживание местоположения</string> <!-- {72} -->
+    <string name="location_tracking_active">Отслеживание местоположения активно</string> <!-- {102} -->
+    <string name="stop_tracking">Остановить отслеживание</string> <!-- {104} -->
+    <string name="travel_route_recording">Запись вашего маршрута</string> <!-- {103} -->
+    <string name="background_location_tracking">Отслеживание местоположения в фоновом режиме</string> <!-- {73} -->
+    <string name="location_loading_error">Возникла проблема\nпри загрузке информации о местоположении</string> <!-- {125} -->
+    <string name="loading_location">Загрузка информации о местоположении</string> <!-- {123} -->
+    <string name="current_location_unavailable">Невозможно определить текущее местоположение</string> <!-- {95} -->
+    <string name="copy_address">Копировать адрес</string> <!-- {158} -->
+
+    <!-- Processing States -->
+    <string name="uploading_image">Загрузка изображения</string> <!-- {110} -->
+    <string name="uploading_thumbnail">Загрузка миниатюры</string> <!-- {111} -->
+    <string name="saving_album">Сохранение альбома</string> <!-- {112} -->
+    <string name="deleting_album">Удаление альбома\nЭто может занять некоторое время</string> <!-- {120} -->
+    <string name="changing_album_visibility">Изменение альбома на %1$s\nЭто может занять некоторое время</string> <!-- {121} -->
+    <string name="creating_share_link">Создание ссылки для обмена\nЭто может занять некоторое время</string> <!-- {122} -->
+    <string name="processing_image">Обработка изображения</string> <!-- {126} -->
+    <string name="reviewing_image">Проверка изображения</string> <!-- {127} -->
+    <string name="stay_until_completion">Пожалуйста, оставайтесь здесь\nдо завершения процесса</string> <!-- {219} -->
+
+    <!-- Profile Management -->
+    <string name="profile_photo_change_success">Фото профиля успешно изменено</string> <!-- {2} -->
+    <string name="name_change_success">Имя успешно изменено</string> <!-- {4} -->
+    <string name="change_profile_photo">Изменить фото профиля</string> <!-- {228} -->
+    <string name="change_name">Изменить имя</string> <!-- {229} -->
+    <string name="enter_name">Пожалуйста, введите ваше имя</string> <!-- {230} -->
+    <string name="name_change">Изменить имя</string> <!-- {231} -->
+    <string name="profile_photo_changing">Изменение фото профиля\nЭто может занять некоторое время</string> <!-- {52} -->
+    <string name="name_changing">Изменение имени\nЭто может занять некоторое время</string> <!-- {67} -->
+    <string name="profile_name_description">Это имя, которое будет отображаться при использовании приложения</string> <!-- {248} -->
+    <string name="select_basic_profile">Пожалуйста, выберите базовый профиль</string> <!-- {278} -->
+    <string name="profile_setup_later">Дополнительные профили можно настроить позже</string> <!-- {277} -->
+
+    <!-- Account Management -->
+    <string name="account_management">Управление аккаунтом</string> <!-- {213} -->
+    <string name="login_album_share_message">Вам нужно войти в систему, чтобы получать общие альбомы</string> <!-- {1} -->
+    <string name="account_mismatch">Аккаунты не совпадают</string> <!-- {36} -->
+    <string name="logout">Выйти</string> <!-- {214} -->
+    <string name="logout_action">Выйти</string> <!-- {251} -->
+    <string name="withdrawal">Удаление аккаунта</string> <!-- {215} -->
+    <string name="withdraw">Удалить</string> <!-- {241} -->
+    <string name="service_withdrawal">Удалить аккаунт</string> <!-- {242} -->
+    <string name="withdrawal_complete">Удаление аккаунта завершено</string> <!-- {148} -->
+    <string name="logout_confirmation">Альбомы в процессе будут %1$s\nВы уверены, что хотите выйти?</string> <!-- {118} -->
+    <string name="logout_confirmation_full">Альбомы в процессе будут автоматически удалены\nВы уверены, что хотите выйти?</string> <!-- {252} -->
+    <string name="withdrawal_confirmation">Все %1$s для этого аккаунта\nВы уверены, что хотите удалить?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation_full">Все данные этого аккаунта будут удалены\nВы уверены, что хотите удалить?</string> <!-- {243} -->
+    <string name="delete_album_confirmation">Если вы удалите этот альбом, вы %1$s его воспоминания\nВы уверены, что хотите удалить?</string> <!-- {116} -->
+    <string name="delete_album_confirmation_full">Если вы удалите этот альбом, вы не сможете восстановить его воспоминания\nВы уверены, что хотите удалить?</string> <!-- {194} -->
+    <string name="auto_deleted">автоматически удалены</string> <!-- {117} -->
+    <string name="all_data_deleted">все данные будут удалены</string> <!-- {146} -->
+    <string name="cannot_recover">не сможете восстановить</string> <!-- {115} -->
+
+    <!-- Authentication -->
+    <string name="sign_in_google">Войти через Google</string> <!-- {161} -->
+    <string name="sign_in_facebook">Войти через Facebook</string> <!-- {162} -->
+    <string name="sign_in_kakao">Войти через KakaoTalk</string> <!-- {163} -->
+    <string name="quick_start">Быстрый старт</string> <!-- {164} -->
+    <string name="get_started">Начать</string> <!-- {276} -->
+    <string name="service_registration">Регистрация в сервисе</string> <!-- {272} -->
+    <string name="user_not_exist">Пользователь не существует</string> <!-- {19} -->
+    <string name="user_not_found">Пользователь не найден</string> <!-- {47} -->
+
+    <!-- Subscription -->
+    <string name="subscription_notification">Уведомление о подписке</string> <!-- {12} -->
+    <string name="premium_plan_active">Активен Премиум план</string> <!-- {38} -->
+    <string name="premium_subscription_active">У вас активна подписка на Премиум план</string> <!-- {89} -->
+    <string name="subscription_expiring">Подписка истекает</string> <!-- {69} -->
+    <string name="subscription_expiry_notice">Ваша подписка истекает через %1$d дней. Пожалуйста, продлите ее, чтобы продолжить использование сервиса.</string> <!-- {70} -->
+    <string name="subscription_price">USD %1$s / месяц</string> <!-- {133} -->
+    <string name="subscribe">Подписаться</string> <!-- {223} -->
+    <string name="subscribe_premium">Подписаться на Премиум</string> <!-- {190} -->
+    <string name="manage_subscription">Управление подпиской</string> <!-- {222} -->
+    <string name="subscription_complete">Подписка завершена</string> <!-- {245} -->
+    <string name="subscription_complete_congrats">Поздравляем! Ваша подписка завершена\nНаслаждайтесь премиум-преимуществами прямо сейчас</string> <!-- {244} -->
+    <string name="premium_label">Премиум</string> <!-- {185} -->
+    <string name="subscription_benefits">Преимущества подписки</string> <!-- {186} -->
+    <string name="subscribe_benefits_prompt">Подпишитесь и получите больше преимуществ!</string> <!-- {184} -->
+    <string name="subscribe_benefit_prompt">Подпишитесь и получите\nбольше преимуществ!</string> <!-- {39} -->
+
+    <!-- Subscription Benefits -->
+    <string name="album_link_creation">Создание ссылок на альбом (веб-страниц)</string> <!-- {187} -->
+    <string name="link_sharing_benefit">Делитесь своими альбомами внешне через ссылки</string> <!-- {188} -->
+    <string name="ad_removal">Удаление рекламы</string> <!-- {189} -->
+    <string name="daily_memory_limit">Создавайте %1$s воспоминаний в день</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">Создавайте 30 воспоминаний в день</string> <!-- {246} -->
+
+    <!-- Free Plan Limits -->
+    <string name="daily_limit">%1$d в день</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">Вы можете создавать воспоминания только до %1$s.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">С бесплатным планом вы можете создавать воспоминания только до %1$s. Если вы хотите создавать больше воспоминаний, нажмите на %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">С бесплатным планом вы можете создать только до 10 воспоминаний.\nЕсли вы хотите создать больше воспоминаний, нажмите здесь.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">С бесплатным планом, если вы хотите создать %1$s, нажмите на %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Создание ссылок для обмена недоступно в бесплатном плане. Если вы хотите создать ссылку, нажмите здесь.</string> <!-- {182} -->
+    <string name="share_link_creation_unavailable">Создание ссылок для обмена недоступно.</string> <!-- {143} -->
+    <string name="public_album_share_available">Ссылки для обмена могут быть созданы для публичных альбомов.</string> <!-- {144} -->
+
+    <!-- Donation -->
+    <string name="donate_to_developer">Поддержать разработчика</string> <!-- {207} -->
+    <string name="donation_thanks_small">Спасибо за ваше ценное пожертвование! Мы отблагодарим вас лучшим сервисом.</string> <!-- {30} -->
+    <string name="donation_thanks_medium">Искренне благодарим вас за ваше ценное пожертвование! Мы будем стремиться создать лучшее приложение.</string> <!-- {31} -->
+    <string name="donation_thanks_large">Большое спасибо за ваше щедрое пожертвование! Оно очень помогает в разработке и поддержке приложения.</string> <!-- {32} -->
+    <string name="donation_thanks_general">Спасибо за ваше пожертвование! Оно очень помогает улучшить приложение.</string> <!-- {33} -->
+    <string name="buy_coffee">Купить кофе</string> <!-- {236} -->
+    <string name="buy_snack">Купить закуску</string> <!-- {234} -->
+    <string name="buy_meal">Купить обед</string> <!-- {235} -->
+
+    <!-- Support -->
+    <string name="user_support">Поддержка пользователей</string> <!-- {208} -->
+    <string name="contact_developer">Связаться с разработчиком</string> <!-- {209} -->
+    <string name="rate_app">Оценить приложение</string> <!-- {206} -->
+    <string name="app_rating_complete">Оценка приложения завершена</string> <!-- {35} -->
+    <string name="dev_email_copied">Email разработчика скопирован в буфер обмена</string> <!-- {66} -->
+    <string name="contact_email_subject">[RoadCapture] Запрос</string> <!-- {51} -->
+    <string name="contact_template">Здравствуйте, я обращаюсь к команде разработчиков RoadCapture.\n\nВерсия приложения: %1$s\nМодель устройства: %2$s\nВерсия Android: %3$s\n\nСодержание запроса:\n</string> <!-- {49} -->
+    <string name="app_info">Информация о приложении</string> <!-- {155} -->
+
+    <!-- Terms and Policies -->
+    <string name="terms_and_policies">Условия и политики</string> <!-- {210} -->
+    <string name="privacy_policy">Политика конфиденциальности</string> <!-- {41} -->
+    <string name="terms_of_service">Условия использования</string> <!-- {42} -->
+    <string name="privacy_collection_consent">Согласие на сбор и использование персональных данных</string> <!-- {43} -->
+    <string name="terms_consent">Согласие с условиями использования</string> <!-- {44} -->
+    <string name="privacy_policy_menu">Политика конфиденциальности</string> <!-- {212} -->
+    <string name="terms_of_service_menu">Условия использования</string> <!-- {211} -->
+    <string name="agree_all_terms">Согласиться со всеми условиями</string> <!-- {273} -->
+    <string name="terms_required_consent">Условия использования (Обязательно)</string> <!-- {274} -->
+    <string name="privacy_required_consent">Сбор и использование персональных данных (Обязательно)</string> <!-- {275} -->
+
+    <!-- Reporting -->
+    <string name="report">Пожаловаться</string> <!-- {238} -->
+    <string name="report_title">Жалоба</string> <!-- {247} -->
+    <string name="report_submit_success">Ваша жалоба была отправлена</string> <!-- {16} -->
+    <string name="report_submitted">Ваша жалоба была отправлена</string> <!-- {130} -->
+    <string name="select_report_reason">Пожалуйста, выберите причину жалобы</string> <!-- {254} -->
+    <string name="inappropriate_content_report">Неприемлемый контент</string> <!-- {255} -->
+    <string name="adult_content">Контент для взрослых, откровенные изображения</string> <!-- {256} -->
+    <string name="abusive_language">Оскорбительный язык, ненормативная лексика</string> <!-- {257} -->
+    <string name="violent_content">Жестокий или ненавистнический контент</string> <!-- {258} -->
+    <string name="spam_ads">Спам и реклама</string> <!-- {259} -->
+    <string name="commercial_ads">Коммерческая реклама, промоакции</string> <!-- {260} -->
+    <string name="repetitive_content">Повторяющийся контент</string> <!-- {261} -->
+    <string name="irrelevant_links">Нерелевантные ссылки или контент</string> <!-- {262} -->
+    <string name="personal_info_exposure">Раскрытие личной информации</string> <!-- {263} -->
+    <string name="unauthorized_info_disclosure">Несанкционированное раскрытие личной информации других людей</string> <!-- {264} -->
+    <string name="sensitive_info">Телефонные номера, адреса, ID-карты и т.д.</string> <!-- {265} -->
+    <string name="portrait_rights_violation">Нарушение прав на изображение (лица, номерные знаки и т.д.)</string> <!-- {266} -->
+    <string name="false_information">Ложная информация</string> <!-- {267} -->
+    <string name="fake_news">Ложная информация, фейковые новости</string> <!-- {268} -->
+    <string name="misleading_content">Вводящий в заблуждение контент</string> <!-- {269} -->
+    <string name="wrong_location_tag">Неправильный тег местоположения</string> <!-- {270} -->
+
+    <!-- Form Fields -->
+    <string name="place_name_optional">(Необязательно) Введите название места</string> <!-- {281} -->
+    <string name="content_optional">(Необязательно) Введите содержимое</string> <!-- {282} -->
+    <string name="search_hint">Поиск заголовка, пользователя, региона, места</string> <!-- {280} -->
+    <string name="no_search_results">Нет результатов поиска</string> <!-- {239} -->
+    <string name="search_different_keyword">Попробуйте поискать с другими ключевыми словами</string> <!-- {240} -->
+    <string name="view_info">Просмотреть информацию</string> <!-- {250} -->
+    <string name="check_info">Проверить информацию</string> <!-- {218} -->
+
+    <!-- Time Related -->
+    <string name="time_days">%1$d дней</string> <!-- {27} -->
+    <string name="time_hours">%1$d часов</string> <!-- {28} -->
+    <string name="time_minutes">%1$d минут</string> <!-- {29} -->
+    <string name="duration_format">В течение %1$s</string> <!-- {105} -->
+
+    <!-- Error Messages -->
+    <string name="general_error">Возникла проблема</string> <!-- {48} -->
+    <string name="unexpected_error">Произошла неожиданная ошибка</string> <!-- {24} -->
+    <string name="load_error">Невозможно загрузить</string> <!-- {45} -->
+    <string name="operation_error">Во время операции возникла проблема\nПожалуйста, попробуйте снова</string> <!-- {114} -->
+    <string name="profile_photo_change_error">Возникла проблема при изменении фото профиля</string> <!-- {3} -->
+    <string name="name_change_error">Возникла проблема при изменении имени</string> <!-- {5} -->
+    <string name="share_link_create_error">Возникла проблема при создании ссылки для обмена</string> <!-- {8} -->
+    <string name="visibility_change_error">Возникла проблема при изменении видимости</string> <!-- {13} -->
+    <string name="album_delete_error">Возникла проблема при удалении альбома</string> <!-- {15} -->
+    <string name="login_error">Возникла проблема при входе в систему</string> <!-- {46} -->
+    <string name="email_send_error">Невозможно отправить email</string> <!-- {65} -->
+    <string name="share_link_access_error">Не удалось получить доступ через ссылку для обмена</string> <!-- {26} -->
+    <string name="share_link_not_exist">Ссылка для обмена не существует</string> <!-- {7} -->
+    <string name="image_decode_error">Невозможно декодировать изображение</string> <!-- {18} -->
+    <string name="camera_app_launch_error">Невозможно запустить приложение камеры</string> <!-- {91} -->
+    <string name="image_edit_start_error">Невозможно начать редактирование изображения</string> <!-- {92} -->
+    <string name="image_edit_error">Произошла ошибка при редактировании изображения</string> <!-- {94} -->
+    <string name="image_processing_error">Возникла проблема при обработке изображения</string> <!-- {128} -->
+    <string name="inappropriate_content">Обнаружен неприемлемый контент\nПожалуйста, сделайте другое фото</string> <!-- {129} -->
+    <string name="withdrawal_error">Произошла ошибка при удалении аккаунта</string> <!-- {149} -->
+    <string name="view_type_not_exist">Тип представления не существует</string> <!-- {23} -->
+
+    <!-- Permissions -->
+    <string name="camera_permission_denied">Невозможно создать альбом\nбез разрешения на камеру</string> <!-- {68} -->
+    <string name="location_permission_denied">Невозможно создать альбом\nбез разрешения на местоположение</string> <!-- {71} -->
+    <string name="no_location_photo_error">Невозможно делать фотографии без информации о местоположении</string> <!-- {82} -->
+    <string name="location_permission_required">Требуется разрешение на местоположение</string> <!-- {83} -->
+    <string name="location_permission_rationale">Разрешение на местоположение необходимо для отображения вашего текущего положения на карте и записи вашего маршрута в фоновом режиме. Пожалуйста, выберите \"Разрешать всегда\" для разрешений на местоположение в настройках.</string> <!-- {84} -->
+    <string name="camera_permission_required">Требуется разрешение на камеру</string> <!-- {87} -->
+    <string name="camera_permission_rationale">Разрешение на камеру необходимо для съемки фотографий. Пожалуйста, разрешите доступ в настройках.</string> <!-- {88} -->
+
+    <!-- Purchase/Payment Related -->
+    <string name="subscription_process_error">Возникла проблема при\nобработке подписки</string> <!-- {25} -->
+    <string name="donation_process_error">Возникла проблема при\nобработке пожертвования</string> <!-- {34} -->
+    <string name="benefit_already_received">Преимущества уже\nполучаются на другом аккаунте</string> <!-- {37} -->
+    <string name="benefit_already_received_account">Преимущества уже получаются на другом аккаунте</string> <!-- {80} -->
+    <string name="purchase_verification_failed">Не удалось проверить покупку</string> <!-- {90} -->
+    <string name="consumption_processing_failed">Не удалось обработать потребление</string> <!-- {96} -->
+    <string name="donation_loading">Загрузка информации о товарах для пожертвования\nПожалуйста, попробуйте позже</string> <!-- {97} -->
+    <string name="donation_product_not_found">Информация о товарах для пожертвования не найдена</string> <!-- {98} -->
+    <string name="subscription_loading">Загрузка информации о товарах для подписки\nПожалуйста, попробуйте позже</string> <!-- {100} -->
+    <string name="subscription_product_not_found">Информация о товарах для подписки не найдена</string> <!-- {101} -->
+
+    <!-- Album Management -->
+    <string name="when_album_completed">Когда альбом завершен</string> <!-- {179} -->
+    <string name="complete_album_guide">Нажмите на значок, отображаемый справа на карте, чтобы завершить ваш альбом.</string> <!-- {178} -->
+    <string name="no_editing_possible">Редактирование невозможно.</string> <!-- {141} -->
+    <string name="delete_only_notice">Удаление возможно, но %1$s</string> <!-- {142} -->
+    <string name="delete_only_edit_impossible">Удаление возможно, но редактирование невозможно.</string> <!-- {180} -->
+    <string name="visibility_toggle_available">Переключение публичный/приватный возможно.</string> <!-- {181} -->
+    <string name="album_management_guide">Вышеуказанные действия можно выполнить, нажав на значок, отображаемый справа во вкладке \'Мой альбом\'.</string> <!-- {183} -->
+    <string name="cannot_create_album">Невозможно создать альбом.</string> <!-- {135} -->
+    <string name="image_edit">Редактировать изображение</string> <!-- {93} -->
+    <string name="move_to_shared_album">Переход к ранее общему альбому</string> <!-- {50} -->
+    <string name="not_ready_yet">Еще не готово</string> <!-- {160} -->
 
     <string name="time_just_now">только что</string>
 
