@@ -19,6 +19,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.Constants
+import com.tenacy.roadcapture.util.ResourceProvider
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.coroutineScope
@@ -29,6 +30,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
     @Assisted private val context: Context,
     @Assisted params: WorkerParameters,
     private val subscriptionManager: SubscriptionManager,
+    private val resourceProvider: ResourceProvider,
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = coroutineScope {
@@ -59,7 +61,7 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         // 알림 채널 생성
         val channel = NotificationChannel(
             Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID,
-            context.getString(R.string.subscription_notification),
+            resourceProvider.getString(R.string.subscription_notification),
             NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationManager.createNotificationChannel(channel)
@@ -71,8 +73,8 @@ class SubscriptionCheckWorker @AssistedInject constructor(
         val `0` = daysLeft
         val builder = NotificationCompat.Builder(context, Constants.SUBSCRIPTION_NOTIFICATION_CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(context.getString(R.string.subscription_expiring))
-            .setContentText(context.getString(R.string.subscription_expiry_notice, `0`))
+            .setContentTitle(resourceProvider.getString(R.string.subscription_expiring))
+            .setContentText(resourceProvider.getString(R.string.subscription_expiry_notice, `0`))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
 

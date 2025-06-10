@@ -78,6 +78,7 @@
                       android:layout_height="wrap_content"
                       android:textAppearance="@style/Body_12_M"
                       android:textColor="@color/label_normal"
+                      android:text="@{vm.providerName}"
                       tools:text="카카오"/>
 
             <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"

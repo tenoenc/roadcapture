@@ -24,8 +24,9 @@
                                            app:cardBackgroundColor="@color/fill_neutral"
                                            android:layout_marginTop="16dp"/>
 
-        <TextView android:layout_width="wrap_content"
+        <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="20dp"
                   android:textAppearance="@style/Title_24"
                   android:textColor="@color/label_normal"
                   android:textAlignment="center"
@@ -33,8 +34,9 @@
                   tools:text="한담해안산책로"
                   android:layout_marginTop="20dp"/>
 
-        <TextView android:layout_width="wrap_content"
+        <TextView android:layout_width="match_parent"
                   android:layout_height="wrap_content"
+                  android:layout_marginHorizontal="20dp"
                   android:id="@+id/txt_b_sheet_memory_info_description"
                   android:textAppearance="@style/Body_12_M"
                   android:textColor="@color/label_neutral"

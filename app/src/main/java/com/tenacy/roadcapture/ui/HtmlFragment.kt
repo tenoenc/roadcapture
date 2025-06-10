@@ -40,10 +40,10 @@ class HtmlFragment: BaseFragment() {
 
     private fun setupViews() {
         binding.title = when (args.type) {
-            HtmlType.PrivacyPolicy -> getString(R.string.privacy_policy)
-            HtmlType.TermsOfService -> getString(R.string.terms_of_service)
-            HtmlType.PrivacyPolicyAgreement -> getString(R.string.privacy_collection_consent)
-            HtmlType.TermsOfServiceAgreement -> getString(R.string.terms_consent)
+            HtmlType.PrivacyPolicy -> requireContext().getString(R.string.privacy_policy)
+            HtmlType.TermsOfService -> requireContext().getString(R.string.terms_of_service)
+            HtmlType.PrivacyPolicyAgreement -> requireContext().getString(R.string.privacy_collection_consent)
+            HtmlType.TermsOfServiceAgreement -> requireContext().getString(R.string.terms_consent)
         }
 
         setupWebView()
@@ -66,7 +66,7 @@ class HtmlFragment: BaseFragment() {
                 val htmlContent = loadHtmlFromAssets()
                 binding.webHtml.loadDataWithBaseURL(null, htmlContent, "text/html", "UTF-8", null)
             } catch (exception: Exception) {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.load_error), ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.load_error), ToastMessageType.Warning)))
                 findNavController().popBackStack()
             }
         }

@@ -22,6 +22,7 @@ import com.google.firebase.ktx.Firebase
 import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.WorkPref
 import com.tenacy.roadcapture.manager.GoogleAccountManager
+import com.tenacy.roadcapture.manager.LocaleManager
 import com.tenacy.roadcapture.manager.RewardedAdManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationTrackingService
@@ -112,6 +113,10 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         } catch (e: IllegalArgumentException) {
             false
         }
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.applyLocale(base))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

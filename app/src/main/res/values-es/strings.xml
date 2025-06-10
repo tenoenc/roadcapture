@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RoadCapture</string>
+    <string name="app_name">CapturaRuta</string>
 
     <!-- General UI -->
     <string name="app">Aplicación</string> <!-- {216} -->
@@ -9,20 +9,20 @@
     <string name="complete">Completar</string> <!-- {192} -->
     <string name="check">Verificar</string> <!-- {171} -->
     <string name="delete">Eliminar</string> <!-- {195} -->
-    <string name="later">Lo haré después</string> <!-- {153} -->
+    <string name="later">Lo haré más tarde</string> <!-- {153} -->
     <string name="next_step">Siguiente</string> <!-- {279} -->
     <string name="none">Ninguno</string> <!-- {78} -->
-    <string name="reconsider">Lo reconsideraré</string> <!-- {193} -->
-    <string name="settings">Configuración</string> <!-- {86} -->
+    <string name="reconsider">Lo pensaré de nuevo</string> <!-- {193} -->
+    <string name="settings">Ajustes</string> <!-- {86} -->
     <string name="share">Compartir</string> <!-- {253} -->
     <string name="submit">Enviar</string> <!-- {271} -->
-    <string name="try_again">Por favor, inténtalo de nuevo</string> <!-- {124} -->
-    <string name="try_again_later">Por favor, inténtalo más tarde</string> <!-- {99} -->
+    <string name="try_again">Inténtalo de nuevo</string> <!-- {124} -->
+    <string name="try_again_later">Inténtalo de nuevo más tarde</string> <!-- {99} -->
     <string name="today">Hoy</string> <!-- {204} -->
     <string name="all">Todo</string> <!-- {170} -->
     <string name="click_here">aquí</string> <!-- {138} -->
     <string name="preparing">Preparando</string> <!-- {109} -->
-    <string name="recently_updated">Actualizado recientemente</string> <!-- {205} -->
+    <string name="recently_updated">Actualizados recientemente</string> <!-- {205} -->
 
     <!-- Navigation -->
     <string name="home_tab">Inicio</string> <!-- {131} -->
@@ -33,6 +33,7 @@
     <!-- Album Management -->
     <string name="create_album">Crear álbum</string> <!-- {165} -->
     <string name="my_album">Mi álbum</string> <!-- {154} -->
+    <string name="album_in_progress">Tienes un álbum en progreso</string> <!-- {283} -->
     <string name="album_share">Compartir álbum</string> <!-- {17} -->
     <string name="create_share_link">Crear enlace para compartir</string> <!-- {224} -->
     <string name="delete_album">Eliminar álbum</string> <!-- {196} -->
@@ -42,28 +43,28 @@
     <string name="set_as_thumbnail">Establecer como miniatura</string> <!-- {217} -->
     <string name="album_scrap_count">El álbum ha sido guardado %1$s veces</string> <!-- {20} -->
     <string name="continue_writing">Continuar escribiendo</string> <!-- {152} -->
-    <string name="enter_title">Por favor, introduce un título</string> <!-- {197} -->
-    <string name="visibility_setting">Configuración de visibilidad</string> <!-- {191} -->
+    <string name="enter_title">Ingresa un título</string> <!-- {197} -->
+    <string name="visibility_setting">Visibilidad</string> <!-- {191} -->
     <string name="switch_to_private">Cambiar a privado</string> <!-- {107} -->
     <string name="switch_to_public">Cambiar a público</string> <!-- {108} -->
     <string name="scrap_status">Guardado</string> <!-- {59} -->
-    <string name="view_count">Vistas: %1$s</string> <!-- {60} -->
+    <string name="view_count">%1$s vistas</string> <!-- {60} -->
     <string name="item_count">%1$s elementos</string> <!-- {64} -->
 
     <!-- Album States -->
     <string name="visibility_public">Público</string> <!-- {9} -->
     <string name="visibility_private">Privado</string> <!-- {10} -->
-    <string name="album_visibility_change_success">El álbum se ha cambiado exitosamente a %1$s</string> <!-- {11} -->
-    <string name="album_switched_private">Este álbum ha cambiado a privado</string> <!-- {22} -->
-    <string name="album_delete_success">El álbum ha sido eliminado exitosamente</string> <!-- {14} -->
-    <string name="album_create_success">El álbum ha sido creado exitosamente</string> <!-- {113} -->
-    <string name="share_link_create_success">El enlace para compartir ha sido creado exitosamente</string> <!-- {6} -->
+    <string name="album_visibility_change_success">El álbum ha sido cambiado a %1$s exitosamente</string> <!-- {11} -->
+    <string name="album_switched_private">Este álbum ha sido cambiado a privado</string> <!-- {22} -->
+    <string name="album_delete_success">Álbum eliminado exitosamente</string> <!-- {14} -->
+    <string name="album_create_success">Álbum creado exitosamente</string> <!-- {113} -->
+    <string name="share_link_create_success">Enlace para compartir creado exitosamente</string> <!-- {6} -->
     <string name="album_not_exist">Este álbum no existe</string> <!-- {21} -->
     <string name="no_album">No existen álbumes...</string> <!-- {237} -->
     <string name="no_album_exists">No existen álbumes</string> <!-- {225} -->
-    <string name="create_first_album">¡Haz un viaje y crea tu primer álbum!</string> <!-- {226} -->
-    <string name="no_scraped_albums">No tienes álbumes guardados</string> <!-- {220} -->
-    <string name="scrap_encouragement">¡Intenta guardar los álbumes que te gusten!</string> <!-- {221} -->
+    <string name="create_first_album">¡Viaja y crea tu primer álbum!</string> <!-- {226} -->
+    <string name="no_scraped_albums">No hay álbumes guardados</string> <!-- {220} -->
+    <string name="scrap_encouragement">¡Guarda los álbumes que te gusten!</string> <!-- {221} -->
 
     <!-- Memory Management -->
     <string name="create_memory">Crear recuerdo</string> <!-- {156} -->
@@ -71,12 +72,12 @@
     <string name="memory_count_created">Has creado %1$d recuerdos</string> <!-- {106} -->
     <string name="memory_creation_time">Recuerdo creado en %1$s</string> <!-- {119} -->
     <string name="memory_minimum_requirement">Necesitas crear al menos un recuerdo para completar un álbum.</string> <!-- {175} -->
-    <string name="nearby_memories_count">Hay %1$d recuerdos cerca</string> <!-- {203} -->
+    <string name="nearby_memories_count">Hay %1$d recuerdos cercanos</string> <!-- {203} -->
     <string name="nearby_only">Solo cercanos</string> <!-- {169} -->
     <string name="no_memories">No existen recuerdos</string> <!-- {232} -->
     <string name="no_memories_exist">No existen recuerdos...</string> <!-- {227} -->
-    <string name="create_memory_prompt">¡Haz un viaje y crea recuerdos!</string> <!-- {233} -->
-    <string name="multiple_memories_nearby">Hay varios recuerdos cerca\nPor favor selecciona el rango que quieres verificar</string> <!-- {168} -->
+    <string name="create_memory_prompt">¡Viaja y crea recuerdos!</string> <!-- {233} -->
+    <string name="multiple_memories_nearby">Existen múltiples recuerdos cercanos\nSelecciona el rango que quieres revisar</string> <!-- {168} -->
     <string name="select_range">Seleccionar rango</string> <!-- {167} -->
     <string name="take_photo_guide">Puedes crear recuerdos tomando fotos.</string> <!-- {172} -->
 
@@ -87,11 +88,11 @@
     <string name="end_travel">Finalizar viaje</string> <!-- {201} -->
     <string name="still_traveling">Todavía viajando</string> <!-- {200} -->
     <string name="during_travel">Durante el viaje</string> <!-- {173} -->
-    <string name="when_travel_ends">Cuando termine el viaje</string> <!-- {177} -->
-    <string name="travel_capture_guide">Captura hermosos recuerdos durante tu viaje\ny crea un álbum!</string> <!-- {166} -->
-    <string name="travel_continuation_notice">Tu viaje no termina cuando cierras la aplicación.\nSin embargo, si tu viaje excede un mes, %1$s</string> <!-- {136} -->
-    <string name="travel_continuation_notice_full">Tu viaje no termina cuando cierras la aplicación.\nSin embargo, si tu viaje excede un mes, no podrás crear un álbum.</string> <!-- {174} -->
-    <string name="travel_completion_guide">Si has terminado tu viaje, por favor avanza a la siguiente pantalla\npara completar tu álbum</string> <!-- {198} -->
+    <string name="when_travel_ends">Cuando finalice el viaje</string> <!-- {177} -->
+    <string name="travel_capture_guide">Captura hermosos recuerdos durante tus viajes\ny crea álbumes</string> <!-- {166} -->
+    <string name="travel_continuation_notice">Tu viaje continúa incluso si cierras la aplicación.\nSin embargo, si tu viaje excede un mes, %1$s</string> <!-- {136} -->
+    <string name="travel_continuation_notice_full">Tu viaje continúa incluso si cierras la aplicación.\nSin embargo, si tu viaje excede un mes, no podrás crear un álbum.</string> <!-- {174} -->
+    <string name="travel_completion_guide">Si has terminado tu viaje, ve a la siguiente pantalla\npara completar tu álbum</string> <!-- {198} -->
 
     <!-- Location Related -->
     <string name="location_tracking">Seguimiento de ubicación</string> <!-- {72} -->
@@ -99,148 +100,151 @@
     <string name="stop_tracking">Detener seguimiento</string> <!-- {104} -->
     <string name="travel_route_recording">Grabando tu ruta de viaje</string> <!-- {103} -->
     <string name="background_location_tracking">Rastreando ubicación en segundo plano</string> <!-- {73} -->
-    <string name="location_loading_error">Hubo un problema\nal cargar la información de ubicación</string> <!-- {125} -->
+    <string name="location_loading_error">Ocurrió un error\nal cargar la información de ubicación</string> <!-- {125} -->
     <string name="loading_location">Cargando información de ubicación</string> <!-- {123} -->
-    <string name="current_location_unavailable">No se puede determinar la ubicación actual</string> <!-- {95} -->
+    <string name="current_location_unavailable">Ubicación actual no disponible</string> <!-- {95} -->
     <string name="copy_address">Copiar dirección</string> <!-- {158} -->
 
     <!-- Processing States -->
     <string name="uploading_image">Subiendo imagen</string> <!-- {110} -->
     <string name="uploading_thumbnail">Subiendo miniatura</string> <!-- {111} -->
     <string name="saving_album">Guardando álbum</string> <!-- {112} -->
-    <string name="deleting_album">Eliminando álbum\nEsto puede tomar algo de tiempo</string> <!-- {120} -->
-    <string name="changing_album_visibility">Cambiando el álbum a %1$s\nEsto puede tomar algo de tiempo</string> <!-- {121} -->
-    <string name="creating_share_link">Creando enlace para compartir\nEsto puede tomar algo de tiempo</string> <!-- {122} -->
+    <string name="deleting_album">Eliminando álbum\nEsto puede tomar algún tiempo</string> <!-- {120} -->
+    <string name="changing_album_visibility">Cambiando álbum a %1$s\nEsto puede tomar algún tiempo</string> <!-- {121} -->
+    <string name="creating_share_link">Creando enlace para compartir\nEsto puede tomar algún tiempo</string> <!-- {122} -->
     <string name="processing_image">Procesando imagen</string> <!-- {126} -->
     <string name="reviewing_image">Revisando imagen</string> <!-- {127} -->
-    <string name="stay_until_completion">Por favor quédate aquí\nhasta que el proceso se complete</string> <!-- {219} -->
+    <string name="stay_until_completion">Por favor quédate aquí\nhasta que se complete el proceso</string> <!-- {219} -->
 
     <!-- Profile Management -->
     <string name="profile_photo_change_success">Foto de perfil cambiada exitosamente</string> <!-- {2} -->
     <string name="name_change_success">Nombre cambiado exitosamente</string> <!-- {4} -->
     <string name="change_profile_photo">Cambiar foto de perfil</string> <!-- {228} -->
     <string name="change_name">Cambiar nombre</string> <!-- {229} -->
-    <string name="enter_name">Por favor, introduce tu nombre</string> <!-- {230} -->
-    <string name="name_change">Cambiar nombre</string> <!-- {231} -->
-    <string name="profile_photo_changing">Cambiando foto de perfil\nEsto puede tomar algo de tiempo</string> <!-- {52} -->
-    <string name="name_changing">Cambiando nombre\nEsto puede tomar algo de tiempo</string> <!-- {67} -->
-    <string name="profile_name_description">Este es el nombre que se mostrará mientras uses la aplicación</string> <!-- {248} -->
+    <string name="enter_name">Ingresa tu nombre</string> <!-- {230} -->
+    <string name="name_change">Cambio de nombre</string> <!-- {231} -->
+    <string name="profile_photo_changing">Cambiando foto de perfil\nEsto puede tomar algún tiempo</string> <!-- {52} -->
+    <string name="name_changing">Cambiando nombre\nEsto puede tomar algún tiempo</string> <!-- {67} -->
+    <string name="profile_name_description">Este nombre se mostrará mientras estés activo en la aplicación</string> <!-- {248} -->
     <string name="select_basic_profile">Por favor selecciona un perfil básico</string> <!-- {278} -->
-    <string name="profile_setup_later">Puedes configurar perfiles adicionales más tarde</string> <!-- {277} -->
+    <string name="profile_setup_later">La configuración adicional del perfil se puede hacer más tarde</string> <!-- {277} -->
 
     <!-- Account Management -->
-    <string name="account_management">Gestión de cuenta</string> <!-- {213} -->
-    <string name="login_album_share_message">Debes iniciar sesión para recibir álbumes compartidos</string> <!-- {1} -->
+    <string name="account_management">Administración de cuenta</string> <!-- {213} -->
+    <string name="login_album_share_message">Necesitas iniciar sesión para recibir álbumes compartidos</string> <!-- {1} -->
     <string name="account_mismatch">Las cuentas no coinciden</string> <!-- {36} -->
     <string name="logout">Cerrar sesión</string> <!-- {214} -->
     <string name="logout_action">Cerrar sesión</string> <!-- {251} -->
-    <string name="withdrawal">Baja del servicio</string> <!-- {215} -->
-    <string name="withdraw">Dar de baja</string> <!-- {241} -->
-    <string name="service_withdrawal">Dar de baja del servicio</string> <!-- {242} -->
-    <string name="withdrawal_complete">Baja del servicio completada</string> <!-- {148} -->
+    <string name="withdrawal">Retirar del servicio</string> <!-- {215} -->
+    <string name="withdraw">Retirar</string> <!-- {241} -->
+    <string name="service_withdrawal">Retirar del servicio</string> <!-- {242} -->
+    <string name="withdrawal_complete">Retirada del servicio completada</string> <!-- {148} -->
     <string name="logout_confirmation">Los álbumes en progreso serán %1$s\n¿Estás seguro de que quieres cerrar sesión?</string> <!-- {118} -->
-    <string name="logout_confirmation_full">Los álbumes en progreso serán eliminados automáticamente\n¿Estás seguro de que quieres cerrar sesión?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">Todos los %1$s para esta cuenta\n¿Estás seguro de que quieres darte de baja?</string> <!-- {147} -->
-    <string name="withdrawal_confirmation_full">Todos los datos de esta cuenta serán eliminados\n¿Estás seguro de que quieres darte de baja?</string> <!-- {243} -->
-    <string name="delete_album_confirmation">Si eliminas este álbum, %1$s sus recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {116} -->
-    <string name="delete_album_confirmation_full">Si eliminas este álbum, no podrás recuperar sus recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {194} -->
+    <string name="logout_confirmation_full">Los álbumes en progreso se eliminarán automáticamente\n¿Estás seguro de que quieres cerrar sesión?</string> <!-- {252} -->
+    <string name="withdrawal_confirmation">Todos los %1$s de la cuenta actual\n¿Estás seguro de que quieres retirarte?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation_full">Todos los datos de la cuenta actual serán eliminados\n¿Estás seguro de que quieres retirarte?</string> <!-- {243} -->
+    <string name="delete_album_confirmation">Si eliminas este álbum, %1$s los recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {116} -->
+    <string name="delete_album_confirmation_full">Si eliminas este álbum, no podrás recuperar los recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {194} -->
     <string name="auto_deleted">eliminados automáticamente</string> <!-- {117} -->
     <string name="all_data_deleted">todos los datos serán eliminados</string> <!-- {146} -->
     <string name="cannot_recover">no podrás recuperar</string> <!-- {115} -->
 
     <!-- Authentication -->
-    <string name="sign_in_google">Iniciar sesión con Google</string> <!-- {161} -->
-    <string name="sign_in_facebook">Iniciar sesión con Facebook</string> <!-- {162} -->
-    <string name="sign_in_kakao">Iniciar sesión con KakaoTalk</string> <!-- {163} -->
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="kakao">KakaoTalk</string>
+    <string name="sign_in_google">Continuar con Google</string> <!-- {161} -->
+    <string name="sign_in_facebook">Continuar con Facebook</string> <!-- {162} -->
+    <string name="sign_in_kakao">Continuar con KakaoTalk</string> <!-- {163} -->
     <string name="quick_start">Inicio rápido</string> <!-- {164} -->
-    <string name="get_started">Empezar</string> <!-- {276} -->
-    <string name="service_registration">Registro de servicio</string> <!-- {272} -->
+    <string name="get_started">Comenzar</string> <!-- {276} -->
+    <string name="service_registration">Registro al servicio</string> <!-- {272} -->
     <string name="user_not_exist">El usuario no existe</string> <!-- {19} -->
     <string name="user_not_found">Usuario no encontrado</string> <!-- {47} -->
 
     <!-- Subscription -->
     <string name="subscription_notification">Notificación de suscripción</string> <!-- {12} -->
     <string name="premium_plan_active">Plan Premium activo</string> <!-- {38} -->
-    <string name="premium_subscription_active">Tienes una suscripción activa del Plan Premium</string> <!-- {89} -->
+    <string name="premium_subscription_active">El plan Premium está activo</string> <!-- {89} -->
     <string name="subscription_expiring">Suscripción a punto de expirar</string> <!-- {69} -->
-    <string name="subscription_expiry_notice">Tu suscripción expira en %1$d días. Renuévala para continuar usando el servicio.</string> <!-- {70} -->
+    <string name="subscription_expiry_notice">Tu suscripción expira en %1$d días. Por favor renueva para continuar usando el servicio.</string> <!-- {70} -->
     <string name="subscription_price">USD %1$s / mes</string> <!-- {133} -->
     <string name="subscribe">Suscribirse</string> <!-- {223} -->
-    <string name="subscribe_premium">Suscribirse a Premium</string> <!-- {190} -->
+    <string name="subscribe_premium">Suscribirse al Premium</string> <!-- {190} -->
     <string name="manage_subscription">Gestionar suscripción</string> <!-- {222} -->
     <string name="subscription_complete">Suscripción completada</string> <!-- {245} -->
-    <string name="subscription_complete_congrats">¡Felicidades! Tu suscripción está completa\nDisfruta de tus beneficios premium ahora</string> <!-- {244} -->
+    <string name="subscription_complete_congrats">¡Felicidades! Tu suscripción ha sido completada\nDisfruta de los beneficios premium ahora</string> <!-- {244} -->
     <string name="premium_label">Premium</string> <!-- {185} -->
     <string name="subscription_benefits">Beneficios de la suscripción</string> <!-- {186} -->
     <string name="subscribe_benefits_prompt">¡Suscríbete y disfruta de más beneficios!</string> <!-- {184} -->
     <string name="subscribe_benefit_prompt">¡Suscríbete y disfruta\nde más beneficios!</string> <!-- {39} -->
 
     <!-- Subscription Benefits -->
-    <string name="album_link_creation">Crear enlaces de álbum (páginas web)</string> <!-- {187} -->
-    <string name="link_sharing_benefit">Comparte tus álbumes externamente usando enlaces</string> <!-- {188} -->
+    <string name="album_link_creation">Creación de enlaces de álbum (página web)</string> <!-- {187} -->
+    <string name="link_sharing_benefit">Puedes compartir tus álbumes externamente usando enlaces</string> <!-- {188} -->
     <string name="ad_removal">Eliminación de anuncios</string> <!-- {189} -->
-    <string name="daily_memory_limit">Crea %1$s recuerdos por día</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">Crea 30 recuerdos por día</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s recuerdos por día</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 recuerdos por día</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
     <string name="daily_limit">%1$d por día</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">Solo puedes crear recuerdos hasta %1$s.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Con el plan gratuito, solo puedes crear recuerdos hasta %1$s. Si quieres crear más recuerdos, haz clic en %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">Con el plan gratuito, solo puedes crear hasta 10 recuerdos.\nSi quieres crear más recuerdos, haz clic aquí.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Con el plan gratuito, si quieres crear %1$s, haz clic en %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">La creación de enlaces para compartir no está disponible en el plan gratuito. Si quieres crear uno, haz clic aquí.</string> <!-- {182} -->
+    <string name="daily_memory_limit_notice">Puedes crear recuerdos hasta %1$s por día.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">Con el plan gratuito, puedes crear recuerdos hasta %1$s. Si quieres crear más recuerdos, haz clic %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">Con el plan gratuito, puedes crear hasta 10 recuerdos.\nSi quieres crear más recuerdos, haz clic aquí.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">Con el plan gratuito, si quieres crear %1$s, haz clic %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">La creación de enlaces para compartir no está disponible con el plan gratuito. Si quieres crear uno, haz clic aquí.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">La creación de enlaces para compartir no está disponible.</string> <!-- {143} -->
-    <string name="public_album_share_available">Los enlaces para compartir pueden ser creados para álbumes públicos.</string> <!-- {144} -->
+    <string name="public_album_share_available">La creación de enlaces para compartir está disponible para álbumes públicos.</string> <!-- {144} -->
 
     <!-- Donation -->
     <string name="donate_to_developer">Donar al desarrollador</string> <!-- {207} -->
     <string name="donation_thanks_small">¡Gracias por tu valiosa donación! Te recompensaremos con un mejor servicio.</string> <!-- {30} -->
-    <string name="donation_thanks_medium">¡Gracias sinceramente por tu valiosa donación! Nos esforzaremos por crear una mejor aplicación.</string> <!-- {31} -->
+    <string name="donation_thanks_medium">¡Gracias sinceramente por tu valiosa donación! Trabajaremos para hacer una mejor aplicación.</string> <!-- {31} -->
     <string name="donation_thanks_large">¡Muchas gracias por tu generosa donación! Ayuda enormemente al desarrollo y mantenimiento de la aplicación.</string> <!-- {32} -->
     <string name="donation_thanks_general">¡Gracias por tu donación! Ayuda enormemente a mejorar la aplicación.</string> <!-- {33} -->
     <string name="buy_coffee">Comprar un café</string> <!-- {236} -->
-    <string name="buy_snack">Comprar un snack</string> <!-- {234} -->
+    <string name="buy_snack">Comprar un bocadillo</string> <!-- {234} -->
     <string name="buy_meal">Comprar una comida</string> <!-- {235} -->
 
     <!-- Support -->
     <string name="user_support">Soporte al usuario</string> <!-- {208} -->
     <string name="contact_developer">Contactar al desarrollador</string> <!-- {209} -->
-    <string name="rate_app">Valorar aplicación</string> <!-- {206} -->
-    <string name="app_rating_complete">Valoración de la aplicación completada</string> <!-- {35} -->
+    <string name="rate_app">Calificar aplicación</string> <!-- {206} -->
+    <string name="app_rating_complete">Calificación de la aplicación completada</string> <!-- {35} -->
     <string name="dev_email_copied">Email del desarrollador copiado al portapapeles</string> <!-- {66} -->
-    <string name="contact_email_subject">[RoadCapture] Consulta</string> <!-- {51} -->
-    <string name="contact_template">Hola, estoy contactando al equipo de desarrollo de RoadCapture.\n\nVersión de la aplicación: %1$s\nModelo del dispositivo: %2$s\nVersión de Android: %3$s\n\nContenido de la consulta:\n</string> <!-- {49} -->
+    <string name="contact_email_subject">[CapturaRuta] Consulta</string> <!-- {51} -->
+    <string name="contact_template">Hola, tengo una consulta para el equipo de desarrollo de CapturaRuta.\n\nVersión de la aplicación: %1$s\nModelo del dispositivo: %2$s\nVersión de Android: %3$s\n\nDetalles de la consulta:\n</string> <!-- {49} -->
     <string name="app_info">Información de la aplicación</string> <!-- {155} -->
 
     <!-- Terms and Policies -->
     <string name="terms_and_policies">Términos y políticas</string> <!-- {210} -->
     <string name="privacy_policy">Política de privacidad</string> <!-- {41} -->
     <string name="terms_of_service">Términos de servicio</string> <!-- {42} -->
-    <string name="privacy_collection_consent">Acuerdo de recopilación y uso de información personal</string> <!-- {43} -->
-    <string name="terms_consent">Acuerdo de términos de servicio</string> <!-- {44} -->
+    <string name="privacy_collection_consent">Consentimiento de recopilación y uso de información privada</string> <!-- {43} -->
+    <string name="terms_consent">Consentimiento de términos de servicio</string> <!-- {44} -->
     <string name="privacy_policy_menu">Política de privacidad</string> <!-- {212} -->
     <string name="terms_of_service_menu">Términos de servicio</string> <!-- {211} -->
     <string name="agree_all_terms">Aceptar todos los términos</string> <!-- {273} -->
-    <string name="terms_required_consent">Términos de servicio (Obligatorio)</string> <!-- {274} -->
-    <string name="privacy_required_consent">Recopilación y uso de información personal (Obligatorio)</string> <!-- {275} -->
+    <string name="terms_required_consent">Términos de servicio (Requerido)</string> <!-- {274} -->
+    <string name="privacy_required_consent">Recopilación y uso de información privada (Requerido)</string> <!-- {275} -->
 
     <!-- Reporting -->
     <string name="report">Reportar</string> <!-- {238} -->
     <string name="report_title">Reporte</string> <!-- {247} -->
     <string name="report_submit_success">Tu reporte ha sido enviado</string> <!-- {16} -->
     <string name="report_submitted">Tu reporte ha sido enviado</string> <!-- {130} -->
-    <string name="select_report_reason">Por favor selecciona un motivo para reportar</string> <!-- {254} -->
+    <string name="select_report_reason">Por favor selecciona una razón para reportar</string> <!-- {254} -->
     <string name="inappropriate_content_report">Contenido inapropiado</string> <!-- {255} -->
     <string name="adult_content">Contenido para adultos, imágenes explícitas</string> <!-- {256} -->
-    <string name="abusive_language">Lenguaje abusivo, profanidades</string> <!-- {257} -->
-    <string name="violent_content">Contenido violento u odioso</string> <!-- {258} -->
+    <string name="abusive_language">Lenguaje abusivo, obscenidades</string> <!-- {257} -->
+    <string name="violent_content">Contenido violento u ofensivo</string> <!-- {258} -->
     <string name="spam_ads">Spam y anuncios</string> <!-- {259} -->
-    <string name="commercial_ads">Anuncios comerciales, promociones</string> <!-- {260} -->
-    <string name="repetitive_content">Contenido repetitivo</string> <!-- {261} -->
+    <string name="commercial_ads">Anuncios comerciales, promoción</string> <!-- {260} -->
+    <string name="repetitive_content">Repetición excesiva</string> <!-- {261} -->
     <string name="irrelevant_links">Enlaces o contenido irrelevante</string> <!-- {262} -->
     <string name="personal_info_exposure">Exposición de información personal</string> <!-- {263} -->
     <string name="unauthorized_info_disclosure">Divulgación no autorizada de información personal de otros</string> <!-- {264} -->
-    <string name="sensitive_info">Números de teléfono, direcciones, tarjetas de identificación, etc.</string> <!-- {265} -->
+    <string name="sensitive_info">Números de teléfono, direcciones, documentos de identidad, etc.</string> <!-- {265} -->
     <string name="portrait_rights_violation">Violación de derechos de imagen (rostros, matrículas, etc.)</string> <!-- {266} -->
     <string name="false_information">Información falsa</string> <!-- {267} -->
     <string name="fake_news">Información falsa, noticias falsas</string> <!-- {268} -->
@@ -248,25 +252,25 @@
     <string name="wrong_location_tag">Etiqueta de ubicación incorrecta</string> <!-- {270} -->
 
     <!-- Form Fields -->
-    <string name="place_name_optional">(Opcional) Introduce el nombre del lugar</string> <!-- {281} -->
-    <string name="content_optional">(Opcional) Introduce contenido</string> <!-- {282} -->
-    <string name="search_hint">Buscar título, usuario, región, lugar</string> <!-- {280} -->
+    <string name="place_name_optional">(Opcional) Ingresa un nombre de lugar</string> <!-- {281} -->
+    <string name="content_optional">(Opcional) Ingresa contenido</string> <!-- {282} -->
+    <string name="search_hint">Buscar por título, usuario, región, lugar</string> <!-- {280} -->
     <string name="no_search_results">No hay resultados de búsqueda</string> <!-- {239} -->
     <string name="search_different_keyword">Intenta buscar con palabras clave diferentes</string> <!-- {240} -->
     <string name="view_info">Ver información</string> <!-- {250} -->
     <string name="check_info">Verificar información</string> <!-- {218} -->
 
     <!-- Time Related -->
-    <string name="time_days">%1$d días</string> <!-- {27} -->
-    <string name="time_hours">%1$d horas</string> <!-- {28} -->
-    <string name="time_minutes">%1$d minutos</string> <!-- {29} -->
+    <string name="time_days">%1$d d</string> <!-- {27} -->
+    <string name="time_hours">%1$d h</string> <!-- {28} -->
+    <string name="time_minutes">%1$d min</string> <!-- {29} -->
     <string name="duration_format">Durante %1$s</string> <!-- {105} -->
 
     <!-- Error Messages -->
-    <string name="general_error">Ocurrió un problema</string> <!-- {48} -->
-    <string name="unexpected_error">Ocurrió un error inesperado</string> <!-- {24} -->
+    <string name="general_error">Ha ocurrido un problema</string> <!-- {48} -->
+    <string name="unexpected_error">Ha ocurrido un error inesperado</string> <!-- {24} -->
     <string name="load_error">No se puede cargar</string> <!-- {45} -->
-    <string name="operation_error">Ocurrió un problema durante la operación\nPor favor, inténtalo de nuevo</string> <!-- {114} -->
+    <string name="operation_error">Ocurrió un problema durante la operación\nPor favor inténtalo de nuevo</string> <!-- {114} -->
     <string name="profile_photo_change_error">Ocurrió un problema al cambiar la foto de perfil</string> <!-- {3} -->
     <string name="name_change_error">Ocurrió un problema al cambiar el nombre</string> <!-- {5} -->
     <string name="share_link_create_error">Ocurrió un problema al crear el enlace para compartir</string> <!-- {8} -->
@@ -274,7 +278,7 @@
     <string name="album_delete_error">Ocurrió un problema al eliminar el álbum</string> <!-- {15} -->
     <string name="login_error">Ocurrió un problema durante el inicio de sesión</string> <!-- {46} -->
     <string name="email_send_error">No se puede enviar el email</string> <!-- {65} -->
-    <string name="share_link_access_error">Falló el acceso a través del enlace compartido</string> <!-- {26} -->
+    <string name="share_link_access_error">No se pudo acceder a través del enlace compartido</string> <!-- {26} -->
     <string name="share_link_not_exist">El enlace para compartir no existe</string> <!-- {7} -->
     <string name="image_decode_error">No se puede decodificar la imagen</string> <!-- {18} -->
     <string name="camera_app_launch_error">No se puede iniciar la aplicación de cámara</string> <!-- {91} -->
@@ -282,7 +286,7 @@
     <string name="image_edit_error">Ocurrió un error al editar la imagen</string> <!-- {94} -->
     <string name="image_processing_error">Ocurrió un problema al procesar la imagen</string> <!-- {128} -->
     <string name="inappropriate_content">Se detectó contenido inapropiado\nPor favor toma otra foto</string> <!-- {129} -->
-    <string name="withdrawal_error">Ocurrió un error durante la baja del servicio</string> <!-- {149} -->
+    <string name="withdrawal_error">Ocurrió un error durante la retirada del servicio</string> <!-- {149} -->
     <string name="view_type_not_exist">El tipo de vista no existe</string> <!-- {23} -->
 
     <!-- Permissions -->
@@ -290,33 +294,33 @@
     <string name="location_permission_denied">No se puede crear un álbum\nsin permiso de ubicación</string> <!-- {71} -->
     <string name="no_location_photo_error">No se pueden tomar fotos sin información de ubicación</string> <!-- {82} -->
     <string name="location_permission_required">Permiso de ubicación requerido</string> <!-- {83} -->
-    <string name="location_permission_rationale">Se requiere permiso de ubicación para mostrar tu ubicación actual en el mapa y registrar tu ruta en segundo plano. Por favor elige \"Permitir todo el tiempo\" para los permisos de ubicación en la configuración.</string> <!-- {84} -->
+    <string name="location_permission_rationale">Se necesita permiso de ubicación para mostrar tu ubicación actual en el mapa y grabar tu ruta en segundo plano. Por favor selecciona \"Permitir siempre\" para el permiso de ubicación en la configuración.</string> <!-- {84} -->
     <string name="camera_permission_required">Permiso de cámara requerido</string> <!-- {87} -->
-    <string name="camera_permission_rationale">Se requiere permiso de cámara para tomar fotos. Por favor permite el permiso en la configuración.</string> <!-- {88} -->
+    <string name="camera_permission_rationale">Se necesita permiso de cámara para tomar fotos. Por favor permite este permiso en la configuración.</string> <!-- {88} -->
 
     <!-- Purchase/Payment Related -->
-    <string name="subscription_process_error">Ocurrió un problema al\nprocesar la suscripción</string> <!-- {25} -->
-    <string name="donation_process_error">Ocurrió un problema al\nprocesar la donación</string> <!-- {34} -->
-    <string name="benefit_already_received">Los beneficios ya están siendo\nrecibidos en otra cuenta</string> <!-- {37} -->
-    <string name="benefit_already_received_account">Los beneficios ya están siendo recibidos en otra cuenta</string> <!-- {80} -->
+    <string name="subscription_process_error">Ocurrió un problema\nal procesar la suscripción</string> <!-- {25} -->
+    <string name="donation_process_error">Ocurrió un problema\nal procesar la donación</string> <!-- {34} -->
+    <string name="benefit_already_received">Ya estás recibiendo beneficios\ndesde otra cuenta</string> <!-- {37} -->
+    <string name="benefit_already_received_account">Ya estás recibiendo beneficios desde otra cuenta</string> <!-- {80} -->
     <string name="purchase_verification_failed">Falló la verificación de compra</string> <!-- {90} -->
-    <string name="consumption_processing_failed">Falló el procesamiento de consumo</string> <!-- {96} -->
-    <string name="donation_loading">Cargando información de productos de donación\nPor favor inténtalo más tarde</string> <!-- {97} -->
-    <string name="donation_product_not_found">Información de producto de donación no encontrada</string> <!-- {98} -->
-    <string name="subscription_loading">Cargando información de productos de suscripción\nPor favor inténtalo más tarde</string> <!-- {100} -->
-    <string name="subscription_product_not_found">Información de producto de suscripción no encontrada</string> <!-- {101} -->
+    <string name="consumption_processing_failed">Falló el procesamiento del consumo</string> <!-- {96} -->
+    <string name="donation_loading">Cargando información del producto de donación\nPor favor inténtalo de nuevo más tarde</string> <!-- {97} -->
+    <string name="donation_product_not_found">No se encontró información del producto de donación</string> <!-- {98} -->
+    <string name="subscription_loading">Cargando información del producto de suscripción\nPor favor inténtalo de nuevo más tarde</string> <!-- {100} -->
+    <string name="subscription_product_not_found">No se encontró información del producto de suscripción</string> <!-- {101} -->
 
     <!-- Album Management -->
     <string name="when_album_completed">Cuando el álbum esté completado</string> <!-- {179} -->
-    <string name="complete_album_guide">Presiona el icono mostrado a la derecha en el mapa para completar tu álbum.</string> <!-- {178} -->
+    <string name="complete_album_guide">Por favor presiona el icono que se muestra a la derecha en el mapa para completar tu álbum.</string> <!-- {178} -->
     <string name="no_editing_possible">No es posible editar.</string> <!-- {141} -->
     <string name="delete_only_notice">Es posible eliminar, pero %1$s</string> <!-- {142} -->
     <string name="delete_only_edit_impossible">Es posible eliminar, pero no es posible editar.</string> <!-- {180} -->
-    <string name="visibility_toggle_available">La visibilidad público/privado puede ser alternada.</string> <!-- {181} -->
-    <string name="album_management_guide">Las acciones anteriores pueden realizarse presionando el icono mostrado a la derecha en la pestaña \'Mi álbum\'.</string> <!-- {183} -->
+    <string name="visibility_toggle_available">Puedes alternar entre público/privado.</string> <!-- {181} -->
+    <string name="album_management_guide">Estas acciones pueden realizarse presionando el icono que se muestra a la derecha en la pestaña \'Mi álbum\'.</string> <!-- {183} -->
     <string name="cannot_create_album">No se puede crear el álbum.</string> <!-- {135} -->
     <string name="image_edit">Editar imagen</string> <!-- {93} -->
-    <string name="move_to_shared_album">Moviéndose al álbum compartido anteriormente</string> <!-- {50} -->
+    <string name="move_to_shared_album">Moviendo al álbum compartido anteriormente</string> <!-- {50} -->
     <string name="not_ready_yet">Aún no está listo</string> <!-- {160} -->
 
     <string name="time_just_now">ahora mismo</string>

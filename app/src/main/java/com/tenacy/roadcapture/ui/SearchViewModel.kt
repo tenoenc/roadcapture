@@ -1,8 +1,6 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -18,9 +16,9 @@ import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.AlgoliaManager
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.FirebaseConstants
+import com.tenacy.roadcapture.util.ResourceProvider
 import com.tenacy.roadcapture.util.db
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,15 +28,17 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val algoliaManager: AlgoliaManager,
 ) : BaseViewModel() {
 
     private val filter = SearchFragmentArgs.fromSavedStateHandle(savedStateHandle).albumFilter
-    val title = when(filter) {
-        SearchFilter.All -> ContextCompat.getString(context, R.string.home_tab)
-        SearchFilter.Scrap -> ContextCompat.getString(context, R.string.scrap_tab)
-    }
+    val title = resourceProvider.configurationContextFlow.map { context ->
+        when(filter) {
+            SearchFilter.All -> context.getString(R.string.home_tab)
+            SearchFilter.Scrap -> context.getString(R.string.scrap_tab)
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     val searchQuery = MutableStateFlow("")
 
@@ -48,7 +48,7 @@ class SearchViewModel @Inject constructor(
     // 검색 실행
     fun performSearch() {
         val searchQuery = searchQuery.value
-        if (searchQuery.isBlank()) {
+        if (searchQuery.isBlank() && searchQuery.length < 2) {
             return
         }
 

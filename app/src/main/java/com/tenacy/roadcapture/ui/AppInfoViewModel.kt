@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AppInfoViewModel @Inject constructor(
     private val _savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
@@ -51,10 +51,10 @@ class AppInfoViewModel @Inject constructor(
     val subscriptionButtonEnabled = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
         !SubscriptionPref.linkedAccountExists
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
-    val subscriptionDescriptionText = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
+    val subscriptionDescriptionText = combine(subscriptionManager.isSubscriptionActive, resourceProvider.configurationContextFlow) { isSubscriptionActive, context ->
         when {
             SubscriptionPref.linkedAccountExists -> context.getString(R.string.benefit_already_received)
-            isSubscriptionActive -> context.getString(R.string.premium_plan_active)
+            isSubscriptionActive -> resourceProvider.getString(R.string.premium_plan_active)
             else -> context.getString(R.string.subscribe_benefit_prompt)
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")

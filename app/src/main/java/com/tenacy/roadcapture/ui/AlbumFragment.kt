@@ -283,7 +283,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
 
             is AlbumViewEvent.Share -> {
                 if(event.link.isNullOrBlank()) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.share_link_not_exist), ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.share_link_not_exist), ToastMessageType.Warning)))
                     return
                 }
                 shareLink(event.link)
@@ -314,12 +314,12 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
             }
 
             is AlbumViewEvent.ReportComplete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submit_success), ToastMessageType.Success)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submit_success), ToastMessageType.Success)))
             }
         }
     }
 
-    private fun shareLink(link: String, title: String = getString(R.string.album_share)) {
+    private fun shareLink(link: String, title: String = requireContext().getString(R.string.album_share)) {
         // 공유할 텍스트 메시지 (제목과 링크 포함)
         val shareText = "$link"
 

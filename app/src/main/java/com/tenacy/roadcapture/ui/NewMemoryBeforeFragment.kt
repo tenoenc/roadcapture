@@ -63,10 +63,10 @@ class NewMemoryBeforeFragment: BaseFragment() {
                 when(it) {
                     is NsfwDetectionState.Loading -> {}
                     is NsfwDetectionState.ProcessingImage -> {
-                        binding.txtNewMemoryBeforeStatus.text = getString(R.string.processing_image)
+                        binding.txtNewMemoryBeforeStatus.text = requireContext().getString(R.string.processing_image)
                     }
                     is NsfwDetectionState.DetectingNsfw -> {
-                        binding.txtNewMemoryBeforeStatus.text = getString(R.string.reviewing_image)
+                        binding.txtNewMemoryBeforeStatus.text = requireContext().getString(R.string.reviewing_image)
                     }
                     is NsfwDetectionState.Completed -> {
                         val args: NewMemoryBeforeFragmentArgs by navArgs()

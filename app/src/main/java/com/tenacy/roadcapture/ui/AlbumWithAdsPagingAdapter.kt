@@ -637,7 +637,7 @@ class AlbumWithAdsPagingAdapter(
 
         protected fun getNumericalText(album: AlbumItemWithAds.Album): String {
             val localizedTimeAgoText = album.value.endedAt.toUtcTimestamp().toLocalizedTimeAgo(binding.root.context)
-            val localizedText = album.value.viewCount.toLocalizedString(binding.root.context).takeUnless { it == "0" } ?: "없음"
+            val localizedText = album.value.viewCount.toLocalizedString(binding.root.context).takeUnless { it == "0" } ?: binding.root.context.getString(R.string.none)
             return StringBuilder().let { sb ->
                 if (!album.value.isPublic) {
                     sb.append(binding.root.context.getString(R.string.visibility_private))

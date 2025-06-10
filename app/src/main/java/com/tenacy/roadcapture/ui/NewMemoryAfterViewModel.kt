@@ -1,10 +1,8 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.location.Location
 import android.net.Uri
 import android.os.Parcelable
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FieldValue
@@ -19,7 +17,6 @@ import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Address
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.*
@@ -34,7 +31,7 @@ import kotlin.time.toKotlinDuration
 @HiltViewModel
 class NewMemoryAfterViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
 ): BaseViewModel() {
@@ -95,9 +92,9 @@ class NewMemoryAfterViewModel @Inject constructor(
                 .timeout(Duration.ofMillis(30 * Constants.MILLIS_PER_SECONDS).toKotlinDuration())
                 .catch { exception ->
                     if(exception is TimeoutCancellationException) {
-                        emit(SaveMemoryState.Error(ContextCompat.getString(context, R.string.try_again)))
+                        emit(SaveMemoryState.Error(resourceProvider.getString(R.string.try_again)))
                     } else {
-                        emit(SaveMemoryState.Error(exception.message ?: context.getString(R.string.general_error)))
+                        emit(SaveMemoryState.Error(exception.message ?: resourceProvider.getString(R.string.general_error)))
                     }
                 }
                 .collect { state ->
@@ -109,10 +106,12 @@ class NewMemoryAfterViewModel @Inject constructor(
     private suspend fun getAddressFromCoordinates(): Address {
         val excludePatterns = listOf("ISO", "country_code")
         return try {
+            val language = resourceProvider.getConfigurationContext().resources.configuration.locale.language
             val nominatimReverseResponse = RetrofitInstance.locationIqApi.reverse(
                 apiKey = BuildConfig.LOCATION_IQ_ACCESS_TOKEN,
                 lat = coordinates.latitude,
                 lon = coordinates.longitude,
+                language = "$language,en",
             )
             Address(
                 country = nominatimReverseResponse.address?.country,
@@ -129,7 +128,7 @@ class NewMemoryAfterViewModel @Inject constructor(
                 coordinates = coordinates,
             )
         } catch (exception: Exception) {
-            throw RuntimeException(context.getString(R.string.location_loading_error))
+            throw RuntimeException(resourceProvider.getString(R.string.location_loading_error))
         }
     }
 

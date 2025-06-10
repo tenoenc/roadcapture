@@ -22,11 +22,13 @@
                     android:textColor="@color/primary_normal"
                     android:layout_marginBottom="16dp" />
 
+            <!-- Mock Location 설정 -->
             <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:cardElevation="4dp"
-                    app:cardCornerRadius="8dp">
+                    app:cardCornerRadius="8dp"
+                    android:layout_marginBottom="16dp">
 
                 <LinearLayout
                         android:layout_width="match_parent"
@@ -61,6 +63,52 @@
                             android:id="@+id/switch_mock_location"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- 언어 선택 설정 -->
+            <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardElevation="4dp"
+                    app:cardCornerRadius="8dp">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="언어/지역 선택"
+                            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                            android:layout_marginBottom="8dp" />
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="선택한 언어로 앱 리소스 변경"
+                            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                            android:textColor="@android:color/darker_gray"
+                            android:layout_marginBottom="16dp" />
+
+                    <Spinner
+                            android:id="@+id/spinner_locale"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:minHeight="48dp" />
+
+                    <Button
+                            android:id="@+id/btn_apply_locale"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="적용"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="8dp" />
 
                 </LinearLayout>
 

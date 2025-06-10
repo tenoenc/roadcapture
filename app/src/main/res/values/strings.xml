@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">로드캡처</string>
 
@@ -32,6 +33,7 @@
     <!-- Album Management -->
     <string name="create_album">앨범 만들기</string> <!-- {165} -->
     <string name="my_album">내 앨범</string> <!-- {154} -->
+    <string name="album_in_progress">작성중인 앨범이 있어요</string> <!-- {283} -->
     <string name="album_share">앨범 공유하기</string> <!-- {17} -->
     <string name="create_share_link">공유 링크 생성하기</string> <!-- {224} -->
     <string name="delete_album">앨범 삭제하기</string> <!-- {196} -->
@@ -148,6 +150,9 @@
     <string name="cannot_recover">복구할 수 없어요</string> <!-- {115} -->
 
     <!-- Authentication -->
+    <string name="google">구글</string>
+    <string name="facebook">페이스북</string>
+    <string name="kakao">카카오톡</string>
     <string name="sign_in_google">구글로 시작하기</string> <!-- {161} -->
     <string name="sign_in_facebook">페이스북으로 시작하기</string> <!-- {162} -->
     <string name="sign_in_kakao">카카오톡으로 시작하기</string> <!-- {163} -->

@@ -35,7 +35,7 @@ class ScrapFragment: BaseFragment() {
 
     private val vm: ScrapViewModel by viewModels()
 
-    private val albumAdapter = AlbumPagingAdapter()
+    private val albumAdapter = AlbumPagingAdapter(scrapVisible = false)
     private val emptyStateAdapter = EmptyStateAdapter(EmptyItem.Scrap)
 
     // RecyclerView 상태 관리
@@ -293,7 +293,7 @@ class ScrapFragment: BaseFragment() {
             }
             is ScrapViewEvent.ReportComplete -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submitted), ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
                 }
             }
         }

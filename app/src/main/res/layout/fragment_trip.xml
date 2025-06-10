@@ -182,8 +182,11 @@
                                                            android:id="@+id/card_trip_total_memory"
                                                            android:clickable="true"
                                                            android:visibility="@{vm.memoryLoaded == false ? View.GONE : View.VISIBLE}"
+                                                           android:layout_marginStart="20dp"
                                                            android:layout_marginEnd="20dp"
                                                            android:layout_marginBottom="20dp"
+                                                           app:layout_constrainedWidth="true"
+                                                           app:layout_constraintHorizontal_bias="1.0"
                                                            app:cardBackgroundColor="@color/primary_strong_a50"
                                                            app:cardCornerRadius="12dp"
                                                            app:cardElevation="0dp"
@@ -193,7 +196,8 @@
                                                            app:contentPaddingBottom="4dp"
                                                            app:contentPaddingTop="4dp"
                                                            app:layout_constraintBottom_toBottomOf="parent"
-                                                           app:layout_constraintEnd_toEndOf="parent">
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           app:layout_constraintStart_toEndOf="@+id/fab_trip_capture">
 
             <LinearLayout android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
@@ -205,6 +209,7 @@
                           android:textAppearance="@style/Title_20"
                           android:textColor="@{vm.exceedLimitedMemorySize ? @color/warning : @color/label_neutral}"
                           tools:textColor="@color/label_neutral"
+                          android:textAlignment="center"
                           android:text="@string/memory_tab"/>
 
                 <TextView android:layout_width="wrap_content"

@@ -125,7 +125,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
-                    ToastModel(getString(R.string.subscription_process_error), ToastMessageType.Warning)
+                    ToastModel(requireContext().getString(R.string.subscription_process_error), ToastMessageType.Warning)
                 )
             )
         }
@@ -135,10 +135,10 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         if (!isAdded) return
 
         val message = when (productId) {
-            "donation_small" -> getString(R.string.donation_thanks_small)
-            "donation_medium" -> getString(R.string.donation_thanks_medium)
-            "donation_large" -> getString(R.string.donation_thanks_large)
-            else -> getString(R.string.donation_thanks_general)
+            "donation_small" -> requireContext().getString(R.string.donation_thanks_small)
+            "donation_medium" -> requireContext().getString(R.string.donation_thanks_medium)
+            "donation_large" -> requireContext().getString(R.string.donation_thanks_large)
+            else -> requireContext().getString(R.string.donation_thanks_general)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -160,7 +160,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         viewLifecycleOwner.lifecycleScope.launch {
             mainActivity.vm.viewEvent(
                 GlobalViewEvent.Toast(
-                    ToastModel(getString(R.string.donation_process_error), ToastMessageType.Warning)
+                    ToastModel(requireContext().getString(R.string.donation_process_error), ToastMessageType.Warning)
                 )
             )
         }
@@ -247,11 +247,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
             }
 
             is AppInfoViewEvent.ReviewApp -> {
-                appReviewManager.requestReview(
-                    onReviewCompleted = {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.app_rating_complete), ToastMessageType.Info)))
-                    }
-                )
+                appReviewManager.requestReview()
             }
 
             is AppInfoViewEvent.ShowLogoutBefore -> {
@@ -286,7 +282,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
                     when(event) {
                         is AppInfoViewEvent.Error.Reauth -> {
-                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.account_mismatch), ToastMessageType.Warning)))
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.account_mismatch), ToastMessageType.Warning)))
                         }
                     }
                 }
@@ -430,13 +426,13 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
                     data = Uri.parse("mailto:")
                     putExtra(Intent.EXTRA_EMAIL, arrayOf("tentenacy@gmail.com"))
-                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.contact_email_subject))
+                    putExtra(Intent.EXTRA_SUBJECT, requireContext().getString(R.string.contact_email_subject))
 
                     val `0` = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0).versionName
                     val `1` = Build.MODEL
                     val `2` = Build.VERSION.RELEASE
                     putExtra(
-                        Intent.EXTRA_TEXT, getString(R.string.contact_template, `0`, `1`, `2`).trimIndent()
+                        Intent.EXTRA_TEXT, requireContext().getString(R.string.contact_template, `0`, `1`, `2`).trimIndent()
                     )
                 }
                 startActivity(emailIntent)
@@ -448,7 +444,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
-                                ToastModel(getString(R.string.email_send_error), ToastMessageType.Warning)
+                                ToastModel(requireContext().getString(R.string.email_send_error), ToastMessageType.Warning)
                             )
                         )
                     }
@@ -462,7 +458,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                     viewLifecycleOwner.lifecycleScope.launch {
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
-                                ToastModel(getString(R.string.dev_email_copied), ToastMessageType.Info)
+                                ToastModel(requireContext().getString(R.string.dev_email_copied), ToastMessageType.Info)
                             )
                         )
                     }

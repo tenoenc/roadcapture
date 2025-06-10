@@ -183,7 +183,7 @@
                               android:foreground="?attr/selectableItemBackground"
                               android:orientation="vertical"
                               android:gravity="center"
-                              android:padding="8dp">
+                              android:paddingVertical="8dp">
 
                     <ImageView android:layout_width="24dp"
                                android:layout_height="24dp"
@@ -193,6 +193,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Body_10_SB"
                               android:textColor="@color/label_normal"
+                              android:textAlignment="center"
                               android:text="@string/report_title"/>
 
                 </LinearLayout>
@@ -220,7 +221,7 @@
                               android:foreground="?attr/selectableItemBackground"
                               android:orientation="vertical"
                               android:gravity="center"
-                              android:padding="8dp">
+                              android:paddingVertical="8dp">
 
                     <ImageView android:layout_width="24dp"
                                android:layout_height="24dp"
@@ -230,6 +231,7 @@
                               android:layout_height="wrap_content"
                               android:textAppearance="@style/Body_10_SB"
                               android:textColor="@color/label_normal"
+                              android:textAlignment="center"
                               android:text="@string/share"/>
 
                 </LinearLayout>
@@ -256,7 +258,7 @@
                               android:foreground="?attr/selectableItemBackground"
                               android:orientation="vertical"
                               android:gravity="center"
-                              android:padding="8dp"
+                              android:paddingVertical="8dp"
                               app:selected="@{vm.scraped}">
 
                     <ImageView android:layout_width="24dp"

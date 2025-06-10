@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ロードキャプチャー</string>
+    <string name="app_name">ロードキャプチャ</string>
 
     <!-- General UI -->
     <string name="app">アプリ</string> <!-- {216} -->
@@ -15,12 +15,12 @@
     <string name="reconsider">もう一度考えます</string> <!-- {193} -->
     <string name="settings">設定</string> <!-- {86} -->
     <string name="share">共有</string> <!-- {253} -->
-    <string name="submit">送信する</string> <!-- {271} -->
+    <string name="submit">送信</string> <!-- {271} -->
     <string name="try_again">もう一度お試しください</string> <!-- {124} -->
-    <string name="try_again_later">後ほどもう一度お試しください</string> <!-- {99} -->
+    <string name="try_again_later">後ほど再試行してください</string> <!-- {99} -->
     <string name="today">今日</string> <!-- {204} -->
     <string name="all">すべて</string> <!-- {170} -->
-    <string name="click_here">ここ</string> <!-- {138} -->
+    <string name="click_here">こちら</string> <!-- {138} -->
     <string name="preparing">準備中</string> <!-- {109} -->
     <string name="recently_updated">最近更新</string> <!-- {205} -->
 
@@ -33,6 +33,7 @@
     <!-- Album Management -->
     <string name="create_album">アルバム作成</string> <!-- {165} -->
     <string name="my_album">マイアルバム</string> <!-- {154} -->
+    <string name="album_in_progress">作成中のアルバムがあります</string> <!-- {283} -->
     <string name="album_share">アルバム共有</string> <!-- {17} -->
     <string name="create_share_link">共有リンク作成</string> <!-- {224} -->
     <string name="delete_album">アルバム削除</string> <!-- {196} -->
@@ -53,10 +54,10 @@
     <!-- Album States -->
     <string name="visibility_public">公開</string> <!-- {9} -->
     <string name="visibility_private">非公開</string> <!-- {10} -->
-    <string name="album_visibility_change_success">アルバムが%1$sに切り替わりました</string> <!-- {11} -->
+    <string name="album_visibility_change_success">アルバムが%1$sに正常に切り替わりました</string> <!-- {11} -->
     <string name="album_switched_private">非公開に切り替えられたアルバムです</string> <!-- {22} -->
     <string name="album_delete_success">アルバムが正常に削除されました</string> <!-- {14} -->
-    <string name="album_create_success">アルバムが正常に作成されました</string> <!-- {113} -->
+    <string name="album_create_success">アルバムを正常に作成しました</string> <!-- {113} -->
     <string name="share_link_create_success">共有リンクが正常に作成されました</string> <!-- {6} -->
     <string name="album_not_exist">存在しないアルバムです</string> <!-- {21} -->
     <string name="no_album">アルバムが存在しません...</string> <!-- {237} -->
@@ -70,13 +71,13 @@
     <string name="memory_count">思い出 %1$d / %2$d</string> <!-- {79} -->
     <string name="memory_count_created">%1$d個の思い出を残しました</string> <!-- {106} -->
     <string name="memory_creation_time">%1$sに残した思い出です</string> <!-- {119} -->
-    <string name="memory_minimum_requirement">アルバムを完成させるには、1つ以上の思い出を作成する必要があります。</string> <!-- {175} -->
+    <string name="memory_minimum_requirement">アルバムを完成させるには、思い出を1つ以上作成する必要があります。</string> <!-- {175} -->
     <string name="nearby_memories_count">近くに%1$d個の思い出があります</string> <!-- {203} -->
-    <string name="nearby_only">この付近のみ</string> <!-- {169} -->
+    <string name="nearby_only">この近くのみ</string> <!-- {169} -->
     <string name="no_memories">思い出が存在しません</string> <!-- {232} -->
     <string name="no_memories_exist">思い出が存在しません...</string> <!-- {227} -->
     <string name="create_memory_prompt">旅に出て思い出を作成しましょう！</string> <!-- {233} -->
-    <string name="multiple_memories_nearby">この付近に複数の思い出が存在します\n確認したい範囲を選択してください</string> <!-- {168} -->
+    <string name="multiple_memories_nearby">この近くに複数の思い出が存在します\n確認したい範囲を選択してください</string> <!-- {168} -->
     <string name="select_range">範囲選択</string> <!-- {167} -->
     <string name="take_photo_guide">写真を撮って思い出を作成できます。</string> <!-- {172} -->
 
@@ -88,10 +89,10 @@
     <string name="still_traveling">まだ旅行中です</string> <!-- {200} -->
     <string name="during_travel">旅行中に</string> <!-- {173} -->
     <string name="when_travel_ends">旅行が終わったら</string> <!-- {177} -->
-    <string name="travel_capture_guide">旅行中に美しい思い出をキャプチャして\nアルバムを作成しましょう！</string> <!-- {166} -->
+    <string name="travel_capture_guide">旅行中に素敵な思い出をキャプチャして\nアルバムを作成してみましょう！</string> <!-- {166} -->
     <string name="travel_continuation_notice">アプリを終了しても旅行は終了しません。\nただし、旅行期間が1ヶ月を超えると%1$s</string> <!-- {136} -->
     <string name="travel_continuation_notice_full">アプリを終了しても旅行は終了しません。\nただし、旅行期間が1ヶ月を超えるとアルバムを作成できなくなります。</string> <!-- {174} -->
-    <string name="travel_completion_guide">旅行を終えたら、アルバムを完成するために\n次の画面に進んでください</string> <!-- {198} -->
+    <string name="travel_completion_guide">旅行を終えたら、アルバムを完成させるために\n次の画面に進んでください</string> <!-- {198} -->
 
     <!-- Location Related -->
     <string name="location_tracking">位置追跡</string> <!-- {72} -->
@@ -102,7 +103,7 @@
     <string name="location_loading_error">位置情報を読み込む際に\n問題が発生しました</string> <!-- {125} -->
     <string name="loading_location">位置情報読み込み中</string> <!-- {123} -->
     <string name="current_location_unavailable">現在位置を確認できません</string> <!-- {95} -->
-    <string name="copy_address">住所をコピー</string> <!-- {158} -->
+    <string name="copy_address">アドレスをコピー</string> <!-- {158} -->
 
     <!-- Processing States -->
     <string name="uploading_image">画像アップロード中</string> <!-- {110} -->
@@ -113,7 +114,7 @@
     <string name="creating_share_link">共有リンクを作成しています\n反映されるまで時間がかかります</string> <!-- {122} -->
     <string name="processing_image">画像処理中</string> <!-- {126} -->
     <string name="reviewing_image">画像確認中</string> <!-- {127} -->
-    <string name="stay_until_completion">作業が完了するまで\nここに留まってください</string> <!-- {219} -->
+    <string name="stay_until_completion">処理が完了するまで\nこのままお待ちください</string> <!-- {219} -->
 
     <!-- Profile Management -->
     <string name="profile_photo_change_success">プロフィール写真が正常に変更されました</string> <!-- {2} -->
@@ -124,34 +125,37 @@
     <string name="name_change">名前変更</string> <!-- {231} -->
     <string name="profile_photo_changing">プロフィール写真を変更しています\n反映されるまで時間がかかります</string> <!-- {52} -->
     <string name="name_changing">名前を変更しています\n反映されるまで時間がかかります</string> <!-- {67} -->
-    <string name="profile_name_description">アプリ内で表示される名前です</string> <!-- {248} -->
+    <string name="profile_name_description">アプリ内で活動中に表示される名前です</string> <!-- {248} -->
     <string name="select_basic_profile">基本プロフィールを選択してください</string> <!-- {278} -->
-    <string name="profile_setup_later">追加のプロフィールは後で設定できます</string> <!-- {277} -->
+    <string name="profile_setup_later">追加のプロフィール設定は後でも設定できます</string> <!-- {277} -->
 
     <!-- Account Management -->
     <string name="account_management">アカウント管理</string> <!-- {213} -->
-    <string name="login_album_share_message">ログイン後にアルバムを共有受けられます</string> <!-- {1} -->
+    <string name="login_album_share_message">ログイン後にアルバムを共有で受け取れます</string> <!-- {1} -->
     <string name="account_mismatch">アカウントが一致しません</string> <!-- {36} -->
     <string name="logout">ログアウト</string> <!-- {214} -->
     <string name="logout_action">ログアウトする</string> <!-- {251} -->
     <string name="withdrawal">サービス退会</string> <!-- {215} -->
     <string name="withdraw">退会する</string> <!-- {241} -->
-    <string name="service_withdrawal">サービス退会する</string> <!-- {242} -->
+    <string name="service_withdrawal">サービスを退会する</string> <!-- {242} -->
     <string name="withdrawal_complete">サービス退会が完了しました</string> <!-- {148} -->
     <string name="logout_confirmation">作成中のアルバムは%1$s\n本当にログアウトしますか？</string> <!-- {118} -->
     <string name="logout_confirmation_full">作成中のアルバムは自動的に削除されます\n本当にログアウトしますか？</string> <!-- {252} -->
     <string name="withdrawal_confirmation">現在のアカウントの%1$s\n本当に退会しますか？</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">現在のアカウントのすべてのデータが削除されます\n本当に退会しますか？</string> <!-- {243} -->
     <string name="delete_album_confirmation">アルバムを削除すると思い出を%1$s\n本当に削除しますか？</string> <!-- {116} -->
-    <string name="delete_album_confirmation_full">アルバムを削除すると思い出を復元できません\n本当に削除しますか？</string> <!-- {194} -->
+    <string name="delete_album_confirmation_full">アルバムを削除すると思い出を復元できなくなります\n本当に削除しますか？</string> <!-- {194} -->
     <string name="auto_deleted">自動的に削除されます</string> <!-- {117} -->
     <string name="all_data_deleted">すべてのデータが削除されます</string> <!-- {146} -->
     <string name="cannot_recover">復元できません</string> <!-- {115} -->
 
     <!-- Authentication -->
+    <string name="google">グーグル</string>
+    <string name="facebook">フェイスブック</string>
+    <string name="kakao">カカオトーク</string>
     <string name="sign_in_google">Googleで始める</string> <!-- {161} -->
     <string name="sign_in_facebook">Facebookで始める</string> <!-- {162} -->
-    <string name="sign_in_kakao">カカオトークで始める</string> <!-- {163} -->
+    <string name="sign_in_kakao">KakaoTalkで始める</string> <!-- {163} -->
     <string name="quick_start">クイックスタート</string> <!-- {164} -->
     <string name="get_started">始める</string> <!-- {276} -->
     <string name="service_registration">サービス登録</string> <!-- {272} -->
@@ -160,20 +164,20 @@
 
     <!-- Subscription -->
     <string name="subscription_notification">サブスクリプション通知</string> <!-- {12} -->
-    <string name="premium_plan_active">プレミアムプラン購読中</string> <!-- {38} -->
-    <string name="premium_subscription_active">プレミアムプランを購読中です</string> <!-- {89} -->
-    <string name="subscription_expiring">購読期限間近</string> <!-- {69} -->
-    <string name="subscription_expiry_notice">購読が%1$d日後に期限切れになります。継続するには更新してください。</string> <!-- {70} -->
+    <string name="premium_plan_active">プレミアムプラン利用中</string> <!-- {38} -->
+    <string name="premium_subscription_active">プレミアムプランを利用中です</string> <!-- {89} -->
+    <string name="subscription_expiring">サブスクリプション期限間近</string> <!-- {69} -->
+    <string name="subscription_expiry_notice">サブスクリプションは%1$d日後に期限切れになります。サービスを継続するには更新してください。</string> <!-- {70} -->
     <string name="subscription_price">USD %1$s / 月</string> <!-- {133} -->
-    <string name="subscribe">購読する</string> <!-- {223} -->
-    <string name="subscribe_premium">プレミアム購読</string> <!-- {190} -->
-    <string name="manage_subscription">購読管理</string> <!-- {222} -->
-    <string name="subscription_complete">購読完了</string> <!-- {245} -->
-    <string name="subscription_complete_congrats">おめでとうございます！購読が完了しました\n今すぐプレミアム特典をお楽しみください</string> <!-- {244} -->
+    <string name="subscribe">定期購読する</string> <!-- {223} -->
+    <string name="subscribe_premium">プレミアム購読する</string> <!-- {190} -->
+    <string name="manage_subscription">定期購読管理</string> <!-- {222} -->
+    <string name="subscription_complete">定期購読完了</string> <!-- {245} -->
+    <string name="subscription_complete_congrats">おめでとうございます！定期購読が完了しました\n今すぐプレミアム特典をお楽しみください</string> <!-- {244} -->
     <string name="premium_label">プレミアム</string> <!-- {185} -->
-    <string name="subscription_benefits">購読特典</string> <!-- {186} -->
-    <string name="subscribe_benefits_prompt">購読してさらなる特典をお楽しみください！</string> <!-- {184} -->
-    <string name="subscribe_benefit_prompt">購読してさらなる\n特典をお楽しみください！</string> <!-- {39} -->
+    <string name="subscription_benefits">定期購読特典</string> <!-- {186} -->
+    <string name="subscribe_benefits_prompt">購読してより多くの特典を楽しみましょう！</string> <!-- {184} -->
+    <string name="subscribe_benefit_prompt">購読してより多くの\n特典を楽しみましょう！</string> <!-- {39} -->
 
     <!-- Subscription Benefits -->
     <string name="album_link_creation">アルバムリンク（ウェブページ）作成</string> <!-- {187} -->
@@ -186,43 +190,43 @@
     <string name="daily_limit">1日%1$d個</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">思い出は%1$sまでしか作成できません。</string> <!-- {139} -->
     <string name="free_plan_memory_limit">無料プランでは思い出を%1$sまでしか作成できません。より多くの思い出を作成したい場合は%2$sをクリックしてください。</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">無料プランでは思い出を10個までしか作成できません。\nより多くの思い出を作成したい場合はここをクリックしてください。</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">無料プランでは%1$s作成を希望する場合は%2$sをクリックしてください。</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">無料プランでは共有リンク作成ができません。作成を希望する場合はここをクリックしてください。</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">共有リンク作成ができません。</string> <!-- {143} -->
+    <string name="free_plan_limit_notice">無料プランでは思い出を10個までしか作成できません。\nより多くの思い出を作成したい場合はこちらをクリックしてください。</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">無料プランでは%1$sを作成したい場合は%2$sをクリックしてください。</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">無料プランでは共有リンク作成が利用できません。作成したい場合はこちらをクリックしてください。</string> <!-- {182} -->
+    <string name="share_link_creation_unavailable">共有リンク作成は利用できません。</string> <!-- {143} -->
     <string name="public_album_share_available">公開アルバムは共有リンク作成が可能です。</string> <!-- {144} -->
 
     <!-- Donation -->
     <string name="donate_to_developer">開発者に寄付する</string> <!-- {207} -->
-    <string name="donation_thanks_small">貴重な寄付ありがとうございます！より良いサービスで返礼します。</string> <!-- {30} -->
-    <string name="donation_thanks_medium">貴重な寄付に心より感謝します！より良いアプリを作るよう努力します。</string> <!-- {31} -->
-    <string name="donation_thanks_large">大きな寄付に本当に感謝します！アプリ開発と維持に大きく役立ちます。</string> <!-- {32} -->
-    <string name="donation_thanks_general">寄付ありがとうございます！アプリ改善に大きく役立ちます。</string> <!-- {33} -->
-    <string name="buy_coffee">コーヒー一杯おごる</string> <!-- {236} -->
-    <string name="buy_snack">おやつ一つおごる</string> <!-- {234} -->
-    <string name="buy_meal">食事一回おごる</string> <!-- {235} -->
+    <string name="donation_thanks_small">貴重な寄付をありがとうございます！より良いサービスでお返しします。</string> <!-- {30} -->
+    <string name="donation_thanks_medium">貴重な寄付を心から感謝します！より良いアプリを作るよう努力します。</string> <!-- {31} -->
+    <string name="donation_thanks_large">多額の寄付を本当にありがとうございます！アプリ開発と維持に大変役立ちます。</string> <!-- {32} -->
+    <string name="donation_thanks_general">寄付をありがとうございます！アプリ改善に大変役立ちます。</string> <!-- {33} -->
+    <string name="buy_coffee">コーヒー一杯をおごる</string> <!-- {236} -->
+    <string name="buy_snack">おやつ一つをおごる</string> <!-- {234} -->
+    <string name="buy_meal">食事一回分をおごる</string> <!-- {235} -->
 
     <!-- Support -->
     <string name="user_support">ユーザーサポート</string> <!-- {208} -->
     <string name="contact_developer">開発者に問い合わせる</string> <!-- {209} -->
     <string name="rate_app">アプリを評価する</string> <!-- {206} -->
-    <string name="app_rating_complete">アプリ評価が完了しました</string> <!-- {35} -->
-    <string name="dev_email_copied">開発者のメールがクリップボードにコピーされました</string> <!-- {66} -->
-    <string name="contact_email_subject">[ロードキャプチャー] お問い合わせ</string> <!-- {51} -->
-    <string name="contact_template">こんにちは、ロードキャプチャー開発チームにお問い合わせします。\n\nアプリバージョン: %1$s\nデバイスモデル: %2$s\nAndroidバージョン: %3$s\n\nお問い合わせ内容:\n</string> <!-- {49} -->
+    <string name="app_rating_complete">アプリ評価を完了しました</string> <!-- {35} -->
+    <string name="dev_email_copied">開発者のメールアドレスがクリップボードにコピーされました</string> <!-- {66} -->
+    <string name="contact_email_subject">[ロードキャプチャ] お問い合わせ</string> <!-- {51} -->
+    <string name="contact_template">こんにちは、ロードキャプチャ開発チームにお問い合わせします。\n\nアプリバージョン：%1$s\n端末モデル：%2$s\nAndroidバージョン：%3$s\n\n問い合わせ内容：\n</string> <!-- {49} -->
     <string name="app_info">アプリ情報</string> <!-- {155} -->
 
     <!-- Terms and Policies -->
     <string name="terms_and_policies">利用規約とポリシー</string> <!-- {210} -->
     <string name="privacy_policy">プライバシーポリシー</string> <!-- {41} -->
-    <string name="terms_of_service">利用規約</string> <!-- {42} -->
+    <string name="terms_of_service">サービス利用規約</string> <!-- {42} -->
     <string name="privacy_collection_consent">個人情報収集・利用同意書</string> <!-- {43} -->
     <string name="terms_consent">サービス利用規約同意書</string> <!-- {44} -->
     <string name="privacy_policy_menu">プライバシーポリシー</string> <!-- {212} -->
-    <string name="terms_of_service_menu">利用規約</string> <!-- {211} -->
+    <string name="terms_of_service_menu">サービス利用規約</string> <!-- {211} -->
     <string name="agree_all_terms">すべての規約に同意</string> <!-- {273} -->
-    <string name="terms_required_consent">サービス利用規約（必須）</string> <!-- {274} -->
-    <string name="privacy_required_consent">個人情報収集・利用（必須）</string> <!-- {275} -->
+    <string name="terms_required_consent">サービス利用規約必須同意</string> <!-- {274} -->
+    <string name="privacy_required_consent">個人情報収集・利用必須同意</string> <!-- {275} -->
 
     <!-- Reporting -->
     <string name="report">報告する</string> <!-- {238} -->
@@ -231,36 +235,36 @@
     <string name="report_submitted">報告内容が受け付けられました</string> <!-- {130} -->
     <string name="select_report_reason">報告理由を選択してください</string> <!-- {254} -->
     <string name="inappropriate_content_report">不適切なコンテンツ</string> <!-- {255} -->
-    <string name="adult_content">アダルトコンテンツ、露出画像</string> <!-- {256} -->
-    <string name="abusive_language">暴言、卑語</string> <!-- {257} -->
-    <string name="violent_content">暴力的または嫌悪的な内容</string> <!-- {258} -->
+    <string name="adult_content">アダルトコンテンツ、露出の多い写真</string> <!-- {256} -->
+    <string name="abusive_language">暴言、俗語</string> <!-- {257} -->
+    <string name="violent_content">暴力的または不快な内容</string> <!-- {258} -->
     <string name="spam_ads">スパムと広告</string> <!-- {259} -->
     <string name="commercial_ads">商業広告、宣伝</string> <!-- {260} -->
-    <string name="repetitive_content">繰り返しの投稿</string> <!-- {261} -->
-    <string name="irrelevant_links">無関係なリンクまたはコンテンツ</string> <!-- {262} -->
-    <string name="personal_info_exposure">個人情報公開</string> <!-- {263} -->
+    <string name="repetitive_content">反復的な投稿</string> <!-- {261} -->
+    <string name="irrelevant_links">関連性のないリンクまたはコンテンツ</string> <!-- {262} -->
+    <string name="personal_info_exposure">個人情報の露出</string> <!-- {263} -->
     <string name="unauthorized_info_disclosure">他人の個人情報の無断公開</string> <!-- {264} -->
     <string name="sensitive_info">電話番号、住所、身分証など</string> <!-- {265} -->
-    <string name="portrait_rights_violation">肖像権侵害（顔、ナンバープレートなど）</string> <!-- {266} -->
-    <string name="false_information">誤情報</string> <!-- {267} -->
-    <string name="fake_news">虚偽情報、フェイクニュース</string> <!-- {268} -->
-    <string name="misleading_content">誤解を招く可能性のある内容</string> <!-- {269} -->
+    <string name="portrait_rights_violation">肖像権侵害（顔、車両ナンバーなど）</string> <!-- {266} -->
+    <string name="false_information">誤った情報</string> <!-- {267} -->
+    <string name="fake_news">偽情報、フェイクニュース</string> <!-- {268} -->
+    <string name="misleading_content">誤解を招く内容</string> <!-- {269} -->
     <string name="wrong_location_tag">間違った位置タグ</string> <!-- {270} -->
 
     <!-- Form Fields -->
     <string name="place_name_optional">（任意）場所名を入力してください</string> <!-- {281} -->
     <string name="content_optional">（任意）内容を入力してください</string> <!-- {282} -->
-    <string name="search_hint">タイトル、ユーザー、地域、場所を検索</string> <!-- {280} -->
+    <string name="search_hint">タイトル、ユーザー、地域、場所で検索</string> <!-- {280} -->
     <string name="no_search_results">検索結果がありません</string> <!-- {239} -->
     <string name="search_different_keyword">別のキーワードで検索してみてください</string> <!-- {240} -->
-    <string name="view_info">情報を確認</string> <!-- {250} -->
-    <string name="check_info">情報を確認</string> <!-- {218} -->
+    <string name="view_info">情報を見る</string> <!-- {250} -->
+    <string name="check_info">情報を確認する</string> <!-- {218} -->
 
     <!-- Time Related -->
     <string name="time_days">%1$d日</string> <!-- {27} -->
     <string name="time_hours">%1$d時間</string> <!-- {28} -->
     <string name="time_minutes">%1$d分</string> <!-- {29} -->
-    <string name="duration_format">%1$s間</string> <!-- {105} -->
+    <string name="duration_format">%1$sの間</string> <!-- {105} -->
 
     <!-- Error Messages -->
     <string name="general_error">問題が発生しました</string> <!-- {48} -->
@@ -274,7 +278,7 @@
     <string name="album_delete_error">アルバム削除中に問題が発生しました</string> <!-- {15} -->
     <string name="login_error">ログイン中に問題が発生しました</string> <!-- {46} -->
     <string name="email_send_error">メールを送信できません</string> <!-- {65} -->
-    <string name="share_link_access_error">共有リンクでのアクセスに失敗しました</string> <!-- {26} -->
+    <string name="share_link_access_error">共有リンクを通じたアクセスに失敗しました</string> <!-- {26} -->
     <string name="share_link_not_exist">共有リンクが存在しません</string> <!-- {7} -->
     <string name="image_decode_error">画像をデコードできません</string> <!-- {18} -->
     <string name="camera_app_launch_error">カメラアプリを起動できません</string> <!-- {91} -->
@@ -290,33 +294,33 @@
     <string name="location_permission_denied">位置情報権限がないため\nアルバムを作成できません</string> <!-- {71} -->
     <string name="no_location_photo_error">位置情報がないため写真を撮ることができません</string> <!-- {82} -->
     <string name="location_permission_required">位置情報権限が必要です</string> <!-- {83} -->
-    <string name="location_permission_rationale">地図に現在位置を表示し、バックグラウンドで経路を記録するために位置情報権限が必要です。設定で位置情報権限を「常に許可」に設定してください。</string> <!-- {84} -->
+    <string name="location_permission_rationale">地図に現在位置を表示し、バックグラウンドで経路を記録するには位置情報権限が必要です。設定で位置情報権限を「常に許可」に選択してください。</string> <!-- {84} -->
     <string name="camera_permission_required">カメラ権限が必要です</string> <!-- {87} -->
-    <string name="camera_permission_rationale">写真を撮るためにカメラ権限が必要です。設定で権限を許可してください。</string> <!-- {88} -->
+    <string name="camera_permission_rationale">写真を撮影するにはカメラ権限が必要です。設定で権限を許可してください。</string> <!-- {88} -->
 
     <!-- Purchase/Payment Related -->
-    <string name="subscription_process_error">定期購読処理中に\n問題が発生しました</string> <!-- {25} -->
+    <string name="subscription_process_error">サブスクリプション処理中に\n問題が発生しました</string> <!-- {25} -->
     <string name="donation_process_error">寄付処理中に\n問題が発生しました</string> <!-- {34} -->
-    <string name="benefit_already_received">他のアカウントで\nすでに特典を受けています</string> <!-- {37} -->
-    <string name="benefit_already_received_account">他のアカウントですでに特典を受けています</string> <!-- {80} -->
+    <string name="benefit_already_received">別のアカウントで\n既に特典を受けています</string> <!-- {37} -->
+    <string name="benefit_already_received_account">別のアカウントで既に特典を受けています</string> <!-- {80} -->
     <string name="purchase_verification_failed">購入確認に失敗しました</string> <!-- {90} -->
     <string name="consumption_processing_failed">消費処理に失敗しました</string> <!-- {96} -->
-    <string name="donation_loading">寄付商品情報を読み込んでいます\n後ほどもう一度お試しください</string> <!-- {97} -->
+    <string name="donation_loading">寄付商品情報を読み込み中です\n後ほど再試行してください</string> <!-- {97} -->
     <string name="donation_product_not_found">寄付商品情報が見つかりません</string> <!-- {98} -->
-    <string name="subscription_loading">購読商品情報を読み込んでいます\n後ほどもう一度お試しください</string> <!-- {100} -->
-    <string name="subscription_product_not_found">購読商品情報が見つかりません</string> <!-- {101} -->
+    <string name="subscription_loading">サブスクリプション商品情報を読み込み中です\n後ほど再試行してください</string> <!-- {100} -->
+    <string name="subscription_product_not_found">サブスクリプション商品情報が見つかりません</string> <!-- {101} -->
 
     <!-- Album Management -->
     <string name="when_album_completed">アルバムが完成したら</string> <!-- {179} -->
-    <string name="complete_album_guide">地図上で右側に表示されているアイコンを押してアルバムを完成させてください。</string> <!-- {178} -->
+    <string name="complete_album_guide">地図上で右側に表示されるアイコンをタップしてアルバムを完成させてください。</string> <!-- {178} -->
     <string name="no_editing_possible">編集はできません。</string> <!-- {141} -->
     <string name="delete_only_notice">削除は可能ですが、%1$s</string> <!-- {142} -->
     <string name="delete_only_edit_impossible">削除は可能ですが、編集はできません。</string> <!-- {180} -->
     <string name="visibility_toggle_available">公開/非公開の切り替えが可能です。</string> <!-- {181} -->
-    <string name="album_management_guide">上記の操作は「マイアルバム」タブで右側に表示されているアイコンをタップして実行できます。</string> <!-- {183} -->
+    <string name="album_management_guide">上記の操作は「マイアルバム」タブで右側に表示されるアイコンをタップすることで実行できます。</string> <!-- {183} -->
     <string name="cannot_create_album">アルバムを作成できません。</string> <!-- {135} -->
     <string name="image_edit">画像編集</string> <!-- {93} -->
-    <string name="move_to_shared_album">以前共有されたアルバムに移動します</string> <!-- {50} -->
+    <string name="move_to_shared_album">以前に共有されたアルバムに移動します</string> <!-- {50} -->
     <string name="not_ready_yet">まだ準備ができていません</string> <!-- {160} -->
 
     <string name="time_just_now">たった今</string>

@@ -44,9 +44,9 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText1 = getString(R.string.cannot_create_album)
+        val spanText1 = requireContext().getString(R.string.cannot_create_album)
         val `0` = spanText1
-        val spanFullText1 = getString(R.string.travel_continuation_notice, `0`)
+        val spanFullText1 = requireContext().getString(R.string.travel_continuation_notice, `0`)
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -63,14 +63,14 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
         val isSubscriptionActive = SubscriptionPref.isSubscriptionActive
 
         val `1` = SubscriptionValues.todayMemoryMaxSize
-        val spanText2_1 = getString(R.string.daily_limit, `1`)
-        val spanText2_2 = getString(R.string.click_here)
+        val spanText2_1 = requireContext().getString(R.string.daily_limit, `1`)
+        val spanText2_2 = requireContext().getString(R.string.click_here)
         val `1-0` = spanText2_1
         val `1-1` = spanText2_2
         val spanFullText2 = if(isSubscriptionActive) {
-            getString(R.string.daily_memory_limit_notice, `1-0`)
+            requireContext().getString(R.string.daily_memory_limit_notice, `1-0`)
         } else {
-            getString(R.string.free_plan_memory_limit, `1-0`, `1-1`)
+            requireContext().getString(R.string.free_plan_memory_limit, `1-0`, `1-1`)
         }
 
         SpannableUtils.setClickableText(
@@ -96,9 +96,9 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             )
         )
 
-        val spanText3 = getString(R.string.no_editing_possible)
+        val spanText3 = requireContext().getString(R.string.no_editing_possible)
         val `2` = spanText3
-        val spanFullText3 = getString(R.string.delete_only_notice, `2`)
+        val spanFullText3 = requireContext().getString(R.string.delete_only_notice, `2`)
 
         SpannableUtils.setClickableText(
             requireContext(),
@@ -112,14 +112,14 @@ class TripGuideBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             )
         )
 
-        val spanText4_1 = getString(R.string.share_link_creation_unavailable)
-        val spanText4_2 = getString(R.string.click_here)
+        val spanText4_1 = requireContext().getString(R.string.share_link_creation_unavailable)
+        val spanText4_2 = requireContext().getString(R.string.click_here)
         val `3-0` = spanText4_1
         val `3-1` = spanText4_2
         val spanFullText4 = if(isSubscriptionActive) {
-            getString(R.string.public_album_share_available)
+            requireContext().getString(R.string.public_album_share_available)
         } else {
-            getString(R.string.free_plan_feature_limit, `3-0`,`3-1`)
+            requireContext().getString(R.string.free_plan_feature_limit, `3-0`,`3-1`)
         }
 
         SpannableUtils.setClickableText(

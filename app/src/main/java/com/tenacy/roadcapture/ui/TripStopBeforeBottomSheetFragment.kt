@@ -38,9 +38,9 @@ class TripStopBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = getString(R.string.cannot_recover)
+        val spanText = requireContext().getString(R.string.cannot_recover)
         val `0` = spanText
-        val fullText = getString(R.string.delete_album_confirmation, `0`)
+        val fullText = requireContext().getString(R.string.delete_album_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetTripStopBeforeDescription,

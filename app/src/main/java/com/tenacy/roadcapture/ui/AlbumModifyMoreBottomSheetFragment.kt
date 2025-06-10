@@ -49,7 +49,7 @@ class AlbumModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
 
     private fun setupViews() {
         params?.let {
-            binding.toggleText = if (it.album.isPublic) getString(R.string.switch_to_private) else getString(R.string.switch_to_public)
+            binding.toggleText = if (it.album.isPublic) requireContext().getString(R.string.switch_to_private) else requireContext().getString(R.string.switch_to_public)
             binding.shareVisible = it.album.shareId.isNullOrBlank() && it.album.isPublic && SubscriptionPref.isSubscriptionActive
         }
     }

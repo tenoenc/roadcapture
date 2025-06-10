@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
@@ -9,11 +8,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
+import com.tenacy.roadcapture.util.ResourceProvider
 import com.tenacy.roadcapture.util.TagConstants
 import com.tenacy.roadcapture.util.functions
 import com.tenacy.roadcapture.worker.PhotoCacheWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
@@ -24,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val _savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
 ) : BaseViewModel(), Loginable {
 
     override val savedStateHandle: SavedStateHandle
@@ -52,13 +51,13 @@ class LoginViewModel @Inject constructor(
     override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialProfileUrl: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
-                if(!checkUserExists(socialUserId, socialType)) throw FirebaseFirestoreException(context.getString(R.string.user_not_found), FirebaseFirestoreException.Code.NOT_FOUND)
+                if(!checkUserExists(socialUserId, socialType)) throw FirebaseFirestoreException(resourceProvider.getString(R.string.user_not_found), FirebaseFirestoreException.Code.NOT_FOUND)
                 emit(Unit)
             }
                 .catch { exception ->
                     Log.e(TagConstants.AUTH, "파이어베이스 로그인 실패", exception)
                     if(exception is FirebaseFirestoreException && exception.code == FirebaseFirestoreException.Code.NOT_FOUND) {
-                        PhotoCacheWorker.enqueueOneTimeWork(context, listOf(socialProfileUrl))
+                        PhotoCacheWorker.enqueueOneTimeWork(resourceProvider.getConfigurationContext(), listOf(socialProfileUrl))
                         viewEvent(LoginViewEvent.Signup(socialUserId, socialType, socialProfileUrl, credential))
                     } else {
                         viewEvent(LoginViewEvent.SocialError(exception.message, socialType))

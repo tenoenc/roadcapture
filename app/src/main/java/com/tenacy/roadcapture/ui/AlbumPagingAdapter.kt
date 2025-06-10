@@ -17,7 +17,6 @@ import com.tenacy.roadcapture.databinding.ItemTagBinding
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.*
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDateTime
 
 @Parcelize
 sealed class AlbumItem(open val value: Album): Parcelable {
@@ -39,7 +38,7 @@ sealed class AlbumItem(open val value: Album): Parcelable {
 }
 
 
-class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumItem>>(AlbumComparator) {
+class AlbumPagingAdapter(private val scrapVisible: Boolean = true) : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumItem>>(AlbumComparator) {
 
     private var recyclerView: RecyclerView? = null
 
@@ -47,7 +46,7 @@ class AlbumPagingAdapter : PagingDataAdapter<AlbumItem, AlbumViewHolder<AlbumIte
         return when(viewType) {
             VIEW_TYPE_GENERAL -> AlbumViewHolder.General(ItemAlbumBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
-            ))
+            ), scrapVisible)
             VIEW_TYPE_USER -> AlbumViewHolder.User(ItemMyAlbumBinding.inflate(
                 LayoutInflater.from(parent.context), parent, false
             ))
@@ -178,14 +177,14 @@ sealed class AlbumViewHolder<out T: AlbumItem>(private val binding: ViewDataBind
     abstract fun bind(item: @UnsafeVariance T)
     abstract fun bind(item: @UnsafeVariance T, payloads: List<Any>)
 
-    class General(private val binding: ItemAlbumBinding) : AlbumViewHolder<AlbumItem.General>(binding) {
+    class General(private val binding: ItemAlbumBinding, private val scrapVisible: Boolean = true) : AlbumViewHolder<AlbumItem.General>(binding) {
 
         override fun bind(item: AlbumItem.General) {
             binding.thumbnailUrl = item.value.thumbnailUrl
             binding.profileImageUrl = item.value.user.photoUrl
             binding.username = item.value.user.displayName
             binding.title = item.value.title
-            binding.numericalText = getNumericalText(item)
+            binding.numericalText = getNumericalText(item, scrapVisible)
 
             binding.llIAlbumTags.setItemsToLayout(extractUniqueLocations(item.value.regionTags))
 
@@ -232,7 +231,7 @@ sealed class AlbumViewHolder<out T: AlbumItem>(private val binding: ViewDataBind
                             }
 
                             "time", "scraped" -> {
-                                binding.numericalText = getNumericalText(item)
+                                binding.numericalText = getNumericalText(item, scrapVisible)
                             }
                         }
                     }
@@ -332,15 +331,15 @@ sealed class AlbumViewHolder<out T: AlbumItem>(private val binding: ViewDataBind
         }
     }
 
-    protected fun getNumericalText(album: AlbumItem): String {
+    protected fun getNumericalText(album: AlbumItem, scrapVisible: Boolean = true): String {
         val localizedTimeAgoText = album.value.endedAt.toUtcTimestamp().toLocalizedTimeAgo(binding.root.context)
-        val localizedText = album.value.viewCount.toLocalizedString(binding.root.context).takeUnless { it == "0" } ?: "없음"
+        val localizedText = album.value.viewCount.toLocalizedString(binding.root.context).takeUnless { it == "0" } ?: binding.root.context.getString(R.string.none)
         return StringBuilder().let { sb ->
             if(!album.value.isPublic) {
                 sb.append(binding.root.context.getString(R.string.visibility_private))
                 sb.append(" · ")
             }
-            if(album.value.isScraped) {
+            if(scrapVisible && album.value.isScraped) {
                 sb.append(binding.root.context.getString(R.string.scrap_status))
                 sb.append(" · ")
             }

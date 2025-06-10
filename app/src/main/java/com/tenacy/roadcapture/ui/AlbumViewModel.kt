@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -20,7 +19,6 @@ import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -35,7 +33,7 @@ import kotlin.coroutines.resumeWithException
 @HiltViewModel
 class AlbumViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val memoryCacheDao: MemoryCacheDao,
     private val locationCacheDao: LocationCacheDao,
     private val cacheDao: CacheDao,
@@ -77,8 +75,8 @@ class AlbumViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val _scrapCount = MutableStateFlow(0)
-    val scrapCountText = _scrapCount.map {
-        it.toLocalizedString(context).takeUnless { it == "0" } ?: "없음"
+    val scrapCountText = combine(_scrapCount, resourceProvider.configurationContextFlow) { scrapCount, context ->
+        scrapCount.toLocalizedString(context).takeUnless { it == "0" } ?: context.getString(R.string.none)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")
 
     private val _scraped = MutableStateFlow(false)
@@ -120,16 +118,16 @@ class AlbumViewModel @Inject constructor(
             flow {
                 val albumUserRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(currentUserId)
                 if(!albumUserRef.get().await().exists()) {
-                    throw FirebaseFirestoreException(context.getString(R.string.user_not_exist), FirebaseFirestoreException.Code.NOT_FOUND)
+                    throw FirebaseFirestoreException(resourceProvider.getString(R.string.user_not_exist), FirebaseFirestoreException.Code.NOT_FOUND)
                 }
 
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(UserPref.id)
                 val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(currentAlbumId)
                 val firebaseAlbum = (albumRef.get().await()?.takeIf { it.exists() }?.toAlbum()
-                    ?: throw FirebaseFirestoreException(context.getString(R.string.album_not_exist), FirebaseFirestoreException.Code.NOT_FOUND))
+                    ?: throw FirebaseFirestoreException(resourceProvider.getString(R.string.album_not_exist), FirebaseFirestoreException.Code.NOT_FOUND))
 
                 if(currentUserId != UserPref.id && !firebaseAlbum.isPublic) {
-                    throw FirebaseFirestoreException(context.getString(R.string.album_switched_private), FirebaseFirestoreException.Code.PERMISSION_DENIED)
+                    throw FirebaseFirestoreException(resourceProvider.getString(R.string.album_switched_private), FirebaseFirestoreException.Code.PERMISSION_DENIED)
                 }
 
                 val scrapRef = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
@@ -180,7 +178,7 @@ class AlbumViewModel @Inject constructor(
                     Log.e("AlbumViewModel", "에러", exception)
 
                     (exception as? FirebaseFirestoreException)?.let { firestoreException ->
-                        viewEvent(AlbumViewEvent.Forbidden(firestoreException.message ?: context.getString(R.string.unexpected_error)))
+                        viewEvent(AlbumViewEvent.Forbidden(firestoreException.message ?: resourceProvider.getString(R.string.unexpected_error)))
                     }
                 }
                 .collect { (memories, locations) ->
@@ -355,7 +353,7 @@ class AlbumViewModel @Inject constructor(
                 }
             } catch (e: Exception) {
                 Log.e("AlbumViewModel", "shareId 처리 오류", e)
-                viewEvent(AlbumViewEvent.Forbidden(context.getString(R.string.share_link_access_error)))
+                viewEvent(AlbumViewEvent.Forbidden(resourceProvider.getString(R.string.share_link_access_error)))
             }
         }
     }

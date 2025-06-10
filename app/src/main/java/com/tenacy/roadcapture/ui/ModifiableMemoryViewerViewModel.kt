@@ -11,6 +11,7 @@ import com.tenacy.roadcapture.data.db.MemoryDao
 import com.tenacy.roadcapture.data.db.MemoryEntity
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
+import com.tenacy.roadcapture.util.ResourceProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ModifiableMemoryViewerViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val savedStateHandle: SavedStateHandle,
     private val memoryDao: MemoryDao,
     private val locationDao: LocationDao,
@@ -46,8 +47,8 @@ class ModifiableMemoryViewerViewModel @Inject constructor(
     val totalPageCount = _state.map { it.totalPageCount }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0)
 
-    val aroundDescriptionText = _state.map {
-        val totalPageCount = it.totalPageCount
+    val aroundDescriptionText = combine(_state, resourceProvider.configurationContextFlow) { state, context ->
+        val totalPageCount = state.totalPageCount
         val `0` = totalPageCount
         context.getString(R.string.nearby_memories_count, `0`)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")

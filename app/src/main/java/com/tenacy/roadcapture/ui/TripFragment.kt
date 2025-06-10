@@ -95,7 +95,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 mainActivity.vm.viewEvent(
                     GlobalViewEvent.Toast(
                         ToastModel(
-                            getString(R.string.camera_permission_denied),
+                            requireContext().getString(R.string.camera_permission_denied),
                             ToastMessageType.Warning
                         )
                     )
@@ -127,7 +127,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 mainActivity.vm.viewEvent(
                     GlobalViewEvent.Toast(
                         ToastModel(
-                            getString(R.string.location_permission_denied),
+                            requireContext().getString(R.string.location_permission_denied),
                             ToastMessageType.Warning
                         )
                     )
@@ -254,7 +254,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val linkedAccountExists = SubscriptionPref.linkedAccountExists
                 when {
                     linkedAccountExists -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
                     }
                     else -> {
                         showSubscriptionDialog()
@@ -290,7 +290,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 Log.d("TAG", "Positive Button Clicked!")
                 viewLifecycleOwner.lifecycleScope.launch {
                     vm.stopTraveling()
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.album_deleted), ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.album_deleted), ToastMessageType.Success)))
                 }
             }
         }
@@ -311,7 +311,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    getString(R.string.no_location_photo_error),
+                                    requireContext().getString(R.string.no_location_photo_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -500,10 +500,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             .setPermissionListener(locationPermissionListener)
             .setPermissions(*permissions.toTypedArray())
             .setGotoSettingButton(true)
-            .setDeniedTitle(getString(R.string.location_permission_required))
-            .setDeniedMessage(getString(R.string.location_permission_rationale))
-            .setDeniedCloseButtonText(getString(R.string.cancel))
-            .setGotoSettingButtonText(getString(R.string.settings))
+            .setDeniedTitle(requireContext().getString(R.string.location_permission_required))
+            .setDeniedMessage(requireContext().getString(R.string.location_permission_rationale))
+            .setDeniedCloseButtonText(requireContext().getString(R.string.cancel))
+            .setGotoSettingButtonText(requireContext().getString(R.string.settings))
             .check()
     }
 
@@ -512,10 +512,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             .setPermissionListener(cameraPermissionListener)
             .setPermissions(Manifest.permission.CAMERA)
             .setGotoSettingButton(true)
-            .setDeniedTitle(getString(R.string.camera_permission_required))
-            .setDeniedMessage(getString(R.string.camera_permission_rationale))
-            .setDeniedCloseButtonText(getString(R.string.cancel))
-            .setGotoSettingButtonText(getString(R.string.settings))
+            .setDeniedTitle(requireContext().getString(R.string.camera_permission_required))
+            .setDeniedMessage(requireContext().getString(R.string.camera_permission_rationale))
+            .setDeniedCloseButtonText(requireContext().getString(R.string.cancel))
+            .setGotoSettingButtonText(requireContext().getString(R.string.settings))
             .check()
 
     // ===== 7. 데이터 관찰 메서드 그룹 =====
@@ -609,10 +609,10 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 val linkedAccountExists = SubscriptionPref.linkedAccountExists
                 when {
                     linkedAccountExists -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.benefit_already_received_account), ToastMessageType.Info)))
                     }
                     isSubscriptionActive -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.premium_subscription_active), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.premium_subscription_active), ToastMessageType.Info)))
                     }
                     else -> {
                         showSubscriptionDialog()
@@ -632,7 +632,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 when(event) {
                     is TripViewEvent.Error.Fetch -> {}
                 }
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.general_error), ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.general_error), ToastMessageType.Warning)))
                 findNavController().popBackStack()
             }
         }
@@ -919,7 +919,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    getString(R.string.camera_app_launch_error),
+                                    requireContext().getString(R.string.camera_app_launch_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -984,7 +984,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         mainActivity.vm.viewEvent(
                             GlobalViewEvent.Toast(
                                 ToastModel(
-                                    getString(R.string.image_edit_start_error),
+                                    requireContext().getString(R.string.image_edit_start_error),
                                     ToastMessageType.Warning
                                 )
                             )
@@ -1003,7 +1003,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             override fun createIntent(context: Context, input: Triple<Uri, Uri, Location?>): Intent {
                 val options = UCrop.Options().apply {
                     setCompressionQuality(30)
-                    setToolbarTitle(getString(R.string.image_edit))
+                    setToolbarTitle(requireContext().getString(R.string.image_edit))
                     setToolbarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setStatusBarColor(ContextCompat.getColor(context, R.color.label_normal))
                     setToolbarWidgetColor(ContextCompat.getColor(context, R.color.background_normal))
@@ -1042,7 +1042,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                getString(R.string.image_edit_error),
+                                requireContext().getString(R.string.image_edit_error),
                                 ToastMessageType.Warning
                             )
                         )
@@ -1054,7 +1054,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                getString(R.string.current_location_unavailable),
+                                requireContext().getString(R.string.current_location_unavailable),
                                 ToastMessageType.Warning
                             )
                         )

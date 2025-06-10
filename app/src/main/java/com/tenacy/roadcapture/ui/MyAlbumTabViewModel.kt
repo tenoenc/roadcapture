@@ -12,6 +12,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.util.ResourceProvider
 import com.tenacy.roadcapture.util.user
 import com.tenacy.roadcapture.worker.CreateShareLinkWorker
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
@@ -30,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MyAlbumTabViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
+    private val resourceProvider: ResourceProvider,
     @ApplicationContext private val context: Context,
 ) : BaseViewModel() {
 
@@ -68,7 +70,7 @@ class MyAlbumTabViewModel @Inject constructor(
                     Log.e("MyAlbumTabViewModel", "에러", excpetion)
                 }
                 .collect {
-                    val publicText = if(!isPublic) context.getString(R.string.visibility_public) else context.getString(R.string.visibility_private)
+                    val publicText = if(!isPublic) resourceProvider.getString(R.string.visibility_public) else resourceProvider.getString(R.string.visibility_private)
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic(publicText))
                 }
         }

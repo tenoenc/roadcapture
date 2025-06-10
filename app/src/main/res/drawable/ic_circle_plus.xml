@@ -7,7 +7,7 @@
       android:pathData="M16.5,1L16.5,1A15.5,15.5 0,0 1,32 16.5L32,16.5A15.5,15.5 0,0 1,16.5 32L16.5,32A15.5,15.5 0,0 1,1 16.5L1,16.5A15.5,15.5 0,0 1,16.5 1z"
       android:fillColor="#E4F5F0"/>
   <path
-      android:strokeWidth="1"
+      android:strokeWidth="1.5"
       android:pathData="M16.5,1L16.5,1A15.5,15.5 0,0 1,32 16.5L32,16.5A15.5,15.5 0,0 1,16.5 32L16.5,32A15.5,15.5 0,0 1,1 16.5L1,16.5A15.5,15.5 0,0 1,16.5 1z"
       android:fillColor="#00000000"
       android:strokeColor="#384845"/>

@@ -42,9 +42,9 @@ class LogoutBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = getString(R.string.auto_deleted)
+        val spanText = requireContext().getString(R.string.auto_deleted)
         val `0` = spanText
-        val fullText = getString(R.string.logout_confirmation, `0`)
+        val fullText = requireContext().getString(R.string.logout_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetLogoutBeforeDescription,

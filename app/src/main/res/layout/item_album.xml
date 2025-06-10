@@ -36,16 +36,30 @@
                        app:layout_constraintEnd_toEndOf="parent"
                        app:layout_constraintTop_toTopOf="parent"/>
 
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/txt_i_album_row_1_numeric"
+                      android:textAppearance="@style/Body_12_M"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="textEnd"
+                      android:text="@{numericalText}"
+                      tools:text="조회수 9.1만 · 방금 전"
+                      android:layout_marginHorizontal="20dp"
+                      android:layout_marginTop="10dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent"
+                      app:layout_constraintTop_toBottomOf="@id/img_i_album_thumbnail"/>
+
             <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="0dp"
                                                                android:layout_height="wrap_content"
                                                                android:id="@+id/cl_i_album_row_1"
                                                                android:orientation="horizontal"
                                                                android:paddingHorizontal="20dp"
-                                                               android:layout_marginTop="10dp"
+                                                               android:layout_marginTop="4dp"
                                                                android:gravity="center"
                                                                app:layout_constraintStart_toStartOf="parent"
                                                                app:layout_constraintEnd_toEndOf="parent"
-                                                               app:layout_constraintTop_toBottomOf="@id/img_i_album_thumbnail">
+                                                               app:layout_constraintTop_toBottomOf="@id/txt_i_album_row_1_numeric">
 
                 <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content"
                                                                    android:layout_height="wrap_content"
@@ -55,7 +69,7 @@
                                                                    android:focusable="true"
                                                                    app:layout_constrainedWidth="true"
                                                                    app:layout_constraintHorizontal_bias="0"
-                                                                   app:layout_constraintEnd_toStartOf="@id/txt_i_album_row_1_numeric"
+                                                                   app:layout_constraintEnd_toEndOf="parent"
                                                                    app:layout_constraintStart_toStartOf="parent"
                                                                    app:layout_constraintTop_toTopOf="parent"
                                                                    app:layout_constraintBottom_toBottomOf="parent">
@@ -86,17 +100,6 @@
                               app:layout_constraintStart_toEndOf="@id/ibtn_i_album_row_1_profile"/>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <TextView android:layout_width="wrap_content"
-                          android:layout_height="wrap_content"
-                          android:id="@+id/txt_i_album_row_1_numeric"
-                          android:textAppearance="@style/Body_12_M"
-                          android:textColor="@color/label_normal"
-                          android:text="@{numericalText}"
-                          tools:text="조회수 9.1만 · 방금 전"
-                          app:layout_constraintEnd_toEndOf="parent"
-                          app:layout_constraintBottom_toBottomOf="parent"
-                          app:layout_constraintTop_toTopOf="parent"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

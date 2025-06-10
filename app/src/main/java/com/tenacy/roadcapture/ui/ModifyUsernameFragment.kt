@@ -94,7 +94,7 @@ class ModifyUsernameFragment: BaseFragment() {
     private fun handleViewEvents(event: ModifyUsernameViewEvent) {
         when (event) {
             is ModifyUsernameViewEvent.Complete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.name_changing), ToastMessageType.Info)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.name_changing), ToastMessageType.Info)))
                 findNavController().popBackStack()
             }
         }

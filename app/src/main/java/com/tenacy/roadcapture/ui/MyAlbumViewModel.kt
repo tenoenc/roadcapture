@@ -1,8 +1,6 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.util.Log
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.AggregateSource
 import com.tenacy.roadcapture.R
@@ -10,19 +8,17 @@ import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class MyAlbumViewModel @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
 ) : BaseViewModel() {
 
     private val _refreshAllEvent = MutableSharedFlow<Unit>()
@@ -56,8 +52,8 @@ class MyAlbumViewModel @Inject constructor(
 //    val memoryCount = totalCounts.filterNotNull().mapNotNull { it[KEY_MEMORY_COUNT] }
 //        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), 0L)
 
-    val scrapText = _user.filterNotNull().map {
-        val localizedText = it.scrapCount.toLocalizedString(context)
+    val scrapText = combine(_user.filterNotNull(), resourceProvider.configurationContextFlow) { user, context ->
+        val localizedText = user.scrapCount.toLocalizedString(context)
         val `0` = localizedText
         context.getString(R.string.album_scrap_count, `0`)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), "")

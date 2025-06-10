@@ -225,14 +225,14 @@ class MyAlbumTabFragment: BaseFragment() {
             is MyAlbumTabViewEvent.EnqueueComplete -> {
                 when(event) {
                     is MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.deleting_album), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.deleting_album), ToastMessageType.Info)))
                     }
                     is MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic -> {
                         val `0` = event.publicText
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
                     }
                     is MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.create_share_link), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.create_share_link), ToastMessageType.Info)))
                     }
                 }
             }

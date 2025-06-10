@@ -13,11 +13,14 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.paging.LoadState
 import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.firebase.AlbumFilter
+import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -33,8 +36,11 @@ class SearchFragment: BaseFragment() {
     val binding get() = _binding!!
 
     private val vm: SearchViewModel by viewModels()
+    private val args: SearchFragmentArgs by navArgs()
 
-    private val albumAdapter = AlbumPagingAdapter()
+    private val albumAdapter: AlbumPagingAdapter by lazy {
+        AlbumPagingAdapter(args.albumFilter !is SearchFilter.Scrap)
+    }
     private val emptyStateAdapter = EmptyStateAdapter(EmptyItem.Search)
 
     // RecyclerView 상태 관리
@@ -274,7 +280,7 @@ class SearchFragment: BaseFragment() {
         when(event) {
             is SearchViewEvent.ReportComplete -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.report_submitted), ToastMessageType.Success)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
                 }
             }
         }

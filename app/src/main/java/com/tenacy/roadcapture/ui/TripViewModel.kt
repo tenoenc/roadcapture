@@ -13,7 +13,6 @@ import com.tenacy.roadcapture.data.db.MemoryWithLocation
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
-import com.tenacy.roadcapture.data.pref.UserPref.todayMemoryCount
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
 import com.tenacy.roadcapture.service.LocationProcessor
@@ -32,6 +31,7 @@ import javax.inject.Inject
 class TripViewModel @Inject constructor(
     subscriptionManager: SubscriptionManager,
     @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
     private val travelingStateManager: TravelingStateManager,
@@ -78,7 +78,7 @@ class TripViewModel @Inject constructor(
 
     private val _todayMemoryCount = MutableStateFlow<Long?>(null)
 
-    val todayMemoryCountText = combine(_todayMemoryCount, isSubscriptionActive) { todayMemoryCount, _ ->
+    val todayMemoryCountText = combine(_todayMemoryCount, isSubscriptionActive, resourceProvider.configurationContextFlow) { todayMemoryCount, _, context ->
         val currentMemorySize = todayMemoryCount ?: 0
         val maxMemorySize = SubscriptionValues.todayMemoryMaxSize
         val `0` = currentMemorySize.toInt()
@@ -200,17 +200,19 @@ class TripViewModel @Inject constructor(
 
             if(days > 0) {
                 val `0` = days.toInt()
-                sb.append(context.getString(R.string.time_days, `0`))
+                sb.append(resourceProvider.getString(R.string.time_days, `0`))
+                sb.append(" ")
             }
 
             if(hours > 0) {
                 val `0` = hours.toInt()
-                sb.append(context.getString(R.string.time_hours, `0`))
+                sb.append(resourceProvider.getString(R.string.time_hours, `0`))
+                sb.append(" ")
             }
 
             if(minutes >= 0) {
                 val `0` = minutes.toInt()
-                sb.append(context.getString(R.string.time_minutes, `0`))
+                sb.append(resourceProvider.getString(R.string.time_minutes, `0`))
             }
 
             sb.toString()

@@ -35,17 +35,6 @@
                     android:background="@null"
                     android:scaleType="fitCenter"/>
 
-            <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:id="@+id/txt_search_title"
-                      android:textAppearance="@style/Title_20"
-                      android:textColor="@color/label_normal"
-                      android:text="@{vm.title}"
-                      tools:text="스크랩"
-                      android:includeFontPadding="false"
-                      android:layout_marginStart="10dp"/>
-
-
             <androidx.cardview.widget.CardView android:layout_width="0dp"
                                                android:layout_height="wrap_content"
                                                android:layout_weight="1"
@@ -108,9 +97,31 @@
                                                    android:paddingBottom="20dp"
                                                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                                                    app:layout_constraintTop_toBottomOf="@id/view_search_1"
-                                                   app:layout_constraintBottom_toBottomOf="parent"
+                                                   app:layout_constraintBottom_toTopOf="@id/view_search_2"
                                                    app:layout_constraintStart_toStartOf="parent"
                                                    app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_search_title"
+                  android:textAppearance="@style/Title_20"
+                  android:textColor="@color/label_normal"
+                  android:textAlignment="center"
+                  android:text="@{vm.title}"
+                  tools:text="스크랩"
+                  android:paddingVertical="4dp"
+                  android:includeFontPadding="false"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"
+                  app:layout_constraintBottom_toBottomOf="parent" />
+
+        <View android:layout_width="0dp"
+              android:layout_height="1dp"
+              android:id="@+id/view_search_2"
+              android:background="@color/line_normal"
+              app:layout_constraintBottom_toTopOf="@id/txt_search_title"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintEnd_toEndOf="parent"/>
 
         <View android:layout_width="0dp"
               android:layout_height="0dp"

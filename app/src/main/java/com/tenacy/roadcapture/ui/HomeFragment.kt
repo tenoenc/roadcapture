@@ -304,7 +304,7 @@ class HomeFragment : BaseFragment() {
                     mainActivity.vm.viewEvent(
                         GlobalViewEvent.Toast(
                             ToastModel(
-                                getString(R.string.report_submit_success),
+                                requireContext().getString(R.string.report_submit_success),
                                 ToastMessageType.Success
                             )
                         )

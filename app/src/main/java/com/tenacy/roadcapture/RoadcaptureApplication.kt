@@ -1,19 +1,18 @@
 package com.tenacy.roadcapture
 
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
 import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.google.android.gms.ads.MobileAds
-import com.google.android.libraries.places.api.Places
 import com.google.firebase.FirebaseApp
 import com.kakao.sdk.common.KakaoSdk
 import com.navercorp.nid.NaverIdLoginSDK
+import com.tenacy.roadcapture.data.pref.DebugSettings
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.manager.*
@@ -29,10 +28,11 @@ import io.branch.referral.Branch
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 @HiltAndroidApp
-class RoadcaptureApplication: Application(), Configuration.Provider {
+class RoadcaptureApplication: Application(), androidx.work.Configuration.Provider {
 
     @Inject
     lateinit var freepikNSFWDetector: FreepikNSFWDetector
@@ -58,12 +58,20 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         fun workerFactory(): HiltWorkerFactory
     }
 
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleManager.applyLocale(base))
+    }
+
     override fun onCreate() {
         super.onCreate()
 
+        // 디버그 모드에서만 사용자 선택 로케일 적용
+        if (BuildConfig.DEBUG) {
+            applyUserSelectedLocale()
+        }
+
         FirebaseApp.initializeApp(this)
         MobileAds.initialize(this)
-//        Places.initialize(applicationContext, BuildConfig.MAPS_API_KEY)
         NaverIdLoginSDK.initialize(applicationContext, BuildConfig.NAVER_CLIENT_ID, BuildConfig.NAVER_CLIENT_SECRET, BuildConfig.NAVER_CLIENT_NAME)
         KakaoSdk.init(this, BuildConfig.KAKAO_CLIENT_ID)
         FacebookSdk.sdkInitialize(this)
@@ -92,11 +100,41 @@ class RoadcaptureApplication: Application(), Configuration.Provider {
         super.onTerminate()
     }
 
-    override val workManagerConfiguration: Configuration =
-        Configuration.Builder()
+    override val workManagerConfiguration: androidx.work.Configuration =
+        androidx.work.Configuration.Builder()
             .setWorkerFactory(EntryPoints.get(this, HiltWorkerFactoryEntryPoint::class.java).workerFactory())
             .build()
 
+    /**
+     * 사용자가 선택한 로케일 적용 (디버그 모드에서만 활성화)
+     */
+    private fun applyUserSelectedLocale() {
+        try {
+            val localeCode = DebugSettings.getSelectedLocale(this)
+            if (localeCode.isNotEmpty() && localeCode != "system") {
+                val locale = when {
+                    localeCode.contains("-") -> {
+                        val parts = localeCode.split("-")
+                        when (parts.size) {
+                            2 -> Locale(parts[0], parts[1])
+                            3 -> Locale(parts[0], parts[1], parts[2])
+                            else -> Locale(localeCode)
+                        }
+                    }
+                    else -> Locale(localeCode)
+                }
+
+                Log.d("Locale", "디버그 모드에서 로케일 적용: $localeCode")
+                Locale.setDefault(locale)
+
+                val config = resources.configuration
+                config.setLocale(locale)
+                resources.updateConfiguration(config, resources.displayMetrics)
+            }
+        } catch (e: Exception) {
+            Log.e("Locale", "로케일 적용 실패", e)
+        }
+    }
 
     // RoadcaptureApplication.kt의 setupLocationCheck() 메서드 수정
     private fun setupLocationCheck() {

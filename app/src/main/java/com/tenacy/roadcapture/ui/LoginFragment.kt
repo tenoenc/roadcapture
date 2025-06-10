@@ -160,7 +160,7 @@ class LoginFragment : BaseFragment() {
             // 추가된 에러 처리
             is LoginViewEvent.SocialError -> {
                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.login_error), ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.login_error), ToastMessageType.Warning)))
                 }
             }
 

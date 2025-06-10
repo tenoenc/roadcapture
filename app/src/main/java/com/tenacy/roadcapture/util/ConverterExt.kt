@@ -3,17 +3,10 @@ package com.tenacy.roadcapture.util
 import android.content.Context
 import android.content.res.Resources
 import android.location.Location
-import android.net.Uri
-import android.os.Parcelable
-import android.util.Log
 import android.util.TypedValue
-import androidx.work.Data
-import androidx.work.workDataOf
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.Timestamp
-import com.google.gson.Gson
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDateTime

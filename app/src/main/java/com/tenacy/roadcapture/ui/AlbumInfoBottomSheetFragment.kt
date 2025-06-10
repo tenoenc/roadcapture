@@ -6,15 +6,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetAlbumInfoBinding
 import com.tenacy.roadcapture.databinding.ItemStopoverBinding
@@ -126,7 +122,7 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     private fun getContentRow1Elements(): Pair<String, String>? {
         return params?.let {
             val startDateText = it.album.createdAt.toDate().toLocalizedDateString(requireContext())
-            val endDateText = it.album.endedAt.toDate().toLocalizedDateTimeString(requireContext())
+            val endDateText = it.album.endedAt.toDate().toLocalizedDateString(requireContext())
             startDateText to endDateText
         }
     }
@@ -145,27 +141,27 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
             if(days > 0) {
                 val `0` = days.toInt()
-                sb2.append(getString(R.string.time_days, `0`))
-                sb.append(" ")
+                sb2.append(requireContext().getString(R.string.time_days, `0`))
+                sb2.append(" ")
             }
 
             if(hours > 0) {
                 val `0` = hours.toInt()
-                sb2.append(getString(R.string.time_hours, `0`))
-                sb.append(" ")
+                sb2.append(requireContext().getString(R.string.time_hours, `0`))
+                sb2.append(" ")
             }
 
             if(minutes > 0) {
                 val `0` = minutes.toInt()
-                sb2.append(getString(R.string.time_minutes, `0`))
-                sb.append(" ")
+                sb2.append(requireContext().getString(R.string.time_minutes, `0`))
+                sb2.append(" ")
             }
 
             val `0` = sb2.toString()
-            sb.append(if(minutes == 0L) "" else getString(R.string.duration_format, `0`))
+            sb.append(if(minutes == 0L) "" else requireContext().getString(R.string.duration_format, `0`))
             sb.append(" ")
             val `1` = it.totalMemoryCount
-            sb.append(getString(R.string.memory_count_created, `1`))
+            sb.append(requireContext().getString(R.string.memory_count_created, `1`))
             return sb.toString()
         }
     }

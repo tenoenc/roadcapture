@@ -72,7 +72,7 @@ class WithdrawBeforeFragment: BaseFragment() {
     private fun handleViewEvents(event: WithdrawBeforeViewEvent) {
         when (event) {
             is WithdrawBeforeViewEvent.Complete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.withdrawal_complete), ToastMessageType.Success)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.withdrawal_complete), ToastMessageType.Success)))
 
                 val navOptions = NavOptions.Builder().setPopUpTo(
                     R.id.mainFragment,
@@ -87,7 +87,7 @@ class WithdrawBeforeFragment: BaseFragment() {
                 }
             }
             is WithdrawBeforeViewEvent.Error.Withdraw -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.withdrawal_error), ToastMessageType.Warning)))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.withdrawal_error), ToastMessageType.Warning)))
                 mainActivity.vm.logout()
             }
         }

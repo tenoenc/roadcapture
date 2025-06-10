@@ -42,9 +42,9 @@ class WithdrawBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupViews() {
-        val spanText = getString(R.string.all_data_deleted)
+        val spanText = requireContext().getString(R.string.all_data_deleted)
         val `0` = spanText
-        val fullText = getString(R.string.withdrawal_confirmation, `0`)
+        val fullText = requireContext().getString(R.string.withdrawal_confirmation, `0`)
         SpannableUtils.setClickableText(
             requireContext(),
             binding.txtBSheetWithdrawBeforeDescription,

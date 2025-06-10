@@ -15,7 +15,7 @@ import javax.inject.Inject
 class AppReviewManager @Inject constructor(
     @ActivityContext private val context: Context,
 ) {
-    fun requestReview(onReviewCompleted: () -> Unit) {
+    fun requestReview(onReviewCompleted: () -> Unit = {}) {
         try {
             requestInAppReview(onReviewCompleted)
         } catch (e: Exception) {

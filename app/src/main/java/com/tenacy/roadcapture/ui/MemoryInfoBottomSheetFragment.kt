@@ -77,7 +77,7 @@ class MemoryInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             val localizedTimeAgoText = it.createdAt.toUtcTimestamp().toLocalizedTimeAgo(binding.root.context)
 
             val `0` = localizedTimeAgoText
-            getString(R.string.memory_creation_time, `0`)
+            requireContext().getString(R.string.memory_creation_time, `0`)
         }
     }
 

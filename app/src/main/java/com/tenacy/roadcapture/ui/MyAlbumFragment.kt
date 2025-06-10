@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.esafirm.imagepicker.features.ImagePickerConfig
 import com.esafirm.imagepicker.features.ImagePickerLauncher
@@ -26,8 +25,6 @@ import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toLocalizedString
 import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MyAlbumFragment: BaseFragment() {
@@ -72,7 +69,7 @@ class MyAlbumFragment: BaseFragment() {
             result.getOrNull(0)?.let {
 
                 UpdateUserPhotoWorker.enqueueOneTimeWork(requireContext(), it.uri)
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(getString(R.string.profile_photo_changing))))
+                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.profile_photo_changing))))
             }
         }
     }
@@ -113,8 +110,8 @@ class MyAlbumFragment: BaseFragment() {
             val `0` = albumCount.toLocalizedString(requireContext())
             val `1` = memoryCount.toLocalizedString(requireContext())
             when (position) {
-                0 -> tab.text = createTabText(getString(R.string.album_tab), getString(R.string.item_count, `0`))
-                1 -> tab.text = createTabText(getString(R.string.memory_tab), getString(R.string.item_count, `1`))
+                0 -> tab.text = createTabText(requireContext().getString(R.string.album_tab), requireContext().getString(R.string.item_count, `0`))
+                1 -> tab.text = createTabText(requireContext().getString(R.string.memory_tab), requireContext().getString(R.string.item_count, `1`))
             }
         }.attach()
     }
@@ -188,8 +185,8 @@ class MyAlbumFragment: BaseFragment() {
         val `0` = albumCount.toLocalizedString(requireContext())
         val `1` = memoryCount.toLocalizedString(requireContext())
         if (tabLayout.tabCount >= 2) {
-            tabLayout.getTabAt(0)?.text = createTabText(getString(R.string.album_tab), getString(R.string.item_count, `0`))
-            tabLayout.getTabAt(1)?.text = createTabText(getString(R.string.memory_tab), getString(R.string.item_count, `1`))
+            tabLayout.getTabAt(0)?.text = createTabText(requireContext().getString(R.string.album_tab), requireContext().getString(R.string.item_count, `0`))
+            tabLayout.getTabAt(1)?.text = createTabText(requireContext().getString(R.string.memory_tab), requireContext().getString(R.string.item_count, `1`))
         }
     }
 

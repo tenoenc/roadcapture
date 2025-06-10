@@ -14,10 +14,7 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.api.dto.VerificationRequest
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
-import com.tenacy.roadcapture.util.Constants
-import com.tenacy.roadcapture.util.FirebaseConstants
-import com.tenacy.roadcapture.util.RetrofitInstance
-import com.tenacy.roadcapture.util.db
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -38,7 +35,7 @@ import kotlin.coroutines.resumeWithException
  */
 @Singleton
 class SubscriptionManager @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val resourceProvider: ResourceProvider,
     private val billingManager: BillingManager,
 ) {
     // 상수 정의
@@ -77,8 +74,6 @@ class SubscriptionManager @Inject constructor(
     private val subscriptionStateListeners = mutableListOf<SubscriptionStateListener>()
 
     init {
-        Kotpref.init(context)
-
         // 초기 상태 설정 - 로컬 캐시 확인
         _isSubscriptionActive.value = SubscriptionPref.isSubscriptionActive
 
@@ -479,7 +474,7 @@ class SubscriptionManager @Inject constructor(
                 } else {
                     purchaseCallback?.onSubscriptionPurchaseFailed(
                         BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                        context.getString(R.string.subscription_loading),
+                        resourceProvider.getString(R.string.subscription_loading),
                     )
                 }
             }
@@ -496,7 +491,7 @@ class SubscriptionManager @Inject constructor(
         if (details == null) {
             purchaseCallback?.onSubscriptionPurchaseFailed(
                 BillingClient.BillingResponseCode.ITEM_UNAVAILABLE,
-                context.getString(R.string.subscription_product_not_found),
+                resourceProvider.getString(R.string.subscription_product_not_found),
             )
             return
         }

@@ -64,7 +64,7 @@ class NewMemoryAfterFragment: BaseFragment() {
                 when(it) {
                     is SaveMemoryState.Loading -> {}
                     is SaveMemoryState.CountMemory -> {
-                        binding.txtNewMemoryAfterStatus.text = getString(R.string.loading_location)
+                        binding.txtNewMemoryAfterStatus.text = requireContext().getString(R.string.loading_location)
                     }
                     is SaveMemoryState.ReversingGeocoding -> {}
                     is SaveMemoryState.SavingMemory -> {}
