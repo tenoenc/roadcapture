@@ -141,7 +141,7 @@
     <string name="withdrawal_complete">服务退出已完成</string> <!-- {148} -->
     <string name="logout_confirmation">正在编辑的相册将%1$s\n您确定要退出登录吗？</string> <!-- {118} -->
     <string name="logout_confirmation_full">正在编辑的相册将被自动删除\n您确定要退出登录吗？</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">当前账户的%1$s\n您确定要退出吗？</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">当前账户的%1$s\\n您确定要退出吗？</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">当前账户的所有数据将被删除\n您确定要退出吗？</string> <!-- {243} -->
     <string name="delete_album_confirmation">如果删除此相册，您将%1$s回忆\n您确定要删除吗？</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">如果删除此相册，您将无法恢复回忆\n您确定要删除吗？</string> <!-- {194} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">编辑图片</string> <!-- {93} -->
     <string name="move_to_shared_album">正在移动到之前共享的相册</string> <!-- {50} -->
     <string name="not_ready_yet">尚未准备就绪</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">韩语</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">英语</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">简体中文</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">西班牙语</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">葡萄牙语</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">日语</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">德语</string> <!-- {original_key: language_german} -->
+    <string name="language_french">法语</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">俄语</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">印尼语</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">印地语</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">阿拉伯语</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">语言设置</string> <!-- {original_key: language_settings} -->
+    <string name="change">更改</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">刚刚</string>
 

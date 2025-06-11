@@ -323,6 +323,22 @@
     <string name="move_to_shared_album">以前に共有されたアルバムに移動します</string> <!-- {50} -->
     <string name="not_ready_yet">まだ準備ができていません</string> <!-- {160} -->
 
+    <!-- Language -->
+    <string name="language_korean">韓国語</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">英語</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">簡体字中国語</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">スペイン語</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">ポルトガル語</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">日本語</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">ドイツ語</string> <!-- {original_key: language_german} -->
+    <string name="language_french">フランス語</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">ロシア語</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">インドネシア語</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">ヒンディー語</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">アラビア語</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">言語設定</string> <!-- {original_key: language_settings} -->
+    <string name="change">変更する</string> <!-- {original_key: change} -->
+
     <string name="time_just_now">たった今</string>
 
     <plurals name="time_minutes_ago">

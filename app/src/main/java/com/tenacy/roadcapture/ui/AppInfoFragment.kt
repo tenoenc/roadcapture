@@ -246,6 +246,10 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
             }
 
+            is AppInfoViewEvent.NavigateToLanguage -> {
+                findNavController().navigate(MainFragmentDirections.actionMainToLanguage())
+            }
+
             is AppInfoViewEvent.ReviewApp -> {
                 appReviewManager.requestReview()
             }

@@ -32,11 +32,22 @@
                 app:popEnterAnim="@anim/from_left"
                 app:popExitAnim="@anim/to_right"
                 app:destination="@id/modifyUsernameFragment"/>
-        <action android:id="@+id/action_main_to_html" app:destination="@id/htmlFragment"/>
+        <action android:id="@+id/action_main_to_html"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right"
+                app:destination="@id/htmlFragment"/>
         <action android:id="@+id/action_main_to_debugSettings"
                 app:destination="@id/debugSettingsFragment"/>
         <action android:id="@+id/action_main_to_withdrawBefore"
                 app:destination="@id/withdrawBeforeFragment"/>
+        <action android:id="@+id/action_main_to_language"
+                app:enterAnim="@anim/from_right"
+                app:exitAnim="@anim/to_left"
+                app:popEnterAnim="@anim/from_left"
+                app:popExitAnim="@anim/to_right"
+                app:destination="@id/languageFragment"/>
     </fragment>
     <fragment android:id="@+id/tripFragment" android:name="com.tenacy.roadcapture.ui.TripFragment"
               android:label="TripFragment"
@@ -168,7 +179,8 @@
         <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
         <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
         <argument android:name="socialUserId" app:argType="string"/>
-        <argument android:name="defaultProfile" app:argType="com.tenacy.roadcapture.ui.DefaultProfile" app:nullable="true"
+        <argument android:name="defaultProfile" app:argType="com.tenacy.roadcapture.ui.DefaultProfile"
+                  app:nullable="true"
                   android:defaultValue="@null"/>
         <argument android:name="isExistingUser" app:argType="boolean"/>
         <argument android:name="username" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
@@ -200,4 +212,7 @@
         <argument android:name="placeName" app:argType="string"/>
         <argument android:name="content" app:argType="string"/>
     </fragment>
+    <fragment android:id="@+id/languageFragment" android:name="com.tenacy.roadcapture.ui.LanguageFragment"
+              android:label="LanguageFragment"
+              tools:layout="@layout/fragment_language"/>
 </navigation>

@@ -49,7 +49,7 @@
     <string name="switch_to_public">Cambiar a público</string> <!-- {108} -->
     <string name="scrap_status">Guardado</string> <!-- {59} -->
     <string name="view_count">%1$s vistas</string> <!-- {60} -->
-    <string name="item_count">%1$s elementos</string> <!-- {64} -->
+    <string name="item_count">%1$s</string> <!-- {64} -->
 
     <!-- Album States -->
     <string name="visibility_public">Público</string> <!-- {9} -->
@@ -141,7 +141,7 @@
     <string name="withdrawal_complete">Retirada del servicio completada</string> <!-- {148} -->
     <string name="logout_confirmation">Los álbumes en progreso serán %1$s\n¿Estás seguro de que quieres cerrar sesión?</string> <!-- {118} -->
     <string name="logout_confirmation_full">Los álbumes en progreso se eliminarán automáticamente\n¿Estás seguro de que quieres cerrar sesión?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">Todos los %1$s de la cuenta actual\n¿Estás seguro de que quieres retirarte?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">%1$s para la cuenta actual\n¿Estás seguro de que quieres retirarte?</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">Todos los datos de la cuenta actual serán eliminados\n¿Estás seguro de que quieres retirarte?</string> <!-- {243} -->
     <string name="delete_album_confirmation">Si eliminas este álbum, %1$s los recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">Si eliminas este álbum, no podrás recuperar los recuerdos\n¿Estás seguro de que quieres eliminarlo?</string> <!-- {194} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">Editar imagen</string> <!-- {93} -->
     <string name="move_to_shared_album">Moviendo al álbum compartido anteriormente</string> <!-- {50} -->
     <string name="not_ready_yet">Aún no está listo</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">Coreano</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">Inglés</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">Chino simplificado</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">Español</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">Portugués</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">Japonés</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">Alemán</string> <!-- {original_key: language_german} -->
+    <string name="language_french">Francés</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">Ruso</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">Indonesio</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">Hindi</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">Árabe</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">Configuración de idioma</string> <!-- {original_key: language_settings} -->
+    <string name="change">Cambiar</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">ahora mismo</string>
 

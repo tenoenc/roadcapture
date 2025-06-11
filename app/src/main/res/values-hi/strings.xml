@@ -49,7 +49,7 @@
     <string name="switch_to_public">सार्वजनिक पर स्विच करें</string> <!-- {108} -->
     <string name="scrap_status">सहेजा गया</string> <!-- {59} -->
     <string name="view_count">%1$s बार देखा गया</string> <!-- {60} -->
-    <string name="item_count">%1$s आइटम</string> <!-- {64} -->
+    <string name="item_count">%1$s</string> <!-- {64} -->
 
     <!-- Album States -->
     <string name="visibility_public">सार्वजनिक</string> <!-- {9} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">छवि संपादित करें</string> <!-- {93} -->
     <string name="move_to_shared_album">पहले शेयर किए गए एल्बम पर जा रहे हैं</string> <!-- {50} -->
     <string name="not_ready_yet">अभी तैयार नहीं है</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">कोरियाई</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">अंग्रेज़ी</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">सरलीकृत चीनी</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">स्पेनिश</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">पुर्तगाली</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">जापानी</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">जर्मन</string> <!-- {original_key: language_german} -->
+    <string name="language_french">फ्रेंच</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">रूसी</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">इंडोनेशियाई</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">हिंदी</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">अरबी</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">भाषा सेटिंग्स</string> <!-- {original_key: language_settings} -->
+    <string name="change">बदलें</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">अभी अभी</string>
 

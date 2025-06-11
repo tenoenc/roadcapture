@@ -35,6 +35,7 @@ sealed class HomeViewEvent: ViewEvent {
 
 sealed class AppInfoViewEvent: ViewEvent {
     data object InquireToDeveloper: AppInfoViewEvent()
+    data object NavigateToLanguage : AppInfoViewEvent()
     data class NavigateToHtml(val type: HtmlType): AppInfoViewEvent()
     data object ReviewApp: AppInfoViewEvent()
     data object ShowLogoutBefore: AppInfoViewEvent()

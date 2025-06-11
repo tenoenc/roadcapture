@@ -147,6 +147,12 @@ class AppInfoViewModel @Inject constructor(
         }
     }
 
+    fun onLanguageSettingClick() {
+        viewModelScope.launch(Dispatchers.Default) {
+            viewEvent(AppInfoViewEvent.NavigateToLanguage)
+        }
+    }
+
     fun onAppReviewClick() {
         viewModelScope.launch(Dispatchers.Default) {
             viewEvent(AppInfoViewEvent.ReviewApp)

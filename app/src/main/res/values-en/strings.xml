@@ -49,7 +49,7 @@
     <string name="switch_to_public">Switch to Public</string> <!-- {108} -->
     <string name="scrap_status">Scraped</string> <!-- {59} -->
     <string name="view_count">%1$s views</string> <!-- {60} -->
-    <string name="item_count">%1$s items</string> <!-- {64} -->
+    <string name="item_count">%1$s</string> <!-- {64} -->
 
     <!-- Album States -->
     <string name="visibility_public">Public</string> <!-- {9} -->
@@ -141,7 +141,7 @@
     <string name="withdrawal_complete">Service withdrawal completed</string> <!-- {148} -->
     <string name="logout_confirmation">Albums in progress will be %1$s\nAre you sure you want to log out?</string> <!-- {118} -->
     <string name="logout_confirmation_full">Albums in progress will be automatically deleted\nAre you sure you want to log out?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">All %1$s for the current account\nAre you sure you want to withdraw?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">%1$s for the current account\nAre you sure you want to withdraw?</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">All data for the current account will be deleted\nAre you sure you want to withdraw?</string> <!-- {243} -->
     <string name="delete_album_confirmation">If you delete this album, you %1$s the memories\nAre you sure you want to delete?</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">If you delete this album, you cannot recover the memories\nAre you sure you want to delete?</string> <!-- {194} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">Edit Image</string> <!-- {93} -->
     <string name="move_to_shared_album">Moving to previously shared album</string> <!-- {50} -->
     <string name="not_ready_yet">Not ready yet</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">Korean</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">English</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">Simplified Chinese</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">Spanish</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">Portuguese</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">Japanese</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">German</string> <!-- {original_key: language_german} -->
+    <string name="language_french">French</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">Russian</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">Indonesian</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">Hindi</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">Arabic</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">Language Settings</string> <!-- {original_key: language_settings} -->
+    <string name="change">Change</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">just now</string>
 

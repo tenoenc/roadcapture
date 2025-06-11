@@ -322,7 +322,7 @@ sealed class AlbumViewHolder<out T: AlbumItem>(private val binding: ViewDataBind
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 if (index > 0) {
-                    setMargins(8f.toPx, 0, 0, 0)
+                    marginStart = 8.toPx
                 }
             }
 

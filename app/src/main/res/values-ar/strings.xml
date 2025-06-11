@@ -49,7 +49,7 @@
     <string name="switch_to_public">التبديل إلى عام</string> <!-- {108} -->
     <string name="scrap_status">محفوظ</string> <!-- {59} -->
     <string name="view_count">%1$s مشاهدة</string> <!-- {60} -->
-    <string name="item_count">%1$s عنصر</string> <!-- {64} -->
+    <string name="item_count">%1$s</string> <!-- {64} -->
 
     <!-- Album States -->
     <string name="visibility_public">عام</string> <!-- {9} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">تحرير الصورة</string> <!-- {93} -->
     <string name="move_to_shared_album">الانتقال إلى الألبوم المشترك سابقاً</string> <!-- {50} -->
     <string name="not_ready_yet">ليس جاهزاً بعد</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">الكورية</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">الإنجليزية</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">الصينية المبسطة</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">الإسبانية</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">البرتغالية</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">اليابانية</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">الألمانية</string> <!-- {original_key: language_german} -->
+    <string name="language_french">الفرنسية</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">الروسية</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">الإندونيسية</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">الهندية</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">العربية</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">إعدادات اللغة</string> <!-- {original_key: language_settings} -->
+    <string name="change">تغيير</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">الآن</string>
 

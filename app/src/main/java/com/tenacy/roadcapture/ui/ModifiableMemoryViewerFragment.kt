@@ -186,7 +186,7 @@ class ModifiableMemoryViewerFragment: BaseFragment() {
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
-                setMargins(8f.toPx, 0, 0, 0)
+                marginStart = 8.toPx
             }
 
             // 레이아웃에 뷰 추가

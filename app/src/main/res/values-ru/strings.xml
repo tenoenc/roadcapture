@@ -141,7 +141,7 @@
     <string name="withdrawal_complete">Удаление аккаунта завершено</string> <!-- {148} -->
     <string name="logout_confirmation">Альбомы в процессе создания будут %1$s\nВы уверены, что хотите выйти?</string> <!-- {118} -->
     <string name="logout_confirmation_full">Альбомы в процессе создания будут автоматически удалены\nВы уверены, что хотите выйти?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">Все %1$s текущего аккаунта\nВы уверены, что хотите удалить аккаунт?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">%1$s текущего аккаунта\nВы уверены, что хотите удалить аккаунт?</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">Все данные текущего аккаунта будут удалены\nВы уверены, что хотите удалить аккаунт?</string> <!-- {243} -->
     <string name="delete_album_confirmation">Если вы удалите этот альбом, вы %1$s воспоминания\nВы уверены, что хотите удалить?</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">Если вы удалите этот альбом, вы не сможете восстановить воспоминания\nВы уверены, что хотите удалить?</string> <!-- {194} -->
@@ -322,6 +322,22 @@
     <string name="image_edit">Редактировать изображение</string> <!-- {93} -->
     <string name="move_to_shared_album">Переход к ранее общему альбому</string> <!-- {50} -->
     <string name="not_ready_yet">Еще не готово</string> <!-- {160} -->
+
+    <!-- Language -->
+    <string name="language_korean">Корейский</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">Английский</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">Упрощенный китайский</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">Испанский</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">Португальский</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">Японский</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">Немецкий</string> <!-- {original_key: language_german} -->
+    <string name="language_french">Французский</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">Русский</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">Индонезийский</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">Хинди</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">Арабский</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">Настройки языка</string> <!-- {original_key: language_settings} -->
+    <string name="change">Изменить</string> <!-- {original_key: change} -->
 
     <string name="time_just_now">только что</string>
 

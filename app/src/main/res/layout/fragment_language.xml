@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+>
+
+    <data>
+
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                       android:layout_height="match_parent">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_language_a_bar_container"
+                      android:orientation="horizontal"
+                      android:paddingHorizontal="16dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                    android:id="@+id/ibtn_a_bar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+            <TextView android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:textAppearance="@style/Title_18"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="center"
+                      android:text="@string/language_settings"/>
+
+            <Space
+                    android:id="@+id/ibtn_language_complete"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_check"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <androidx.core.widget.NestedScrollView android:layout_width="0dp"
+                                               android:layout_height="0dp"
+                                               android:paddingBottom="24dp"
+                                               android:paddingTop="20dp"
+                                               android:clipToPadding="false"
+                                               app:layout_constraintStart_toStartOf="parent"
+                                               app:layout_constraintEnd_toEndOf="parent"
+                                               app:layout_constraintTop_toBottomOf="@id/ll_language_a_bar_container"
+                                               app:layout_constraintBottom_toTopOf="@id/btn_language_change">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/ll_language_content_container"
+                          android:orientation="vertical"
+                          android:paddingHorizontal="20dp">
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_english"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_korean"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_chinese_simplified"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_spanish"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_portuguese"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_japanese"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_german"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_french"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_russian"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_indonesian"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_hindi"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView android:layout_width="match_parent"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:layout_marginTop="12dp"
+                                                                   app:rippleColor="@android:color/transparent"
+                                                                   app:cardBackgroundColor="@color/chip_choice_range_background"
+                                                                   app:cardElevation="0dp"
+                                                                   app:cardCornerRadius="12dp"
+                                                                   app:strokeColor="@color/chip_choice_range_stroke"
+                                                                   app:strokeWidth="2dp">
+
+                    <TextView android:layout_width="match_parent"
+                              android:layout_height="wrap_content"
+                              android:padding="10dp"
+                              android:textAppearance="@style/Body_14_M"
+                              android:textColor="@color/label_normal"
+                              android:textAlignment="center"
+                              android:text="@string/language_arabic"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_language_change"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="@string/change"
+                android:backgroundTint="@color/primary_normal"
+                app:cornerRadius="12dp"
+                android:padding="12dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:visibility="gone"
+                tools:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
