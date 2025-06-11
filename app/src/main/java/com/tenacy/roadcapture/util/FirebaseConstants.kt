@@ -1,7 +1,5 @@
 package com.tenacy.roadcapture.util
 
-import com.tenacy.roadcapture.BuildConfig
-
 object FirebaseConstants {
     const val DEFAULT_PROFILE_PATH = "images/default_profile.jpg"
     const val DEFAULT_PROFILE_URL = "https://firebasestorage.googleapis.com/v0/b/roadcapture-457911.firebasestorage.app/o/images%2Fdefault_profile.jpg?alt=media&token=3c26d0bf-47d1-48f5-b37c-71826eab75a7"

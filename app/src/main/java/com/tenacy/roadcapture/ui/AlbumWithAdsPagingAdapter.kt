@@ -125,11 +125,22 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // AlbumWithAdsPagingAdapter.kt에 아래 코드 추가
+    // 개선된 preloadAds 함수
     private fun preloadAds(startPosition: Int, count: Int) {
         val items = snapshot().items
+        if (items.isNullOrEmpty()) {
+            Log.w(TAG, "Items is null or empty, skipping preload")
+            return
+        }
+
+        // startPosition이 유효한 범위인지 확인
+        if (startPosition < 0 || startPosition >= items.size) {
+            Log.w(TAG, "Invalid startPosition: $startPosition, items size: ${items.size}")
+            return
+        }
+
         for (i in startPosition until minOf(startPosition + count, items.size)) {
-            val item = items[i]
+            val item = items.getOrNull(i) // 안전한 접근
             if (item is AlbumItemWithAds.Ad) {
                 val id = item.id
                 if (!adCache.containsKey(id) && !loadingAds.contains(id)) {
@@ -139,7 +150,7 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // onAttachedToRecyclerView 메소드 수정
+    // 개선된 onAttachedToRecyclerView 메소드
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
@@ -148,12 +159,19 @@ class AlbumWithAdsPagingAdapter(
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                recyclerView.layoutManager?.let { layoutManager ->
-                    if (layoutManager is LinearLayoutManager) {
-                        val firstVisible = layoutManager.findFirstVisibleItemPosition()
-                        // 현재 보이는 항목 이후 10개의 항목에 대해 광고 미리 로딩
-                        preloadAds(firstVisible, 10)
+
+                try {
+                    recyclerView.layoutManager?.let { layoutManager ->
+                        if (layoutManager is LinearLayoutManager) {
+                            val firstVisible = layoutManager.findFirstVisibleItemPosition()
+                            // firstVisible이 유효한 경우에만 preload 실행
+                            if (firstVisible >= 0) {
+                                preloadAds(firstVisible, 10)
+                            }
+                        }
                     }
+                } catch (e: Exception) {
+                    Log.e(TAG, "Error in scroll listener: ${e.message}")
                 }
             }
         })
@@ -205,21 +223,27 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
+    // 개선된 onBindViewHolder
     override fun onBindViewHolder(holder: AlbumWithAdsViewHolder<AlbumItemWithAds>, position: Int) {
-        when (val item = getItem(position)) {
-            is AlbumItemWithAds.Album -> {
-                holder.bind(item)
-            }
-
-            is AlbumItemWithAds.Ad -> {
-                if (holder is AdViewHolder) {
+        try {
+            when (val item = getItem(position)) {
+                is AlbumItemWithAds.Album -> {
                     holder.bind(item)
                 }
-            }
 
-            null -> {
-                // Loading placeholder
+                is AlbumItemWithAds.Ad -> {
+                    if (holder is AdViewHolder) {
+                        holder.bind(item)
+                    }
+                }
+
+                null -> {
+                    // Loading placeholder - 로그 추가
+                    Log.d(TAG, "Item at position $position is null (loading)")
+                }
             }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error binding view holder at position $position: ${e.message}")
         }
     }
 
@@ -242,7 +266,27 @@ class AlbumWithAdsPagingAdapter(
         notifyItemRangeChanged(0, itemCount, listOf("time"))
     }
 
-    // loadAdForPosition 메소드 개선
+    // 안전한 notifyItemChanged 헬퍼 함수
+    private fun notifyItemChangedSafely(adItem: AlbumItemWithAds.Ad) {
+        try {
+            val items = snapshot().items
+            if (items.isNullOrEmpty()) {
+                Log.w(TAG, "Cannot notify item changed: items is null or empty")
+                return
+            }
+
+            val position = items.indexOf(adItem)
+            if (position >= 0) {
+                notifyItemChanged(position)
+            } else {
+                Log.w(TAG, "Ad item not found in current items list")
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error notifying item changed: ${e.message}")
+        }
+    }
+
+    // 개선된 loadAdForPosition 메소드
     private fun loadAdForPosition(adItem: AlbumItemWithAds.Ad) {
         val id = adItem.id
         if (context == null || loadingAds.contains(id) || adCache.containsKey(id)) return
@@ -265,11 +309,8 @@ class AlbumWithAdsPagingAdapter(
             if (loadingAds.contains(id)) {
                 Log.w(TAG, "Ad load timeout for ID: $id")
                 loadingAds.remove(id)
-                // 타임아웃 발생 시 해당 위치 업데이트
-                val position = snapshot().items.indexOf(adItem)
-                if (position >= 0) {
-                    notifyItemChanged(position)
-                }
+                // 타임아웃 발생 시 해당 위치 업데이트 (안전하게)
+                notifyItemChangedSafely(adItem)
             }
         }
 
@@ -289,11 +330,8 @@ class AlbumWithAdsPagingAdapter(
                 val loadTime = System.currentTimeMillis() - startTime
                 Log.d(TAG, "Ad loaded in $loadTime ms for position ${adItem.position}")
 
-                // 해당 위치의 아이템 업데이트
-                val position = snapshot().items.indexOf(adItem)
-                if (position >= 0) {
-                    notifyItemChanged(position)
-                }
+                // 해당 위치의 아이템 업데이트 (안전하게)
+                notifyItemChangedSafely(adItem)
             }
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(loadAdError: LoadAdError) {
@@ -308,7 +346,6 @@ class AlbumWithAdsPagingAdapter(
 
         // 높은 우선순위로 광고 로드
         val adRequest = AdRequest.Builder().build()
-
         adLoader.loadAd(adRequest)
     }
 

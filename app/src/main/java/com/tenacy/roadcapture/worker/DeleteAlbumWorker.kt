@@ -81,6 +81,7 @@ class DeleteAlbumWorker @AssistedInject constructor(
 
             // 참조 불러오기
             val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
+            val album = albumRef.get().await().toAlbum()
 
             val memoryRefs = db.collection(FirebaseConstants.COLLECTION_MEMORIES)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
@@ -110,7 +111,6 @@ class DeleteAlbumWorker @AssistedInject constructor(
             memoryCacheDao.deleteByAlbumId(albumId)
             locationCacheDao.deleteByAlbumId(albumId)
 
-            val storage = FirebaseStorage.getInstance()
             val albumStorageRef = storage.reference.child("images/albums/$userId/$albumId")
 
             // 폴더 내 모든 파일 리스트 가져오기
@@ -138,6 +138,11 @@ class DeleteAlbumWorker @AssistedInject constructor(
 
             // 오픈 그래프 이미지 삭제
             storage.getReference("og-images-$userId-$albumId.jpg").delete().await()
+
+            // 공유 링크가 있다면 삭제
+            if(album.shareId != null) {
+                storage.reference.child("shared_albums/$userId/${album.shareId}/data.json").delete()
+            }
 
             Log.d(TAG, "앨범 삭제 완료: $successCount/$totalCount 파일 삭제됨")
 

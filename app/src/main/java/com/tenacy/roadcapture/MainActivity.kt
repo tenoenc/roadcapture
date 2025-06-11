@@ -54,19 +54,16 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     private var destinationChangedListener: NavController.OnDestinationChangedListener? = null
 
+    private var isDeepLinkProcessed = false
+
     private val branchListener = Branch.BranchReferralInitListener { linkProperties, error ->
         if (error == null) {
-            // 성공적으로 딥링크 데이터를 받음
             Log.d("BranchSDK", "딥링크 초기화 성공: $linkProperties")
 
             if (linkProperties != null) {
-                // 모든 속성 로깅 (디버깅용)
                 val clickedBranchLink = linkProperties.optBoolean("+clicked_branch_link", false)
                 val nonBranchLink = linkProperties.optString("+non_branch_link", "")
-                Log.d("BranchSDK", "브랜치 링크 클릭 여부: $clickedBranchLink")
-                Log.d("BranchSDK", "non-branch 링크: $nonBranchLink")
 
-                // 브랜치 링크 클릭 처리
                 if (clickedBranchLink) {
                     val shareId = linkProperties.optString("share_id", "")
                     if (shareId.isNotEmpty()) {
@@ -74,12 +71,10 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                         AppPrefs.pendingDeepLinkShareId = shareId
                         navigateToAlbumSafely()
                     }
-                }
-                // 브랜치가 아닌 링크 처리
-                else if(!nonBranchLink.isNullOrBlank()) {
+                } else if (!nonBranchLink.isNullOrBlank()) {
                     val shareId = Regex("roadcapture://open/albums/([^/?]+)").find(nonBranchLink)?.groupValues?.get(1)
                     if (!shareId.isNullOrBlank()) {
-                        Log.d("BranchSDK", "브랜치 링크에서 shareId 발견: $shareId")
+                        Log.d("BranchSDK", "논브랜치 링크에서 shareId 발견: $shareId")
                         AppPrefs.pendingDeepLinkShareId = shareId
                         navigateToAlbumSafely()
                     } else {
@@ -88,9 +83,14 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
                 }
             }
         } else {
-            // 에러 처리
             Log.e("BranchSDK", "Branch 초기화 에러: ${error.message}, 에러 코드: ${error.errorCode}")
         }
+
+        // 딥링크 처리 완료 표시
+        isDeepLinkProcessed = true
+
+        // 이제 인텐트 데이터 제거해도 안전
+        intent?.data = null
     }
 
     private fun navigateToAlbumSafely() {
@@ -128,24 +128,34 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         setupWorkManagerCleaning()
         checkTravelingStateOnStartup()
 
-        try {
-            // 초기화 시도
-            Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).init()
-        } catch (e: Exception) {
-            // 이미 초기화된 경우 reInit 사용
-            Log.d("BranchSDK", "Branch init failed, using reInit: ${e.message}")
-            Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).reInit()
+        // 딥링크 데이터가 있고 아직 처리되지 않은 경우에만 초기화
+        if (intent?.data != null && !isDeepLinkProcessed) {
+            Log.d("BranchSDK", "onCreate - 딥링크 처리 시작: ${intent?.data}")
+
+            try {
+                Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).init()
+            } catch (e: Exception) {
+                Log.d("BranchSDK", "Branch init failed, using reInit: ${e.message}")
+                Branch.sessionBuilder(this).withCallback(branchListener).withData(intent?.data).reInit()
+            }
+        } else {
+            Log.d("BranchSDK", "onCreate - 딥링크 처리 건너뛰기 (데이터: ${intent?.data}, 처리됨: $isDeepLinkProcessed)")
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-        Log.d("DeepLink", "onNewIntent 호출됨: ${intent.data}")
 
-        // Branch에 새 인텐트 전달
-        Branch.sessionBuilder(this).withCallback(branchListener).withData(intent.data).reInit()
+        if (intent.data != null) {
+            Log.d("DeepLink", "onNewIntent 호출됨: ${intent.data}")
+            isDeepLinkProcessed = false // 새로운 딥링크이므로 플래그 리셋
+            Branch.sessionBuilder(this).withCallback(branchListener).withData(intent.data).reInit()
+        } else {
+            Log.d("DeepLink", "onNewIntent - 인텐트 데이터 없음")
+        }
     }
+
 
     private fun observeUpdateUserPhoto() {
         repeatOnLifecycle {

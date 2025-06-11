@@ -232,7 +232,7 @@ class MyAlbumTabFragment: BaseFragment() {
                         mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
                     }
                     is MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.create_share_link), ToastMessageType.Info)))
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.creating_share_link), ToastMessageType.Info)))
                     }
                 }
             }
