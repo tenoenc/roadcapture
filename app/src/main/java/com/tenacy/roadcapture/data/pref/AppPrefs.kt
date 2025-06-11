@@ -17,4 +17,6 @@ object AppPrefs : KotprefModel() {
         get() = System.currentTimeMillis() <= deepLinkTime + Constants.MILLIS_PER_MINUTES
     private var deepLinkTime by longPref(key = "deep_link_time")
     private var deepLinkExpiryTime by longPref(key = "deep_link_expiry_time")
+
+    var languageChanged by booleanPref(false)
 }

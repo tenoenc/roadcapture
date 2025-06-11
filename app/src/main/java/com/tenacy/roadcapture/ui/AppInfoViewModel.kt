@@ -31,6 +31,9 @@ class AppInfoViewModel @Inject constructor(
     subscriptionManager: SubscriptionManager,
 ) : BaseViewModel(), Loginable {
 
+    private val _signingIn = MutableStateFlow(false)
+    val signingIn = _signingIn.asStateFlow()
+
     override val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle
 
@@ -85,30 +88,26 @@ class AppInfoViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e(TagConstants.AUTH, "파이어베이스 재인증 실패", exception)
-                    withContext(Dispatchers.Default) {
-                        viewEvent(AppInfoViewEvent.Error.Reauth(exception.message, socialType))
-                    }
+                    viewEvent(AppInfoViewEvent.Error.Reauth(exception.message, socialType))
+                    _signingIn.update { false }
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 재인증 성공: $authResult")
                     viewEvent(AppInfoViewEvent.Withdraw)
+                    _signingIn.update { false }
                 }
         }
     }
 
     override fun onLoginError(exception: Throwable, socialType: SocialType) {
         Log.e(TagConstants.AUTH, "${socialType.name} 로그인 에러", exception)
-        viewModelScope.launch(Dispatchers.Main) {
-            // 에러 메시지 표시나 다른 에러 처리
-            viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
-        }
+        viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
+        _signingIn.update { false }
     }
 
     override fun onLoginCancelled(socialType: SocialType) {
         Log.d(TagConstants.AUTH, "${socialType.name} 로그인 취소")
-        viewModelScope.launch(Dispatchers.Main) {
-            // 취소 처리 (필요한 경우)
-        }
+        _signingIn.update { false }
     }
 
     private fun fetchUser() {
@@ -131,6 +130,10 @@ class AppInfoViewModel @Inject constructor(
                     _user.emit(User.from(user))
                 }
         }
+    }
+
+    fun enterSigningIn() {
+        _signingIn.update { true }
     }
 
     fun refreshUserStates() {

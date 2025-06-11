@@ -48,7 +48,7 @@ class SearchViewModel @Inject constructor(
     // 검색 실행
     fun performSearch() {
         val searchQuery = searchQuery.value
-        if (searchQuery.isBlank() && searchQuery.length < 2) {
+        if (searchQuery.isBlank() || searchQuery.length < 2) {
             return
         }
 

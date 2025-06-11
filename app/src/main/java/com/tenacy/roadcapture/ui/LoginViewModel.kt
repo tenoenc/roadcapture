@@ -14,8 +14,7 @@ import com.tenacy.roadcapture.util.functions
 import com.tenacy.roadcapture.worker.PhotoCacheWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -26,27 +25,11 @@ class LoginViewModel @Inject constructor(
     private val resourceProvider: ResourceProvider,
 ) : BaseViewModel(), Loginable {
 
+    private val _signingIn = MutableStateFlow(false)
+    val signingIn = _signingIn.asStateFlow()
+
     override val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle
-
-    /*override fun signInWithCustomToken(customToken: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            flow {
-                emit(Firebase.auth.signInWithCustomToken(customToken).await())
-            }
-                .catch { exception ->
-                    Log.e(TagConstants.AUTH, "파이어베이스 로그인 실패", exception)
-                    // 에러 이벤트 발생
-                    withContext(Dispatchers.Default) {
-                        viewEvent(LoginViewEvent.SocialError(exception.message, SocialType.Naver))
-                    }
-                }
-                .collect { authResult ->
-                    Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
-                    updateUser(SocialType.Naver)
-                }
-        }
-    }*/
 
     override fun signInWithCredential(credential: AuthCredential, socialUserId: String, socialProfileUrl: String, socialType: SocialType) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -62,27 +45,25 @@ class LoginViewModel @Inject constructor(
                     } else {
                         viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
                     }
+                    _signingIn.update { false }
                 }
                 .collect { authResult ->
                     Log.d(TagConstants.AUTH, "파이어베이스 로그인 성공: $authResult")
                     viewEvent(LoginViewEvent.Login(socialUserId, socialType, credential))
+                    _signingIn.update { false }
                 }
         }
     }
 
     override fun onLoginError(exception: Throwable, socialType: SocialType) {
         Log.e(TagConstants.AUTH, "${socialType.name} 로그인 에러", exception)
-        viewModelScope.launch(Dispatchers.Main) {
-            // 에러 메시지 표시나 다른 에러 처리
-            viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
-        }
+        viewEvent(LoginViewEvent.SocialError(exception.message, socialType))
+        _signingIn.update { false }
     }
 
     override fun onLoginCancelled(socialType: SocialType) {
         Log.d(TagConstants.AUTH, "${socialType.name} 로그인 취소")
-        viewModelScope.launch(Dispatchers.Main) {
-            // 취소 처리 (필요한 경우)
-        }
+        _signingIn.update { false }
     }
 
     // 사용자 존재 여부만 확인
@@ -110,24 +91,28 @@ class LoginViewModel @Inject constructor(
     fun onGoogleLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
             viewEvent(LoginViewEvent.GoogleLogin)
+            _signingIn.update { true }
         }
     }
 
     fun onFacebookLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
             viewEvent(LoginViewEvent.FacebookLogin)
+            _signingIn.update { true }
         }
     }
 
     fun onKakaoLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
             viewEvent(LoginViewEvent.KakaoLogin)
+            _signingIn.update { true }
         }
     }
 
     fun onNaverLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
             viewEvent(LoginViewEvent.NaverLogin)
+            _signingIn.update { true }
         }
     }
 }

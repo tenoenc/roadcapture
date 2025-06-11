@@ -337,6 +337,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
     }
 
     private fun reauthenticate() {
+        vm.enterSigningIn()
         when (UserPref.provider) {
             SocialType.Google -> googleReauth()
             SocialType.Facebook -> facebookReauth()

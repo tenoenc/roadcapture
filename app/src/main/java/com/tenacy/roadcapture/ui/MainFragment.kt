@@ -7,6 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -35,6 +37,7 @@ class MainFragment: BaseFragment() {
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             super.onPageSelected(position)
+
             // 바텀 네비게이션 아이템 선택 상태 업데이트
             val destinationId = when(position) {
                 0 -> R.id.homeFragment
@@ -153,6 +156,19 @@ class MainFragment: BaseFragment() {
 
         // 초기 선택 페이지 설정
         binding.bottomNav.selectItem(R.id.homeFragment)
+
+        viewPagerAdapter.registerFragmentTransactionCallback(object : FragmentStateAdapter.FragmentTransactionCallback() {
+            override fun onFragmentMaxLifecyclePreUpdated(
+                fragment: Fragment,
+                maxLifecycleState: Lifecycle.State
+            ): OnPostEventListener {
+                if (binding.childVm == null && fragment is AppInfoFragment && maxLifecycleState == Lifecycle.State.RESUMED) {
+                    val childViewModel = ViewModelProvider(fragment)[AppInfoViewModel::class.java]
+                    binding.childVm = childViewModel
+                }
+                return super.onFragmentMaxLifecyclePreUpdated(fragment, maxLifecycleState)
+            }
+        })
     }
 
     private fun setupObservers() {

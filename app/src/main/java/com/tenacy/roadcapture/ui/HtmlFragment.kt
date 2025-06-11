@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.pref.DebugSettings
 import com.tenacy.roadcapture.databinding.FragmentHtmlBinding
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
@@ -78,11 +79,12 @@ class HtmlFragment: BaseFragment() {
     }
 
     private suspend fun loadHtmlFromAssets(): String = withContext(Dispatchers.IO) {
+        val language = DebugSettings.getSelectedLocale(requireContext())
         val fileName = when(args.type) {
-            HtmlType.TermsOfService -> "terms_of_service.html"
-            HtmlType.PrivacyPolicy -> "privacy_policy.html"
-            HtmlType.TermsOfServiceAgreement -> "terms_of_service_agreement.html"
-            HtmlType.PrivacyPolicyAgreement -> "privacy_policy_agreement.html"
+            HtmlType.TermsOfService -> "$language/terms_of_service.html"
+            HtmlType.PrivacyPolicy -> "$language/privacy_policy.html"
+            HtmlType.TermsOfServiceAgreement -> "$language/terms_of_service_agreement.html"
+            HtmlType.PrivacyPolicyAgreement -> "$language/privacy_policy_agreement.html"
         }
         val inputStream = requireContext().assets.open(fileName) // assets 폴더에 있는 HTML 파일 이름
         val reader = BufferedReader(InputStreamReader(inputStream, "UTF-8"))
