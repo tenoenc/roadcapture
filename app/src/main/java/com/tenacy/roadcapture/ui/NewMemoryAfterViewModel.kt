@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.api.dto.NominatimAddress
 import com.tenacy.roadcapture.data.db.LocationDao
 import com.tenacy.roadcapture.data.db.LocationEntity
 import com.tenacy.roadcapture.data.db.MemoryDao
@@ -104,7 +105,6 @@ class NewMemoryAfterViewModel @Inject constructor(
     }
 
     private suspend fun getAddressFromCoordinates(): Address {
-        val excludePatterns = listOf("ISO", "country_code")
         return try {
             val language = resourceProvider.getConfigurationContext().resources.configuration.locale.language
             val nominatimReverseResponse = RetrofitInstance.locationIqApi.reverse(
@@ -116,21 +116,46 @@ class NewMemoryAfterViewModel @Inject constructor(
             Address(
                 country = nominatimReverseResponse.address?.country,
                 formattedAddress = nominatimReverseResponse.displayName,
-                components = nominatimReverseResponse.address?.otherFields?.entries
-                    ?.filter { (key, value) ->
-                        !excludePatterns.any { pattern -> key.contains(pattern, ignoreCase = true) }
-                                && (!value.containsDigit() || value.containsLetter())
-                    }
-                    ?.map { it.value }
-                    ?.toList()
-                    ?.distinct()
-                    ?.reversed() ?: throw Exception(),
+                components = extractAddressComponents(nominatimReverseResponse.displayName, nominatimReverseResponse.address) ?: throw Exception(),
                 coordinates = coordinates,
             )
         } catch (exception: Exception) {
             throw RuntimeException(resourceProvider.getString(R.string.location_loading_error))
         }
     }
+
+    private fun extractAddressComponents(
+        formattedAddress: String?,
+        address: NominatimAddress?
+    ): List<String>? {
+        return try {
+            // 첫 번째 방법: formattedAddress에서 패턴에 맞게 역순으로 추출
+            // 전제 조건: 전체 주소는 범위가 좁은 것부터 큰 순으로 정렬되어 있음
+            // 추출 1순위
+            val addressComponents = formattedAddress!!.split(", ").toList()
+            addressComponents
+                .reversed()
+                .filterIndexed { index, component -> index > 0 && validateIncludePattern(component) }
+                .distinct()
+        } catch (exception: Exception) {
+            // 두 번째 방법: 무작위 태그에서 역순으로 추출
+            // 전제 조건: 응답 json은 범위가 좁은 것부터 큰 순으로 정렬되어 있음
+            // 단, LocationIQ는 Nominatim과 다르게 아닌 경우도 있는 듯하여 추출 2순위로 둠
+            val excludePatterns = listOf("ISO", "country_code")
+            address?.otherFields?.entries
+                ?.reversed()
+                ?.filter { (key, value) ->
+                    !excludePatterns.any { pattern -> key.contains(pattern, ignoreCase = true) }
+                            && validateIncludePattern(value)
+                }
+                ?.map { it.value }
+                ?.distinct()
+        }
+    }
+    
+    // 1. 숫자가 포함되지 않은 경우
+    // 2. 숫자 및 문자가 포함된 경우
+    private fun validateIncludePattern(value: String) = (!value.containsDigit() || value.containsLetter())
 
     private fun saveLocationToLocal(address: Address): Long {
         val locationEntity = LocationEntity(

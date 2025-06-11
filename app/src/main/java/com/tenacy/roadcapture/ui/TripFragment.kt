@@ -29,6 +29,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.android.billingclient.api.Purchase
+import com.esafirm.imagepicker.features.ImagePickerConfig
+import com.esafirm.imagepicker.features.ImagePickerLauncher
+import com.esafirm.imagepicker.features.ImagePickerMode
+import com.esafirm.imagepicker.features.registerImagePicker
+import com.esafirm.imagepicker.model.Image
 import com.facebook.FacebookSdk.setCacheDir
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -48,6 +53,7 @@ import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCa
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.*
+import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -78,6 +84,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     @Inject
     lateinit var subscriptionManager: SubscriptionManager
+
+    /*TEST*/
+    private lateinit var imagePickerLauncher: ImagePickerLauncher
 
     // ===== 2. 권한 처리 관련 리스너 그룹 =====
     private val cameraPermissionListener = object : PermissionListener {
@@ -196,6 +205,28 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
             }
         }
 */
+        /*TEST*/
+        setupImagePicker()
+    }
+
+    /*TEST*/
+    private fun setupImagePicker() {
+        imagePickerLauncher = registerImagePicker { result: List<Image> ->
+            result.getOrNull(0)?.let {
+                val sourceUri = it.uri
+                try {
+                    // 내부 캐시 디렉토리에 크롭된 이미지를 저장할 파일 생성
+                    val croppedFile = createTempImageFile()
+                    val croppedUri = getUriForFile(croppedFile)
+
+                    // uCrop 시작
+                    cropLauncher.launch(Triple(sourceUri, croppedUri, getCurrentLocation()))
+                } catch (e: Exception) {
+                    Log.e("TripFragment", "uCrop 시작 오류", e)
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -324,7 +355,9 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         )
                         return@setSafeClickListener
                     }
-                    captureImageWithCameraApp()
+//                    captureImageWithCameraApp()
+                    /*TEST*/
+                    imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
                 }
             }
             binding.fabTripCapture.setOnClickListener(null)

@@ -46,7 +46,7 @@ class SignupUsernameViewModel @Inject constructor(
     }
 
     fun onUsernameInputAttempt(currentLength: Int) {
-        _usernameInputAttemptOverflow.update { currentLength >= InputModule.MAX_LENGTH_ALBUM_TITLE }
+        _usernameInputAttemptOverflow.update { currentLength >= InputModule.MAX_LENGTH_USERNAME }
     }
 
     fun onNextClick() {

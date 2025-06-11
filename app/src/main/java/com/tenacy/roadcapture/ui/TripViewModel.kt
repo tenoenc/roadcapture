@@ -311,7 +311,7 @@ class TripViewModel @Inject constructor(
     }
 
     fun onCheckClick() {
-        // 한 달이 지나면 여행 중단 (워커로도 확인 필요)
+        // TODO: 한 달이 지나면 여행 중단 (워커로도 확인 필요)
         if(TravelPref.isOverOneMonth()) {
             stopTraveling()
             return
