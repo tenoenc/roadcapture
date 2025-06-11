@@ -449,6 +449,7 @@ class SubscriptionManager @Inject constructor(
                 this.isSubscriptionCancelled = false
                 this.purchaseToken = ""
                 this.subscriptionPurchaseTime = 0
+                this.linkedAccountExists = false
             }
 
             this.lastSubscriptionCheckTime = System.currentTimeMillis()

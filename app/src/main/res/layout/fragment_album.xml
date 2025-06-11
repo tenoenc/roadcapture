@@ -308,20 +308,23 @@
                                                                app:layout_constraintStart_toEndOf="@id/card_album_zoom"
                                                                app:layout_constraintEnd_toStartOf="@id/fl_album_report">
 
-                <LinearLayout android:layout_width="wrap_content"
-                              android:layout_height="wrap_content"
-                              android:gravity="center_vertical"
-                              android:minWidth="88dp"
-                              android:orientation="horizontal">
+                <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="wrap_content"
+                                                                   android:layout_height="wrap_content"
+                                                                   android:minWidth="88dp">
 
                     <ImageView android:layout_width="36dp"
                                android:layout_height="36dp"
+                               android:id="@+id/img_album_profile"
                                app:url="@{vm.profileUrl}"
                                app:radius="@{100}"
-                               tools:src="@drawable/profile"/>
+                               tools:src="@drawable/profile"
+                               app:layout_constraintTop_toTopOf="parent"
+                               app:layout_constraintBottom_toBottomOf="parent"
+                               app:layout_constraintStart_toStartOf="parent"/>
 
-                    <TextView android:layout_width="match_parent"
+                    <TextView android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
+                              android:id="@+id/txt_album_username"
                               android:layout_marginStart="4dp"
                               android:layout_marginEnd="5dp"
                               android:ellipsize="end"
@@ -330,9 +333,14 @@
                               android:textColor="@color/label_normal"
                               android:textAlignment="center"
                               android:text="@{vm.profileDisplayName}"
-                              tools:text="purifree"/>
+                              tools:text="tenacy"
+                              app:layout_constrainedWidth="true"
+                              app:layout_constraintEnd_toEndOf="parent"
+                              app:layout_constraintTop_toTopOf="parent"
+                              app:layout_constraintBottom_toBottomOf="parent"
+                              app:layout_constraintStart_toEndOf="@id/img_album_profile"/>
 
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.card.MaterialCardView>
 

@@ -156,7 +156,6 @@ class AlbumInfoBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
             if(minutes > 0) {
                 val `0` = minutes.toInt()
                 sb2.append(requireContext().getString(R.string.time_minutes, `0`))
-                sb2.append(" ")
             }
 
             val `0` = sb2.toString()

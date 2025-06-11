@@ -1,6 +1,5 @@
 package com.tenacy.roadcapture.ui
 
-import android.content.Context
 import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
@@ -16,12 +15,10 @@ import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.User
 import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
