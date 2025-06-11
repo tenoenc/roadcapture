@@ -183,16 +183,16 @@
     <string name="album_link_creation">相册链接（网页）创建</string> <!-- {187} -->
     <string name="link_sharing_benefit">您可以使用链接将相册分享到外部</string> <!-- {188} -->
     <string name="ad_removal">去除广告</string> <!-- {189} -->
-    <string name="daily_memory_limit">每天%1$s个回忆</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">每天30个回忆</string> <!-- {246} -->
+    <string name="daily_memory_limit">每日%1$s个回忆</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">每日30个回忆</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">每天%1$d个</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">您每天最多可以创建%1$s个回忆。</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">免费计划中，您最多可以创建%1$s个回忆。如果想创建更多回忆，请点击%2$s。</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">免费计划中，您最多可以创建10个回忆。\n如果想创建更多回忆，请点击这里。</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">免费计划中，如果您想创建%1$s，请点击%2$s。</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">免费计划不支持创建分享链接。如果想创建，请点击这里。</string> <!-- {182} -->
+    <string name="daily_limit">每日%1$d个</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">您最多只能创建%1$s个回忆。</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">免费计划中，您最多只能创建%1$s个回忆。如需创建更多回忆，请点击%2$s。</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">免费计划中，您最多只能创建10个回忆。\n如需创建更多回忆，请点击这里。</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">免费计划中，如需创建%1$s，请点击%2$s。</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">免费计划不支持创建分享链接。如需创建，请点击这里。</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">无法创建分享链接。</string> <!-- {143} -->
     <string name="public_album_share_available">公开相册可以创建分享链接。</string> <!-- {144} -->
 

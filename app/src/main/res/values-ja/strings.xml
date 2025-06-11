@@ -191,7 +191,7 @@
     <string name="daily_memory_limit_notice">思い出は%1$sまでしか作成できません。</string> <!-- {139} -->
     <string name="free_plan_memory_limit">無料プランでは思い出を%1$sまでしか作成できません。より多くの思い出を作成したい場合は%2$sをクリックしてください。</string> <!-- {140} -->
     <string name="free_plan_limit_notice">無料プランでは思い出を10個までしか作成できません。\nより多くの思い出を作成したい場合はこちらをクリックしてください。</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">無料プランでは%1$sを作成したい場合は%2$sをクリックしてください。</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">無料プランで%1$sを作成したい場合は%2$sをクリックしてください。</string> <!-- {145} -->
     <string name="free_plan_share_limitation">無料プランでは共有リンク作成が利用できません。作成したい場合はこちらをクリックしてください。</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">共有リンク作成は利用できません。</string> <!-- {143} -->
     <string name="public_album_share_available">公開アルバムは共有リンク作成が可能です。</string> <!-- {144} -->

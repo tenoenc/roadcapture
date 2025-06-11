@@ -183,16 +183,16 @@
     <string name="album_link_creation">एल्बम लिंक (वेब पेज) निर्माण</string> <!-- {187} -->
     <string name="link_sharing_benefit">आप लिंक का उपयोग करके अपने एल्बम बाहरी रूप से शेयर कर सकते हैं</string> <!-- {188} -->
     <string name="ad_removal">विज्ञापन हटाना</string> <!-- {189} -->
-    <string name="daily_memory_limit">प्रति दिन %1$s यादें</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">प्रति दिन 30 यादें</string> <!-- {246} -->
+    <string name="daily_memory_limit">दैनिक %1$s यादें</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">दैनिक 30 यादें</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">प्रति दिन %1$d</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">आप प्रति दिन %1$s तक यादें बना सकते हैं।</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">फ्री प्लान के साथ, आप %1$s तक यादें बना सकते हैं। अगर आप अधिक यादें बनाना चाहते हैं, तो कृपया %2$s पर क्लिक करें।</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">फ्री प्लान के साथ, आप 10 तक यादें बना सकते हैं।\nअगर आप अधिक यादें बनाना चाहते हैं, तो कृपया यहां क्लिक करें।</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">फ्री प्लान के साथ, अगर आप %1$s बनाना चाहते हैं, तो कृपया %2$s पर क्लिक करें।</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">फ्री प्लान के साथ शेयर लिंक निर्माण उपलब्ध नहीं है। अगर आप बनाना चाहते हैं, तो कृपया यहां क्लिक करें।</string> <!-- {182} -->
+    <string name="daily_limit">दैनिक %1$d</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">आप केवल अधिकतम %1$s यादें बना सकते हैं।</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">फ्री प्लान के साथ, आप केवल अधिकतम %1$s यादें बना सकते हैं। अधिक यादें बनाने के लिए, कृपया %2$s पर क्लिक करें।</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">फ्री प्लान के साथ, आप 10 तक यादें बना सकते हैं।\nअधिक यादें बनाने के लिए, कृपया यहां क्लिक करें।</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">फ्री प्लान के साथ, %1$s बनाने के लिए, कृपया %2$s पर क्लिक करें।</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">फ्री प्लान के साथ शेयर लिंक निर्माण उपलब्ध नहीं है। बनाने के लिए, कृपया यहां क्लिक करें।</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">शेयर लिंक निर्माण उपलब्ध नहीं है।</string> <!-- {143} -->
     <string name="public_album_share_available">सार्वजनिक एल्बम के लिए शेयर लिंक निर्माण उपलब्ध है।</string> <!-- {144} -->
 

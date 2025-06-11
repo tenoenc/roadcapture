@@ -183,16 +183,16 @@
     <string name="album_link_creation">Création de liens d\'album (page web)</string> <!-- {187} -->
     <string name="link_sharing_benefit">Vous pouvez partager vos albums en externe à l\'aide de liens</string> <!-- {188} -->
     <string name="ad_removal">Suppression des publicités</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s souvenirs par jour</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 souvenirs par jour</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s souvenirs quotidiens</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 souvenirs quotidiens</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d par jour</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">Vous pouvez créer des souvenirs jusqu\'à %1$s par jour.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Avec le plan gratuit, vous pouvez créer des souvenirs jusqu\'à %1$s. Si vous souhaitez en créer davantage, veuillez cliquer %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">Avec le plan gratuit, vous pouvez créer jusqu\'à 10 souvenirs.\nSi vous souhaitez en créer davantage, veuillez cliquer ici.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Avec le plan gratuit, si vous souhaitez créer %1$s, veuillez cliquer %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">La création de liens de partage n\'est pas disponible avec le plan gratuit. Si vous souhaitez en créer un, veuillez cliquer ici.</string> <!-- {182} -->
+    <string name="daily_limit">%1$d quotidiens</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">Vous ne pouvez créer que %1$s souvenirs maximum.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">Avec le plan gratuit, vous ne pouvez créer que %1$s souvenirs maximum. Pour en créer davantage, veuillez cliquer %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">Avec le plan gratuit, vous pouvez créer jusqu\'à 10 souvenirs.\nPour en créer davantage, veuillez cliquer ici.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">Avec le plan gratuit, pour créer %1$s, veuillez cliquer %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">La création de liens de partage n\'est pas disponible avec le plan gratuit. Pour en créer un, veuillez cliquer ici.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">La création de liens de partage n\'est pas disponible.</string> <!-- {143} -->
     <string name="public_album_share_available">La création de liens de partage est disponible pour les albums publics.</string> <!-- {144} -->
 

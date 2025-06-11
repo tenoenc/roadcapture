@@ -336,24 +336,26 @@ class AlbumViewModel @Inject constructor(
                     .get()
                     .await()
 
-                if (!snapshot.isEmpty) {
-                    val albumDoc = snapshot.documents[0]
-                    val albumId = albumDoc.id
-                    val userId = albumDoc.getDocumentReference("userRef")?.id
-
-                    if (userId != null) {
-                        // 기존 fetchData 로직이 자동으로 실행되도록 필드 업데이트
-                        _albumId.value = albumId
-                        _albumUserId.value = userId
-
-                        // 데이터 다시 로드
-                        fetchData()
-                        countView()
-                    }
+                if(snapshot.isEmpty) {
+                    throw FirebaseFirestoreException(resourceProvider.getString(R.string.album_not_exist), FirebaseFirestoreException.Code.NOT_FOUND)
                 }
-            } catch (e: Exception) {
-                Log.e("AlbumViewModel", "shareId 처리 오류", e)
-                viewEvent(AlbumViewEvent.Forbidden(resourceProvider.getString(R.string.share_link_access_error)))
+
+                val albumDoc = snapshot.documents[0]
+                val albumId = albumDoc.id
+                val userId = albumDoc.getDocumentReference("userRef")?.id
+
+                if (userId != null) {
+                    // 기존 fetchData 로직이 자동으로 실행되도록 필드 업데이트
+                    _albumId.value = albumId
+                    _albumUserId.value = userId
+
+                    // 데이터 다시 로드
+                    fetchData()
+                    countView()
+                }
+            } catch (exception: Exception) {
+                Log.e("AlbumViewModel", "shareId 처리 오류", exception)
+                viewEvent(AlbumViewEvent.Forbidden(exception.message ?: resourceProvider.getString(R.string.share_link_access_error)))
             }
         }
     }

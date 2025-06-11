@@ -1,344 +1,343 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">로드캡처</string>
+    <string name="app_name">RoadCapture</string>
 
     <!-- General UI -->
-    <string name="app">앱</string> <!-- {216} -->
-    <string name="cancel">취소</string> <!-- {85} -->
-    <string name="close">닫기</string> <!-- {150} -->
-    <string name="complete">완성하기</string> <!-- {192} -->
-    <string name="check">확인하기</string> <!-- {171} -->
-    <string name="delete">삭제하기</string> <!-- {195} -->
-    <string name="later">나중에 할게요</string> <!-- {153} -->
-    <string name="next_step">다음으로 이동</string> <!-- {279} -->
-    <string name="none">없음</string> <!-- {78} -->
-    <string name="reconsider">다시 생각해볼게요</string> <!-- {193} -->
-    <string name="settings">설정</string> <!-- {86} -->
-    <string name="share">공유</string> <!-- {253} -->
-    <string name="submit">접수하기</string> <!-- {271} -->
-    <string name="try_again">다시 시도해주세요</string> <!-- {124} -->
-    <string name="try_again_later">잠시 후 다시 시도해주세요</string> <!-- {99} -->
-    <string name="today">오늘</string> <!-- {204} -->
-    <string name="all">전체</string> <!-- {170} -->
-    <string name="click_here">여기</string> <!-- {138} -->
-    <string name="preparing">준비하는 중</string> <!-- {109} -->
-    <string name="recently_updated">최근 업데이트</string> <!-- {205} -->
+    <string name="app">App</string> <!-- {216} -->
+    <string name="cancel">Cancel</string> <!-- {85} -->
+    <string name="close">Close</string> <!-- {150} -->
+    <string name="complete">Complete</string> <!-- {192} -->
+    <string name="check">Check</string> <!-- {171} -->
+    <string name="delete">Delete</string> <!-- {195} -->
+    <string name="later">I\'ll do it later</string> <!-- {153} -->
+    <string name="next_step">Next</string> <!-- {279} -->
+    <string name="none">None</string> <!-- {78} -->
+    <string name="reconsider">I\'ll reconsider</string> <!-- {193} -->
+    <string name="settings">Settings</string> <!-- {86} -->
+    <string name="share">Share</string> <!-- {253} -->
+    <string name="submit">Submit</string> <!-- {271} -->
+    <string name="try_again">Please try again</string> <!-- {124} -->
+    <string name="try_again_later">Please try again later</string> <!-- {99} -->
+    <string name="today">Today</string> <!-- {204} -->
+    <string name="all">All</string> <!-- {170} -->
+    <string name="click_here">here</string> <!-- {138} -->
+    <string name="preparing">Preparing</string> <!-- {109} -->
+    <string name="recently_updated">Recently Updated</string> <!-- {205} -->
 
     <!-- Navigation -->
-    <string name="home_tab">홈</string> <!-- {131} -->
-    <string name="album_tab">앨범</string> <!-- {62} -->
-    <string name="memory_tab">추억</string> <!-- {63} -->
-    <string name="scrap_tab">스크랩</string> <!-- {132} -->
+    <string name="home_tab">Home</string> <!-- {131} -->
+    <string name="album_tab">Album</string> <!-- {62} -->
+    <string name="memory_tab">Memory</string> <!-- {63} -->
+    <string name="scrap_tab">Scrap</string> <!-- {132} -->
 
     <!-- Album Management -->
-    <string name="create_album">앨범 만들기</string> <!-- {165} -->
-    <string name="my_album">내 앨범</string> <!-- {154} -->
-    <string name="album_in_progress">작성중인 앨범이 있어요</string> <!-- {283} -->
-    <string name="album_share">앨범 공유하기</string> <!-- {17} -->
-    <string name="create_share_link">공유 링크 생성하기</string> <!-- {224} -->
-    <string name="delete_album">앨범 삭제하기</string> <!-- {196} -->
-    <string name="album_deleted">앨범을 삭제했어요</string> <!-- {81} -->
-    <string name="view_album">앨범 확인하기</string> <!-- {249} -->
-    <string name="thumbnail">썸네일</string> <!-- {202} -->
-    <string name="set_as_thumbnail">썸네일로 지정하기</string> <!-- {217} -->
-    <string name="album_scrap_count">앨범이 %1$s번 스크랩 되었어요</string> <!-- {20} -->
-    <string name="continue_writing">이어서 작성하기</string> <!-- {152} -->
-    <string name="enter_title">제목을 입력해주세요</string> <!-- {197} -->
-    <string name="visibility_setting">공개 여부</string> <!-- {191} -->
-    <string name="switch_to_private">비공개로 전환하기</string> <!-- {107} -->
-    <string name="switch_to_public">공개로 전환하기</string> <!-- {108} -->
-    <string name="scrap_status">스크랩됨</string> <!-- {59} -->
-    <string name="view_count">조회수 %1$s</string> <!-- {60} -->
-    <string name="item_count">%1$s개</string> <!-- {64} -->
+    <string name="create_album">Create Album</string> <!-- {165} -->
+    <string name="my_album">My Album</string> <!-- {154} -->
+    <string name="album_in_progress">You have an album in progress</string> <!-- {283} -->
+    <string name="album_share">Share Album</string> <!-- {17} -->
+    <string name="create_share_link">Create Share Link</string> <!-- {224} -->
+    <string name="delete_album">Delete Album</string> <!-- {196} -->
+    <string name="album_deleted">Album deleted</string> <!-- {81} -->
+    <string name="view_album">View Album</string> <!-- {249} -->
+    <string name="thumbnail">Thumbnail</string> <!-- {202} -->
+    <string name="set_as_thumbnail">Set as Thumbnail</string> <!-- {217} -->
+    <string name="album_scrap_count">Album has been scraped %1$s times</string> <!-- {20} -->
+    <string name="continue_writing">Continue Writing</string> <!-- {152} -->
+    <string name="enter_title">Please enter a title</string> <!-- {197} -->
+    <string name="visibility_setting">Visibility</string> <!-- {191} -->
+    <string name="switch_to_private">Switch to Private</string> <!-- {107} -->
+    <string name="switch_to_public">Switch to Public</string> <!-- {108} -->
+    <string name="scrap_status">Scraped</string> <!-- {59} -->
+    <string name="view_count">%1$s views</string> <!-- {60} -->
+    <string name="item_count">%1$s</string> <!-- {64} -->
 
     <!-- Album States -->
-    <string name="visibility_public">공개</string> <!-- {9} -->
-    <string name="visibility_private">비공개</string> <!-- {10} -->
-    <string name="album_visibility_change_success">성공적으로 앨범이 %1$s로 전환되었어요</string> <!-- {11} -->
-    <string name="album_switched_private">비공개로 전환된 앨범이에요</string> <!-- {22} -->
-    <string name="album_delete_success">앨범이 성공적으로 삭제되었어요</string> <!-- {14} -->
-    <string name="album_create_success">앨범을 성공적으로 생성했어요</string> <!-- {113} -->
-    <string name="share_link_create_success">성공적으로 공유 링크가 생성되었어요</string> <!-- {6} -->
-    <string name="album_not_exist">존재하지 않는 앨범이에요</string> <!-- {21} -->
-    <string name="no_album">앨범이 존재하지 않아요...</string> <!-- {237} -->
-    <string name="no_album_exists">앨범이 존재하지 않아요</string> <!-- {225} -->
-    <string name="create_first_album">여행을 떠나 첫 앨범을 만들어 보세요!</string> <!-- {226} -->
-    <string name="no_scraped_albums">스크랩한 앨범이 없어요</string> <!-- {220} -->
-    <string name="scrap_encouragement">마음에 드는 앨범을 스크랩해 보세요!</string> <!-- {221} -->
+    <string name="visibility_public">Public</string> <!-- {9} -->
+    <string name="visibility_private">Private</string> <!-- {10} -->
+    <string name="album_visibility_change_success">Album successfully switched to %1$s</string> <!-- {11} -->
+    <string name="album_switched_private">This album has been switched to private</string> <!-- {22} -->
+    <string name="album_delete_success">Album successfully deleted</string> <!-- {14} -->
+    <string name="album_create_success">Album successfully created</string> <!-- {113} -->
+    <string name="share_link_create_success">Share link successfully created</string> <!-- {6} -->
+    <string name="album_not_exist">This album doesn\'t exist</string> <!-- {21} -->
+    <string name="no_album">No albums exist...</string> <!-- {237} -->
+    <string name="no_album_exists">No albums exist</string> <!-- {225} -->
+    <string name="create_first_album">Go on a trip and create your first album!</string> <!-- {226} -->
+    <string name="no_scraped_albums">No scraped albums</string> <!-- {220} -->
+    <string name="scrap_encouragement">Try scraping albums you like!</string> <!-- {221} -->
 
     <!-- Memory Management -->
-    <string name="create_memory">추억 생성</string> <!-- {156} -->
-    <string name="memory_count">추억 %1$d / %2$d</string> <!-- {79} -->
-    <string name="memory_count_created">%1$d개의 추억을 남겼어요</string> <!-- {106} -->
-    <string name="memory_creation_time">%1$s에 남긴 추억이에요</string> <!-- {119} -->
-    <string name="memory_minimum_requirement">추억을 1개 이상 만들어야 앨범을 완성할 수 있어요.</string> <!-- {175} -->
-    <string name="nearby_memories_count">근처에 %1$d개의 추억이 있어요</string> <!-- {203} -->
-    <string name="nearby_only">이 근처만</string> <!-- {169} -->
-    <string name="no_memories">추억이 존재하지 않아요</string> <!-- {232} -->
-    <string name="no_memories_exist">추억이 존재하지 않아요...</string> <!-- {227} -->
-    <string name="create_memory_prompt">여행을 떠나 추억을 만들어 보세요!</string> <!-- {233} -->
-    <string name="multiple_memories_nearby">이 근처에 여러 추억이 존재해요\n확인하고자 하는 범위를 선택해주세요</string> <!-- {168} -->
-    <string name="select_range">범위 선택</string> <!-- {167} -->
-    <string name="take_photo_guide">사진을 찍어 추억을 만들 수 있어요.</string> <!-- {172} -->
+    <string name="create_memory">Create Memory</string> <!-- {156} -->
+    <string name="memory_count">Memory %1$d / %2$d</string> <!-- {79} -->
+    <string name="memory_count_created">You\'ve created %1$d memories</string> <!-- {106} -->
+    <string name="memory_creation_time">Memory created at %1$s</string> <!-- {119} -->
+    <string name="memory_minimum_requirement">You need to create at least one memory to complete an album.</string> <!-- {175} -->
+    <string name="nearby_memories_count">There are %1$d memories nearby</string> <!-- {203} -->
+    <string name="nearby_only">Only Nearby</string> <!-- {169} -->
+    <string name="no_memories">No memories exist</string> <!-- {232} -->
+    <string name="no_memories_exist">No memories exist...</string> <!-- {227} -->
+    <string name="create_memory_prompt">Go on a trip and create memories!</string> <!-- {233} -->
+    <string name="multiple_memories_nearby">Multiple memories exist nearby\nPlease select the range you want to check</string> <!-- {168} -->
+    <string name="select_range">Select Range</string> <!-- {167} -->
+    <string name="take_photo_guide">You can create memories by taking photos.</string> <!-- {172} -->
 
     <!-- Travel Related -->
-    <string name="traveling">여행중</string> <!-- {157} -->
-    <string name="destination">여행지</string> <!-- {151} -->
-    <string name="start_journey">여행 시작</string> <!-- {159} -->
-    <string name="end_travel">여행 끝내기</string> <!-- {201} -->
-    <string name="still_traveling">아직 여행 중이에요</string> <!-- {200} -->
-    <string name="during_travel">여행 중에</string> <!-- {173} -->
-    <string name="when_travel_ends">여행이 끝나면</string> <!-- {177} -->
-    <string name="travel_capture_guide">여행 중에 아름다운 추억들을 캡처하고\n앨범을 만들어보세요!</string> <!-- {166} -->
-    <string name="travel_continuation_notice">앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 %1$s</string> <!-- {136} -->
-    <string name="travel_continuation_notice_full">앱을 종료해도 여행은 끝나지 않아요.\n단, 여행 기간이 한 달이 넘어가면 앨범을 생성할 수 없어요.</string> <!-- {174} -->
-    <string name="travel_completion_guide">여행을 마쳤다면 앨범을 완성하기 위해\n다음 화면으로 이동해주세요</string> <!-- {198} -->
+    <string name="traveling">Traveling</string> <!-- {157} -->
+    <string name="destination">Destination</string> <!-- {151} -->
+    <string name="start_journey">Start Journey</string> <!-- {159} -->
+    <string name="end_travel">End Travel</string> <!-- {201} -->
+    <string name="still_traveling">Still traveling</string> <!-- {200} -->
+    <string name="during_travel">During travel</string> <!-- {173} -->
+    <string name="when_travel_ends">When travel ends</string> <!-- {177} -->
+    <string name="travel_capture_guide">Capture beautiful memories during your trips\nand create albums!</string> <!-- {166} -->
+    <string name="travel_continuation_notice">Your trip continues even if you close the app.\nHowever, if your trip exceeds one month, %1$s</string> <!-- {136} -->
+    <string name="travel_continuation_notice_full">Your trip continues even if you close the app.\nHowever, if your trip exceeds one month, you cannot create an album.</string> <!-- {174} -->
+    <string name="travel_completion_guide">If you\'ve finished your trip, please move to the next screen\nto complete your album</string> <!-- {198} -->
 
     <!-- Location Related -->
-    <string name="location_tracking">위치 추적</string> <!-- {72} -->
-    <string name="location_tracking_active">위치 추적 중</string> <!-- {102} -->
-    <string name="stop_tracking">추적 중지</string> <!-- {104} -->
-    <string name="travel_route_recording">여행 경로를 기록하고 있습니다</string> <!-- {103} -->
-    <string name="background_location_tracking">백그라운드에서 위치를 추적합니다</string> <!-- {73} -->
-    <string name="location_loading_error">위치 정보를 불러오는 중에\n문제가 발생했어요</string> <!-- {125} -->
-    <string name="loading_location">위치 정보 불러오는 중</string> <!-- {123} -->
-    <string name="current_location_unavailable">현재 위치를 확인할 수 없어요</string> <!-- {95} -->
-    <string name="copy_address">주소 복사하기</string> <!-- {158} -->
+    <string name="location_tracking">Location Tracking</string> <!-- {72} -->
+    <string name="location_tracking_active">Tracking Location</string> <!-- {102} -->
+    <string name="stop_tracking">Stop Tracking</string> <!-- {104} -->
+    <string name="travel_route_recording">Recording your travel route</string> <!-- {103} -->
+    <string name="background_location_tracking">Tracking location in the background</string> <!-- {73} -->
+    <string name="location_loading_error">An error occurred\nwhile loading location information</string> <!-- {125} -->
+    <string name="loading_location">Loading location information</string> <!-- {123} -->
+    <string name="current_location_unavailable">Current location unavailable</string> <!-- {95} -->
+    <string name="copy_address">Copy Address</string> <!-- {158} -->
 
     <!-- Processing States -->
-    <string name="uploading_image">이미지 업로드 중</string> <!-- {110} -->
-    <string name="uploading_thumbnail">썸네일 업로드 중</string> <!-- {111} -->
-    <string name="saving_album">앨범 저장하는 중</string> <!-- {112} -->
-    <string name="deleting_album">앨범을 삭제하고 있어요\n반영되는 데 시간이 걸려요</string> <!-- {120} -->
-    <string name="changing_album_visibility">앨범을 %1$s로 전환하고 있어요\n반영되는 데 시간이 걸려요</string> <!-- {121} -->
-    <string name="creating_share_link">공유 링크를 생성하고 있어요\n반영되는 데 시간이 걸려요</string> <!-- {122} -->
-    <string name="processing_image">이미지 처리 중</string> <!-- {126} -->
-    <string name="reviewing_image">이미지 검토 중</string> <!-- {127} -->
-    <string name="stay_until_completion">작업이 끝나기 전까지는\n여기에 머물러주세요</string> <!-- {219} -->
+    <string name="uploading_image">Uploading image</string> <!-- {110} -->
+    <string name="uploading_thumbnail">Uploading thumbnail</string> <!-- {111} -->
+    <string name="saving_album">Saving album</string> <!-- {112} -->
+    <string name="deleting_album">Deleting album\nThis may take some time</string> <!-- {120} -->
+    <string name="changing_album_visibility">Changing album to %1$s\nThis may take some time</string> <!-- {121} -->
+    <string name="creating_share_link">Creating share link\nThis may take some time</string> <!-- {122} -->
+    <string name="processing_image">Processing image</string> <!-- {126} -->
+    <string name="reviewing_image">Reviewing image</string> <!-- {127} -->
+    <string name="stay_until_completion">Please stay here\nuntil the process completes</string> <!-- {219} -->
 
     <!-- Profile Management -->
-    <string name="profile_photo_change_success">성공적으로 프로필 사진이 변경되었어요</string> <!-- {2} -->
-    <string name="name_change_success">성공적으로 이름이 변경되었어요</string> <!-- {4} -->
-    <string name="change_profile_photo">프로필 사진 변경하기</string> <!-- {228} -->
-    <string name="change_name">이름 변경하기</string> <!-- {229} -->
-    <string name="enter_name">이름을 입력해주세요</string> <!-- {230} -->
-    <string name="name_change">이름 변경</string> <!-- {231} -->
-    <string name="profile_photo_changing">프로필 사진을 변경하고 있어요\n반영되는 데 시간이 걸려요</string> <!-- {52} -->
-    <string name="name_changing">이름을 변경하고 있어요\n반영되는 데 시간이 걸려요</string> <!-- {67} -->
-    <string name="profile_name_description">앱에서 활동하는 동안 표시되는 이름이에요</string> <!-- {248} -->
-    <string name="select_basic_profile">기본 프로필을 선택해주세요</string> <!-- {278} -->
-    <string name="profile_setup_later">추가적인 프로필은 나중에 설정할 수 있어요</string> <!-- {277} -->
+    <string name="profile_photo_change_success">Profile photo successfully changed</string> <!-- {2} -->
+    <string name="name_change_success">Name successfully changed</string> <!-- {4} -->
+    <string name="change_profile_photo">Change Profile Photo</string> <!-- {228} -->
+    <string name="change_name">Change Name</string> <!-- {229} -->
+    <string name="enter_name">Please enter your name</string> <!-- {230} -->
+    <string name="name_change">Name Change</string> <!-- {231} -->
+    <string name="profile_photo_changing">Changing profile photo\nThis may take some time</string> <!-- {52} -->
+    <string name="name_changing">Changing name\nThis may take some time</string> <!-- {67} -->
+    <string name="profile_name_description">This name will be displayed while you\'re active in the app</string> <!-- {248} -->
+    <string name="select_basic_profile">Please select a basic profile</string> <!-- {278} -->
+    <string name="profile_setup_later">Additional profile settings can be set up later</string> <!-- {277} -->
 
     <!-- Account Management -->
-    <string name="account_management">계정 관리</string> <!-- {213} -->
-    <string name="login_album_share_message">로그인 후에 앨범을 공유받을 수 있어요</string> <!-- {1} -->
-    <string name="account_mismatch">계정이 일치하지 않아요</string> <!-- {36} -->
-    <string name="logout">로그아웃</string> <!-- {214} -->
-    <string name="logout_action">로그아웃 하기</string> <!-- {251} -->
-    <string name="withdrawal">서비스 탈퇴</string> <!-- {215} -->
-    <string name="withdraw">탈퇴하기</string> <!-- {241} -->
-    <string name="service_withdrawal">서비스 탈퇴하기</string> <!-- {242} -->
-    <string name="withdrawal_complete">서비스 탈퇴가 완료되었어요</string> <!-- {148} -->
-    <string name="logout_confirmation">작성 중인 앨범은 %1$s\n정말 로그아웃 하시겠어요?</string> <!-- {118} -->
-    <string name="logout_confirmation_full">작성 중인 앨범은 자동으로 삭제돼요\n정말 로그아웃 하시겠어요?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">현재 계정의 %1$s\n정말 탈퇴하시겠어요?</string> <!-- {147} -->
-    <string name="withdrawal_confirmation_full">현재 계정의 모든 데이터가 삭제돼요\n정말 탈퇴하시겠어요?</string> <!-- {243} -->
-    <string name="delete_album_confirmation">앨범을 삭제하면 추억들을 %1$s\n정말 삭제하시겠어요?</string> <!-- {116} -->
-    <string name="delete_album_confirmation_full">앨범을 삭제하면 추억들을 복구할 수 없어요\n정말 삭제하시겠어요?</string> <!-- {194} -->
-    <string name="auto_deleted">자동으로 삭제돼요</string> <!-- {117} -->
-    <string name="all_data_deleted">모든 데이터가 삭제돼요</string> <!-- {146} -->
-    <string name="cannot_recover">복구할 수 없어요</string> <!-- {115} -->
+    <string name="account_management">Account Management</string> <!-- {213} -->
+    <string name="login_album_share_message">You need to log in to receive shared albums</string> <!-- {1} -->
+    <string name="account_mismatch">Account mismatch</string> <!-- {36} -->
+    <string name="logout">Logout</string> <!-- {214} -->
+    <string name="logout_action">Logout</string> <!-- {251} -->
+    <string name="withdrawal">Service Withdrawal</string> <!-- {215} -->
+    <string name="withdraw">Withdraw</string> <!-- {241} -->
+    <string name="service_withdrawal">Withdraw from Service</string> <!-- {242} -->
+    <string name="withdrawal_complete">Service withdrawal completed</string> <!-- {148} -->
+    <string name="logout_confirmation">Albums in progress will be %1$s\nAre you sure you want to log out?</string> <!-- {118} -->
+    <string name="logout_confirmation_full">Albums in progress will be automatically deleted\nAre you sure you want to log out?</string> <!-- {252} -->
+    <string name="withdrawal_confirmation">%1$s for the current account\nAre you sure you want to withdraw?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation_full">All data for the current account will be deleted\nAre you sure you want to withdraw?</string> <!-- {243} -->
+    <string name="delete_album_confirmation">If you delete this album, you %1$s the memories\nAre you sure you want to delete?</string> <!-- {116} -->
+    <string name="delete_album_confirmation_full">If you delete this album, you cannot recover the memories\nAre you sure you want to delete?</string> <!-- {194} -->
+    <string name="auto_deleted">automatically deleted</string> <!-- {117} -->
+    <string name="all_data_deleted">all data will be deleted</string> <!-- {146} -->
+    <string name="cannot_recover">cannot recover</string> <!-- {115} -->
 
     <!-- Authentication -->
-    <string name="google">구글</string>
-    <string name="facebook">페이스북</string>
-    <string name="kakao">카카오톡</string>
-    <string name="sign_in_google">구글로 시작하기</string> <!-- {161} -->
-    <string name="sign_in_facebook">페이스북으로 시작하기</string> <!-- {162} -->
-    <string name="sign_in_kakao">카카오톡으로 시작하기</string> <!-- {163} -->
-    <string name="quick_start">빠르게 시작하기</string> <!-- {164} -->
-    <string name="get_started">시작하기</string> <!-- {276} -->
-    <string name="service_registration">서비스 가입</string> <!-- {272} -->
-    <string name="user_not_exist">존재하지 않는 사용자예요</string> <!-- {19} -->
-    <string name="user_not_found">사용자가 존재하지 않아요</string> <!-- {47} -->
+    <string name="google">Google</string>
+    <string name="facebook">Facebook</string>
+    <string name="kakao">KakaoTalk</string>
+    <string name="sign_in_google">Continue with Google</string> <!-- {161} -->
+    <string name="sign_in_facebook">Continue with Facebook</string> <!-- {162} -->
+    <string name="sign_in_kakao">Continue with KakaoTalk</string> <!-- {163} -->
+    <string name="quick_start">Quick Start</string> <!-- {164} -->
+    <string name="get_started">Get Started</string> <!-- {276} -->
+    <string name="service_registration">Service Registration</string> <!-- {272} -->
+    <string name="user_not_exist">User doesn\'t exist</string> <!-- {19} -->
+    <string name="user_not_found">User not found</string> <!-- {47} -->
 
     <!-- Subscription -->
-    <string name="subscription_notification">구독 알림</string> <!-- {12} -->
-    <string name="premium_plan_active">프리미엄 플랜 구독중</string> <!-- {38} -->
-    <string name="premium_subscription_active">프리미엄 플랜을 구독 중이에요</string> <!-- {89} -->
-    <string name="subscription_expiring">구독 만료 예정</string> <!-- {69} -->
-    <string name="subscription_expiry_notice">구독이 %1$d일 후에 만료됩니다. 계속 이용하시려면 갱신하세요.</string> <!-- {70} -->
-    <string name="subscription_price">USD %1$s / 월</string> <!-- {133} -->
-    <string name="subscribe">정기구독하기</string> <!-- {223} -->
-    <string name="subscribe_premium">프리미엄 구독하기</string> <!-- {190} -->
-    <string name="manage_subscription">정기구독 관리</string> <!-- {222} -->
-    <string name="subscription_complete">정기구독 완료</string> <!-- {245} -->
-    <string name="subscription_complete_congrats">축하해요! 정기구독이 완료되었어요\n지금 바로 프리미엄 혜택을 누려보세요</string> <!-- {244} -->
-    <string name="premium_label">프리미엄</string> <!-- {185} -->
-    <string name="subscription_benefits">정기구독 혜택</string> <!-- {186} -->
-    <string name="subscribe_benefits_prompt">구독하고 더 많은 혜택을 누려보세요!</string> <!-- {184} -->
-    <string name="subscribe_benefit_prompt">구독하고 더 많은\n혜택을 누려보세요!</string> <!-- {39} -->
+    <string name="subscription_notification">Subscription Notification</string> <!-- {12} -->
+    <string name="premium_plan_active">Premium Plan Active</string> <!-- {38} -->
+    <string name="premium_subscription_active">Premium plan is active</string> <!-- {89} -->
+    <string name="subscription_expiring">Subscription Expiring</string> <!-- {69} -->
+    <string name="subscription_expiry_notice">Your subscription expires in %1$d days. Please renew to continue using the service.</string> <!-- {70} -->
+    <string name="subscription_price">USD %1$s / month</string> <!-- {133} -->
+    <string name="subscribe">Subscribe</string> <!-- {223} -->
+    <string name="subscribe_premium">Subscribe to Premium</string> <!-- {190} -->
+    <string name="manage_subscription">Manage Subscription</string> <!-- {222} -->
+    <string name="subscription_complete">Subscription Complete</string> <!-- {245} -->
+    <string name="subscription_complete_congrats">Congratulations! Your subscription is complete\nEnjoy premium benefits now</string> <!-- {244} -->
+    <string name="premium_label">Premium</string> <!-- {185} -->
+    <string name="subscription_benefits">Subscription Benefits</string> <!-- {186} -->
+    <string name="subscribe_benefits_prompt">Subscribe and enjoy more benefits!</string> <!-- {184} -->
+    <string name="subscribe_benefit_prompt">Subscribe and enjoy\nmore benefits!</string> <!-- {39} -->
 
     <!-- Subscription Benefits -->
-    <string name="album_link_creation">앨범 링크(웹 페이지) 생성</string> <!-- {187} -->
-    <string name="link_sharing_benefit">링크를 활용하여 외부에 앨범을 공유할 수 있어요</string> <!-- {188} -->
-    <string name="ad_removal">광고 제거</string> <!-- {189} -->
-    <string name="daily_memory_limit">일 %1$s개 추억 생성</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">일 30개 추억 생성</string> <!-- {246} -->
+    <string name="album_link_creation">Album Link (Web Page) Creation</string> <!-- {187} -->
+    <string name="link_sharing_benefit">You can share your albums externally using links</string> <!-- {188} -->
+    <string name="ad_removal">Ad Removal</string> <!-- {189} -->
+    <string name="daily_memory_limit">%1$s memories daily</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 memories daily</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">하루에 %1$d개</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">추억은 %1$s까지만 만들 수 있어요.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">무료 플랜에서는 추억을 %1$s까지만 만들 수 있어요. 더 많은 추억을 만들기 원하시면 %2$s를 클릭해주세요.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">무료 플랜에서는 추억을 10개까지만 만들 수 있어요.\n더 많은 추억을 만들기 원하시면 여기를 클릭해주세요.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">무료 플랜에서는 %1$s 생성을 원하시면 %2$s를 클릭해주세요.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">무료 플랜에서는 공유 링크 생성이 불가능해요. 생성을 원하시면 여기를 클릭해주세요.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">공유 링크 생성이 불가능해요.</string> <!-- {143} -->
-    <string name="public_album_share_available">공개 앨범은 공유 링크 생성이 가능해요.</string> <!-- {144} -->
+    <string name="daily_limit">%1$d daily</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">You can create memories up to %1$s.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">With the free plan, you can create memories up to %1$s. To create more memories, please click %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">With the free plan, you can create up to 10 memories.\nTo create more memories, please click here.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">With the free plan, to create %1$s, please click %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Share link creation is not available with the free plan. To create one, please click here.</string> <!-- {182} -->
+    <string name="share_link_creation_unavailable">Share link creation is unavailable.</string> <!-- {143} -->
+    <string name="public_album_share_available">Share link creation is available for public albums.</string> <!-- {144} -->
 
     <!-- Donation -->
-    <string name="donate_to_developer">개발자에게 후원하기</string> <!-- {207} -->
-    <string name="donation_thanks_small">소중한 후원에 감사드립니다! 더 좋은 서비스로 보답하겠습니다.</string> <!-- {30} -->
-    <string name="donation_thanks_medium">귀중한 후원에 진심으로 감사드립니다! 더 나은 앱을 만들도록 노력하겠습니다.</string> <!-- {31} -->
-    <string name="donation_thanks_large">큰 후원에 정말 감사드립니다! 앱 개발과 유지보수에 큰 도움이 됩니다.</string> <!-- {32} -->
-    <string name="donation_thanks_general">후원에 감사드립니다! 앱 개선에 큰 도움이 됩니다.</string> <!-- {33} -->
-    <string name="buy_coffee">커피 한 잔 사주기</string> <!-- {236} -->
-    <string name="buy_snack">간식 하나 사주기</string> <!-- {234} -->
-    <string name="buy_meal">밥 한 끼 사주기</string> <!-- {235} -->
+    <string name="donate_to_developer">Donate to Developer</string> <!-- {207} -->
+    <string name="donation_thanks_small">Thank you for your valuable donation! We\'ll repay you with better service.</string> <!-- {30} -->
+    <string name="donation_thanks_medium">Thank you sincerely for your valuable donation! We\'ll work to make a better app.</string> <!-- {31} -->
+    <string name="donation_thanks_large">Thank you so much for your generous donation! It greatly helps with app development and maintenance.</string> <!-- {32} -->
+    <string name="donation_thanks_general">Thank you for your donation! It greatly helps improve the app.</string> <!-- {33} -->
+    <string name="buy_coffee">Buy a Coffee</string> <!-- {236} -->
+    <string name="buy_snack">Buy a Snack</string> <!-- {234} -->
+    <string name="buy_meal">Buy a Meal</string> <!-- {235} -->
 
     <!-- Support -->
-    <string name="user_support">사용자 지원</string> <!-- {208} -->
-    <string name="contact_developer">개발자에게 문의하기</string> <!-- {209} -->
-    <string name="rate_app">앱 평가하기</string> <!-- {206} -->
-    <string name="app_rating_complete">앱 평가를 완료했어요</string> <!-- {35} -->
-    <string name="dev_email_copied">개발자 이메일이 클립보드에 복사되었어요</string> <!-- {66} -->
-    <string name="contact_email_subject">[로드캡처] 문의하기</string> <!-- {51} -->
-    <string name="contact_template">안녕하세요, 로드캡처 개발팀에 문의합니다.\n\n앱 버전: %1$s\n기기 모델: %2$s\n안드로이드 버전: %3$s\n\n문의 내용:\n</string> <!-- {49} -->
-    <string name="app_info">앱 정보</string> <!-- {155} -->
+    <string name="user_support">User Support</string> <!-- {208} -->
+    <string name="contact_developer">Contact Developer</string> <!-- {209} -->
+    <string name="rate_app">Rate App</string> <!-- {206} -->
+    <string name="app_rating_complete">App rating completed</string> <!-- {35} -->
+    <string name="dev_email_copied">Developer email copied to clipboard</string> <!-- {66} -->
+    <string name="contact_email_subject">[RoadCapture] Inquiry</string> <!-- {51} -->
+    <string name="contact_template">Hello, I have an inquiry for the RoadCapture development team.\n\nApp version: %1$s\nDevice model: %2$s\nAndroid version: %3$s\n\nInquiry details:\n</string> <!-- {49} -->
+    <string name="app_info">App Info</string> <!-- {155} -->
 
     <!-- Terms and Policies -->
-    <string name="terms_and_policies">약관 및 정책</string> <!-- {210} -->
-    <string name="privacy_policy">개인정보 처리방침</string> <!-- {41} -->
-    <string name="terms_of_service">서비스 이용약관</string> <!-- {42} -->
-    <string name="privacy_collection_consent">개인정보 수집 · 이용 동의서</string> <!-- {43} -->
-    <string name="terms_consent">서비스 이용약관 동의서</string> <!-- {44} -->
-    <string name="privacy_policy_menu">개인정보 처리방침</string> <!-- {212} -->
-    <string name="terms_of_service_menu">서비스 이용약관</string> <!-- {211} -->
-    <string name="agree_all_terms">약관 전체 동의</string> <!-- {273} -->
-    <string name="terms_required_consent">서비스 이용약관 필수동의</string> <!-- {274} -->
-    <string name="privacy_required_consent">개인정보 수집 · 이용 필수동의</string> <!-- {275} -->
+    <string name="terms_and_policies">Terms and Policies</string> <!-- {210} -->
+    <string name="privacy_policy">Privacy Policy</string> <!-- {41} -->
+    <string name="terms_of_service">Terms of Service</string> <!-- {42} -->
+    <string name="privacy_collection_consent">Privacy Information Collection and Use Consent</string> <!-- {43} -->
+    <string name="terms_consent">Terms of Service Consent</string> <!-- {44} -->
+    <string name="privacy_policy_menu">Privacy Policy</string> <!-- {212} -->
+    <string name="terms_of_service_menu">Terms of Service</string> <!-- {211} -->
+    <string name="agree_all_terms">Agree to All Terms</string> <!-- {273} -->
+    <string name="terms_required_consent">Terms of Service (Required)</string> <!-- {274} -->
+    <string name="privacy_required_consent">Privacy Information Collection and Use (Required)</string> <!-- {275} -->
 
     <!-- Reporting -->
-    <string name="report">신고하기</string> <!-- {238} -->
-    <string name="report_title">신고</string> <!-- {247} -->
-    <string name="report_submit_success">신고 내용이 접수되었어요</string> <!-- {16} -->
-    <string name="report_submitted">신고 내용이 접수되었어요</string> <!-- {130} -->
-    <string name="select_report_reason">신고 사유를 선택해주세요</string> <!-- {254} -->
-    <string name="inappropriate_content_report">부적절한 콘텐츠</string> <!-- {255} -->
-    <string name="adult_content">음란물, 노출 사진</string> <!-- {256} -->
-    <string name="abusive_language">욕설, 비속어</string> <!-- {257} -->
-    <string name="violent_content">폭력적이거나 혐오스러운 내용</string> <!-- {258} -->
-    <string name="spam_ads">스팸 및 광고</string> <!-- {259} -->
-    <string name="commercial_ads">상업적 광고, 홍보</string> <!-- {260} -->
-    <string name="repetitive_content">반복적인 도배</string> <!-- {261} -->
-    <string name="irrelevant_links">관련 없는 링크 또는 콘텐츠</string> <!-- {262} -->
-    <string name="personal_info_exposure">개인정보 노출</string> <!-- {263} -->
-    <string name="unauthorized_info_disclosure">타인의 개인정보 무단 공개</string> <!-- {264} -->
-    <string name="sensitive_info">전화번호, 주소, 신분증 등</string> <!-- {265} -->
-    <string name="portrait_rights_violation">초상권 침해 (얼굴, 차량번호 등)</string> <!-- {266} -->
-    <string name="false_information">잘못된 정보</string> <!-- {267} -->
-    <string name="fake_news">허위 정보, 가짜 뉴스</string> <!-- {268} -->
-    <string name="misleading_content">오해의 소지가 있는 내용</string> <!-- {269} -->
-    <string name="wrong_location_tag">잘못된 위치 태그</string> <!-- {270} -->
+    <string name="report">Report</string> <!-- {238} -->
+    <string name="report_title">Report</string> <!-- {247} -->
+    <string name="report_submit_success">Your report has been submitted</string> <!-- {16} -->
+    <string name="report_submitted">Your report has been submitted</string> <!-- {130} -->
+    <string name="select_report_reason">Please select a reason for reporting</string> <!-- {254} -->
+    <string name="inappropriate_content_report">Inappropriate Content</string> <!-- {255} -->
+    <string name="adult_content">Adult content, Explicit images</string> <!-- {256} -->
+    <string name="abusive_language">Abusive language, Profanity</string> <!-- {257} -->
+    <string name="violent_content">Violent or offensive content</string> <!-- {258} -->
+    <string name="spam_ads">Spam and Ads</string> <!-- {259} -->
+    <string name="commercial_ads">Commercial ads, Promotion</string> <!-- {260} -->
+    <string name="repetitive_content">Repetitive flooding</string> <!-- {261} -->
+    <string name="irrelevant_links">Irrelevant links or content</string> <!-- {262} -->
+    <string name="personal_info_exposure">Personal Information Exposure</string> <!-- {263} -->
+    <string name="unauthorized_info_disclosure">Unauthorized disclosure of others\' personal information</string> <!-- {264} -->
+    <string name="sensitive_info">Phone numbers, addresses, ID cards, etc.</string> <!-- {265} -->
+    <string name="portrait_rights_violation">Portrait rights violation (faces, license plates, etc.)</string> <!-- {266} -->
+    <string name="false_information">False Information</string> <!-- {267} -->
+    <string name="fake_news">False information, Fake news</string> <!-- {268} -->
+    <string name="misleading_content">Misleading content</string> <!-- {269} -->
+    <string name="wrong_location_tag">Incorrect location tag</string> <!-- {270} -->
 
     <!-- Form Fields -->
-    <string name="place_name_optional">(선택) 장소명을 입력해주세요</string> <!-- {281} -->
-    <string name="content_optional">(선택) 내용을 입력해주세요</string> <!-- {282} -->
-    <string name="search_hint">제목, 사용자, 지역, 장소 검색</string> <!-- {280} -->
-    <string name="no_search_results">검색 결과가 없어요</string> <!-- {239} -->
-    <string name="search_different_keyword">다른 키워드로 검색해보세요</string> <!-- {240} -->
-    <string name="view_info">정보 확인하기</string> <!-- {250} -->
-    <string name="check_info">정보 확인하기</string> <!-- {218} -->
+    <string name="place_name_optional">(Optional) Please enter a place name</string> <!-- {281} -->
+    <string name="content_optional">(Optional) Please enter content</string> <!-- {282} -->
+    <string name="search_hint">Search by title, user, region, place</string> <!-- {280} -->
+    <string name="no_search_results">No search results</string> <!-- {239} -->
+    <string name="search_different_keyword">Try searching with different keywords</string> <!-- {240} -->
+    <string name="view_info">View Information</string> <!-- {250} -->
+    <string name="check_info">Check Information</string> <!-- {218} -->
 
     <!-- Time Related -->
-    <string name="time_days">%1$d일</string> <!-- {27} -->
-    <string name="time_hours">%1$d시간</string> <!-- {28} -->
-    <string name="time_minutes">%1$d분</string> <!-- {29} -->
-    <string name="duration_format">%1$s 동안</string> <!-- {105} -->
+    <string name="time_days">%1$d d</string> <!-- {27} -->
+    <string name="time_hours">%1$d h</string> <!-- {28} -->
+    <string name="time_minutes">%1$d m</string> <!-- {29} -->
+    <string name="duration_format">For %1$s</string> <!-- {105} -->
 
     <!-- Error Messages -->
-    <string name="general_error">문제가 발생했어요</string> <!-- {48} -->
-    <string name="unexpected_error">예기치 않은 오류가 발생했어요</string> <!-- {24} -->
-    <string name="load_error">불러올 수 없어요</string> <!-- {45} -->
-    <string name="operation_error">작업 중 문제가 발생했어요\n다시 시도해주세요</string> <!-- {114} -->
-    <string name="profile_photo_change_error">프로필 사진 변경 중에 문제가 발생했어요</string> <!-- {3} -->
-    <string name="name_change_error">이름 변경 중에 문제가 발생했어요</string> <!-- {5} -->
-    <string name="share_link_create_error">공유 링크 생성 중에 문제가 발생했어요</string> <!-- {8} -->
-    <string name="visibility_change_error">공개 여부 전환 중에 문제가 발생했어요</string> <!-- {13} -->
-    <string name="album_delete_error">앨범 삭제 중에 문제가 발생했어요</string> <!-- {15} -->
-    <string name="login_error">로그인 중에 문제가 발생했어요</string> <!-- {46} -->
-    <string name="email_send_error">이메일을 보낼 수 없어요</string> <!-- {65} -->
-    <string name="share_link_access_error">공유 링크를 통한 접근에 실패했어요</string> <!-- {26} -->
-    <string name="share_link_not_exist">공유 링크가 존재하지 않아요</string> <!-- {7} -->
-    <string name="image_decode_error">이미지를 디코딩할 수 없습니다</string> <!-- {18} -->
-    <string name="camera_app_launch_error">카메라 앱을 실행할 수 없어요</string> <!-- {91} -->
-    <string name="image_edit_start_error">이미지 편집을 시작할 수 없습니다</string> <!-- {92} -->
-    <string name="image_edit_error">이미지 편집 중 오류가 발생했습니다</string> <!-- {94} -->
-    <string name="image_processing_error">이미지 처리 중에 문제가 발생했어요</string> <!-- {128} -->
-    <string name="inappropriate_content">부적절한 컨텐츠를 감지했어요\n다시 촬영해주세요</string> <!-- {129} -->
-    <string name="withdrawal_error">서비스 탈퇴 중 오류가 발생했어요</string> <!-- {149} -->
-    <string name="view_type_not_exist">뷰타입이 존재하지 않습니다</string> <!-- {23} -->
+    <string name="general_error">A problem occurred</string> <!-- {48} -->
+    <string name="unexpected_error">An unexpected error occurred</string> <!-- {24} -->
+    <string name="load_error">Unable to load</string> <!-- {45} -->
+    <string name="operation_error">A problem occurred during operation\nPlease try again</string> <!-- {114} -->
+    <string name="profile_photo_change_error">A problem occurred while changing profile photo</string> <!-- {3} -->
+    <string name="name_change_error">A problem occurred while changing name</string> <!-- {5} -->
+    <string name="share_link_create_error">A problem occurred while creating share link</string> <!-- {8} -->
+    <string name="visibility_change_error">A problem occurred while changing visibility</string> <!-- {13} -->
+    <string name="album_delete_error">A problem occurred while deleting album</string> <!-- {15} -->
+    <string name="login_error">A problem occurred during login</string> <!-- {46} -->
+    <string name="email_send_error">Unable to send email</string> <!-- {65} -->
+    <string name="share_link_access_error">Failed to access via share link</string> <!-- {26} -->
+    <string name="share_link_not_exist">Share link doesn\'t exist</string> <!-- {7} -->
+    <string name="image_decode_error">Unable to decode image</string> <!-- {18} -->
+    <string name="camera_app_launch_error">Unable to launch camera app</string> <!-- {91} -->
+    <string name="image_edit_start_error">Unable to start image editing</string> <!-- {92} -->
+    <string name="image_edit_error">An error occurred while editing image</string> <!-- {94} -->
+    <string name="image_processing_error">A problem occurred while processing image</string> <!-- {128} -->
+    <string name="inappropriate_content">Inappropriate content detected\nPlease take another photo</string> <!-- {129} -->
+    <string name="withdrawal_error">An error occurred during service withdrawal</string> <!-- {149} -->
+    <string name="view_type_not_exist">View type doesn\'t exist</string> <!-- {23} -->
 
     <!-- Permissions -->
-    <string name="camera_permission_denied">카메라 권한이 없어\n앨범을 만들 수 없어요</string> <!-- {68} -->
-    <string name="location_permission_denied">위치 권한이 없어\n앨범을 만들 수 없습니다</string> <!-- {71} -->
-    <string name="no_location_photo_error">위치 정보가 없기 때문에 사진을 찍을 수 없어요</string> <!-- {82} -->
-    <string name="location_permission_required">위치 권한 필요</string> <!-- {83} -->
-    <string name="location_permission_rationale">지도에 현재 위치를 표시하고 백그라운드에서 경로를 기록하기 위해 위치 권한이 필요합니다. 설정에서 위치 권한을 항상 허용으로 선택해주세요.</string> <!-- {84} -->
-    <string name="camera_permission_required">카메라 권한 필요</string> <!-- {87} -->
-    <string name="camera_permission_rationale">사진을 촬영하기 위해 카메라 권한이 필요합니다. 설정에서 권한을 허용해주세요.</string> <!-- {88} -->
+    <string name="camera_permission_denied">Cannot create album\nwithout camera permission</string> <!-- {68} -->
+    <string name="location_permission_denied">Cannot create album\nwithout location permission</string> <!-- {71} -->
+    <string name="no_location_photo_error">Cannot take photos without location information</string> <!-- {82} -->
+    <string name="location_permission_required">Location Permission Required</string> <!-- {83} -->
+    <string name="location_permission_rationale">Location permission is needed to show your current location on the map and record your route in the background. Please select \"Allow all the time\" for location permission in settings.</string> <!-- {84} -->
+    <string name="camera_permission_required">Camera Permission Required</string> <!-- {87} -->
+    <string name="camera_permission_rationale">Camera permission is needed to take photos. Please allow permission in settings.</string> <!-- {88} -->
 
     <!-- Purchase/Payment Related -->
-    <string name="subscription_process_error">정기구독을 처리하는 중에\n문제가 발생했어요</string> <!-- {25} -->
-    <string name="donation_process_error">후원을 처리하는 중에\n문제가 발생했어요</string> <!-- {34} -->
-    <string name="benefit_already_received">다른 계정에서\n이미 혜택을 받고 있어요</string> <!-- {37} -->
-    <string name="benefit_already_received_account">다른 계정에서 이미 혜택을 받고 있어요</string> <!-- {80} -->
-    <string name="purchase_verification_failed">구매 확인에 실패했어요</string> <!-- {90} -->
-    <string name="consumption_processing_failed">소비 처리에 실패했어요</string> <!-- {96} -->
-    <string name="donation_loading">후원 상품 정보를 불러오는 중이에요\n잠시 후 다시 시도해주세요</string> <!-- {97} -->
-    <string name="donation_product_not_found">후원 상품 정보를 찾을 수 없어요</string> <!-- {98} -->
-    <string name="subscription_loading">구독 상품 정보를 불러오는 중이에요\n잠시 후 다시 시도해주세요</string> <!-- {100} -->
-    <string name="subscription_product_not_found">구독 상품 정보를 찾을 수 없습니다</string> <!-- {101} -->
+    <string name="subscription_process_error">A problem occurred\nwhile processing subscription</string> <!-- {25} -->
+    <string name="donation_process_error">A problem occurred\nwhile processing donation</string> <!-- {34} -->
+    <string name="benefit_already_received">Already receiving benefits\nfrom another account</string> <!-- {37} -->
+    <string name="benefit_already_received_account">Already receiving benefits from another account</string> <!-- {80} -->
+    <string name="purchase_verification_failed">Purchase verification failed</string> <!-- {90} -->
+    <string name="consumption_processing_failed">Consumption processing failed</string> <!-- {96} -->
+    <string name="donation_loading">Loading donation product information\nPlease try again later</string> <!-- {97} -->
+    <string name="donation_product_not_found">Donation product information not found</string> <!-- {98} -->
+    <string name="subscription_loading">Loading subscription product information\nPlease try again later</string> <!-- {100} -->
+    <string name="subscription_product_not_found">Subscription product information not found</string> <!-- {101} -->
 
     <!-- Album Management -->
-    <string name="when_album_completed">앨범이 완성되면</string> <!-- {179} -->
-    <string name="complete_album_guide">우측에 보이는 모양의 아이콘을 지도에서 눌러 앨범을 완성시켜주세요.</string> <!-- {178} -->
-    <string name="no_editing_possible">수정은 불가능해요.</string> <!-- {141} -->
-    <string name="delete_only_notice">삭제가 가능하지만, %1$s</string> <!-- {142} -->
-    <string name="delete_only_edit_impossible">삭제가 가능하지만, 수정은 불가능해요.</string> <!-- {180} -->
-    <string name="visibility_toggle_available">공개 / 비공개 전환이 가능해요.</string> <!-- {181} -->
-    <string name="album_management_guide">위의 작업들은 \'내 앨범\' 탭에서 우측에 보이는 모양의 아이콘을 눌러 수행할 수 있어요.</string> <!-- {183} -->
-    <string name="cannot_create_album">앨범을 생성할 수 없어요.</string> <!-- {135} -->
-    <string name="image_edit">이미지 편집</string> <!-- {93} -->
-    <string name="move_to_shared_album">이전에 공유받은 앨범으로 이동할게요</string> <!-- {50} -->
-    <string name="not_ready_yet">아직 준비되지 않았어요</string> <!-- {160} -->
+    <string name="when_album_completed">When album is completed</string> <!-- {179} -->
+    <string name="complete_album_guide">Please press the icon shown on the right on the map to complete your album.</string> <!-- {178} -->
+    <string name="no_editing_possible">Editing is not possible.</string> <!-- {141} -->
+    <string name="delete_only_notice">Deletion is possible, but %1$s</string> <!-- {142} -->
+    <string name="delete_only_edit_impossible">Deletion is possible, but editing is not possible.</string> <!-- {180} -->
+    <string name="visibility_toggle_available">You can toggle between public/private.</string> <!-- {181} -->
+    <string name="album_management_guide">These actions can be performed by pressing the icon shown on the right in the \'My Album\' tab.</string> <!-- {183} -->
+    <string name="cannot_create_album">Cannot create album.</string> <!-- {135} -->
+    <string name="image_edit">Edit Image</string> <!-- {93} -->
+    <string name="move_to_shared_album">Moving to previously shared album</string> <!-- {50} -->
+    <string name="not_ready_yet">Not ready yet</string> <!-- {160} -->
 
     <!-- Language -->
-    <string name="language_korean">한국어</string> <!-- {original_key: language_korean} -->
-    <string name="language_english">영어</string> <!-- {original_key: language_english} -->
-    <string name="language_chinese_simplified">중국어 간체</string> <!-- {original_key: language_chinese_simplified} -->
-    <string name="language_spanish">스페인어</string> <!-- {original_key: language_spanish} -->
-    <string name="language_portuguese">포르투갈어</string> <!-- {original_key: language_portuguese} -->
-    <string name="language_japanese">일본어</string> <!-- {original_key: language_japanese} -->
-    <string name="language_german">독일어</string> <!-- {original_key: language_german} -->
-    <string name="language_french">프랑스어</string> <!-- {original_key: language_french} -->
-    <string name="language_russian">러시아어</string> <!-- {original_key: language_russian} -->
-    <string name="language_indonesian">인도네시아어</string> <!-- {original_key: language_indonesian} -->
-    <string name="language_hindi">힌디어</string> <!-- {original_key: language_hindi} -->
-    <string name="language_arabic">아랍어</string> <!-- {original_key: language_arabic} -->
-    <string name="language_settings">언어 설정</string> <!-- {original_key: language_settings} -->
-    <string name="change">변경하기</string> <!-- {original_key: change} -->
-
+    <string name="language_korean">Korean</string> <!-- {original_key: language_korean} -->
+    <string name="language_english">English</string> <!-- {original_key: language_english} -->
+    <string name="language_chinese_simplified">Simplified Chinese</string> <!-- {original_key: language_chinese_simplified} -->
+    <string name="language_spanish">Spanish</string> <!-- {original_key: language_spanish} -->
+    <string name="language_portuguese">Portuguese</string> <!-- {original_key: language_portuguese} -->
+    <string name="language_japanese">Japanese</string> <!-- {original_key: language_japanese} -->
+    <string name="language_german">German</string> <!-- {original_key: language_german} -->
+    <string name="language_french">French</string> <!-- {original_key: language_french} -->
+    <string name="language_russian">Russian</string> <!-- {original_key: language_russian} -->
+    <string name="language_indonesian">Indonesian</string> <!-- {original_key: language_indonesian} -->
+    <string name="language_hindi">Hindi</string> <!-- {original_key: language_hindi} -->
+    <string name="language_arabic">Arabic</string> <!-- {original_key: language_arabic} -->
+    <string name="language_settings">Language Settings</string> <!-- {original_key: language_settings} -->
+    <string name="change">Change</string> <!-- {original_key: change} -->
 
     <!--Common-->
     <string name="unit_ko_thousand" translatable="false">천</string>
@@ -391,7 +390,7 @@
     <string name="unit_id_million" translatable="false">jt</string>
     <string name="unit_id_billion" translatable="false">M</string>
 
-    <string name="time_just_now">방금 전</string>
+    <string name="time_just_now">just now</string>
 
     <string name="date_format_ko">yyyy년 MM월 dd일</string>
     <string name="datetime_format_ko">yyyy년 MM월 dd일 HH시 mm분</string>
@@ -407,17 +406,17 @@
     <string name="datetime_seconds_format_default">MM/dd/yyyy h:mm:ss a</string>
 
     <plurals name="time_minutes_ago">
-        <item quantity="one">%d분 전</item>
-        <item quantity="other">%d분 전</item>
+        <item quantity="one">%d minute ago</item>
+        <item quantity="other">%d minutes ago</item>
     </plurals>
 
     <plurals name="time_hours_ago">
-        <item quantity="one">%d시간 전</item>
-        <item quantity="other">%d시간 전</item>
+        <item quantity="one">%d hour ago</item>
+        <item quantity="other">%d hours ago</item>
     </plurals>
 
     <plurals name="time_days_ago">
-        <item quantity="one">%d일 전</item>
-        <item quantity="other">%d일 전</item>
+        <item quantity="one">%d day ago</item>
+        <item quantity="other">%d days ago</item>
     </plurals>
 </resources>

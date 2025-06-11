@@ -183,16 +183,16 @@
     <string name="album_link_creation">إنشاء رابط الألبوم (صفحة ويب)</string> <!-- {187} -->
     <string name="link_sharing_benefit">يمكنك مشاركة ألبوماتك خارجياً باستخدام الروابط</string> <!-- {188} -->
     <string name="ad_removal">إزالة الإعلانات</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s ذكريات يومياً</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 ذكرى يومياً</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s ذكريات يومية</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 ذكرى يومية</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
     <string name="daily_limit">%1$d يومياً</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">يمكنك إنشاء ذكريات تصل إلى %1$s يومياً.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">مع الخطة المجانية، يمكنك إنشاء ذكريات تصل إلى %1$s. إذا كنت ترغب في إنشاء المزيد من الذكريات، الرجاء النقر %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">مع الخطة المجانية، يمكنك إنشاء حتى 10 ذكريات.\nإذا كنت ترغب في إنشاء المزيد من الذكريات، الرجاء النقر هنا.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">مع الخطة المجانية، إذا كنت ترغب في إنشاء %1$s، الرجاء النقر %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">إنشاء رابط المشاركة غير متاح مع الخطة المجانية. إذا كنت ترغب في إنشاء واحد، الرجاء النقر هنا.</string> <!-- {182} -->
+    <string name="daily_memory_limit_notice">يمكنك إنشاء %1$s ذكريات كحد أقصى فقط.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">مع الخطة المجانية، يمكنك إنشاء %1$s ذكريات كحد أقصى فقط. لإنشاء المزيد من الذكريات، الرجاء النقر %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">مع الخطة المجانية، يمكنك إنشاء حتى 10 ذكريات.\nلإنشاء المزيد من الذكريات، الرجاء النقر هنا.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">مع الخطة المجانية، لإنشاء %1$s، الرجاء النقر %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">إنشاء رابط المشاركة غير متاح مع الخطة المجانية. للإنشاء، الرجاء النقر هنا.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">إنشاء رابط المشاركة غير متاح.</string> <!-- {143} -->
     <string name="public_album_share_available">إنشاء رابط المشاركة متاح للألبومات العامة.</string> <!-- {144} -->
 

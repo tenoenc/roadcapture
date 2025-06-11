@@ -183,16 +183,16 @@
     <string name="album_link_creation">Album Link (Web Page) Creation</string> <!-- {187} -->
     <string name="link_sharing_benefit">You can share your albums externally using links</string> <!-- {188} -->
     <string name="ad_removal">Ad Removal</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s memories per day</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 memories per day</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s memories daily</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 memories daily</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d per day</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">You can create memories up to %1$s per day.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">With the free plan, you can create memories up to %1$s. If you want to create more memories, please click %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">With the free plan, you can create up to 10 memories.\nIf you want to create more memories, please click here.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">With the free plan, if you want to create %1$s, please click %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">Share link creation is not available with the free plan. If you want to create one, please click here.</string> <!-- {182} -->
+    <string name="daily_limit">%1$d daily</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">You can create memories up to %1$s.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">With the free plan, you can create memories up to %1$s. To create more memories, please click %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">With the free plan, you can create up to 10 memories.\nTo create more memories, please click here.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">With the free plan, to create %1$s, please click %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Share link creation is not available with the free plan. To create one, please click here.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">Share link creation is unavailable.</string> <!-- {143} -->
     <string name="public_album_share_available">Share link creation is available for public albums.</string> <!-- {144} -->
 

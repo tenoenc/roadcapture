@@ -183,16 +183,16 @@
     <string name="album_link_creation">Pembuatan Tautan Album (Halaman Web)</string> <!-- {187} -->
     <string name="link_sharing_benefit">Anda dapat membagikan album secara eksternal menggunakan tautan</string> <!-- {188} -->
     <string name="ad_removal">Penghapusan Iklan</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s kenangan per hari</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 kenangan per hari</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s kenangan harian</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 kenangan harian</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d per hari</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">Anda dapat membuat kenangan hingga %1$s per hari.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Dengan paket gratis, Anda dapat membuat kenangan hingga %1$s. Jika Anda ingin membuat lebih banyak kenangan, silakan klik %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">Dengan paket gratis, Anda dapat membuat hingga 10 kenangan.\nJika Anda ingin membuat lebih banyak kenangan, silakan klik di sini.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Dengan paket gratis, jika Anda ingin membuat %1$s, silakan klik %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">Pembuatan tautan berbagi tidak tersedia dengan paket gratis. Jika Anda ingin membuat, silakan klik di sini.</string> <!-- {182} -->
+    <string name="daily_limit">%1$d harian</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">Anda hanya dapat membuat maksimal %1$s kenangan.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">Dengan paket gratis, Anda hanya dapat membuat maksimal %1$s kenangan. Untuk membuat lebih banyak kenangan, silakan klik %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">Dengan paket gratis, Anda dapat membuat hingga 10 kenangan.\nUntuk membuat lebih banyak kenangan, silakan klik di sini.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">Dengan paket gratis, untuk membuat %1$s, silakan klik %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Pembuatan tautan berbagi tidak tersedia dengan paket gratis. Untuk membuat, silakan klik di sini.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">Pembuatan tautan berbagi tidak tersedia.</string> <!-- {143} -->
     <string name="public_album_share_available">Pembuatan tautan berbagi tersedia untuk album publik.</string> <!-- {144} -->
 

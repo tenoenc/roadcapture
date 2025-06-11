@@ -183,16 +183,16 @@
     <string name="album_link_creation">Создание ссылок на альбом (веб-страница)</string> <!-- {187} -->
     <string name="link_sharing_benefit">Вы можете делиться своими альбомами внешне с помощью ссылок</string> <!-- {188} -->
     <string name="ad_removal">Удаление рекламы</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s воспоминаний в день</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 воспоминаний в день</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s воспоминаний ежедневно</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 воспоминаний ежедневно</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d в день</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">Вы можете создавать воспоминания до %1$s в день.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">С бесплатным планом вы можете создавать воспоминания до %1$s. Если вы хотите создать больше воспоминаний, нажмите %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">С бесплатным планом вы можете создавать до 10 воспоминаний.\nЕсли вы хотите создать больше воспоминаний, нажмите здесь.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">С бесплатным планом, если вы хотите создать %1$s, нажмите %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">Создание ссылок для общего доступа недоступно с бесплатным планом. Если вы хотите создать ссылку, нажмите здесь.</string> <!-- {182} -->
+    <string name="daily_limit">%1$d ежедневно</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">Вы можете создать только %1$s воспоминаний максимум.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">С бесплатным планом вы можете создать только %1$s воспоминаний максимум. Чтобы создать больше воспоминаний, нажмите %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">С бесплатным планом вы можете создавать до 10 воспоминаний.\nЧтобы создать больше воспоминаний, нажмите здесь.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">С бесплатным планом, чтобы создать %1$s, нажмите %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Создание ссылок для общего доступа недоступно с бесплатным планом. Чтобы создать ссылку, нажмите здесь.</string> <!-- {182} -->
     <string name="share_link_creation_unavailable">Создание ссылок для общего доступа недоступно.</string> <!-- {143} -->
     <string name="public_album_share_available">Создание ссылок для общего доступа доступно для публичных альбомов.</string> <!-- {144} -->
 

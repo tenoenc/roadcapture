@@ -183,18 +183,18 @@
     <string name="album_link_creation">Album-Link (Webseite) Erstellung</string> <!-- {187} -->
     <string name="link_sharing_benefit">Du kannst deine Alben extern über Links teilen</string> <!-- {188} -->
     <string name="ad_removal">Werbung entfernen</string> <!-- {189} -->
-    <string name="daily_memory_limit">%1$s Erinnerungen pro Tag</string> <!-- {134} -->
-    <string name="daily_memory_limit_thirty">30 Erinnerungen pro Tag</string> <!-- {246} -->
+    <string name="daily_memory_limit">%1$s Erinnerungen täglich</string> <!-- {134} -->
+    <string name="daily_memory_limit_thirty">30 Erinnerungen täglich</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d pro Tag</string> <!-- {137} -->
-    <string name="daily_memory_limit_notice">Du kannst bis zu %1$s Erinnerungen pro Tag erstellen.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Mit dem kostenlosen Plan kannst du bis zu %1$s Erinnerungen erstellen. Wenn du mehr erstellen möchtest, klicke bitte %2$s.</string> <!-- {140} -->
-    <string name="free_plan_limit_notice">Mit dem kostenlosen Plan kannst du bis zu 10 Erinnerungen erstellen.\nWenn du mehr erstellen möchtest, klicke bitte hier.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Mit dem kostenlosen Plan, wenn du %1$s erstellen möchtest, klicke bitte %2$s.</string> <!-- {145} -->
-    <string name="free_plan_share_limitation">Die Erstellung von Links zum Teilen ist im kostenlosen Plan nicht verfügbar. Wenn du einen erstellen möchtest, klicke bitte hier.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">Die Erstellung von Links zum Teilen ist nicht verfügbar.</string> <!-- {143} -->
-    <string name="public_album_share_available">Die Erstellung von Links zum Teilen ist für öffentliche Alben verfügbar.</string> <!-- {144} -->
+    <string name="daily_limit">%1$d täglich</string> <!-- {137} -->
+    <string name="daily_memory_limit_notice">Du kannst nur bis zu %1$s Erinnerungen erstellen.</string> <!-- {139} -->
+    <string name="free_plan_memory_limit">Mit dem kostenlosen Plan kannst du nur bis zu %1$s Erinnerungen erstellen. Um mehr zu erstellen, klicke bitte %2$s.</string> <!-- {140} -->
+    <string name="free_plan_limit_notice">Mit dem kostenlosen Plan kannst du bis zu 10 Erinnerungen erstellen.\nUm mehr zu erstellen, klicke bitte hier.</string> <!-- {176} -->
+    <string name="free_plan_feature_limit">Mit dem kostenlosen Plan, um %1$s zu erstellen, klicke bitte %2$s.</string> <!-- {145} -->
+    <string name="free_plan_share_limitation">Die Erstellung von Teilen-Links ist im kostenlosen Plan nicht verfügbar. Um einen zu erstellen, klicke bitte hier.</string> <!-- {182} -->
+    <string name="share_link_creation_unavailable">Die Erstellung von Teilen-Links ist nicht verfügbar.</string> <!-- {143} -->
+    <string name="public_album_share_available">Die Erstellung von Teilen-Links ist für öffentliche Alben verfügbar.</string> <!-- {144} -->
 
     <!-- Donation -->
     <string name="donate_to_developer">An Entwickler spenden</string> <!-- {207} -->

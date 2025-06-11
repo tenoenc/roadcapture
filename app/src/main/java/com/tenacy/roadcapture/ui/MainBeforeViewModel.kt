@@ -11,10 +11,7 @@ import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.SubscriptionPref.linkedAccountExists
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
-import com.tenacy.roadcapture.util.FirebaseConstants
-import com.tenacy.roadcapture.util.auth
-import com.tenacy.roadcapture.util.db
-import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.util.*
 import com.tenacy.roadcapture.worker.SubscriptionCheckWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -58,10 +55,12 @@ class MainBeforeViewModel @Inject constructor(
                     user!!.updateProfile(profileUpdates).await()
 
                     // 2. 파이어스토어 업데이트
-                    val defaultProfilePath  = when(defaultProfile) {
-                        is DefaultProfile.Social -> "images/users/$userId/profile.jpg"
-                        is DefaultProfile.App -> FirebaseConstants.DEFAULT_PROFILE_PATH
-                    }
+                    val defaultProfilePath  = "images/users/$userId/profile.jpg"
+
+                    val defaultProfileUri = context.getContentUriFromUrlContext(defaultProfile.url) ?: context.getUriFromAsset("default_profile.jpg")!!
+                    val resizedDefaultProfileUri = defaultProfileUri.resizeCenterCrop(context, 512, 512, quality = 100)
+                    context.uploadImageToStorage(resizedDefaultProfileUri, defaultProfilePath)
+
                     val userData = mapOf(
                         "displayName" to username,
                         "socialUserId" to socialUserId,

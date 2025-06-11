@@ -13,6 +13,8 @@ import com.tenacy.roadcapture.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.*
+import java.net.HttpURLConnection
+import java.net.URL
 
 val Context.fileProviderAuthority get() = "${packageName}.fileprovider"
 
@@ -336,4 +338,56 @@ private fun Bitmap.resizeCenterCrop(targetWidth: Int, targetHeight: Int): Bitmap
     }
 
     return scaledBitmap
+}
+
+fun Context.getContentUriFromUrlContext(urlString: String): Uri? {
+    return try {
+        // 1. URL로부터 이미지 다운로드
+        val url = URL(urlString)
+        val connection: HttpURLConnection = url.openConnection() as HttpURLConnection
+        connection.doInput = true
+        connection.connect()
+        val inputStream = connection.inputStream
+        val bitmap: Bitmap = BitmapFactory.decodeStream(inputStream)
+
+        // 2. 파일 생성 및 저장
+        val file = File(cacheDir, "image_${System.currentTimeMillis()}.jpg")
+        val outputStream = FileOutputStream(file)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        outputStream.flush()
+        outputStream.close()
+
+        // 3. FileProvider를 통해 content Uri 생성
+        FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider", // AndroidManifest와 일치해야 함
+            file
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+
+fun Context.getUriFromAsset(assetFileName: String): Uri? {
+    return try {
+        val inputStream = assets.open(assetFileName)
+
+        // 캐시 디렉토리에 복사
+        val outFile = File(cacheDir, assetFileName)
+        val outputStream = FileOutputStream(outFile)
+        inputStream.copyTo(outputStream)
+        inputStream.close()
+        outputStream.close()
+
+        // FileProvider 통해 content Uri 생성
+        FileProvider.getUriForFile(
+            this,
+            "${packageName}.fileprovider", // AndroidManifest와 일치해야 함
+            outFile
+        )
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
