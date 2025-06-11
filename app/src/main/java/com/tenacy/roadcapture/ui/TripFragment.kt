@@ -223,10 +223,15 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     override fun onSubscriptionPurchaseCompleted(purchase: Purchase) {
         val bottomSheet = SubscribeAfterBottomSheetFragment.newInstance()
         bottomSheet.show(childFragmentManager, SubscribeAfterBottomSheetFragment.TAG)
+        vm.setSubscribing(false)
     }
 
     override fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String) {
+        vm.setSubscribing(false)
+    }
 
+    override fun onSubscriptionPurchaseCanceled() {
+        vm.setSubscribing(false)
     }
 
     // ===== 5. 초기 설정 메서드 그룹 =====
@@ -271,6 +276,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                 // 정기구독
                 subscriptionManager.setPurchaseCallback(this)
                 subscriptionManager.subscribe(mainActivity)
+                vm.setSubscribing(true)
             }
         }
         childFragmentManager.setFragmentResultListener(

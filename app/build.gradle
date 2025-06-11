@@ -21,8 +21,8 @@ android {
         applicationId "com.tenacy.roadcapture"
         minSdk 26
         targetSdk 35
-        versionCode 10
-        versionName "0.9.1"
+        versionCode 14
+        versionName "0.9.2"
 
         multiDexEnabled true
 
@@ -52,6 +52,12 @@ android {
             storePassword properties.getProperty("STORE_PASSWORD")
             keyAlias properties.getProperty("KEY_ALIAS")
             keyPassword properties.getProperty("KEY_PASSOWORD")
+        }
+    }
+
+    bundle {
+        language {
+            enableSplit = false
         }
     }
 

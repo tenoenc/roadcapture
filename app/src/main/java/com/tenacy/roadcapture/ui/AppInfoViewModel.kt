@@ -34,6 +34,9 @@ class AppInfoViewModel @Inject constructor(
     private val _signingIn = MutableStateFlow(false)
     val signingIn = _signingIn.asStateFlow()
 
+    private val _subscribing = MutableStateFlow(false)
+    val subscribing = _subscribing.asStateFlow()
+
     override val savedStateHandle: SavedStateHandle
         get() = _savedStateHandle
 
@@ -53,7 +56,7 @@ class AppInfoViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), UserPref.displayName)
     val subscriptionButtonEnabled = subscriptionManager.isSubscriptionActive.map { isSubscriptionActive ->
         !SubscriptionPref.linkedAccountExists
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), true)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), false)
     val subscriptionDescriptionText = combine(subscriptionManager.isSubscriptionActive, resourceProvider.configurationContextFlow) { isSubscriptionActive, context ->
         when {
             SubscriptionPref.linkedAccountExists -> context.getString(R.string.benefit_already_received)
@@ -108,6 +111,10 @@ class AppInfoViewModel @Inject constructor(
     override fun onLoginCancelled(socialType: SocialType) {
         Log.d(TagConstants.AUTH, "${socialType.name} 로그인 취소")
         _signingIn.update { false }
+    }
+
+    fun setSubscribing(subscribing: Boolean) {
+        _subscribing.update { subscribing }
     }
 
     private fun fetchUser() {

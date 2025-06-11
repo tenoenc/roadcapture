@@ -165,6 +165,7 @@ class SubscriptionManager @Inject constructor(
 
             BillingManager.PurchaseEventType.CANCELED -> {
                 Log.d(TAG, "구독이 취소되었습니다")
+                purchaseCallback?.onSubscriptionPurchaseCanceled()
             }
         }
     }
@@ -585,5 +586,6 @@ class SubscriptionManager @Inject constructor(
     interface SubscriptionPurchaseCallback {
         fun onSubscriptionPurchaseCompleted(purchase: Purchase)
         fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String)
+        fun onSubscriptionPurchaseCanceled()
     }
 }

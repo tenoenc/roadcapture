@@ -57,6 +57,9 @@ class TripViewModel @Inject constructor(
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
 
+    private val _subscribing = MutableStateFlow(false)
+    val subscribing = _subscribing.asStateFlow()
+
     val saveEnabled = _memories.map {
         val memoryCount = it?.size ?: 0
         memoryCount > 0
@@ -143,6 +146,10 @@ class TripViewModel @Inject constructor(
                     _locations.emit(locations)
                 }
         }
+    }
+
+    fun setSubscribing(subscribing: Boolean) {
+        _subscribing.update { subscribing }
     }
 
     fun getMemories(): List<MemoryWithLocation> = _memories.value ?: emptyList()

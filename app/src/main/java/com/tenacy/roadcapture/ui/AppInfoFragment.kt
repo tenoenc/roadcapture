@@ -117,18 +117,22 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         // 바텀시트 표시
         val bottomSheet = SubscribeAfterBottomSheetFragment.newInstance()
         bottomSheet.show(childFragmentManager, SubscribeAfterBottomSheetFragment.TAG)
+        vm.setSubscribing(false)
     }
 
     override fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String) {
         if (!isAdded) return
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            mainActivity.vm.viewEvent(
-                GlobalViewEvent.Toast(
-                    ToastModel(requireContext().getString(R.string.subscription_process_error), ToastMessageType.Warning)
-                )
+        mainActivity.vm.viewEvent(
+            GlobalViewEvent.Toast(
+                ToastModel(requireContext().getString(R.string.subscription_process_error), ToastMessageType.Warning)
             )
-        }
+        )
+        vm.setSubscribing(false)
+    }
+
+    override fun onSubscriptionPurchaseCanceled() {
+        vm.setSubscribing(false)
     }
 
     override fun onDonationCompleted(productId: String, purchase: Purchase) {
@@ -222,6 +226,7 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 // 구독 시작
                 subscriptionManager.setPurchaseCallback(this)
                 subscriptionManager.subscribe(mainActivity, this)
+                vm.setSubscribing(true)
             }
         }
     }

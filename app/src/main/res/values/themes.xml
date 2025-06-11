@@ -3,7 +3,7 @@
     <style name="Base.Theme.Roadcapture" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/primary_normal</item>
-
+        <item name="floatingActionButtonStyle">@style/FAB</item>
     </style>
 
     <style name="Theme.Roadcapture" parent="Base.Theme.Roadcapture"/>
