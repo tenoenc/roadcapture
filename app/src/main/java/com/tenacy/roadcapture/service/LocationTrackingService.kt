@@ -1,13 +1,8 @@
-// LocationTrackingService.kt (수정된 버전)
 package com.tenacy.roadcapture.service
 
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.hardware.Sensor
-import android.hardware.SensorEvent
-import android.hardware.SensorEventListener
-import android.hardware.SensorManager
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
@@ -33,10 +28,6 @@ class LocationTrackingService : Service() {
 
     private var fusedLocationClient: FusedLocationProviderClient? = null
     private var locationCallback: LocationCallback? = null
-
-    // 센서 관련 필드
-    private var sensorManager: SensorManager? = null
-    private var accelerometer: Sensor? = null
 
     private var isInitialized = false
 
@@ -77,9 +68,6 @@ class LocationTrackingService : Service() {
             stopSelf()
             return
         }
-
-        // 센서 등록
-        registerSensors()
 
         // 초기화 진행
         initializeLocationServices()
@@ -131,9 +119,6 @@ class LocationTrackingService : Service() {
         if (isInitialized) {
             stopLocationUpdates()
         }
-
-        // 센서 해제
-        unregisterSensors()
 
         // 상태 저장
         locationProcessor.saveState()
@@ -208,51 +193,6 @@ class LocationTrackingService : Service() {
         }
 
         return builder.build()
-    }
-
-    // 센서 등록 메서드
-    private fun registerSensors() {
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-        accelerometer = sensorManager?.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-
-        accelerometer?.let {
-            sensorManager?.registerListener(
-                sensorListener,
-                it,
-                SensorManager.SENSOR_DELAY_NORMAL
-            )
-        }
-    }
-
-    // 센서 해제 메서드
-    private fun unregisterSensors() {
-        sensorManager?.unregisterListener(sensorListener)
-    }
-
-    // 센서 리스너 구현
-    private val sensorListener = object : SensorEventListener {
-        override fun onSensorChanged(event: SensorEvent) {
-            if (event.sensor.type == Sensor.TYPE_ACCELEROMETER) {
-                val x = event.values[0]
-                val y = event.values[1]
-                val z = event.values[2]
-
-                // 가속도 벡터의 크기 계산
-                val acceleration = Math.sqrt((x * x + y * y + z * z).toDouble())
-
-                // 임계값 이상이면 움직임으로 판단
-                val isMoving = acceleration > 10.5 // 약간의 움직임 감지 (정지 시 ~9.8)
-
-                // LocationProcessor에 움직임 상태 전달
-                if (locationProcessor is DefaultLocationProcessor) {
-                    (locationProcessor as DefaultLocationProcessor).setMovingState(isMoving)
-                }
-            }
-        }
-
-        override fun onAccuracyChanged(sensor: Sensor, accuracy: Int) {
-            // 정확도 변경 무시
-        }
     }
 
     private fun setupLocationCallback() {
@@ -368,7 +308,7 @@ class LocationTrackingService : Service() {
                     Log.d(TAG, "위치 업데이트 시작됨 (모드: ${if (isDebugMode) "DEBUG" else "RELEASE"})")
                 }
                 .addOnFailureListener { e ->
-                    // 설정이 만족되지 않으면 기존 방식으로 시도
+                    // 설정이 만족되지 않으면 기본 방식으로 시도
                     Log.w(TAG, "위치 설정 확인 실패, 기본 요청으로 진행: ${e.message}")
                     fusedLocationClient?.requestLocationUpdates(
                         locationRequest,

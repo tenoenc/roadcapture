@@ -42,7 +42,7 @@ class RewardedAdManager @Inject constructor(
     fun loadAd() {
         val adRequest = AdRequest.Builder().build()
 
-        val adUnitId = if(BuildConfig.DEBUG) {
+        val adUnitId = if(BuildConfig.DEBUG || BuildConfig.DEVELOPMENT.toBoolean()) {
             BuildConfig.AD_MOB_APP_UNIT_REWARD_TEST_ID
         } else {
             BuildConfig.AD_MOB_APP_SAVE_MEMORY_ID

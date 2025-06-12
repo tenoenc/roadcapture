@@ -296,7 +296,7 @@ class AlbumWithAdsPagingAdapter(
         // 광고 로드 시간 측정 시작
         val startTime = System.currentTimeMillis()
 
-        val adUnitId = if (BuildConfig.DEBUG) {
+        val adUnitId = if (BuildConfig.DEBUG || BuildConfig.DEVELOPMENT.toBoolean()) {
             BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
         } else {
             BuildConfig.AD_MOB_APP_HOME_ALBUM_ID

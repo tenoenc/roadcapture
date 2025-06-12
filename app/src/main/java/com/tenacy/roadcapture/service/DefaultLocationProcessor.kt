@@ -48,19 +48,12 @@ class DefaultLocationProcessor @Inject constructor(
     private val MAX_RECENT_LOCATIONS = 5
     private val MAX_REASONABLE_ACCELERATION = 15.0f  // m/s²
 
-    // 센서 관련 필드
-    private var isMoving = false
-
     // 위치 이벤트 Flow
     private val _savedLocationsFlow = MutableSharedFlow<Location>(replay = 0)
 
     init {
         // 상태 복원
         restoreState()
-    }
-
-    fun setMovingState(moving: Boolean) {
-        isMoving = moving
     }
 
     override suspend fun processLocation(location: Location): LocationEntity? {
@@ -205,14 +198,6 @@ class DefaultLocationProcessor @Inject constructor(
 
         // 필터링되지 않았으므로 카운터 리셋
         consecutiveSpeedFilterCount = 0
-
-        // 움직임이 감지되지 않았고, 거리가 매우 작다면 노이즈로 간주
-        if (!isMoving && distance < Constants.MIN_DISTANCE_TO_SAVE * 0.5) {
-            Log.v(TAG, "위치 저장 건너뜀 - 움직임 없음 & 거리 작음: ${distance}m")
-            lastProcessedLocation = location
-            lastProcessedTime = currentTime
-            return false
-        }
 
         // 디버그 모드에서는 시간과 거리 조건 모두 만족해야 함
         var shouldSave = false
