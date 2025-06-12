@@ -8,9 +8,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
-import com.tenacy.roadcapture.util.ResourceProvider
-import com.tenacy.roadcapture.util.TagConstants
-import com.tenacy.roadcapture.util.functions
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
+import com.tenacy.roadcapture.util.*
 import com.tenacy.roadcapture.worker.PhotoCacheWorker
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -90,6 +89,16 @@ class LoginViewModel @Inject constructor(
 
     fun onGoogleLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+            } catch (exception: Exception) {
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@launch
+                }
+            }
             viewEvent(LoginViewEvent.GoogleLogin)
             _signingIn.update { true }
         }
@@ -97,6 +106,16 @@ class LoginViewModel @Inject constructor(
 
     fun onFacebookLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+            } catch (exception: Exception) {
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@launch
+                }
+            }
             viewEvent(LoginViewEvent.FacebookLogin)
             _signingIn.update { true }
         }
@@ -104,6 +123,16 @@ class LoginViewModel @Inject constructor(
 
     fun onKakaoLoginClick() {
         viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+            } catch (exception: Exception) {
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@launch
+                }
+            }
             viewEvent(LoginViewEvent.KakaoLogin)
             _signingIn.update { true }
         }

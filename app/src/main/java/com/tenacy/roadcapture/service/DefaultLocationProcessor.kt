@@ -32,10 +32,6 @@ class DefaultLocationProcessor @Inject constructor(
 
     private val processorScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // 위치 캐싱 관련 필드
-    private val locationCache = mutableListOf<Location>()
-    private val MAX_CACHE_SIZE = 5
-
     // 이동 모드 관련 필드
     private var lastProcessedLocation: Location? = null
     private var lastProcessedTime = 0L
@@ -281,33 +277,6 @@ class DefaultLocationProcessor @Inject constructor(
         return location.provider == "mock"
     }
 
-    private fun isLocationSuspicious(location: Location): Boolean {
-        // 디버그 모드에서는 조작 앱 설치 여부도 체크
-        if (BuildConfig.DEBUG && hasLocationMockingApp()) {
-            // 정확도가 너무 완벽한 경우 (실제 GPS는 보통 약간의 오차가 있음)
-            if (location.accuracy < 1.0f) {
-                Log.v(TAG, "의심스러운 위치: 비현실적으로 높은 정확도 ${location.accuracy}m")
-                return true
-            }
-        }
-
-        // 시간 체크 (위치 시간이 현재 시간보다 너무 미래이거나 과거)
-        val currentTime = System.currentTimeMillis()
-        val timeDiff = Math.abs(location.time - currentTime)
-        if (timeDiff > 60_000) { // 1분 이상 차이
-            Log.v(TAG, "의심스러운 위치: 시간 차이 ${timeDiff}ms")
-            return true
-        }
-
-        // Provider가 null이거나 빈 문자열인 경우
-        if (location.provider.isNullOrEmpty()) {
-            Log.v(TAG, "의심스러운 위치: Provider가 없음")
-            return true
-        }
-
-        return false
-    }
-
     private fun hasLocationMockingApp(): Boolean {
         val knownMockApps = listOf(
             "com.lexa.fakegps",
@@ -345,8 +314,7 @@ class DefaultLocationProcessor @Inject constructor(
             // ID를 포함한 완성된 엔티티를 생성
             val savedEntity = locationEntity.copy(id = id)
 
-            // 캐시 및 상태 업데이트
-            updateLocationCache(location)
+            // 상태 업데이트
             TravelPref.setLastSavedLocation(location)
             TravelPref.lastSavedTime = System.currentTimeMillis()
 
@@ -418,40 +386,5 @@ class DefaultLocationProcessor @Inject constructor(
 
             return false
         }
-    }
-
-    private fun updateLocationCache(location: Location) {
-        synchronized(locationCache) {
-            // 캐시에 새 위치 추가
-            locationCache.add(location)
-
-            // 캐시 사이즈 제한
-            while (locationCache.size > MAX_CACHE_SIZE) {
-                locationCache.removeAt(0)
-            }
-        }
-    }
-
-    private fun getBestCachedLocation(): Location? {
-        synchronized(locationCache) {
-            if (locationCache.isEmpty()) return null
-
-            // 가장 최근 위치 반환
-            return locationCache.last()
-        }
-    }
-
-    private fun getReliableLocation(): Location? {
-        val lastSaved = getLastSavedLocation()
-        val bestCached = getBestCachedLocation()
-
-        // 캐시된 위치가 있고, 최근 저장된 위치보다 더 최신이면 캐시 사용
-        if (bestCached != null && lastSaved != null) {
-            if (bestCached.time > lastSaved.time) {
-                return bestCached
-            }
-        }
-
-        return lastSaved ?: bestCached
     }
 }

@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentModifyUsernameBinding
@@ -16,8 +15,6 @@ import com.tenacy.roadcapture.di.UsernameFilter
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -85,17 +82,19 @@ class ModifyUsernameFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? ModifyUsernameViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: ModifyUsernameViewEvent) {
-        when (event) {
-            is ModifyUsernameViewEvent.Complete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.name_changing), ToastMessageType.Info)))
-                findNavController().popBackStack()
+    private fun handleViewEvents(event: ViewEvent) {
+        if(event is ModifyUsernameViewEvent) {
+            when (event) {
+                is ModifyUsernameViewEvent.Complete -> {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.name_changing), ToastMessageType.Info)))
+                    findNavController().popBackStack()
+                }
             }
         }
     }

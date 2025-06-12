@@ -235,63 +235,71 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? AppInfoViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: AppInfoViewEvent) {
-        when (event) {
-            is AppInfoViewEvent.InquireToDeveloper -> {
-                openEmailToContactDeveloper()
-            }
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
 
-            is AppInfoViewEvent.NavigateToHtml -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
-            }
+        if(event is AppInfoViewEvent) {
+            when (event) {
+                is AppInfoViewEvent.InquireToDeveloper -> {
+                    openEmailToContactDeveloper()
+                }
 
-            is AppInfoViewEvent.NavigateToLanguage -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToLanguage())
-            }
+                is AppInfoViewEvent.NavigateToHtml -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainToHtml(event.type))
+                }
 
-            is AppInfoViewEvent.ReviewApp -> {
-                appReviewManager.requestReview()
-            }
+                is AppInfoViewEvent.NavigateToLanguage -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainToLanguage())
+                }
 
-            is AppInfoViewEvent.ShowLogoutBefore -> {
-                val bottomSheet = LogoutBeforeBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, LogoutBeforeBottomSheetFragment.TAG)
-            }
+                is AppInfoViewEvent.ReviewApp -> {
+                    appReviewManager.requestReview()
+                }
 
-            is AppInfoViewEvent.Donate -> {
-                val bottomSheet = DonateBeforeBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, DonateBeforeBottomSheetFragment.TAG)
-            }
+                is AppInfoViewEvent.ShowLogoutBefore -> {
+                    val bottomSheet = LogoutBeforeBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, LogoutBeforeBottomSheetFragment.TAG)
+                }
 
-            is AppInfoViewEvent.ShowSubscription -> {
-                val bottomSheet = SubscriptionBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
-            }
+                is AppInfoViewEvent.Donate -> {
+                    val bottomSheet = DonateBeforeBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, DonateBeforeBottomSheetFragment.TAG)
+                }
 
-            is AppInfoViewEvent.Withdraw -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToWithdrawBefore())
-            }
+                is AppInfoViewEvent.ShowSubscription -> {
+                    val bottomSheet = SubscriptionBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, SubscriptionBottomSheetFragment.TAG)
+                }
 
-            is AppInfoViewEvent.ShowWithdrawBefore -> {
-                val bottomSheet = WithdrawBeforeBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, WithdrawBeforeBottomSheetFragment.TAG)
-            }
+                is AppInfoViewEvent.Withdraw -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainToWithdrawBefore())
+                }
 
-            is AppInfoViewEvent.OpenPlayStoreSubscriptionManager -> {
-                openPlayStoreSubscriptionManager()
-            }
+                is AppInfoViewEvent.ShowWithdrawBefore -> {
+                    val bottomSheet = WithdrawBeforeBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, WithdrawBeforeBottomSheetFragment.TAG)
+                }
 
-            is AppInfoViewEvent.Error -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    when(event) {
-                        is AppInfoViewEvent.Error.Reauth -> {
-                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.account_mismatch), ToastMessageType.Warning)))
+                is AppInfoViewEvent.OpenPlayStoreSubscriptionManager -> {
+                    openPlayStoreSubscriptionManager()
+                }
+
+                is AppInfoViewEvent.Error -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        when(event) {
+                            is AppInfoViewEvent.Error.Reauth -> {
+                                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.account_mismatch), ToastMessageType.Warning)))
+                            }
                         }
                     }
                 }

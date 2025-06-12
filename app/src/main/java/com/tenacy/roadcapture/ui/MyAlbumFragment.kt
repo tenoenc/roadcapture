@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.esafirm.imagepicker.features.ImagePickerConfig
 import com.esafirm.imagepicker.features.ImagePickerLauncher
@@ -17,14 +18,15 @@ import com.esafirm.imagepicker.features.registerImagePicker
 import com.esafirm.imagepicker.model.Image
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tenacy.roadcapture.R
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.databinding.FragmentMyAlbumBinding
-import com.tenacy.roadcapture.util.consumeOnce
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toLocalizedString
+import com.tenacy.roadcapture.util.*
 import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class MyAlbumFragment: BaseFragment() {
@@ -67,7 +69,6 @@ class MyAlbumFragment: BaseFragment() {
     private fun setupImagePicker() {
         imagePickerLauncher = registerImagePicker { result: List<Image> ->
             result.getOrNull(0)?.let {
-
                 UpdateUserPhotoWorker.enqueueOneTimeWork(requireContext(), it.uri)
                 mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.profile_photo_changing))))
             }
@@ -80,12 +81,34 @@ class MyAlbumFragment: BaseFragment() {
             this
         ) { _, bundle ->
             bundle.getParcelable<ProfileMoreBottomSheetFragment.ParamsOut.ModifyPhoto>(ProfileMoreBottomSheetFragment.KEY_PARAMS_OUT_MODIFY_PHOTO)?.let {
-                // 프로필 사진 변경
-                imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
+                lifecycleScope.launch(Dispatchers.IO) {
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    try {
+                        validateSystemConfig()
+                    } catch (exception: SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@launch
+                    }
+                    withContext(Dispatchers.Main) {
+                        // 프로필 사진 변경
+                        imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
+                    }
+                }
             }
             bundle.getParcelable<ProfileMoreBottomSheetFragment.ParamsOut.ModifyName>(ProfileMoreBottomSheetFragment.KEY_PARAMS_OUT_MODIFY_NAME)?.let {
-                // 이름 변경 -> 화면 이동
-                findNavController().navigate(MainFragmentDirections.actionMainToModifyUsername())
+                lifecycleScope.launch(Dispatchers.IO) {
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    try {
+                        validateSystemConfig()
+                    } catch (exception: SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@launch
+                    }
+                    withContext(Dispatchers.Main) {
+                        // 이름 변경 -> 화면 이동
+                        findNavController().navigate(MainFragmentDirections.actionMainToModifyUsername())
+                    }
+                }
             }
         }
     }

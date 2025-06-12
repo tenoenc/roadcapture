@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         super<AppCompatActivity>.onCreate(savedInstanceState)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         setContentView(R.layout.activity_main)
+        setupFragmentResultListeners()
         setupObservers()
         setupNavigationListener()
         setupWorkManagerCleaning()
@@ -156,6 +158,23 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         }
     }
 
+    private fun setupFragmentResultListeners() {
+        supportFragmentManager.setFragmentResultListener(
+            UpdateRequiredBottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<UpdateRequiredBottomSheetFragment.ParamsOut.Positive>(
+                UpdateRequiredBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE
+            )?.let {
+                Log.d("TAG", "Positive Button Clicked!")
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse("market://details?id=${packageName}")
+                }
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
 
     private fun observeUpdateUserPhoto() {
         repeatOnLifecycle {
@@ -635,6 +654,16 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             is GlobalViewEvent.Logout -> {
                 supportFragmentManager.dismissAllDialogs()
                 signOut()
+            }
+
+            is GlobalViewEvent.UpdateRequired -> {
+                val bottomSheet = UpdateRequiredBottomSheetFragment.newInstance()
+                bottomSheet.show(supportFragmentManager, UpdateRequiredBottomSheetFragment.TAG)
+            }
+
+            is GlobalViewEvent.UnderMaintenance -> {
+                val bottomSheet = UnderMaintenanceBottomSheetFragment.newInstance()
+                bottomSheet.show(supportFragmentManager, UnderMaintenanceBottomSheetFragment.TAG)
             }
         }
     }

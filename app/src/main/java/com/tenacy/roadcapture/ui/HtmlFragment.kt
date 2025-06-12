@@ -39,6 +39,11 @@ class HtmlFragment: BaseFragment() {
         setupViews()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun setupViews() {
         binding.title = when (args.type) {
             HtmlType.PrivacyPolicy -> requireContext().getString(R.string.privacy_policy)
@@ -71,11 +76,6 @@ class HtmlFragment: BaseFragment() {
                 findNavController().popBackStack()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private suspend fun loadHtmlFromAssets(): String = withContext(Dispatchers.IO) {

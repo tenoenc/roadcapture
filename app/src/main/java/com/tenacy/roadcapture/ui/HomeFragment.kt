@@ -23,10 +23,7 @@ import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentHomeBinding
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
-import com.tenacy.roadcapture.util.consumeOnce
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
-import com.tenacy.roadcapture.util.toPx
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -287,28 +284,36 @@ class HomeFragment : BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? HomeViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: HomeViewEvent) {
-        when (event) {
-            is HomeViewEvent.Search -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
-            }
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
 
-            is HomeViewEvent.ReportComplete -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(
-                        GlobalViewEvent.Toast(
-                            ToastModel(
-                                requireContext().getString(R.string.report_submit_success),
-                                ToastMessageType.Success
+        if(event is HomeViewEvent) {
+            when (event) {
+                is HomeViewEvent.Search -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.All))
+                }
+
+                is HomeViewEvent.ReportComplete -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        mainActivity.vm.viewEvent(
+                            GlobalViewEvent.Toast(
+                                ToastModel(
+                                    requireContext().getString(R.string.report_submit_success),
+                                    ToastMessageType.Success
+                                )
                             )
                         )
-                    )
+                    }
                 }
             }
         }

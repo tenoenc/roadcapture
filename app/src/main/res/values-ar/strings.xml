@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">اختر بعناية لأنه لا يمكن تغييره لاحقاً</string> <!-- {285} -->
     <string name="timezone_input_hint">أدخل المنطقة الزمنية</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">قيد الصيانة</string>
+    <string name="maintenance_message">النظام قيد الصيانة حالياً\nيرجى المحاولة مرة أخرى بعد انتهاء الصيانة</string>
+    <string name="update_required">مطلوب تحديث</string>
+    <string name="update_message">لاستخدام الخدمة\nيرجى التحديث إلى الإصدار الجديد</string>
+    <string name="update_button">تحديث</string>
+
     <string name="time_just_now">الآن</string>
 
     <plurals name="time_minutes_ago">

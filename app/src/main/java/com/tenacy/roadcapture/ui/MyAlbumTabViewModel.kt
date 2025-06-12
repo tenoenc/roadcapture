@@ -11,9 +11,12 @@ import androidx.paging.cachedIn
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.ResourceProvider
+import com.tenacy.roadcapture.util.handleSystemConfigException
 import com.tenacy.roadcapture.util.user
+import com.tenacy.roadcapture.util.validateSystemConfig
 import com.tenacy.roadcapture.worker.CreateShareLinkWorker
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
 import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
@@ -63,11 +66,18 @@ class MyAlbumTabViewModel @Inject constructor(
     fun updateAlbumPublic(albumId: String, isPublic: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
                 UpdateAlbumPublicWorker.enqueueOneTimeWork(context, albumId, isPublic)
                 emit(Unit)
             }
-                .catch { excpetion ->
-                    Log.e("MyAlbumTabViewModel", "에러", excpetion)
+                .catch { exception ->
+                    Log.e("MyAlbumTabViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                 }
                 .collect {
                     val publicText = if(!isPublic) resourceProvider.getString(R.string.visibility_public) else resourceProvider.getString(R.string.visibility_private)
@@ -79,11 +89,18 @@ class MyAlbumTabViewModel @Inject constructor(
     fun deleteAlbum(userId: String, albumId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
                 DeleteAlbumWorker.enqueueOneTimeWork(context, userId, albumId)
                 emit(Unit)
             }
-                .catch { excpetion ->
-                    Log.e("MyAlbumTabViewModel", "에러", excpetion)
+                .catch { exception ->
+                    Log.e("MyAlbumTabViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                 }
                 .collect {
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum)
@@ -94,12 +111,19 @@ class MyAlbumTabViewModel @Inject constructor(
     fun createShareLink(albumId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
                 val idToken = user!!.getIdToken(false).await().token ?: throw Exception("토큰을 가져올 수 없습니다.")
                 CreateShareLinkWorker.enqueueOneTimeWork(context, albumId, idToken)
                 emit(Unit)
             }
                 .catch { exception ->
                     Log.e("MyAlbumTabViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                 }
                 .collect {
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink)

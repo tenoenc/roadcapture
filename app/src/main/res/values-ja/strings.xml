@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">後で変更できないので慎重に選択してください</string> <!-- {285} -->
     <string name="timezone_input_hint">タイムゾーン入力</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">メンテナンス中</string>
+    <string name="maintenance_message">現在システムメンテナンス中\nメンテナンス後に再度お試しください</string>
+    <string name="update_required">アップデート必要</string>
+    <string name="update_message">サービスをご利用いただくために\n新しいバージョンにアップデートしてください</string>
+    <string name="update_button">アップデート</string>
+
     <string name="time_just_now">たった今</string>
 
     <plurals name="time_minutes_ago">

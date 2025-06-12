@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">Escolha com cuidado pois não poderá alterar depois</string> <!-- {285} -->
     <string name="timezone_input_hint">Digite o fuso horário</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">Em Manutenção</string>
+    <string name="maintenance_message">Sistema em manutenção no momento\nTente novamente após a manutenção</string>
+    <string name="update_required">Atualização Necessária</string>
+    <string name="update_message">Para continuar usando o serviço\natualize para a nova versão</string>
+    <string name="update_button">Atualizar</string>
+
     <string name="time_just_now">agora mesmo</string>
 
     <plurals name="time_minutes_ago">

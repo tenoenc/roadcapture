@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">Pilih dengan hati-hati karena tidak bisa diubah nanti</string> <!-- {285} -->
     <string name="timezone_input_hint">Masukkan zona waktu</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">Sedang Pemeliharaan</string>
+    <string name="maintenance_message">Sistem sedang dalam pemeliharaan\nSilakan coba lagi setelah pemeliharaan selesai</string>
+    <string name="update_required">Perlu Update</string>
+    <string name="update_message">Untuk menggunakan layanan\nsilakan update ke versi terbaru</string>
+    <string name="update_button">Update</string>
+
     <string name="time_just_now">baru saja</string>
 
     <plurals name="time_minutes_ago">

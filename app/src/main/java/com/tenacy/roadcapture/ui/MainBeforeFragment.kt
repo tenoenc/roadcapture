@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.FragmentMainBeforeBinding
+import com.tenacy.roadcapture.util.handleCommonSystemViewEvents
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
@@ -62,20 +63,28 @@ class MainBeforeFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? MainBeforeViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: MainBeforeViewEvent) {
-        when (event) {
-            is MainBeforeViewEvent.Complete -> {
-                findNavController().navigate(MainBeforeFragmentDirections.actionMainBeforeToMain())
-            }
-            is MainBeforeViewEvent.Error -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.general_error), ToastMessageType.Warning)))
-                mainActivity.vm.viewEvent(GlobalViewEvent.Logout)
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+
+        if(event is MainBeforeViewEvent) {
+            when (event) {
+                is MainBeforeViewEvent.Complete -> {
+                    findNavController().navigate(MainBeforeFragmentDirections.actionMainBeforeToMain())
+                }
+                is MainBeforeViewEvent.Error -> {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.general_error), ToastMessageType.Warning)))
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Logout)
+                }
             }
         }
     }

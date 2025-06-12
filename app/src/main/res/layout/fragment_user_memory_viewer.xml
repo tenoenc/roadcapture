@@ -38,10 +38,13 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:layout_marginHorizontal="4dp"
                         android:textAppearance="@style/Title_18"
                         android:textColor="@color/label_normal"
                         android:textAlignment="center"
                         android:text="@{vm.placeName}"
+                        android:maxLines="1"
+                        android:ellipsize="end"
                         tools:text="한담해안산책로"/>
 
                 <ImageButton

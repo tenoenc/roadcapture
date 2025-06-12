@@ -20,6 +20,7 @@ import com.facebook.shimmer.Shimmer
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentScrapBinding
+import com.tenacy.roadcapture.util.handleCommonSystemViewEvents
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -271,7 +272,7 @@ class ScrapFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? ScrapViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
@@ -286,14 +287,22 @@ class ScrapFragment: BaseFragment() {
         }
     }
 
-    private fun handleViewEvents(event: ScrapViewEvent) {
-        when (event) {
-            is ScrapViewEvent.Search -> {
-                findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.Scrap))
-            }
-            is ScrapViewEvent.ReportComplete -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+
+        if(event is ScrapViewEvent) {
+            when (event) {
+                is ScrapViewEvent.Search -> {
+                    findNavController().navigate(MainFragmentDirections.actionMainToSearch(SearchFilter.Scrap))
+                }
+                is ScrapViewEvent.ReportComplete -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
+                    }
                 }
             }
         }

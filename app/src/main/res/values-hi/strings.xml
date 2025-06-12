@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">सावधानी से चुनें क्योंकि बाद में बदला नहीं जा सकता</string> <!-- {285} -->
     <string name="timezone_input_hint">समय क्षेत्र दर्ज करें</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">रखरखाव चल रहा है</string>
+    <string name="maintenance_message">सिस्टम रखरखाव चल रहा है\nरखरखाव के बाद पुनः प्रयास करें</string>
+    <string name="update_required">अपडेट आवश्यक</string>
+    <string name="update_message">सेवा का उपयोग करने के लिए\nकृपया नए संस्करण में अपडेट करें</string>
+    <string name="update_button">अपडेट करें</string>
+
     <string name="time_just_now">अभी अभी</string>
 
     <plurals name="time_minutes_ago">

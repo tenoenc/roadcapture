@@ -1,7 +1,10 @@
 package com.tenacy.roadcapture.ui
 
 import androidx.lifecycle.viewModelScope
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.di.InputModule
+import com.tenacy.roadcapture.util.handleSystemConfigException
+import com.tenacy.roadcapture.util.validateSystemConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -50,6 +53,16 @@ class NewAlbumViewModel @Inject constructor(
 
     fun onCompleteClick() {
         viewModelScope.launch(Dispatchers.Default) {
+            try {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+            } catch (exception: Exception) {
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@launch
+                }
+            }
             viewEvent(NewAlbumViewEvent.ShowCompleteBefore)
         }
     }

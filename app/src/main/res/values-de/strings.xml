@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">Wählen Sie sorgfältig, da Sie es später nicht ändern können</string> <!-- {285} -->
     <string name="timezone_input_hint">Zeitzone eingeben</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">Wartung läuft</string>
+    <string name="maintenance_message">System wird derzeit gewartet\nBitte versuchen Sie es nach der Wartung erneut</string>
+    <string name="update_required">Update erforderlich</string>
+    <string name="update_message">Für die Nutzung des Dienstes\nbitte auf die neue Version aktualisieren</string>
+    <string name="update_button">Aktualisieren</string>
+
     <string name="time_just_now">gerade eben</string>
 
     <plurals name="time_minutes_ago">

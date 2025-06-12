@@ -11,12 +11,15 @@ import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSourceWithAds
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.ui.dto.AlbumItemWithAds
 import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
+import com.tenacy.roadcapture.util.handleSystemConfigException
+import com.tenacy.roadcapture.util.validateSystemConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -60,6 +63,9 @@ class HomeViewModel @Inject constructor(
     fun report(albumId: String, reason: ReportReason) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+
                 val userId = UserPref.id
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
                 val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
@@ -80,6 +86,11 @@ class HomeViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e("HomeViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                 }
                 .collect {
                     viewEvent(HomeViewEvent.ReportComplete)

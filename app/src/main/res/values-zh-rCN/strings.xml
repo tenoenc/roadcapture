@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">请慎重选择，之后无法更改</string> <!-- {285} -->
     <string name="timezone_input_hint">输入时区</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">维护中</string>
+    <string name="maintenance_message">系统正在维护中\n请在维护完成后重试</string>
+    <string name="update_required">需要更新</string>
+    <string name="update_message">为了继续使用服务\n请更新到最新版本</string>
+    <string name="update_button">更新</string>
+
     <string name="time_just_now">刚刚</string>
 
     <plurals name="time_minutes_ago">

@@ -10,10 +10,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.BSheetSubscribeAfterBinding
+import com.tenacy.roadcapture.databinding.BSheetUnderMaintenanceBinding
 
-class SubscribeAfterBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
+class UnderMaintenanceBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
-    private var _binding: BSheetSubscribeAfterBinding? = null
+    private var _binding: BSheetUnderMaintenanceBinding? = null
     private val binding get() = _binding!!
 
     override fun getTheme(): Int = R.style.ThemeOverlay_App_BottomSheetDialog
@@ -23,7 +24,7 @@ class SubscribeAfterBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return BSheetSubscribeAfterBinding.inflate(inflater, container, false).apply {
+        return BSheetUnderMaintenanceBinding.inflate(inflater, container, false).apply {
             _binding = this
         }.root
     }
@@ -35,7 +36,7 @@ class SubscribeAfterBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
     }
 
     private fun setupListeners() {
-        binding.btnBSheetSubscribeAfterNegative.setSafeClickListener {
+        binding.btnBSheetUnderMaintenanceNegative.setSafeClickListener {
             dismiss()
         }
     }
@@ -47,10 +48,10 @@ class SubscribeAfterBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
     companion object {
 
-        const val TAG = "SubscribeAfterBottomSheetFragment"
+        const val TAG = "UnderMaintenanceBottomSheetFragment"
 
-        fun newInstance(bundle: Bundle? = null): SubscribeAfterBottomSheetFragment {
-            return SubscribeAfterBottomSheetFragment().apply {
+        fun newInstance(bundle: Bundle? = null): UnderMaintenanceBottomSheetFragment {
+            return UnderMaintenanceBottomSheetFragment().apply {
                 arguments = bundle
             }
         }

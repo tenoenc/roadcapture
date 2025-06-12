@@ -19,9 +19,9 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.SimpleItemAnimator
 import com.tenacy.roadcapture.R
-import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.SearchFilter
 import com.tenacy.roadcapture.databinding.FragmentSearchBinding
+import com.tenacy.roadcapture.util.handleCommonSystemViewEvents
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -260,7 +260,7 @@ class SearchFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? SearchViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
@@ -275,12 +275,19 @@ class SearchFragment: BaseFragment() {
         }
     }
 
-    private fun handleViewEvents(event: SearchViewEvent) {
-        // 필요한 이벤트 처리 로직 구현
-        when(event) {
-            is SearchViewEvent.ReportComplete -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+
+        if(event is SearchViewEvent) {
+            when(event) {
+                is SearchViewEvent.ReportComplete -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submitted), ToastMessageType.Success)))
+                    }
                 }
             }
         }

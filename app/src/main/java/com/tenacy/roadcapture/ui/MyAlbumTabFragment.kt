@@ -14,6 +14,7 @@ import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.databinding.TabMyAlbumBinding
+import com.tenacy.roadcapture.util.handleCommonSystemViewEvents
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import com.tenacy.roadcapture.util.toPx
@@ -214,25 +215,33 @@ class MyAlbumTabFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? MyAlbumTabViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: MyAlbumTabViewEvent) {
-        when(event) {
-            is MyAlbumTabViewEvent.EnqueueComplete -> {
-                when(event) {
-                    is MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.deleting_album), ToastMessageType.Info)))
-                    }
-                    is MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic -> {
-                        val `0` = event.publicText
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
-                    }
-                    is MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink -> {
-                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.creating_share_link), ToastMessageType.Info)))
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+
+        if(event is MyAlbumTabViewEvent) {
+            when(event) {
+                is MyAlbumTabViewEvent.EnqueueComplete -> {
+                    when(event) {
+                        is MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum -> {
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.deleting_album), ToastMessageType.Info)))
+                        }
+                        is MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic -> {
+                            val `0` = event.publicText
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.changing_album_visibility, `0`), ToastMessageType.Info)))
+                        }
+                        is MyAlbumTabViewEvent.EnqueueComplete.CreateShareLink -> {
+                            mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.creating_share_link), ToastMessageType.Info)))
+                        }
                     }
                 }
             }

@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">나중에 변경할 수 없으니 신중하게 선택해주세요</string> <!-- {285} -->
     <string name="timezone_input_hint">시간대 입력</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">점검 중</string>
+    <string name="maintenance_message">현재 시스템 점검 중입니다\n점검 후에 다시 시도해주세요</string>
+    <string name="update_required">업데이트 필요</string>
+    <string name="update_message">서비스 이용을 위해\n새로운 버전으로 업데이트 해주세요</string>
+    <string name="update_button">업데이트 하기</string>
+
     <string name="time_just_now">방금 전</string>
 
     <plurals name="time_minutes_ago">

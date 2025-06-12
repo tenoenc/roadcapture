@@ -31,10 +31,7 @@ import com.tenacy.roadcapture.auth.GoogleOAuthLoginCallback
 import com.tenacy.roadcapture.auth.KakaoOAuthLoginCallback
 import com.tenacy.roadcapture.auth.NaverOAuthLoginCallback
 import com.tenacy.roadcapture.databinding.FragmentLoginBinding
-import com.tenacy.roadcapture.util.TagConstants
-import com.tenacy.roadcapture.util.auth
-import com.tenacy.roadcapture.util.mainActivity
-import com.tenacy.roadcapture.util.repeatOnLifecycle
+import com.tenacy.roadcapture.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,43 +126,51 @@ class LoginFragment : BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? LoginViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: LoginViewEvent) {
-        when (event) {
-            is LoginViewEvent.Login -> {
-                findNavController().navigate(LoginFragmentDirections.actionLoginToMainBefore(event.authCredential, event.socialType, event.socialUserId, isExistingUser = true))
-            }
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
 
-            is LoginViewEvent.GoogleLogin -> {
-                googleLogin()
-            }
-
-            is LoginViewEvent.FacebookLogin -> {
-                facebookLogin()
-            }
-
-            is LoginViewEvent.KakaoLogin -> {
-                kakaoLogin()
-            }
-
-            is LoginViewEvent.NaverLogin -> {
-                naverLogin()
-            }
-
-            // 추가된 에러 처리
-            is LoginViewEvent.SocialError -> {
-                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.login_error), ToastMessageType.Warning)))
+        if(event is LoginViewEvent) {
+            when (event) {
+                is LoginViewEvent.Login -> {
+                    findNavController().navigate(LoginFragmentDirections.actionLoginToMainBefore(event.authCredential, event.socialType, event.socialUserId, isExistingUser = true))
                 }
-            }
 
-            is LoginViewEvent.Signup -> {
-                findNavController().navigate(LoginFragmentDirections.actionLoginToSignupUsername(event.authCredential, event.socialUserId, event.socialProfileUrl, event.socialType))
+                is LoginViewEvent.GoogleLogin -> {
+                    googleLogin()
+                }
+
+                is LoginViewEvent.FacebookLogin -> {
+                    facebookLogin()
+                }
+
+                is LoginViewEvent.KakaoLogin -> {
+                    kakaoLogin()
+                }
+
+                is LoginViewEvent.NaverLogin -> {
+                    naverLogin()
+                }
+
+                // 추가된 에러 처리
+                is LoginViewEvent.SocialError -> {
+                    viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.login_error), ToastMessageType.Warning)))
+                    }
+                }
+
+                is LoginViewEvent.Signup -> {
+                    findNavController().navigate(LoginFragmentDirections.actionLoginToSignupUsername(event.authCredential, event.socialUserId, event.socialProfileUrl, event.socialType))
+                }
             }
         }
     }

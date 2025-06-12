@@ -12,6 +12,8 @@ sealed class GlobalViewEvent: ViewEvent {
     data class Toast(val toast: ToastModel) : GlobalViewEvent()
     data class CopyToClipboard(val text: String) : GlobalViewEvent()
     data object Logout: GlobalViewEvent()
+    data object UnderMaintenance: GlobalViewEvent()
+    data object UpdateRequired: GlobalViewEvent()
 }
 
 sealed class LoginViewEvent: ViewEvent {
@@ -166,4 +168,9 @@ sealed class WithdrawBeforeViewEvent : ViewEvent {
 
 sealed class SignupTimezoneViewEvent: ViewEvent {
     data class Next(val timezone: Timezone): SignupTimezoneViewEvent()
+}
+
+sealed class CommonSystemViewEvent: ViewEvent {
+    data object UnderMaintenance: CommonSystemViewEvent()
+    data object UpdateRequired: CommonSystemViewEvent()
 }

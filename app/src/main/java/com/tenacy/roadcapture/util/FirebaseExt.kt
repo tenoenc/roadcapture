@@ -3,6 +3,7 @@ package com.tenacy.roadcapture.util
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import androidx.fragment.app.Fragment
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
@@ -12,6 +13,12 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.data.firebase.dto.*
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
+import com.tenacy.roadcapture.data.firebase.exception.UnderMaintenanceException
+import com.tenacy.roadcapture.data.firebase.exception.UpdateRequiredException
+import com.tenacy.roadcapture.ui.BaseViewModel
+import com.tenacy.roadcapture.ui.CommonSystemViewEvent
+import com.tenacy.roadcapture.ui.GlobalViewEvent
 import com.tenacy.roadcapture.util.FirebaseConstants.DEFAULT_PROFILE_PATH
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -173,6 +180,16 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
         scrapCount = scrapCount,
         createdAt = createdAt,
         updatedAt = updatedAt,
+    )
+}
+
+fun DocumentSnapshot.toSystemConfig(): FirebaseSystemConfig {
+    val underMaintenance = getBoolean("underMaintenance") ?: false
+    val updateRequired = getBoolean("updateRequired") ?: false
+
+    return FirebaseSystemConfig(
+        underMaintenance = underMaintenance,
+        updateRequired = updateRequired,
     )
 }
 
@@ -456,5 +473,52 @@ suspend fun Context.uploadImageToStorage(
         downloadUrl
     } catch (e: Exception) {
         throw Exception("Failed to upload image: ${e.message}", e)
+    }
+}
+
+suspend fun validateSystemConfig() {
+    val systemRef = db.collection(FirebaseConstants.COLLECTION_SYSTEMS)
+        .document(FirebaseConstants.DOCUMENT_CONFIG)
+
+    val systemConfig = systemRef.get().await().toSystemConfig()
+
+    if(systemConfig.updateRequired) {
+        throw UpdateRequiredException()
+    }
+    if(systemConfig.underMaintenance) {
+        throw UnderMaintenanceException()
+    }
+}
+
+fun BaseViewModel.handleSystemConfigException(exception: SystemConfigException) {
+    when(exception) {
+        is UpdateRequiredException -> {
+            viewEvent(CommonSystemViewEvent.UpdateRequired)
+        }
+        is UnderMaintenanceException -> {
+            viewEvent(CommonSystemViewEvent.UnderMaintenance)
+        }
+    }
+}
+
+fun Fragment.handleSystemConfigException(exception: SystemConfigException) {
+    when(exception) {
+        is UpdateRequiredException -> {
+            mainActivity.vm.viewEvent(GlobalViewEvent.UpdateRequired)
+        }
+        is UnderMaintenanceException -> {
+            mainActivity.vm.viewEvent(GlobalViewEvent.UnderMaintenance)
+        }
+    }
+}
+
+fun Fragment.handleCommonSystemViewEvents(event: CommonSystemViewEvent) {
+    when(event) {
+        CommonSystemViewEvent.UpdateRequired -> {
+            mainActivity.vm.viewEvent(GlobalViewEvent.UpdateRequired)
+        }
+        CommonSystemViewEvent.UnderMaintenance -> {
+            mainActivity.vm.viewEvent(GlobalViewEvent.UnderMaintenance)
+        }
     }
 }

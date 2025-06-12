@@ -9,6 +9,7 @@ import com.tenacy.roadcapture.BuildConfig
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.auth.Loginable
 import com.tenacy.roadcapture.data.SocialType
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
@@ -205,6 +206,16 @@ class AppInfoViewModel @Inject constructor(
 
     fun onWithdrawClick() {
         viewModelScope.launch(Dispatchers.Default) {
+            try {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+            } catch (exception: Exception) {
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@launch
+                }
+            }
             viewEvent(AppInfoViewEvent.ShowWithdrawBefore)
         }
     }

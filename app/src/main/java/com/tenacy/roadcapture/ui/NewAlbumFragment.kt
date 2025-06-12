@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.databinding.FragmentNewAlbumBinding
 import com.tenacy.roadcapture.di.AlbumTitleFilter
+import com.tenacy.roadcapture.util.handleCommonSystemViewEvents
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -94,17 +95,25 @@ class NewAlbumFragment: BaseFragment() {
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? NewAlbumViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
-    private fun handleViewEvents(event: NewAlbumViewEvent) {
-        when (event) {
-            is NewAlbumViewEvent.ShowCompleteBefore -> {
-                val bottomSheet = AlbumCompeteBeforeBottomSheetFragment.newInstance()
-                bottomSheet.show(childFragmentManager, AlbumCompeteBeforeBottomSheetFragment.TAG)
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+
+        if(event is NewAlbumViewEvent) {
+            when (event) {
+                is NewAlbumViewEvent.ShowCompleteBefore -> {
+                    val bottomSheet = AlbumCompeteBeforeBottomSheetFragment.newInstance()
+                    bottomSheet.show(childFragmentManager, AlbumCompeteBeforeBottomSheetFragment.TAG)
+                }
             }
         }
     }

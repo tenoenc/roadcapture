@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.data.pref.SubscriptionPref.linkedAccountExists
 import com.tenacy.roadcapture.data.pref.UserPref
@@ -41,6 +42,9 @@ class MainBeforeViewModel @Inject constructor(
             val socialType = args.socialType
             val isExistingUser = args.isExistingUser
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+
                 auth.signInWithCredential(credential).await()
                 val userId = user!!.uid
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
@@ -108,6 +112,11 @@ class MainBeforeViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e("MainBeforeViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                     viewEvent(MainBeforeViewEvent.Error.Login(exception.message))
                 }
                 .collect {

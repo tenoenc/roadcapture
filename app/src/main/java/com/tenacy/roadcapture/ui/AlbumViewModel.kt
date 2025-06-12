@@ -13,6 +13,7 @@ import com.tenacy.roadcapture.data.ReportReason
 import com.tenacy.roadcapture.data.db.*
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseLocation
 import com.tenacy.roadcapture.data.firebase.dto.FirebaseMemory
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.ui.dto.Album
@@ -211,6 +212,9 @@ class AlbumViewModel @Inject constructor(
     private fun scrap() {
         if (isScrapProcessing) return
 
+        val capturedScraped = _scraped.value
+        val capturedScrapCount = _scrapCount.value
+
         scrapJob?.cancel()
 
         scrapJob = viewModelScope.launch(Dispatchers.IO) {
@@ -218,6 +222,9 @@ class AlbumViewModel @Inject constructor(
 
             flow {
                 isScrapProcessing = true
+
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
 
                 val userId = UserPref.id
 
@@ -277,7 +284,17 @@ class AlbumViewModel @Inject constructor(
 
                 emit(isScraped)
             }.catch { exception ->
+                _scraped.update {
+                    _scrapCount.update { (capturedScrapCount + if(capturedScraped) -1 else 1).coerceAtLeast(0) }
+                    !capturedScraped
+                }
+                isScrapProcessing = false
                 Log.e("AlbumViewModel", "에러", exception)
+                // [VALIDATE_SYSTEM_CONFIG]
+                if(exception is SystemConfigException) {
+                    handleSystemConfigException(exception)
+                    return@catch
+                }
             }
                 .collectLatest { nextScraped ->
                     _scraped.update { currentScraped ->
@@ -299,6 +316,9 @@ class AlbumViewModel @Inject constructor(
     fun report(albumId: String, reason: ReportReason) {
         viewModelScope.launch(Dispatchers.IO) {
             flow {
+                // [VALIDATE_SYSTEM_CONFIG]
+                validateSystemConfig()
+
                 val userId = UserPref.id
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
                 val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
@@ -319,6 +339,11 @@ class AlbumViewModel @Inject constructor(
             }
                 .catch { exception ->
                     Log.e("AlbumViewModel", "에러", exception)
+                    // [VALIDATE_SYSTEM_CONFIG]
+                    if(exception is SystemConfigException) {
+                        handleSystemConfigException(exception)
+                        return@catch
+                    }
                 }
                 .collect {
                     viewEvent(AlbumViewEvent.ReportComplete)

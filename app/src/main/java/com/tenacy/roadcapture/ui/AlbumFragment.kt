@@ -243,79 +243,88 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         repeatOnLifecycle {
             vm.viewEvent.collect {
                 it.getContentIfNotHandled()?.let { event ->
-                    (event as? AlbumViewEvent)?.let { handleViewEvents(it) }
+                    handleViewEvents(event)
                 }
             }
         }
     }
 
     // ===== 8. 이벤트 처리 메서드 그룹 =====
-    private fun handleViewEvents(event: AlbumViewEvent) {
-        when (event) {
-            is AlbumViewEvent.ResetCameraPosition -> {
-                resetCameraPosition()
-            }
-
-            is AlbumViewEvent.ZoomIn -> {
-                zoomIn()
-            }
-
-            is AlbumViewEvent.ZoomOut -> {
-                zoomOut()
-            }
-
-            is AlbumViewEvent.SetCamera -> {
-                moveCameraTo(event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
-            }
-
-            is AlbumViewEvent.ShowInfo -> {
-                val bottomSheet = AlbumInfoBottomSheetFragment.newInstance(
-                    bundle = bundleOf(
-                        AlbumInfoBottomSheetFragment.KEY_PARAMS_IN to
-                                AlbumInfoBottomSheetFragment.ParamsIn(
-                                    album = event.album,
-                                    totalMemoryCount = event.totalMemoryCount
-                                ),
-                    )
-                )
-                bottomSheet.show(childFragmentManager, AlbumInfoBottomSheetFragment.TAG)
-            }
-
-            is AlbumViewEvent.Share -> {
-                if(event.link.isNullOrBlank()) {
-                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.share_link_not_exist), ToastMessageType.Warning)))
-                    return
+    private fun handleViewEvents(event: ViewEvent) {
+        // [VALIDATE_SYSTEM_CONFIG]
+        if(event is CommonSystemViewEvent) {
+            handleCommonSystemViewEvents(event)
+            return
+        }
+        
+        if(event is AlbumViewEvent) {
+            when (event) {
+                is AlbumViewEvent.ResetCameraPosition -> {
+                    resetCameraPosition()
                 }
-                shareLink(event.link)
-            }
 
-            is AlbumViewEvent.NavigateToStudio -> {
+                is AlbumViewEvent.ZoomIn -> {
+                    zoomIn()
+                }
 
-            }
+                is AlbumViewEvent.ZoomOut -> {
+                    zoomOut()
+                }
 
-            is AlbumViewEvent.Forbidden -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
-                findNavController().previousBackStackEntry?.savedStateHandle?.set(
-                    HomeFragment.KEY_ALBUM,
-                    bundleOf(
-                        HomeFragment.RESULT_FORBIDDEN to System.currentTimeMillis()
+                is AlbumViewEvent.SetCamera -> {
+                    moveCameraTo(event.coordinates, zoom = event.zoom ?: map.cameraPosition.zoom)
+                }
+
+                is AlbumViewEvent.ShowInfo -> {
+                    val bottomSheet = AlbumInfoBottomSheetFragment.newInstance(
+                        bundle = bundleOf(
+                            AlbumInfoBottomSheetFragment.KEY_PARAMS_IN to
+                                    AlbumInfoBottomSheetFragment.ParamsIn(
+                                        album = event.album,
+                                        totalMemoryCount = event.totalMemoryCount
+                                    ),
+                        )
                     )
-                )
-                findNavController().popBackStack()
-            }
+                    bottomSheet.show(childFragmentManager, AlbumInfoBottomSheetFragment.TAG)
+                }
 
-            is AlbumViewEvent.ShowReport -> {
-                val bottomSheet = ReportBottomSheetFragment.newInstance(
-                    bundleOf(
-                        ReportBottomSheetFragment.KEY_PARAMS_IN to ReportBottomSheetFragment.ParamsIn(event.albumId)
+                is AlbumViewEvent.Share -> {
+                    if(event.link.isNullOrBlank()) {
+                        mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.share_link_not_exist), ToastMessageType.Warning)))
+                        return
+                    }
+                    shareLink(event.link)
+                }
+
+                is AlbumViewEvent.NavigateToStudio -> {
+
+                }
+
+                is AlbumViewEvent.Forbidden -> {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(event.message, ToastMessageType.Warning)))
+                    findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                        HomeFragment.KEY_ALBUM,
+                        bundleOf(
+                            HomeFragment.RESULT_FORBIDDEN to System.currentTimeMillis()
+                        )
                     )
-                )
-                bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+                    findNavController().popBackStack()
+                }
+
+                is AlbumViewEvent.ShowReport -> {
+                    val bottomSheet = ReportBottomSheetFragment.newInstance(
+                        bundleOf(
+                            ReportBottomSheetFragment.KEY_PARAMS_IN to ReportBottomSheetFragment.ParamsIn(event.albumId)
+                        )
+                    )
+                    bottomSheet.show(childFragmentManager, ReportBottomSheetFragment.TAG)
+                }
+
+                is AlbumViewEvent.ReportComplete -> {
+                    mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submit_success), ToastMessageType.Success)))
+                }
             }
 
-            is AlbumViewEvent.ReportComplete -> {
-                mainActivity.vm.viewEvent(GlobalViewEvent.Toast(ToastModel(requireContext().getString(R.string.report_submit_success), ToastMessageType.Success)))
-            }
         }
     }
 

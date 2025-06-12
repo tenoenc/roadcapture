@@ -453,6 +453,13 @@
     <string name="timezone_selection_warning">Выбирайте внимательно, так как изменить потом будет нельзя</string> <!-- {285} -->
     <string name="timezone_input_hint">Введите часовой пояс</string> <!-- {286} -->
 
+    <!-- System -->
+    <string name="under_maintenance">На обслуживании</string>
+    <string name="maintenance_message">Проводится техническое обслуживание\nПопробуйте снова после завершения</string>
+    <string name="update_required">Требуется обновление</string>
+    <string name="update_message">Для продолжения использования сервиса\nобновите до новой версии</string>
+    <string name="update_button">Обновить</string>
+
     <string name="time_just_now">только что</string>
 
     <plurals name="time_minutes_ago">
