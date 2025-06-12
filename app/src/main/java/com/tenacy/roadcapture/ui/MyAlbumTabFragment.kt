@@ -230,6 +230,14 @@ class MyAlbumTabFragment: BaseFragment() {
 
         if(event is MyAlbumTabViewEvent) {
             when(event) {
+                is MyAlbumTabViewEvent.ShowAlbumLocked -> {
+                    val bottomSheet = AlbumLockedBottomSheetFragment.newInstance(
+                        bundleOf(
+                            AlbumLockedBottomSheetFragment.KEY_PARAMS_IN to AlbumLockedBottomSheetFragment.ParamsIn(event.lockReason, event.lockedAt)
+                        )
+                    )
+                    bottomSheet.show(childFragmentManager, AlbumLockedBottomSheetFragment.TAG)
+                }
                 is MyAlbumTabViewEvent.EnqueueComplete -> {
                     when(event) {
                         is MyAlbumTabViewEvent.EnqueueComplete.DeleteAlbum -> {

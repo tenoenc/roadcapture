@@ -322,6 +322,9 @@
     <string name="image_edit">छवि संपादित करें</string> <!-- {93} -->
     <string name="move_to_shared_album">पहले शेयर किए गए एल्बम पर जा रहे हैं</string> <!-- {50} -->
     <string name="not_ready_yet">अभी तैयार नहीं है</string> <!-- {160} -->
+    <string name="locked_by_admin">एडमिन द्वारा लॉक</string>
+    <string name="album_visibility_restriction">निम्न कारण से \nयह एल्बम सार्वजनिक नहीं किया जा सकता</string>
+    <string name="reason">कारण</string>
 
     <!-- Language -->
     <string name="language_korean">कोरियाई</string> <!-- {original_key: language_korean} -->

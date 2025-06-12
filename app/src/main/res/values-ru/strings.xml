@@ -322,6 +322,9 @@
     <string name="image_edit">Редактировать изображение</string> <!-- {93} -->
     <string name="move_to_shared_album">Переход к ранее общему альбому</string> <!-- {50} -->
     <string name="not_ready_yet">Еще не готово</string> <!-- {160} -->
+    <string name="locked_by_admin">Заблокировано админом</string>
+    <string name="album_visibility_restriction">Этот альбом нельзя сделать публичным \nпо следующей причине</string>
+    <string name="reason">Причина</string>
 
     <!-- Language -->
     <string name="language_korean">Корейский</string> <!-- {original_key: language_korean} -->

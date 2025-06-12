@@ -21,8 +21,9 @@
                                                android:layout_height="0dp"
                                                android:layout_weight="1"
                                                android:layout_marginTop="8dp"
+                                               android:layout_marginBottom="-12dp"
                                                android:clipToPadding="false"
-                                               android:paddingBottom="24dp">
+                                               android:paddingBottom="36dp">
 
             <LinearLayout android:layout_width="match_parent"
                           android:layout_height="wrap_content"
@@ -410,6 +411,8 @@
                 android:backgroundTint="@color/primary_normal"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp"
                 android:layout_marginHorizontal="20dp"/>
 
         <Button android:layout_width="match_parent"
@@ -422,10 +425,8 @@
                 android:backgroundTint="@color/fill_alternative"
                 app:cornerRadius="12dp"
                 android:padding="12dp"
-                android:layout_marginTop="12dp"
                 android:layout_marginBottom="20dp"
                 android:layout_marginHorizontal="20dp"/>
-
 
     </LinearLayout>
 </layout>

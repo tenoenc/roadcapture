@@ -322,6 +322,9 @@
     <string name="image_edit">编辑图片</string> <!-- {93} -->
     <string name="move_to_shared_album">正在移动到之前共享的相册</string> <!-- {50} -->
     <string name="not_ready_yet">尚未准备就绪</string> <!-- {160} -->
+    <string name="locked_by_admin">管理员锁定</string>
+    <string name="album_visibility_restriction">由于以下原因\n此相册无法设为公开</string>
+    <string name="reason">原因</string>
 
     <!-- Language -->
     <string name="language_korean">韩语</string> <!-- {original_key: language_korean} -->

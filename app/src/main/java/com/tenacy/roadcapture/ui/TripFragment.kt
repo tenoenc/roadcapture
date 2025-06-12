@@ -40,7 +40,10 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLngBounds
+import com.google.android.gms.maps.model.PolylineOptions
+import com.google.android.gms.maps.model.RoundCap
 import com.google.maps.android.PolyUtil
 import com.google.maps.android.clustering.ClusterManager
 import com.gun0912.tedpermission.PermissionListener
@@ -53,7 +56,6 @@ import com.tenacy.roadcapture.manager.SubscriptionManager.SubscriptionPurchaseCa
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.ui.dto.MemoryViewerArguments
 import com.tenacy.roadcapture.util.*
-import com.tenacy.roadcapture.worker.UpdateUserPhotoWorker
 import com.yalantis.ucrop.UCrop
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -72,6 +74,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     val binding get() = _binding!!
 
     val vm: TripViewModel by viewModels()
+
+    private lateinit var imagePickerLauncher: ImagePickerLauncher
 
     private lateinit var map: GoogleMap
 
@@ -146,6 +150,33 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupFragmentResultListeners()
+        setupImagePicker()
+    }
+
+    private fun setupImagePicker() {
+        imagePickerLauncher = registerImagePicker { result: List<Image> ->
+            result.getOrNull(0)?.let {
+                try {
+                    // 내부 캐시 디렉토리에 크롭된 이미지를 저장할 파일 생성
+                    val croppedFile = createTempImageFile()
+                    val croppedUri = getUriForFile(croppedFile)
+
+                    // uCrop 시작
+                    cropLauncher.launch(Triple(it.uri, croppedUri, getCurrentLocation()))
+                } catch (e: Exception) {
+                    Log.e("TripFragment", "uCrop 시작 오류", e)
+                    e.printStackTrace()
+                    mainActivity.vm.viewEvent(
+                        GlobalViewEvent.Toast(
+                            ToastModel(
+                                requireContext().getString(R.string.image_edit_start_error),
+                                ToastMessageType.Warning
+                            )
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -330,7 +361,8 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         )
                         return@setSafeClickListener
                     }
-                    captureImageWithCameraApp()
+//                    captureImageWithCameraApp()
+                    imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
                 }
             }
             binding.fabTripCapture.setOnClickListener(null)

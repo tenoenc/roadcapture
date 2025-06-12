@@ -83,6 +83,10 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
     val scrapCount = getLong("scrapCount")?.toInt() ?: 0
     val regionTags = get("regionTags") as? List<Map<String, String>> ?: emptyList()
     val isPublic = getBoolean("isPublic") ?: false
+    val isLocked = getBoolean("isLocked") ?: false
+    val lockReason = getString("lockReason") ?: ""
+    val lockedAt = getTimestamp("lockedAt")?.toDate()?.toLocalDateTime()
+    val lockedBy = getString("lockedBy") ?: ""
     val branchLink = getString("branchLink")
     val shareId = getString("shareId")
     val shareCreatedAt = getTimestamp("shareCreatedAt")?.toDate()?.toLocalDateTime()
@@ -102,6 +106,10 @@ fun DocumentSnapshot.toAlbum(): FirebaseAlbum {
         scrapCount = scrapCount,
         regionTags = regionTags,
         isPublic = isPublic,
+        isLocked = isLocked,
+        lockReason = lockReason,
+        lockedAt = lockedAt,
+        lockedBy = lockedBy,
         branchLink = branchLink,
         shareId = shareId,
         shareCreatedAt = shareCreatedAt,
@@ -184,10 +192,12 @@ fun DocumentSnapshot.toUser(): FirebaseUser {
 }
 
 fun DocumentSnapshot.toSystemConfig(): FirebaseSystemConfig {
+    val appVersion = getString("appVersion") ?: BuildConfig.VERSION_NAME
     val underMaintenance = getBoolean("underMaintenance") ?: false
     val updateRequired = getBoolean("updateRequired") ?: false
 
     return FirebaseSystemConfig(
+        appVersion = appVersion.trim(),
         underMaintenance = underMaintenance,
         updateRequired = updateRequired,
     )
@@ -482,10 +492,10 @@ suspend fun validateSystemConfig() {
 
     val systemConfig = systemRef.get().await().toSystemConfig()
 
-    if(systemConfig.updateRequired) {
+    if(systemConfig.isUpdateRequired()) {
         throw UpdateRequiredException()
     }
-    if(systemConfig.underMaintenance) {
+    if(systemConfig.isUnderMaintenance()) {
         throw UnderMaintenanceException()
     }
 }

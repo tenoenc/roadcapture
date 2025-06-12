@@ -16,9 +16,12 @@ import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.databinding.FragmentMainBinding
+import com.tenacy.roadcapture.manager.AppReviewManager
+import com.tenacy.roadcapture.util.consumeOnce
 import com.tenacy.roadcapture.util.mainActivity
 import com.tenacy.roadcapture.util.repeatOnLifecycle
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment: BaseFragment() {
@@ -27,6 +30,9 @@ class MainFragment: BaseFragment() {
     val binding get() = _binding!!
 
     private val vm: MainViewModel by viewModels()
+
+    @Inject
+    lateinit var appReviewManager: AppReviewManager
 
     // 메인 페이저 어댑터
     private lateinit var viewPagerAdapter: MainViewPagerAdapter
@@ -173,6 +179,22 @@ class MainFragment: BaseFragment() {
 
     private fun setupObservers() {
         observeViewEvents()
+        observeSavedState()
+    }
+
+    private fun observeSavedState() {
+        val savedStateHandle = findNavController().currentBackStackEntry?.savedStateHandle
+
+        repeatOnLifecycle(lifecycleState = Lifecycle.State.RESUMED) {
+            savedStateHandle?.consumeOnce<Bundle?>(KEY_ALBUM_UPLOAD_PROGRESS) { bundle ->
+                if (bundle == null) return@consumeOnce
+                val albumUploaded = bundle.getBoolean(RESULT_ALBUM_UPLOADED)
+                if(albumUploaded) {
+                    Log.d("MainFragment", "Album uploaded")
+                    appReviewManager.requestReview()
+                }
+            }
+        }
     }
 
     private fun observeViewEvents() {
@@ -224,5 +246,10 @@ class MainFragment: BaseFragment() {
             val name = "f" + getItemId(position) // FragmentStateAdapter가 내부적으로 사용하는 태그 형식
             return childFragmentManager.findFragmentByTag(name)
         }
+    }
+
+    companion object {
+        const val KEY_ALBUM_UPLOAD_PROGRESS = "album_upload_progress"
+        const val RESULT_ALBUM_UPLOADED = "album_uploaded"
     }
 }

@@ -322,6 +322,9 @@
     <string name="image_edit">Edit Gambar</string> <!-- {93} -->
     <string name="move_to_shared_album">Pindah ke album yang dibagikan sebelumnya</string> <!-- {50} -->
     <string name="not_ready_yet">Belum siap</string> <!-- {160} -->
+    <string name="locked_by_admin">Dikunci oleh admin</string>
+    <string name="album_visibility_restriction">Album ini tidak bisa dipublikasikan \nkarena alasan berikut</string>
+    <string name="reason">Alasan</string>
 
     <!-- Language -->
     <string name="language_korean">Korea</string> <!-- {original_key: language_korean} -->

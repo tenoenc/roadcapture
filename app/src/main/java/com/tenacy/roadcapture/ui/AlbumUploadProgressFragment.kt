@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.DecelerateInterpolator
 import androidx.activity.OnBackPressedCallback
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.tenacy.roadcapture.R
@@ -101,7 +102,11 @@ class AlbumUploadProgressFragment: BaseFragment() {
                                 )
                             )
                         )
-                        findNavController().popBackStack(R.id.mainFragment, false)
+                        val destinationId = R.id.mainFragment
+                        findNavController().getBackStackEntry(destinationId).savedStateHandle[MainFragment.KEY_ALBUM_UPLOAD_PROGRESS] = bundleOf(
+                            MainFragment.RESULT_ALBUM_UPLOADED to true
+                        )
+                        findNavController().popBackStack(destinationId, false)
                     }
 
                     is AlbumSaveState.Error -> {

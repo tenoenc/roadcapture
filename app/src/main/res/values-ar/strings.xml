@@ -322,6 +322,9 @@
     <string name="image_edit">تحرير الصورة</string> <!-- {93} -->
     <string name="move_to_shared_album">الانتقال إلى الألبوم المشترك سابقاً</string> <!-- {50} -->
     <string name="not_ready_yet">ليس جاهزاً بعد</string> <!-- {160} -->
+    <string name="locked_by_admin">مُقفل بواسطة المشرف</string>
+    <string name="album_visibility_restriction">لا يمكن جعل هذا الألبوم عامًا \nللسبب التالي</string>
+    <string name="reason">السبب</string>
 
     <!-- Language -->
     <string name="language_korean">الكورية</string> <!-- {original_key: language_korean} -->

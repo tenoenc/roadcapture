@@ -322,6 +322,9 @@
     <string name="image_edit">画像編集</string> <!-- {93} -->
     <string name="move_to_shared_album">以前に共有されたアルバムに移動します</string> <!-- {50} -->
     <string name="not_ready_yet">まだ準備ができていません</string> <!-- {160} -->
+    <string name="locked_by_admin">管理者によりロック</string>
+    <string name="album_visibility_restriction">次の理由により\nこのアルバムは公開できません</string>
+    <string name="reason">理由</string>
 
     <!-- Language -->
     <string name="language_korean">韓国語</string> <!-- {original_key: language_korean} -->

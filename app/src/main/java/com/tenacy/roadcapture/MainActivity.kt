@@ -20,6 +20,8 @@ import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
+import com.tenacy.roadcapture.data.firebase.exception.UpdateRequiredException
 import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.WorkPref
 import com.tenacy.roadcapture.manager.GoogleAccountManager
@@ -36,6 +38,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import io.branch.referral.Branch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -124,10 +127,13 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         super<AppCompatActivity>.onCreate(savedInstanceState)
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         setContentView(R.layout.activity_main)
+
         setupFragmentResultListeners()
         setupObservers()
         setupNavigationListener()
         setupWorkManagerCleaning()
+
+        checkAppUpdate()
         checkTravelingStateOnStartup()
 
         // 딥링크 데이터가 있고 아직 처리되지 않은 경우에만 초기화
@@ -155,6 +161,25 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             Branch.sessionBuilder(this).withCallback(branchListener).withData(intent.data).reInit()
         } else {
             Log.d("DeepLink", "onNewIntent - 인텐트 데이터 없음")
+        }
+    }
+
+    private fun checkAppUpdate() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val systemRef = db.collection(FirebaseConstants.COLLECTION_SYSTEMS)
+                    .document(FirebaseConstants.DOCUMENT_CONFIG)
+
+                val systemConfig = systemRef.get().await().toSystemConfig()
+
+                if (systemConfig.isUpdateRequired()) {
+                    throw UpdateRequiredException()
+                }
+            } catch (exception: UpdateRequiredException) {
+                withContext(Dispatchers.Main) {
+                    handleViewEvents(GlobalViewEvent.UpdateRequired)
+                }
+            }
         }
     }
 

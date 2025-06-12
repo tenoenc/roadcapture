@@ -322,6 +322,9 @@
     <string name="image_edit">Bild bearbeiten</string> <!-- {93} -->
     <string name="move_to_shared_album">Zum zuvor geteilten Album wechseln</string> <!-- {50} -->
     <string name="not_ready_yet">Noch nicht bereit</string> <!-- {160} -->
+    <string name="locked_by_admin">Vom Admin gesperrt</string>
+    <string name="album_visibility_restriction">Dieses Album kann aus folgendem Grund \nnicht öffentlich gemacht werden</string>
+    <string name="reason">Grund</string>
 
     <!-- Language -->
     <string name="language_korean">Koreanisch</string> <!-- {original_key: language_korean} -->

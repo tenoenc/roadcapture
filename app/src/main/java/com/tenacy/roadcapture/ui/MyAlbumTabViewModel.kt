@@ -11,12 +11,10 @@ import androidx.paging.cachedIn
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.firebase.AlbumFilter
 import com.tenacy.roadcapture.data.firebase.AlbumPagingSource
+import com.tenacy.roadcapture.data.firebase.exception.AlbumLockedException
 import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.ui.dto.Album
-import com.tenacy.roadcapture.util.ResourceProvider
-import com.tenacy.roadcapture.util.handleSystemConfigException
-import com.tenacy.roadcapture.util.user
-import com.tenacy.roadcapture.util.validateSystemConfig
+import com.tenacy.roadcapture.util.*
 import com.tenacy.roadcapture.worker.CreateShareLinkWorker
 import com.tenacy.roadcapture.worker.DeleteAlbumWorker
 import com.tenacy.roadcapture.worker.UpdateAlbumPublicWorker
@@ -68,19 +66,28 @@ class MyAlbumTabViewModel @Inject constructor(
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
                 validateSystemConfig()
+                val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
+                val album = albumRef.get().await().toAlbum()
+                if(album.isLocked) {
+                    throw AlbumLockedException(album.lockReason, album.lockedAt!!)
+                }
                 UpdateAlbumPublicWorker.enqueueOneTimeWork(context, albumId, isPublic)
                 emit(Unit)
             }
                 .catch { exception ->
                     Log.e("MyAlbumTabViewModel", "에러", exception)
                     // [VALIDATE_SYSTEM_CONFIG]
-                    if(exception is SystemConfigException) {
-                        handleSystemConfigException(exception)
-                        return@catch
+                    when(exception) {
+                        is SystemConfigException -> {
+                            handleSystemConfigException(exception)
+                        }
+                        is AlbumLockedException -> {
+                            viewEvent(MyAlbumTabViewEvent.ShowAlbumLocked(exception.lockReason, exception.lockedAt))
+                        }
                     }
                 }
                 .collect {
-                    val publicText = if(!isPublic) resourceProvider.getString(R.string.visibility_public) else resourceProvider.getString(R.string.visibility_private)
+                    val publicText = if(isPublic) resourceProvider.getString(R.string.visibility_public) else resourceProvider.getString(R.string.visibility_private)
                     viewEvent(MyAlbumTabViewEvent.EnqueueComplete.UpdateAlbumPublic(publicText))
                 }
         }

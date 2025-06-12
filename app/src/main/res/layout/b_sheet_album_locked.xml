@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable name="description" type="String"/>
+        <variable name="reason" type="String"/>
+        <import type="com.tenacy.roadcapture.ui.ViewScope"/>
+    </data>
+
+    <LinearLayout android:id="@+id/ll_b_sheet_album_locked_container"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:paddingHorizontal="20dp"
+                  android:paddingBottom="20dp"
+                  app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+        <androidx.cardview.widget.CardView android:layout_width="48dp"
+                                           android:layout_height="4dp"
+                                           android:id="@+id/card_b_sheet_album_locked_handle"
+                                           app:cardElevation="0dp"
+                                           app:cardCornerRadius="10dp"
+                                           app:cardBackgroundColor="@color/fill_neutral"
+                                           android:layout_gravity="center"
+                                           android:layout_marginTop="16dp"/>
+
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+                                               android:layout_height="0dp"
+                                               android:layout_weight="1"
+                                               android:id="@+id/ns_b_sheet_album_locked"
+                                               android:layout_marginTop="8dp"
+                                               android:paddingBottom="24dp"
+                                               android:clipToPadding="false">
+
+            <LinearLayout android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical">
+
+                <TextView android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:textAlignment="center"
+                          android:text="@string/locked_by_admin"
+                          android:layout_marginTop="20dp"/>
+
+                <TextView android:layout_width="match_parent"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_b_sheet_album_locked_description"
+                          android:textAppearance="@style/Body_12_M"
+                          android:textColor="@color/label_neutral"
+                          android:textAlignment="center"
+                          android:text="@{description}"
+                          tools:text="@string/album_visibility_restriction"
+                          android:layout_marginTop="4dp"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:layout_marginTop="24dp"
+                          android:textAppearance="@style/Title_24"
+                          android:textColor="@color/label_normal"
+                          android:text="@string/reason"/>
+
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:id="@+id/txt_b_sheet_album_locked_reason"
+                          android:layout_marginTop="12dp"
+                          android:textAppearance="@style/Body_15_M"
+                          android:textColor="@color/label_normal"
+                          android:text="@{reason}"
+                          tools:text="부적절한 컨텐츠"/>
+
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_b_sheet_album_locked_negative"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="@string/close"
+                android:backgroundTint="@color/fill_alternative"
+                app:cornerRadius="12dp"
+                android:padding="12dp"/>
+
+    </LinearLayout>
+
+</layout>

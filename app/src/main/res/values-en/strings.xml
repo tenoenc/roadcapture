@@ -322,6 +322,9 @@
     <string name="image_edit">Edit Image</string> <!-- {93} -->
     <string name="move_to_shared_album">Moving to previously shared album</string> <!-- {50} -->
     <string name="not_ready_yet">Not ready yet</string> <!-- {160} -->
+    <string name="locked_by_admin">Locked by admin</string>
+    <string name="album_visibility_restriction">This album can\'t be made public \nfor the following reason</string>
+    <string name="reason">Reason</string>
 
     <!-- Language -->
     <string name="language_korean">Korean</string> <!-- {original_key: language_korean} -->

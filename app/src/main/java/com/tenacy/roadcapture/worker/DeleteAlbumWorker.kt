@@ -92,6 +92,9 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val scrapRefs = db.collection(FirebaseConstants.COLLECTION_SCRAPS)
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
+            val reportRefs = db.collection(FirebaseConstants.COLLECTION_REPORTS)
+                .whereEqualTo("albumRef", albumRef).getAllReferences()
+
             val allOperations = mutableListOf<BatchOperation>()
             allOperations.add(DeleteDocumentOperation(albumRef))
             memoryRefs.forEach { ref ->
@@ -101,6 +104,9 @@ class DeleteAlbumWorker @AssistedInject constructor(
                 allOperations.add(DeleteDocumentOperation(ref))
             }
             scrapRefs.forEach { ref ->
+                allOperations.add(DeleteDocumentOperation(ref))
+            }
+            reportRefs.forEach { ref ->
                 allOperations.add(DeleteDocumentOperation(ref))
             }
 

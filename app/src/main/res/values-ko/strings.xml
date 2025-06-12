@@ -322,6 +322,9 @@
     <string name="image_edit">이미지 편집</string> <!-- {93} -->
     <string name="move_to_shared_album">이전에 공유받은 앨범으로 이동할게요</string> <!-- {50} -->
     <string name="not_ready_yet">아직 준비되지 않았어요</string> <!-- {160} -->
+    <string name="locked_by_admin">관리자에 의해 잠김</string>
+    <string name="album_visibility_restriction">다음 사유에 의해 \n이 앨범은 공개로 전환할 수 없어요</string>
+    <string name="reason">사유</string>
 
     <!-- Language -->
     <string name="language_korean">한국어</string> <!-- {original_key: language_korean} -->

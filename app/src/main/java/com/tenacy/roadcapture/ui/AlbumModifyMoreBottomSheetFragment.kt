@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.tenacy.roadcapture.R
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
 import com.tenacy.roadcapture.databinding.BSheetAlbumModifyMoreBinding
@@ -61,6 +60,7 @@ class AlbumModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
                 REQUEST_KEY,
                 bundleOf(KEY_PARAMS_OUT_TOGGLE_PUBLIC to ParamsOut.TogglePublic(album))
             )
+
             dismiss()
         }
         binding.btnBSheetAlbumModifyMoreShare.setSafeClickListener {
@@ -95,6 +95,8 @@ class AlbumModifyMoreBottomSheetFragment: ExpandedBottomSheetDialogFragment() {
     sealed class ParamsOut: Parcelable {
         @Parcelize
         data class TogglePublic(val album: Album): ParamsOut()
+        @Parcelize
+        data class Locked(val album: Album): ParamsOut()
         @Parcelize
         data class Share(val album: Album): ParamsOut()
         @Parcelize

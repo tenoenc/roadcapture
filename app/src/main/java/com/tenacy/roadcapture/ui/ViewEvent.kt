@@ -5,6 +5,7 @@ import com.google.firebase.auth.AuthCredential
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.ui.dto.Timezone
+import java.time.LocalDateTime
 
 sealed interface ViewEvent
 
@@ -125,6 +126,7 @@ sealed class SearchViewEvent: ViewEvent {
 }
 
 sealed class MyAlbumTabViewEvent: ViewEvent {
+    data class ShowAlbumLocked(val lockReason: String, val lockedAt: LocalDateTime): MyAlbumTabViewEvent()
     sealed class EnqueueComplete: MyAlbumTabViewEvent() {
         data object CreateShareLink: EnqueueComplete()
         data class UpdateAlbumPublic(val publicText: String): EnqueueComplete()
@@ -136,8 +138,6 @@ sealed class MyMemoryTabViewEvent: ViewEvent
 sealed class ModifyUsernameViewEvent: ViewEvent {
     data object Complete: ModifyUsernameViewEvent()
 }
-
-sealed class HtmlViewEvent
 
 sealed class SignupUsernameViewEvent: ViewEvent {
     data class Next(val username: String): SignupUsernameViewEvent()
