@@ -1,6 +1,7 @@
 package com.tenacy.roadcapture.util
 
 import androidx.recyclerview.widget.DiffUtil
+import com.tenacy.roadcapture.ui.TimezoneItem
 
 class DiffUtilCallback<out T : Any>(
     private val oldList: List<T>,
@@ -14,8 +15,19 @@ class DiffUtilCallback<out T : Any>(
         val oldItem = oldList[oldItemPosition]
         val newItem = newList[newItemPosition]
 
-        return oldItem == newItem
+        return when {
+            oldItem is TimezoneItem && newItem is TimezoneItem -> oldItem.id == newItem.id
+            else -> oldItem == newItem
+        }
     }
 
-    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean = true
+    override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
+        val oldItem = oldList[oldItemPosition]
+        val newItem = newList[newItemPosition]
+
+        return when {
+            oldItem is TimezoneItem && newItem is TimezoneItem -> oldItem.value.isSelected == newItem.value.isSelected
+            else -> true
+        }
+    }
 }

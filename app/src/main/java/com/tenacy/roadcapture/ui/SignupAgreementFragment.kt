@@ -68,7 +68,8 @@ class SignupAgreementFragment: BaseFragment() {
                     args.socialUserId,
                     defaultProfile = args.defaultProfile,
                     isExistingUser = false,
-                    username = args.username
+                    username = args.username,
+                    timezone = args.timezone,
                 ))
             }
         }

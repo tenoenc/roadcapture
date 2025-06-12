@@ -78,8 +78,8 @@ class AlbumUploadProgressViewModel @Inject constructor(
                     }
                     mapOf(
                         "country" to top3[0],
-                        "depth1" to top3[1],
-                        "depth2" to top3[2],
+                        "depth1" to if(top3.size >= 2) top3[1] else "undefined",
+                        "depth2" to if(top3.size >= 3) top3[2] else "undefined",
                     )
                 }
                     .distinct()

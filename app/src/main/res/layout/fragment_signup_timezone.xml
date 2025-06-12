@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+>
+
+    <data>
+
+        <variable name="vm" type="com.tenacy.roadcapture.ui.SignupTimezoneViewModel"/>
+
+        <import type="android.view.View"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/background_normal">
+
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:id="@+id/ll_signup_timezone_a_bar_container"
+                      android:orientation="horizontal"
+                      android:paddingHorizontal="16dp"
+                      android:paddingVertical="8dp"
+                      app:layout_constraintStart_toStartOf="parent"
+                      app:layout_constraintTop_toTopOf="parent"
+                      app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageButton
+                    android:id="@+id/ibtn_a_bar_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_arrow_left"
+                    android:background="@null"
+                    android:scaleType="fitCenter"/>
+
+        </LinearLayout>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_signup_timezone_hint"
+                  android:layout_marginTop="80dp"
+                  android:layout_marginHorizontal="20dp"
+                  android:textAppearance="@style/Title_20"
+                  android:textColor="@color/label_normal"
+                  android:textAlignment="center"
+                  android:text="@string/select_timezone"
+                  app:layout_constraintTop_toBottomOf="@id/ll_signup_timezone_a_bar_container"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView android:layout_width="0dp"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/txt_signup_timezone_hint_description"
+                  android:textAppearance="@style/Body_12_M"
+                  android:textColor="@color/label_neutral"
+                  android:textAlignment="center"
+                  android:text="@string/timezone_selection_warning"
+                  android:layout_marginHorizontal="20dp"
+                  app:layout_constraintTop_toBottomOf="@id/txt_signup_timezone_hint"
+                  app:layout_constraintStart_toStartOf="parent"
+                  app:layout_constraintEnd_toEndOf="parent"/>
+
+        <com.google.android.material.card.MaterialCardView android:layout_width="0dp"
+                                                           android:layout_height="wrap_content"
+                                                           android:id="@+id/card_signup_timezone_input"
+                                                           app:cardBackgroundColor="@color/background_normal"
+                                                           app:cardCornerRadius="12dp"
+                                                           app:cardElevation="0dp"
+                                                           app:strokeWidth="1dp"
+                                                           app:strokeColor="@color/line_normal"
+                                                           android:layout_marginTop="28dp"
+                                                           android:layout_marginHorizontal="20dp"
+                                                           app:layout_constraintTop_toBottomOf="@id/txt_signup_timezone_hint_description"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintEnd_toEndOf="parent">
+
+            <EditText android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_weight="1"
+                      android:background="@null"
+                      android:textCursorDrawable="@drawable/cursor"
+                      android:importantForAutofill="no"
+                      android:inputType="text"
+                      android:imeOptions="actionSearch"
+                      android:textAppearance="@style/Body_14_M"
+                      android:textColor="@color/label_normal"
+                      android:textAlignment="center"
+                      android:text="@={vm.searchQuery}"
+                      android:hint="@string/timezone_input_hint"
+                      android:textColorHint="@color/fill_neutral"
+                      android:padding="12dp"/>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView android:layout_width="0dp"
+                                                   android:layout_height="0dp"
+                                                   android:id="@+id/rv_signup_timezone"
+                                                   android:layout_marginBottom="-12dp"
+                                                   android:paddingHorizontal="20dp"
+                                                   android:paddingBottom="36dp"
+                                                   android:layout_marginTop="20dp"
+                                                   android:clipToPadding="false"
+                                                   app:layout_constraintTop_toBottomOf="@id/card_signup_timezone_input"
+                                                   app:layout_constraintStart_toStartOf="parent"
+                                                   app:layout_constraintEnd_toEndOf="parent"
+                                                   app:layout_constraintBottom_toTopOf="@id/btn_signup_timezone_next" />
+
+        <Button android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/btn_signup_timezone_next"
+                android:visibility="@{vm.anySelected ? View.VISIBLE : View.GONE}"
+                tools:visibility="visible"
+                android:onClick="@{() -> vm.onNextClick()}"
+                style="@style/Button"
+                android:textAppearance="@style/Body_16_SB"
+                android:textColor="@color/label_normal"
+                android:text="@string/next_step"
+                android:backgroundTint="@color/primary_normal"
+                app:cornerRadius="12dp"
+                android:padding="12dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="20dp"
+                android:layout_marginHorizontal="20dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

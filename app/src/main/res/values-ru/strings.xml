@@ -20,7 +20,7 @@
     <string name="try_again_later">Попробуйте позже</string> <!-- {99} -->
     <string name="today">Сегодня</string> <!-- {204} -->
     <string name="all">Все</string> <!-- {170} -->
-    <string name="click_here">здесь</string> <!-- {138} -->
+    <string name="click_here">нажмите здесь</string> <!-- {138} -->
     <string name="preparing">Подготовка</string> <!-- {109} -->
     <string name="recently_updated">Недавно обновлено</string> <!-- {205} -->
 
@@ -141,12 +141,12 @@
     <string name="withdrawal_complete">Удаление аккаунта завершено</string> <!-- {148} -->
     <string name="logout_confirmation">Альбомы в процессе создания будут %1$s\nВы уверены, что хотите выйти?</string> <!-- {118} -->
     <string name="logout_confirmation_full">Альбомы в процессе создания будут автоматически удалены\nВы уверены, что хотите выйти?</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">%1$s текущего аккаунта\nВы уверены, что хотите удалить аккаунт?</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">Все данные текущего аккаунта %1$s\nВы уверены, что хотите удалить аккаунт?</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">Все данные текущего аккаунта будут удалены\nВы уверены, что хотите удалить аккаунт?</string> <!-- {243} -->
     <string name="delete_album_confirmation">Если вы удалите этот альбом, вы %1$s воспоминания\nВы уверены, что хотите удалить?</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">Если вы удалите этот альбом, вы не сможете восстановить воспоминания\nВы уверены, что хотите удалить?</string> <!-- {194} -->
-    <string name="auto_deleted">автоматически удалены</string> <!-- {117} -->
-    <string name="all_data_deleted">все данные будут удалены</string> <!-- {146} -->
+    <string name="auto_deleted">будут автоматически удалены</string> <!-- {117} -->
+    <string name="all_data_deleted">будут удалены</string> <!-- {146} -->
     <string name="cannot_recover">не сможете восстановить</string> <!-- {115} -->
 
     <!-- Authentication -->
@@ -187,13 +187,13 @@
     <string name="daily_memory_limit_thirty">30 воспоминаний ежедневно</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d ежедневно</string> <!-- {137} -->
+    <string name="daily_limit">%1$d в день</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">Вы можете создать только %1$s воспоминаний максимум.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">С бесплатным планом вы можете создать только %1$s воспоминаний максимум. Чтобы создать больше воспоминаний, нажмите %2$s.</string> <!-- {140} -->
+    <string name="free_plan_memory_limit">С бесплатным планом вы можете создать максимум %1$s воспоминаний. Чтобы создать больше воспоминаний, %2$s.</string> <!-- {140} -->
     <string name="free_plan_limit_notice">С бесплатным планом вы можете создавать до 10 воспоминаний.\nЧтобы создать больше воспоминаний, нажмите здесь.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">С бесплатным планом, чтобы создать %1$s, нажмите %2$s.</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">Чтобы %1$s в бесплатном плане, %2$s.</string> <!-- {145} -->
     <string name="free_plan_share_limitation">Создание ссылок для общего доступа недоступно с бесплатным планом. Чтобы создать ссылку, нажмите здесь.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">Создание ссылок для общего доступа недоступно.</string> <!-- {143} -->
+    <string name="share_link_creation_unavailable">создать ссылки для общего доступа</string> <!-- {143} -->
     <string name="public_album_share_available">Создание ссылок для общего доступа доступно для публичных альбомов.</string> <!-- {144} -->
 
     <!-- Donation -->
@@ -313,12 +313,12 @@
     <!-- Album Management -->
     <string name="when_album_completed">Когда альбом завершен</string> <!-- {179} -->
     <string name="complete_album_guide">Пожалуйста, нажмите на значок, отображаемый справа на карте, чтобы завершить ваш альбом.</string> <!-- {178} -->
-    <string name="no_editing_possible">Редактирование невозможно.</string> <!-- {141} -->
+    <string name="no_editing_possible">редактирование невозможно</string> <!-- {141} -->
     <string name="delete_only_notice">Удаление возможно, но %1$s</string> <!-- {142} -->
     <string name="delete_only_edit_impossible">Удаление возможно, но редактирование невозможно.</string> <!-- {180} -->
     <string name="visibility_toggle_available">Вы можете переключаться между публичным/приватным.</string> <!-- {181} -->
     <string name="album_management_guide">Эти действия можно выполнить, нажав на значок, отображаемый справа во вкладке \'Мой альбом\'.</string> <!-- {183} -->
-    <string name="cannot_create_album">Невозможно создать альбом.</string> <!-- {135} -->
+    <string name="cannot_create_album">не сможете создать альбом</string> <!-- {135} -->
     <string name="image_edit">Редактировать изображение</string> <!-- {93} -->
     <string name="move_to_shared_album">Переход к ранее общему альбому</string> <!-- {50} -->
     <string name="not_ready_yet">Еще не готово</string> <!-- {160} -->
@@ -338,6 +338,120 @@
     <string name="language_arabic">Арабский</string> <!-- {original_key: language_arabic} -->
     <string name="language_settings">Настройки языка</string> <!-- {original_key: language_settings} -->
     <string name="change">Изменить</string> <!-- {original_key: change} -->
+
+    <!-- Timezone Names -->
+    <string name="timezone_dateline_standard">Стандартное время линии перемены дат</string>
+    <string name="timezone_utc_minus_11">UTC-11</string>
+    <string name="timezone_hawaiian_standard">Гавайское стандартное время</string>
+    <string name="timezone_alaskan_standard">Аляскинское стандартное время</string>
+    <string name="timezone_pacific_standard_mexico">Тихоокеанское стандартное время (Мексика)</string>
+    <string name="timezone_pacific_daylight">Тихоокеанское летнее время</string>
+    <string name="timezone_pacific_standard">Тихоокеанское стандартное время</string>
+    <string name="timezone_us_mountain_standard">Горное стандартное время США</string>
+    <string name="timezone_mountain_standard_mexico">Горное стандартное время (Мексика)</string>
+    <string name="timezone_mountain_standard">Горное стандартное время</string>
+    <string name="timezone_central_america_standard">Центральноамериканское стандартное время</string>
+    <string name="timezone_central_standard">Центральное стандартное время</string>
+    <string name="timezone_central_standard_mexico">Центральное стандартное время (Мексика)</string>
+    <string name="timezone_canada_central_standard">Канадское центральное стандартное время</string>
+    <string name="timezone_sa_pacific_standard">Южноамериканское тихоокеанское стандартное время</string>
+    <string name="timezone_eastern_standard">Восточное стандартное время</string>
+    <string name="timezone_eastern_daylight">Восточное летнее время</string>
+    <string name="timezone_us_eastern_standard">Восточное стандартное время США</string>
+    <string name="timezone_venezuela_standard">Венесуэльское стандартное время</string>
+    <string name="timezone_paraguay_standard">Парагвайское стандартное время</string>
+    <string name="timezone_atlantic_standard">Атлантическое стандартное время</string>
+    <string name="timezone_central_brazilian_standard">Центральное бразильское стандартное время</string>
+    <string name="timezone_sa_western_standard">Южноамериканское западное стандартное время</string>
+    <string name="timezone_pacific_sa_standard">Южноамериканское тихоокеанское стандартное время</string>
+    <string name="timezone_newfoundland_standard">Ньюфаундлендское стандартное время</string>
+    <string name="timezone_e_south_america_standard">Восточное южноамериканское стандартное время</string>
+    <string name="timezone_argentina_standard">Аргентинское стандартное время</string>
+    <string name="timezone_sa_eastern_standard">Южноамериканское восточное стандартное время</string>
+    <string name="timezone_greenland_standard">Гренландское стандартное время</string>
+    <string name="timezone_montevideo_standard">Монтевидейское стандартное время</string>
+    <string name="timezone_bahia_standard">Баийское стандартное время</string>
+    <string name="timezone_utc_minus_2">UTC-02</string>
+    <string name="timezone_mid_atlantic_standard">Среднеатлантическое стандартное время</string>
+    <string name="timezone_azores_standard">Азорское стандартное время</string>
+    <string name="timezone_cape_verde_standard">Стандартное время Кабо-Верде</string>
+    <string name="timezone_morocco_standard">Марокканское стандартное время</string>
+    <string name="timezone_utc">Всемирное координированное время</string>
+    <string name="timezone_gmt_standard">Стандартное время по Гринвичу</string>
+    <string name="timezone_british_summer">Британское летнее время</string>
+    <string name="timezone_greenwich_standard">Стандартное время по Гринвичу</string>
+    <string name="timezone_w_europe_standard">Западноевропейское стандартное время</string>
+    <string name="timezone_central_europe_standard">Центральноевропейское стандартное время</string>
+    <string name="timezone_romance_standard">Романское стандартное время</string>
+    <string name="timezone_central_european_standard">Центральноевропейское стандартное время</string>
+    <string name="timezone_w_central_africa_standard">Западно-центральноафриканское стандартное время</string>
+    <string name="timezone_namibia_standard">Намибийское стандартное время</string>
+    <string name="timezone_gtb_standard">GTB стандартное время</string>
+    <string name="timezone_middle_east_standard">Ближневосточное стандартное время</string>
+    <string name="timezone_egypt_standard">Египетское стандартное время</string>
+    <string name="timezone_syria_standard">Сирийское стандартное время</string>
+    <string name="timezone_e_europe_standard">Восточноевропейское стандартное время</string>
+    <string name="timezone_south_africa_standard">Южноафриканское стандартное время</string>
+    <string name="timezone_fle_standard">FLE стандартное время</string>
+    <string name="timezone_turkey_standard">Турецкое стандартное время</string>
+    <string name="timezone_israel_standard">Израильское стандартное время</string>
+    <string name="timezone_libya_standard">Ливийское стандартное время</string>
+    <string name="timezone_jordan_standard">Иорданское стандартное время</string>
+    <string name="timezone_arabic_standard">Арабское стандартное время</string>
+    <string name="timezone_kaliningrad_standard">Калининградское стандартное время</string>
+    <string name="timezone_arab_standard">Арабское стандартное время</string>
+    <string name="timezone_e_africa_standard">Восточноафриканское стандартное время</string>
+    <string name="timezone_moscow_standard">Московское стандартное время</string>
+    <string name="timezone_samara_time">Самарское время</string>
+    <string name="timezone_iran_standard">Иранское стандартное время</string>
+    <string name="timezone_arabian_standard">Аравийское стандартное время</string>
+    <string name="timezone_azerbaijan_standard">Азербайджанское стандартное время</string>
+    <string name="timezone_mauritius_standard">Маврикийское стандартное время</string>
+    <string name="timezone_georgian_standard">Грузинское стандартное время</string>
+    <string name="timezone_caucasus_standard">Кавказское стандартное время</string>
+    <string name="timezone_afghanistan_standard">Афганское стандартное время</string>
+    <string name="timezone_west_asia_standard">Западноазиатское стандартное время</string>
+    <string name="timezone_yekaterinburg_time">Екатеринбургское время</string>
+    <string name="timezone_pakistan_standard">Пакистанское стандартное время</string>
+    <string name="timezone_india_standard">Индийское стандартное время</string>
+    <string name="timezone_sri_lanka_standard">Шри-ланкийское стандартное время</string>
+    <string name="timezone_nepal_standard">Непальское стандартное время</string>
+    <string name="timezone_central_asia_standard">Центральноазиатское стандартное время</string>
+    <string name="timezone_bangladesh_standard">Бангладешское стандартное время</string>
+    <string name="timezone_myanmar_standard">Мьянмарское стандартное время</string>
+    <string name="timezone_se_asia_standard">Юго-восточноазиатское стандартное время</string>
+    <string name="timezone_n_central_asia_standard">Северо-центральноазиатское стандартное время</string>
+    <string name="timezone_china_standard">Китайское стандартное время</string>
+    <string name="timezone_north_asia_standard">Северноазиатское стандартное время</string>
+    <string name="timezone_singapore_standard">Сингапурское стандартное время</string>
+    <string name="timezone_w_australia_standard">Западноавстралийское стандартное время</string>
+    <string name="timezone_taipei_standard">Тайбэйское стандартное время</string>
+    <string name="timezone_ulaanbaatar_standard">Улан-Баторское стандартное время</string>
+    <string name="timezone_north_asia_east_standard">Северо-восточноазиатское стандартное время</string>
+    <string name="timezone_japan_standard">Японское стандартное время</string>
+    <string name="timezone_korea_standard">Корейское стандартное время</string>
+    <string name="timezone_cen_australia_standard">Центральноавстралийское стандартное время</string>
+    <string name="timezone_aus_central_standard">Австралийское центральное стандартное время</string>
+    <string name="timezone_e_australia_standard">Восточноавстралийское стандартное время</string>
+    <string name="timezone_aus_eastern_standard">Австралийское восточное стандартное время</string>
+    <string name="timezone_west_pacific_standard">Западно-тихоокеанское стандартное время</string>
+    <string name="timezone_tasmania_standard">Тасманийское стандартное время</string>
+    <string name="timezone_yakutsk_standard">Якутское стандартное время</string>
+    <string name="timezone_central_pacific_standard">Центрально-тихоокеанское стандартное время</string>
+    <string name="timezone_vladivostok_standard">Владивостокское стандартное время</string>
+    <string name="timezone_sakhalin_standard">Сахалинское стандартное время</string>
+    <string name="timezone_new_zealand_standard">Новозеландское стандартное время</string>
+    <string name="timezone_utc_plus_12">UTC+12</string>
+    <string name="timezone_fiji_standard">Фиджийское стандартное время</string>
+    <string name="timezone_magadan_standard">Магаданское стандартное время</string>
+    <string name="timezone_kamchatka_standard">Камчатское стандартное время</string>
+    <string name="timezone_tonga_standard">Тонганское стандартное время</string>
+    <string name="timezone_samoa_standard">Самоанское стандартное время</string>
+
+    <!-- Timezone -->
+    <string name="select_timezone">Пожалуйста, выберите ваш часовой пояс</string> <!-- {284} -->
+    <string name="timezone_selection_warning">Выбирайте внимательно, так как изменить потом будет нельзя</string> <!-- {285} -->
+    <string name="timezone_input_hint">Введите часовой пояс</string> <!-- {286} -->
 
     <string name="time_just_now">только что</string>
 

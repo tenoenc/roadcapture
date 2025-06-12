@@ -168,6 +168,7 @@
         <argument android:name="defaultProfile" app:argType="com.tenacy.roadcapture.ui.DefaultProfile"/>
         <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
         <argument android:name="username" app:argType="string"/>
+        <argument android:name="timezone" app:argType="com.tenacy.roadcapture.ui.dto.Timezone"/>
         <action android:id="@+id/action_signupAgreement_to_html" app:destination="@id/htmlFragment"/>
         <action android:id="@+id/action_signupAgreement_to_mainBefore"
                 app:destination="@id/mainBeforeFragment"/>
@@ -184,6 +185,7 @@
                   android:defaultValue="@null"/>
         <argument android:name="isExistingUser" app:argType="boolean"/>
         <argument android:name="username" app:argType="string" app:nullable="true" android:defaultValue="@null"/>
+        <argument android:name="timezone" app:argType="com.tenacy.roadcapture.ui.dto.Timezone" app:nullable="true" android:defaultValue="@null"/>
         <action android:id="@+id/action_mainBefore_to_main"
                 app:popUpTo="@id/loginFragment"
                 app:popUpToInclusive="true"
@@ -201,8 +203,8 @@
         <argument android:name="socialProfileUrl" app:argType="string"/>
         <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
         <argument android:name="username" app:argType="string"/>
-        <action android:id="@+id/action_signupProfile_to_signupAgreement"
-                app:destination="@id/signupAgreementFragment"/>
+        <action android:id="@+id/action_signupProfile_to_signupTimezone"
+                app:destination="@id/signupTimezoneFragment"/>
     </fragment>
     <fragment android:id="@+id/newMemoryAfterFragment" android:name="com.tenacy.roadcapture.ui.NewMemoryAfterFragment"
               android:label="NewMemoryAfterFragment"
@@ -215,4 +217,15 @@
     <fragment android:id="@+id/languageFragment" android:name="com.tenacy.roadcapture.ui.LanguageFragment"
               android:label="LanguageFragment"
               tools:layout="@layout/fragment_language"/>
+    <fragment android:id="@+id/signupTimezoneFragment" android:name="com.tenacy.roadcapture.ui.SignupTimezoneFragment"
+              android:label="SignupTimezoneFragment"
+              tools:layout="@layout/fragment_signup_timezone">
+        <argument android:name="authCredential" app:argType="com.google.firebase.auth.AuthCredential"/>
+        <argument android:name="socialUserId" app:argType="string"/>
+        <argument android:name="defaultProfile" app:argType="com.tenacy.roadcapture.ui.DefaultProfile"/>
+        <argument android:name="socialType" app:argType="com.tenacy.roadcapture.data.SocialType"/>
+        <argument android:name="username" app:argType="string"/>
+        <action android:id="@+id/action_signupTimezone_to_signupAgreement"
+                app:destination="@id/signupAgreementFragment"/>
+    </fragment>
 </navigation>

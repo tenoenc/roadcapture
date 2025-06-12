@@ -4,6 +4,7 @@ import android.location.Location
 import com.google.firebase.auth.AuthCredential
 import com.tenacy.roadcapture.data.SocialType
 import com.tenacy.roadcapture.ui.dto.Album
+import com.tenacy.roadcapture.ui.dto.Timezone
 
 sealed interface ViewEvent
 
@@ -161,4 +162,8 @@ sealed class WithdrawBeforeViewEvent : ViewEvent {
     sealed class Error(open val message: String?): WithdrawBeforeViewEvent() {
         data class Withdraw(override val message: String?) : Error(message)
     }
+}
+
+sealed class SignupTimezoneViewEvent: ViewEvent {
+    data class Next(val timezone: Timezone): SignupTimezoneViewEvent()
 }

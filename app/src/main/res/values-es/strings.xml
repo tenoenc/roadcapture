@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CapturaRuta</string>
+    <string name="app_name">RoadCapture</string>
 
     <!-- General UI -->
     <string name="app">Aplicación</string> <!-- {216} -->
@@ -187,13 +187,13 @@
     <string name="daily_memory_limit_thirty">30 recuerdos diarios</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d diarios</string> <!-- {137} -->
+    <string name="daily_limit">hasta %1$d recuerdos diarios</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">Solo puedes crear hasta %1$s recuerdos.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Con el plan gratuito, solo puedes crear hasta %1$s recuerdos. Para crear más recuerdos, haz clic %2$s.</string> <!-- {140} -->
+    <string name="free_plan_memory_limit">Con el plan gratuito, solo puedes crear %1$s. Para crear más recuerdos, haz clic %2$s.</string> <!-- {140} -->
     <string name="free_plan_limit_notice">Con el plan gratuito, puedes crear hasta 10 recuerdos.\nPara crear más recuerdos, haz clic aquí.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Con el plan gratuito, para crear %1$s, haz clic %2$s.</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">Con el plan gratuito, %1$s. Haz clic %2$s para actualizar.</string> <!-- {145} -->
     <string name="free_plan_share_limitation">La creación de enlaces para compartir no está disponible con el plan gratuito. Para crear uno, haz clic aquí.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">La creación de enlaces para compartir no está disponible.</string> <!-- {143} -->
+    <string name="share_link_creation_unavailable">la creación de enlaces para compartir no está disponible</string> <!-- {143} -->
     <string name="public_album_share_available">La creación de enlaces para compartir está disponible para álbumes públicos.</string> <!-- {144} -->
 
     <!-- Donation -->
@@ -338,6 +338,120 @@
     <string name="language_arabic">Árabe</string> <!-- {original_key: language_arabic} -->
     <string name="language_settings">Configuración de idioma</string> <!-- {original_key: language_settings} -->
     <string name="change">Cambiar</string> <!-- {original_key: change} -->
+
+    <!-- Timezone Names -->
+    <string name="timezone_dateline_standard">Hora estándar de la línea de fecha</string>
+    <string name="timezone_utc_minus_11">UTC-11</string>
+    <string name="timezone_hawaiian_standard">Hora estándar de Hawái</string>
+    <string name="timezone_alaskan_standard">Hora estándar de Alaska</string>
+    <string name="timezone_pacific_standard_mexico">Hora estándar del Pacífico (México)</string>
+    <string name="timezone_pacific_daylight">Hora de verano del Pacífico</string>
+    <string name="timezone_pacific_standard">Hora estándar del Pacífico</string>
+    <string name="timezone_us_mountain_standard">Hora estándar de montaña de EE.UU.</string>
+    <string name="timezone_mountain_standard_mexico">Hora estándar de montaña (México)</string>
+    <string name="timezone_mountain_standard">Hora estándar de montaña</string>
+    <string name="timezone_central_america_standard">Hora estándar de América Central</string>
+    <string name="timezone_central_standard">Hora estándar central</string>
+    <string name="timezone_central_standard_mexico">Hora estándar central (México)</string>
+    <string name="timezone_canada_central_standard">Hora estándar central de Canadá</string>
+    <string name="timezone_sa_pacific_standard">Hora estándar del Pacífico de SA</string>
+    <string name="timezone_eastern_standard">Hora estándar del este</string>
+    <string name="timezone_eastern_daylight">Hora de verano del este</string>
+    <string name="timezone_us_eastern_standard">Hora estándar del este de EE.UU.</string>
+    <string name="timezone_venezuela_standard">Hora estándar de Venezuela</string>
+    <string name="timezone_paraguay_standard">Hora estándar de Paraguay</string>
+    <string name="timezone_atlantic_standard">Hora estándar del Atlántico</string>
+    <string name="timezone_central_brazilian_standard">Hora estándar central de Brasil</string>
+    <string name="timezone_sa_western_standard">Hora estándar occidental de SA</string>
+    <string name="timezone_pacific_sa_standard">Hora estándar del Pacífico de SA</string>
+    <string name="timezone_newfoundland_standard">Hora estándar de Terranova</string>
+    <string name="timezone_e_south_america_standard">Hora estándar del este de Sudamérica</string>
+    <string name="timezone_argentina_standard">Hora estándar de Argentina</string>
+    <string name="timezone_sa_eastern_standard">Hora estándar oriental de SA</string>
+    <string name="timezone_greenland_standard">Hora estándar de Groenlandia</string>
+    <string name="timezone_montevideo_standard">Hora estándar de Montevideo</string>
+    <string name="timezone_bahia_standard">Hora estándar de Bahía</string>
+    <string name="timezone_utc_minus_2">UTC-02</string>
+    <string name="timezone_mid_atlantic_standard">Hora estándar del Atlántico medio</string>
+    <string name="timezone_azores_standard">Hora estándar de las Azores</string>
+    <string name="timezone_cape_verde_standard">Hora estándar de Cabo Verde</string>
+    <string name="timezone_morocco_standard">Hora estándar de Marruecos</string>
+    <string name="timezone_utc">Tiempo universal coordinado</string>
+    <string name="timezone_gmt_standard">Hora estándar GMT</string>
+    <string name="timezone_british_summer">Hora de verano británica</string>
+    <string name="timezone_greenwich_standard">Hora estándar de Greenwich</string>
+    <string name="timezone_w_europe_standard">Hora estándar de Europa occidental</string>
+    <string name="timezone_central_europe_standard">Hora estándar de Europa central</string>
+    <string name="timezone_romance_standard">Hora estándar romance</string>
+    <string name="timezone_central_european_standard">Hora estándar centroeuropea</string>
+    <string name="timezone_w_central_africa_standard">Hora estándar de África centro-occidental</string>
+    <string name="timezone_namibia_standard">Hora estándar de Namibia</string>
+    <string name="timezone_gtb_standard">Hora estándar GTB</string>
+    <string name="timezone_middle_east_standard">Hora estándar de Oriente Medio</string>
+    <string name="timezone_egypt_standard">Hora estándar de Egipto</string>
+    <string name="timezone_syria_standard">Hora estándar de Siria</string>
+    <string name="timezone_e_europe_standard">Hora estándar de Europa oriental</string>
+    <string name="timezone_south_africa_standard">Hora estándar de Sudáfrica</string>
+    <string name="timezone_fle_standard">Hora estándar FLE</string>
+    <string name="timezone_turkey_standard">Hora estándar de Turquía</string>
+    <string name="timezone_israel_standard">Hora estándar de Israel</string>
+    <string name="timezone_libya_standard">Hora estándar de Libia</string>
+    <string name="timezone_jordan_standard">Hora estándar de Jordania</string>
+    <string name="timezone_arabic_standard">Hora estándar árabe</string>
+    <string name="timezone_kaliningrad_standard">Hora estándar de Kaliningrado</string>
+    <string name="timezone_arab_standard">Hora estándar árabe</string>
+    <string name="timezone_e_africa_standard">Hora estándar de África oriental</string>
+    <string name="timezone_moscow_standard">Hora estándar de Moscú</string>
+    <string name="timezone_samara_time">Hora de Samara</string>
+    <string name="timezone_iran_standard">Hora estándar de Irán</string>
+    <string name="timezone_arabian_standard">Hora estándar arábiga</string>
+    <string name="timezone_azerbaijan_standard">Hora estándar de Azerbaiyán</string>
+    <string name="timezone_mauritius_standard">Hora estándar de Mauricio</string>
+    <string name="timezone_georgian_standard">Hora estándar de Georgia</string>
+    <string name="timezone_caucasus_standard">Hora estándar del Cáucaso</string>
+    <string name="timezone_afghanistan_standard">Hora estándar de Afganistán</string>
+    <string name="timezone_west_asia_standard">Hora estándar de Asia occidental</string>
+    <string name="timezone_yekaterinburg_time">Hora de Ekaterimburgo</string>
+    <string name="timezone_pakistan_standard">Hora estándar de Pakistán</string>
+    <string name="timezone_india_standard">Hora estándar de India</string>
+    <string name="timezone_sri_lanka_standard">Hora estándar de Sri Lanka</string>
+    <string name="timezone_nepal_standard">Hora estándar de Nepal</string>
+    <string name="timezone_central_asia_standard">Hora estándar de Asia central</string>
+    <string name="timezone_bangladesh_standard">Hora estándar de Bangladesh</string>
+    <string name="timezone_myanmar_standard">Hora estándar de Myanmar</string>
+    <string name="timezone_se_asia_standard">Hora estándar del sudeste asiático</string>
+    <string name="timezone_n_central_asia_standard">Hora estándar del centro-norte de Asia</string>
+    <string name="timezone_china_standard">Hora estándar de China</string>
+    <string name="timezone_north_asia_standard">Hora estándar del norte de Asia</string>
+    <string name="timezone_singapore_standard">Hora estándar de Singapur</string>
+    <string name="timezone_w_australia_standard">Hora estándar de Australia occidental</string>
+    <string name="timezone_taipei_standard">Hora estándar de Taipéi</string>
+    <string name="timezone_ulaanbaatar_standard">Hora estándar de Ulán Bator</string>
+    <string name="timezone_north_asia_east_standard">Hora estándar del noreste de Asia</string>
+    <string name="timezone_japan_standard">Hora estándar de Japón</string>
+    <string name="timezone_korea_standard">Hora estándar de Corea</string>
+    <string name="timezone_cen_australia_standard">Hora estándar central de Australia</string>
+    <string name="timezone_aus_central_standard">Hora estándar central australiana</string>
+    <string name="timezone_e_australia_standard">Hora estándar oriental de Australia</string>
+    <string name="timezone_aus_eastern_standard">Hora estándar oriental australiana</string>
+    <string name="timezone_west_pacific_standard">Hora estándar del Pacífico occidental</string>
+    <string name="timezone_tasmania_standard">Hora estándar de Tasmania</string>
+    <string name="timezone_yakutsk_standard">Hora estándar de Yakutsk</string>
+    <string name="timezone_central_pacific_standard">Hora estándar del Pacífico central</string>
+    <string name="timezone_vladivostok_standard">Hora estándar de Vladivostok</string>
+    <string name="timezone_sakhalin_standard">Hora estándar de Sajalín</string>
+    <string name="timezone_new_zealand_standard">Hora estándar de Nueva Zelanda</string>
+    <string name="timezone_utc_plus_12">UTC+12</string>
+    <string name="timezone_fiji_standard">Hora estándar de Fiyi</string>
+    <string name="timezone_magadan_standard">Hora estándar de Magadán</string>
+    <string name="timezone_kamchatka_standard">Hora estándar de Kamchatka</string>
+    <string name="timezone_tonga_standard">Hora estándar de Tonga</string>
+    <string name="timezone_samoa_standard">Hora estándar de Samoa</string>
+
+    <!-- Timezone -->
+    <string name="select_timezone">Por favor selecciona tu zona horaria</string> <!-- {284} -->
+    <string name="timezone_selection_warning">Elige con cuidado ya que no podrás cambiarlo después</string> <!-- {285} -->
+    <string name="timezone_input_hint">Ingresa zona horaria</string> <!-- {286} -->
 
     <string name="time_just_now">ahora mismo</string>
 

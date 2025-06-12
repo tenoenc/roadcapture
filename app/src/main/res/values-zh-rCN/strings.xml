@@ -20,7 +20,7 @@
     <string name="try_again_later">请稍后重试</string> <!-- {99} -->
     <string name="today">今天</string> <!-- {204} -->
     <string name="all">全部</string> <!-- {170} -->
-    <string name="click_here">这里</string> <!-- {138} -->
+    <string name="click_here">点击这里</string> <!-- {138} -->
     <string name="preparing">准备中</string> <!-- {109} -->
     <string name="recently_updated">最近更新</string> <!-- {205} -->
 
@@ -141,12 +141,12 @@
     <string name="withdrawal_complete">服务退出已完成</string> <!-- {148} -->
     <string name="logout_confirmation">正在编辑的相册将%1$s\n您确定要退出登录吗？</string> <!-- {118} -->
     <string name="logout_confirmation_full">正在编辑的相册将被自动删除\n您确定要退出登录吗？</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">当前账户的%1$s\\n您确定要退出吗？</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">当前账户%1$s\n您确定要退出吗？</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">当前账户的所有数据将被删除\n您确定要退出吗？</string> <!-- {243} -->
     <string name="delete_album_confirmation">如果删除此相册，您将%1$s回忆\n您确定要删除吗？</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">如果删除此相册，您将无法恢复回忆\n您确定要删除吗？</string> <!-- {194} -->
-    <string name="auto_deleted">自动删除</string> <!-- {117} -->
-    <string name="all_data_deleted">所有数据将被删除</string> <!-- {146} -->
+    <string name="auto_deleted">被自动删除</string> <!-- {117} -->
+    <string name="all_data_deleted">的所有数据将被删除</string> <!-- {146} -->
     <string name="cannot_recover">无法恢复</string> <!-- {115} -->
 
     <!-- Authentication -->
@@ -189,11 +189,11 @@
     <!-- Free Plan Limits -->
     <string name="daily_limit">每日%1$d个</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">您最多只能创建%1$s个回忆。</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">免费计划中，您最多只能创建%1$s个回忆。如需创建更多回忆，请点击%2$s。</string> <!-- {140} -->
+    <string name="free_plan_memory_limit">免费计划中，您最多只能创建%1$s回忆。如需创建更多回忆，请%2$s。</string> <!-- {140} -->
     <string name="free_plan_limit_notice">免费计划中，您最多只能创建10个回忆。\n如需创建更多回忆，请点击这里。</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">免费计划中，如需创建%1$s，请点击%2$s。</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">在免费计划中%1$s，请%2$s。</string> <!-- {145} -->
     <string name="free_plan_share_limitation">免费计划不支持创建分享链接。如需创建，请点击这里。</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">无法创建分享链接。</string> <!-- {143} -->
+    <string name="share_link_creation_unavailable">要创建分享链接</string> <!-- {143} -->
     <string name="public_album_share_available">公开相册可以创建分享链接。</string> <!-- {144} -->
 
     <!-- Donation -->
@@ -313,12 +313,12 @@
     <!-- Album Management -->
     <string name="when_album_completed">当相册完成时</string> <!-- {179} -->
     <string name="complete_album_guide">请在地图上点击右侧显示的图标完成您的相册。</string> <!-- {178} -->
-    <string name="no_editing_possible">无法编辑。</string> <!-- {141} -->
+    <string name="no_editing_possible">无法编辑</string> <!-- {141} -->
     <string name="delete_only_notice">可以删除，但%1$s</string> <!-- {142} -->
     <string name="delete_only_edit_impossible">可以删除，但无法编辑。</string> <!-- {180} -->
     <string name="visibility_toggle_available">可以切换公开/私密。</string> <!-- {181} -->
     <string name="album_management_guide">通过在"我的相册"选项卡中点击右侧显示的图标可以执行上述操作。</string> <!-- {183} -->
-    <string name="cannot_create_album">无法创建相册。</string> <!-- {135} -->
+    <string name="cannot_create_album">无法创建相册</string> <!-- {135} -->
     <string name="image_edit">编辑图片</string> <!-- {93} -->
     <string name="move_to_shared_album">正在移动到之前共享的相册</string> <!-- {50} -->
     <string name="not_ready_yet">尚未准备就绪</string> <!-- {160} -->
@@ -338,6 +338,120 @@
     <string name="language_arabic">阿拉伯语</string> <!-- {original_key: language_arabic} -->
     <string name="language_settings">语言设置</string> <!-- {original_key: language_settings} -->
     <string name="change">更改</string> <!-- {original_key: change} -->
+
+    <!-- Timezone Names -->
+    <string name="timezone_dateline_standard">国际日期变更线标准时间</string>
+    <string name="timezone_utc_minus_11">UTC-11</string>
+    <string name="timezone_hawaiian_standard">夏威夷标准时间</string>
+    <string name="timezone_alaskan_standard">阿拉斯加标准时间</string>
+    <string name="timezone_pacific_standard_mexico">太平洋标准时间（墨西哥）</string>
+    <string name="timezone_pacific_daylight">太平洋夏令时间</string>
+    <string name="timezone_pacific_standard">太平洋标准时间</string>
+    <string name="timezone_us_mountain_standard">美国山地标准时间</string>
+    <string name="timezone_mountain_standard_mexico">山地标准时间（墨西哥）</string>
+    <string name="timezone_mountain_standard">山地标准时间</string>
+    <string name="timezone_central_america_standard">中美洲标准时间</string>
+    <string name="timezone_central_standard">中部标准时间</string>
+    <string name="timezone_central_standard_mexico">中部标准时间（墨西哥）</string>
+    <string name="timezone_canada_central_standard">加拿大中部标准时间</string>
+    <string name="timezone_sa_pacific_standard">南美太平洋标准时间</string>
+    <string name="timezone_eastern_standard">东部标准时间</string>
+    <string name="timezone_eastern_daylight">东部夏令时间</string>
+    <string name="timezone_us_eastern_standard">美国东部标准时间</string>
+    <string name="timezone_venezuela_standard">委内瑞拉标准时间</string>
+    <string name="timezone_paraguay_standard">巴拉圭标准时间</string>
+    <string name="timezone_atlantic_standard">大西洋标准时间</string>
+    <string name="timezone_central_brazilian_standard">巴西中部标准时间</string>
+    <string name="timezone_sa_western_standard">南美西部标准时间</string>
+    <string name="timezone_pacific_sa_standard">南美太平洋标准时间</string>
+    <string name="timezone_newfoundland_standard">纽芬兰标准时间</string>
+    <string name="timezone_e_south_america_standard">南美东部标准时间</string>
+    <string name="timezone_argentina_standard">阿根廷标准时间</string>
+    <string name="timezone_sa_eastern_standard">南美东部标准时间</string>
+    <string name="timezone_greenland_standard">格林兰标准时间</string>
+    <string name="timezone_montevideo_standard">蒙得维的亚标准时间</string>
+    <string name="timezone_bahia_standard">巴伊亚标准时间</string>
+    <string name="timezone_utc_minus_2">UTC-02</string>
+    <string name="timezone_mid_atlantic_standard">中大西洋标准时间</string>
+    <string name="timezone_azores_standard">亚速尔群岛标准时间</string>
+    <string name="timezone_cape_verde_standard">佛得角标准时间</string>
+    <string name="timezone_morocco_standard">摩洛哥标准时间</string>
+    <string name="timezone_utc">协调世界时</string>
+    <string name="timezone_gmt_standard">格林威治标准时间</string>
+    <string name="timezone_british_summer">英国夏令时间</string>
+    <string name="timezone_greenwich_standard">格林威治标准时间</string>
+    <string name="timezone_w_europe_standard">西欧标准时间</string>
+    <string name="timezone_central_europe_standard">中欧标准时间</string>
+    <string name="timezone_romance_standard">罗曼语标准时间</string>
+    <string name="timezone_central_european_standard">中欧标准时间</string>
+    <string name="timezone_w_central_africa_standard">西中非标准时间</string>
+    <string name="timezone_namibia_standard">纳米比亚标准时间</string>
+    <string name="timezone_gtb_standard">GTB标准时间</string>
+    <string name="timezone_middle_east_standard">中东标准时间</string>
+    <string name="timezone_egypt_standard">埃及标准时间</string>
+    <string name="timezone_syria_standard">叙利亚标准时间</string>
+    <string name="timezone_e_europe_standard">东欧标准时间</string>
+    <string name="timezone_south_africa_standard">南非标准时间</string>
+    <string name="timezone_fle_standard">FLE标准时间</string>
+    <string name="timezone_turkey_standard">土耳其标准时间</string>
+    <string name="timezone_israel_standard">以色列标准时间</string>
+    <string name="timezone_libya_standard">利比亚标准时间</string>
+    <string name="timezone_jordan_standard">约旦标准时间</string>
+    <string name="timezone_arabic_standard">阿拉伯标准时间</string>
+    <string name="timezone_kaliningrad_standard">加里宁格勒标准时间</string>
+    <string name="timezone_arab_standard">阿拉伯标准时间</string>
+    <string name="timezone_e_africa_standard">东非标准时间</string>
+    <string name="timezone_moscow_standard">莫斯科标准时间</string>
+    <string name="timezone_samara_time">萨马拉时间</string>
+    <string name="timezone_iran_standard">伊朗标准时间</string>
+    <string name="timezone_arabian_standard">阿拉伯标准时间</string>
+    <string name="timezone_azerbaijan_standard">阿塞拜疆标准时间</string>
+    <string name="timezone_mauritius_standard">毛里求斯标准时间</string>
+    <string name="timezone_georgian_standard">格鲁吉亚标准时间</string>
+    <string name="timezone_caucasus_standard">高加索标准时间</string>
+    <string name="timezone_afghanistan_standard">阿富汗标准时间</string>
+    <string name="timezone_west_asia_standard">西亚标准时间</string>
+    <string name="timezone_yekaterinburg_time">叶卡捷琳堡时间</string>
+    <string name="timezone_pakistan_standard">巴基斯坦标准时间</string>
+    <string name="timezone_india_standard">印度标准时间</string>
+    <string name="timezone_sri_lanka_standard">斯里兰卡标准时间</string>
+    <string name="timezone_nepal_standard">尼泊尔标准时间</string>
+    <string name="timezone_central_asia_standard">中亚标准时间</string>
+    <string name="timezone_bangladesh_standard">孟加拉国标准时间</string>
+    <string name="timezone_myanmar_standard">缅甸标准时间</string>
+    <string name="timezone_se_asia_standard">东南亚标准时间</string>
+    <string name="timezone_n_central_asia_standard">北中亚标准时间</string>
+    <string name="timezone_china_standard">中国标准时间</string>
+    <string name="timezone_north_asia_standard">北亚标准时间</string>
+    <string name="timezone_singapore_standard">新加坡标准时间</string>
+    <string name="timezone_w_australia_standard">西澳大利亚标准时间</string>
+    <string name="timezone_taipei_standard">台北标准时间</string>
+    <string name="timezone_ulaanbaatar_standard">乌兰巴托标准时间</string>
+    <string name="timezone_north_asia_east_standard">北亚东部标准时间</string>
+    <string name="timezone_japan_standard">日本标准时间</string>
+    <string name="timezone_korea_standard">韩国标准时间</string>
+    <string name="timezone_cen_australia_standard">澳大利亚中部标准时间</string>
+    <string name="timezone_aus_central_standard">澳大利亚中部标准时间</string>
+    <string name="timezone_e_australia_standard">澳大利亚东部标准时间</string>
+    <string name="timezone_aus_eastern_standard">澳大利亚东部标准时间</string>
+    <string name="timezone_west_pacific_standard">西太平洋标准时间</string>
+    <string name="timezone_tasmania_standard">塔斯马尼亚标准时间</string>
+    <string name="timezone_yakutsk_standard">雅库茨克标准时间</string>
+    <string name="timezone_central_pacific_standard">中太平洋标准时间</string>
+    <string name="timezone_vladivostok_standard">符拉迪沃斯托克标准时间</string>
+    <string name="timezone_sakhalin_standard">萨哈林标准时间</string>
+    <string name="timezone_new_zealand_standard">新西兰标准时间</string>
+    <string name="timezone_utc_plus_12">UTC+12</string>
+    <string name="timezone_fiji_standard">斐济标准时间</string>
+    <string name="timezone_magadan_standard">马加丹标准时间</string>
+    <string name="timezone_kamchatka_standard">堪察加标准时间</string>
+    <string name="timezone_tonga_standard">汤加标准时间</string>
+    <string name="timezone_samoa_standard">萨摩亚标准时间</string>
+
+    <!-- Timezone -->
+    <string name="select_timezone">请选择您的时区</string> <!-- {284} -->
+    <string name="timezone_selection_warning">请慎重选择，之后无法更改</string> <!-- {285} -->
+    <string name="timezone_input_hint">输入时区</string> <!-- {286} -->
 
     <string name="time_just_now">刚刚</string>
 

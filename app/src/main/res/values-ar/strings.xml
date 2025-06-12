@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">رود كابتشر</string>
+    <string name="app_name">RoadCapture</string>
 
     <!-- General UI -->
     <string name="app">التطبيق</string> <!-- {216} -->
@@ -139,14 +139,14 @@
     <string name="withdraw">انسحاب</string> <!-- {241} -->
     <string name="service_withdrawal">الانسحاب من الخدمة</string> <!-- {242} -->
     <string name="withdrawal_complete">اكتمل الانسحاب من الخدمة</string> <!-- {148} -->
-    <string name="logout_confirmation">ستتم %1$s الألبومات قيد التقدم\nهل أنت متأكد أنك تريد تسجيل الخروج؟</string> <!-- {118} -->
+    <string name="logout_confirmation">سيتم %1$s الألبومات قيد التقدم\nهل أنت متأكد أنك تريد تسجيل الخروج؟</string> <!-- {118} -->
     <string name="logout_confirmation_full">سيتم حذف الألبومات قيد التقدم تلقائياً\nهل أنت متأكد أنك تريد تسجيل الخروج؟</string> <!-- {252} -->
-    <string name="withdrawal_confirmation">سيتم %1$s لحسابك الحالي\nهل أنت متأكد أنك تريد الانسحاب؟</string> <!-- {147} -->
+    <string name="withdrawal_confirmation">%1$s لحسابك الحالي\nهل أنت متأكد أنك تريد الانسحاب؟</string> <!-- {147} -->
     <string name="withdrawal_confirmation_full">سيتم حذف جميع بيانات حسابك الحالي\nهل أنت متأكد أنك تريد الانسحاب؟</string> <!-- {243} -->
     <string name="delete_album_confirmation">إذا قمت بحذف هذا الألبوم، %1$s الذكريات\nهل أنت متأكد أنك تريد الحذف؟</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">إذا قمت بحذف هذا الألبوم، لن تتمكن من استعادة الذكريات\nهل أنت متأكد أنك تريد الحذف؟</string> <!-- {194} -->
-    <string name="auto_deleted">سيتم حذفها تلقائياً</string> <!-- {117} -->
-    <string name="all_data_deleted">سيتم حذف جميع البيانات</string> <!-- {146} -->
+    <string name="auto_deleted">حذفها تلقائياً</string> <!-- {117} -->
+    <string name="all_data_deleted">حذف جميع البيانات</string> <!-- {146} -->
     <string name="cannot_recover">لن تتمكن من استعادة</string> <!-- {115} -->
 
     <!-- Authentication -->
@@ -187,13 +187,13 @@
     <string name="daily_memory_limit_thirty">30 ذكرى يومية</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d يومياً</string> <!-- {137} -->
+    <string name="daily_limit">حتى %1$d ذكريات يومياً</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">يمكنك إنشاء %1$s ذكريات كحد أقصى فقط.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">مع الخطة المجانية، يمكنك إنشاء %1$s ذكريات كحد أقصى فقط. لإنشاء المزيد من الذكريات، الرجاء النقر %2$s.</string> <!-- {140} -->
+    <string name="free_plan_memory_limit">مع الخطة المجانية، يمكنك إنشاء %1$s فقط. لإنشاء المزيد من الذكريات، الرجاء النقر %2$s.</string> <!-- {140} -->
     <string name="free_plan_limit_notice">مع الخطة المجانية، يمكنك إنشاء حتى 10 ذكريات.\nلإنشاء المزيد من الذكريات، الرجاء النقر هنا.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">مع الخطة المجانية، لإنشاء %1$s، الرجاء النقر %2$s.</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">مع الخطة المجانية، %1$s. الرجاء النقر %2$s للترقية.</string> <!-- {145} -->
     <string name="free_plan_share_limitation">إنشاء رابط المشاركة غير متاح مع الخطة المجانية. للإنشاء، الرجاء النقر هنا.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">إنشاء رابط المشاركة غير متاح.</string> <!-- {143} -->
+    <string name="share_link_creation_unavailable">لا يمكن إنشاء رابط المشاركة</string> <!-- {143} -->
     <string name="public_album_share_available">إنشاء رابط المشاركة متاح للألبومات العامة.</string> <!-- {144} -->
 
     <!-- Donation -->
@@ -338,6 +338,120 @@
     <string name="language_arabic">العربية</string> <!-- {original_key: language_arabic} -->
     <string name="language_settings">إعدادات اللغة</string> <!-- {original_key: language_settings} -->
     <string name="change">تغيير</string> <!-- {original_key: change} -->
+
+    <!-- Timezone Names -->
+    <string name="timezone_dateline_standard">التوقيت القياسي لخط التاريخ</string>
+    <string name="timezone_utc_minus_11">UTC-11</string>
+    <string name="timezone_hawaiian_standard">التوقيت القياسي لهاواي</string>
+    <string name="timezone_alaskan_standard">التوقيت القياسي لألاسكا</string>
+    <string name="timezone_pacific_standard_mexico">التوقيت القياسي للمحيط الهادئ (المكسيك)</string>
+    <string name="timezone_pacific_daylight">التوقيت الصيفي للمحيط الهادئ</string>
+    <string name="timezone_pacific_standard">التوقيت القياسي للمحيط الهادئ</string>
+    <string name="timezone_us_mountain_standard">التوقيت القياسي الجبلي الأمريكي</string>
+    <string name="timezone_mountain_standard_mexico">التوقيت القياسي الجبلي (المكسيك)</string>
+    <string name="timezone_mountain_standard">التوقيت القياسي الجبلي</string>
+    <string name="timezone_central_america_standard">التوقيت القياسي لأمريكا الوسطى</string>
+    <string name="timezone_central_standard">التوقيت القياسي المركزي</string>
+    <string name="timezone_central_standard_mexico">التوقيت القياسي المركزي (المكسيك)</string>
+    <string name="timezone_canada_central_standard">التوقيت القياسي المركزي الكندي</string>
+    <string name="timezone_sa_pacific_standard">التوقيت القياسي للمحيط الهادئ في أمريكا الجنوبية</string>
+    <string name="timezone_eastern_standard">التوقيت القياسي الشرقي</string>
+    <string name="timezone_eastern_daylight">التوقيت الصيفي الشرقي</string>
+    <string name="timezone_us_eastern_standard">التوقيت القياسي الشرقي الأمريكي</string>
+    <string name="timezone_venezuela_standard">التوقيت القياسي لفنزويلا</string>
+    <string name="timezone_paraguay_standard">التوقيت القياسي لباراغواي</string>
+    <string name="timezone_atlantic_standard">التوقيت القياسي للأطلسي</string>
+    <string name="timezone_central_brazilian_standard">التوقيت القياسي البرازيلي المركزي</string>
+    <string name="timezone_sa_western_standard">التوقيت القياسي الغربي لأمريكا الجنوبية</string>
+    <string name="timezone_pacific_sa_standard">التوقيت القياسي للمحيط الهادئ في أمريكا الجنوبية</string>
+    <string name="timezone_newfoundland_standard">التوقيت القياسي لنيوفاوندلاند</string>
+    <string name="timezone_e_south_america_standard">التوقيت القياسي لشرق أمريكا الجنوبية</string>
+    <string name="timezone_argentina_standard">التوقيت القياسي للأرجنتين</string>
+    <string name="timezone_sa_eastern_standard">التوقيت القياسي الشرقي لأمريكا الجنوبية</string>
+    <string name="timezone_greenland_standard">التوقيت القياسي لجرينلاند</string>
+    <string name="timezone_montevideo_standard">التوقيت القياسي لمونتيفيديو</string>
+    <string name="timezone_bahia_standard">التوقيت القياسي لباهيا</string>
+    <string name="timezone_utc_minus_2">UTC-02</string>
+    <string name="timezone_mid_atlantic_standard">التوقيت القياسي لوسط الأطلسي</string>
+    <string name="timezone_azores_standard">التوقيت القياسي لجزر الأزور</string>
+    <string name="timezone_cape_verde_standard">التوقيت القياسي للرأس الأخضر</string>
+    <string name="timezone_morocco_standard">التوقيت القياسي للمغرب</string>
+    <string name="timezone_utc">التوقيت العالمي المنسق</string>
+    <string name="timezone_gmt_standard">توقيت غرينتش القياسي</string>
+    <string name="timezone_british_summer">التوقيت الصيفي البريطاني</string>
+    <string name="timezone_greenwich_standard">التوقيت القياسي لغرينتش</string>
+    <string name="timezone_w_europe_standard">التوقيت القياسي لغرب أوروبا</string>
+    <string name="timezone_central_europe_standard">التوقيت القياسي لوسط أوروبا</string>
+    <string name="timezone_romance_standard">التوقيت القياسي الرومانسي</string>
+    <string name="timezone_central_european_standard">التوقيت القياسي لوسط أوروبا</string>
+    <string name="timezone_w_central_africa_standard">التوقيت القياسي لغرب وسط أفريقيا</string>
+    <string name="timezone_namibia_standard">التوقيت القياسي لناميبيا</string>
+    <string name="timezone_gtb_standard">التوقيت القياسي GTB</string>
+    <string name="timezone_middle_east_standard">التوقيت القياسي للشرق الأوسط</string>
+    <string name="timezone_egypt_standard">التوقيت القياسي لمصر</string>
+    <string name="timezone_syria_standard">التوقيت القياسي لسوريا</string>
+    <string name="timezone_e_europe_standard">التوقيت القياسي لشرق أوروبا</string>
+    <string name="timezone_south_africa_standard">التوقيت القياسي لجنوب أفريقيا</string>
+    <string name="timezone_fle_standard">التوقيت القياسي FLE</string>
+    <string name="timezone_turkey_standard">التوقيت القياسي لتركيا</string>
+    <string name="timezone_israel_standard">التوقيت القياسي لإسرائيل</string>
+    <string name="timezone_libya_standard">التوقيت القياسي لليبيا</string>
+    <string name="timezone_jordan_standard">التوقيت القياسي للأردن</string>
+    <string name="timezone_arabic_standard">التوقيت القياسي العربي</string>
+    <string name="timezone_kaliningrad_standard">التوقيت القياسي لكالينينغراد</string>
+    <string name="timezone_arab_standard">التوقيت القياسي العربي</string>
+    <string name="timezone_e_africa_standard">التوقيت القياسي لشرق أفريقيا</string>
+    <string name="timezone_moscow_standard">التوقيت القياسي لموسكو</string>
+    <string name="timezone_samara_time">توقيت سامارا</string>
+    <string name="timezone_iran_standard">التوقيت القياسي لإيران</string>
+    <string name="timezone_arabian_standard">التوقيت القياسي العربي</string>
+    <string name="timezone_azerbaijan_standard">التوقيت القياسي لأذربيجان</string>
+    <string name="timezone_mauritius_standard">التوقيت القياسي لموريشيوس</string>
+    <string name="timezone_georgian_standard">التوقيت القياسي لجورجيا</string>
+    <string name="timezone_caucasus_standard">التوقيت القياسي للقوقاز</string>
+    <string name="timezone_afghanistan_standard">التوقيت القياسي لأفغانستان</string>
+    <string name="timezone_west_asia_standard">التوقيت القياسي لغرب آسيا</string>
+    <string name="timezone_yekaterinburg_time">توقيت يكاتيرينبورغ</string>
+    <string name="timezone_pakistan_standard">التوقيت القياسي لباكستان</string>
+    <string name="timezone_india_standard">التوقيت القياسي للهند</string>
+    <string name="timezone_sri_lanka_standard">التوقيت القياسي لسريلانكا</string>
+    <string name="timezone_nepal_standard">التوقيت القياسي لنيبال</string>
+    <string name="timezone_central_asia_standard">التوقيت القياسي لوسط آسيا</string>
+    <string name="timezone_bangladesh_standard">التوقيت القياسي لبنغلاديش</string>
+    <string name="timezone_myanmar_standard">التوقيت القياسي لميانمار</string>
+    <string name="timezone_se_asia_standard">التوقيت القياسي لجنوب شرق آسيا</string>
+    <string name="timezone_n_central_asia_standard">التوقيت القياسي لشمال وسط آسيا</string>
+    <string name="timezone_china_standard">التوقيت القياسي للصين</string>
+    <string name="timezone_north_asia_standard">التوقيت القياسي لشمال آسيا</string>
+    <string name="timezone_singapore_standard">التوقيت القياسي لسنغافورة</string>
+    <string name="timezone_w_australia_standard">التوقيت القياسي لغرب أستراليا</string>
+    <string name="timezone_taipei_standard">التوقيت القياسي لتايبيه</string>
+    <string name="timezone_ulaanbaatar_standard">التوقيت القياسي لأولان باتور</string>
+    <string name="timezone_north_asia_east_standard">التوقيت القياسي لشمال شرق آسيا</string>
+    <string name="timezone_japan_standard">التوقيت القياسي لليابان</string>
+    <string name="timezone_korea_standard">التوقيت القياسي لكوريا</string>
+    <string name="timezone_cen_australia_standard">التوقيت القياسي لوسط أستراليا</string>
+    <string name="timezone_aus_central_standard">التوقيت القياسي الأسترالي المركزي</string>
+    <string name="timezone_e_australia_standard">التوقيت القياسي لشرق أستراليا</string>
+    <string name="timezone_aus_eastern_standard">التوقيت القياسي الأسترالي الشرقي</string>
+    <string name="timezone_west_pacific_standard">التوقيت القياسي لغرب المحيط الهادئ</string>
+    <string name="timezone_tasmania_standard">التوقيت القياسي لتسمانيا</string>
+    <string name="timezone_yakutsk_standard">التوقيت القياسي لياكوتسك</string>
+    <string name="timezone_central_pacific_standard">التوقيت القياسي لوسط المحيط الهادئ</string>
+    <string name="timezone_vladivostok_standard">التوقيت القياسي لفلاديفوستوك</string>
+    <string name="timezone_sakhalin_standard">التوقيت القياسي لساخالين</string>
+    <string name="timezone_new_zealand_standard">التوقيت القياسي لنيوزيلندا</string>
+    <string name="timezone_utc_plus_12">UTC+12</string>
+    <string name="timezone_fiji_standard">التوقيت القياسي لفيجي</string>
+    <string name="timezone_magadan_standard">التوقيت القياسي لماغادان</string>
+    <string name="timezone_kamchatka_standard">التوقيت القياسي لكامتشاتكا</string>
+    <string name="timezone_tonga_standard">التوقيت القياسي لتونغا</string>
+    <string name="timezone_samoa_standard">التوقيت القياسي لساموا</string>
+
+    <!-- Timezone -->
+    <string name="select_timezone">الرجاء اختيار المنطقة الزمنية</string> <!-- {284} -->
+    <string name="timezone_selection_warning">اختر بعناية لأنه لا يمكن تغييره لاحقاً</string> <!-- {285} -->
+    <string name="timezone_input_hint">أدخل المنطقة الزمنية</string> <!-- {286} -->
 
     <string name="time_just_now">الآن</string>
 

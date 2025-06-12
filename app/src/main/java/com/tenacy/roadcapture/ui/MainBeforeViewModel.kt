@@ -47,6 +47,7 @@ class MainBeforeViewModel @Inject constructor(
                 if (!isExistingUser) {
                     val username = args.username ?: user!!.displayName ?: "unknown"
                     val defaultProfile = args.defaultProfile!!
+                    val timezone = args.timezone!!
 
                     // 1. Authentication 프로필 업데이트
                     val profileUpdates = UserProfileChangeRequest.Builder()
@@ -69,6 +70,8 @@ class MainBeforeViewModel @Inject constructor(
                         "updatedAt" to FieldValue.serverTimestamp(),
                         "photoUrl" to defaultProfile.url,
                         "photoName" to defaultProfilePath,
+                        "timezoneId" to timezone.id,
+                        "timezoneOffset" to timezone.offset,
                     )
                     userRef.set(userData).await()
 

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">CapturaDeCaminho</string>
+    <string name="app_name">RoadCapture</string>
 
     <!-- General UI -->
     <string name="app">Aplicativo</string> <!-- {216} -->
@@ -20,7 +20,7 @@
     <string name="try_again_later">Tente novamente mais tarde</string> <!-- {99} -->
     <string name="today">Hoje</string> <!-- {204} -->
     <string name="all">Todos</string> <!-- {170} -->
-    <string name="click_here">aqui</string> <!-- {138} -->
+    <string name="click_here">clique aqui</string> <!-- {138} -->
     <string name="preparing">Preparando</string> <!-- {109} -->
     <string name="recently_updated">Atualizados recentemente</string> <!-- {205} -->
 
@@ -145,9 +145,9 @@
     <string name="withdrawal_confirmation_full">Todos os dados da conta atual serão excluídos\nTem certeza de que deseja se retirar?</string> <!-- {243} -->
     <string name="delete_album_confirmation">Se você excluir este álbum, %1$s as memórias\nTem certeza de que deseja excluí-lo?</string> <!-- {116} -->
     <string name="delete_album_confirmation_full">Se você excluir este álbum, não poderá recuperar as memórias\nTem certeza de que deseja excluí-lo?</string> <!-- {194} -->
-    <string name="auto_deleted">excluídos automaticamente</string> <!-- {117} -->
+    <string name="auto_deleted">serão excluídos automaticamente</string> <!-- {117} -->
     <string name="all_data_deleted">todos os dados serão excluídos</string> <!-- {146} -->
-    <string name="cannot_recover">não poderá recuperar</string> <!-- {115} -->
+    <string name="cannot_recover">não será possível recuperar</string> <!-- {115} -->
 
     <!-- Authentication -->
     <string name="google">Google</string>
@@ -187,13 +187,13 @@
     <string name="daily_memory_limit_thirty">30 memórias diárias</string> <!-- {246} -->
 
     <!-- Free Plan Limits -->
-    <string name="daily_limit">%1$d diárias</string> <!-- {137} -->
+    <string name="daily_limit">%1$d por dia</string> <!-- {137} -->
     <string name="daily_memory_limit_notice">Você só pode criar até %1$s memórias.</string> <!-- {139} -->
-    <string name="free_plan_memory_limit">Com o plano gratuito, você só pode criar até %1$s memórias. Para criar mais memórias, clique %2$s.</string> <!-- {140} -->
+    <string name="free_plan_memory_limit">Com o plano gratuito, você só pode criar %1$s memórias. Para criar mais memórias, %2$s.</string> <!-- {140} -->
     <string name="free_plan_limit_notice">Com o plano gratuito, você pode criar até 10 memórias.\nPara criar mais memórias, clique aqui.</string> <!-- {176} -->
-    <string name="free_plan_feature_limit">Com o plano gratuito, para criar %1$s, clique %2$s.</string> <!-- {145} -->
+    <string name="free_plan_feature_limit">Para %1$s no plano gratuito, %2$s.</string> <!-- {145} -->
     <string name="free_plan_share_limitation">A criação de links para compartilhar não está disponível com o plano gratuito. Para criar um, clique aqui.</string> <!-- {182} -->
-    <string name="share_link_creation_unavailable">A criação de links para compartilhar não está disponível.</string> <!-- {143} -->
+    <string name="share_link_creation_unavailable">criar links de compartilhamento</string> <!-- {143} -->
     <string name="public_album_share_available">A criação de links para compartilhar está disponível para álbuns públicos.</string> <!-- {144} -->
 
     <!-- Donation -->
@@ -313,12 +313,12 @@
     <!-- Album Management -->
     <string name="when_album_completed">Quando o álbum estiver concluído</string> <!-- {179} -->
     <string name="complete_album_guide">Por favor, pressione o ícone mostrado à direita no mapa para completar seu álbum.</string> <!-- {178} -->
-    <string name="no_editing_possible">Não é possível editar.</string> <!-- {141} -->
+    <string name="no_editing_possible">não será possível editar</string> <!-- {141} -->
     <string name="delete_only_notice">É possível excluir, mas %1$s</string> <!-- {142} -->
     <string name="delete_only_edit_impossible">É possível excluir, mas não é possível editar.</string> <!-- {180} -->
     <string name="visibility_toggle_available">Você pode alternar entre público/privado.</string> <!-- {181} -->
     <string name="album_management_guide">Essas ações podem ser realizadas pressionando o ícone mostrado à direita na guia \'Meu álbum\'.</string> <!-- {183} -->
-    <string name="cannot_create_album">Não é possível criar o álbum.</string> <!-- {135} -->
+    <string name="cannot_create_album">não será possível criar o álbum</string> <!-- {135} -->
     <string name="image_edit">Editar imagem</string> <!-- {93} -->
     <string name="move_to_shared_album">Movendo para o álbum compartilhado anteriormente</string> <!-- {50} -->
     <string name="not_ready_yet">Ainda não está pronto</string> <!-- {160} -->
@@ -338,6 +338,120 @@
     <string name="language_arabic">Árabe</string> <!-- {original_key: language_arabic} -->
     <string name="language_settings">Configurações de idioma</string> <!-- {original_key: language_settings} -->
     <string name="change">Alterar</string> <!-- {original_key: change} -->
+
+    <!-- Timezone Names -->
+    <string name="timezone_dateline_standard">Horário padrão da linha de data</string>
+    <string name="timezone_utc_minus_11">UTC-11</string>
+    <string name="timezone_hawaiian_standard">Horário padrão do Havaí</string>
+    <string name="timezone_alaskan_standard">Horário padrão do Alasca</string>
+    <string name="timezone_pacific_standard_mexico">Horário padrão do Pacífico (México)</string>
+    <string name="timezone_pacific_daylight">Horário de verão do Pacífico</string>
+    <string name="timezone_pacific_standard">Horário padrão do Pacífico</string>
+    <string name="timezone_us_mountain_standard">Horário padrão da montanha dos EUA</string>
+    <string name="timezone_mountain_standard_mexico">Horário padrão da montanha (México)</string>
+    <string name="timezone_mountain_standard">Horário padrão da montanha</string>
+    <string name="timezone_central_america_standard">Horário padrão da América Central</string>
+    <string name="timezone_central_standard">Horário padrão central</string>
+    <string name="timezone_central_standard_mexico">Horário padrão central (México)</string>
+    <string name="timezone_canada_central_standard">Horário padrão central do Canadá</string>
+    <string name="timezone_sa_pacific_standard">Horário padrão do Pacífico SA</string>
+    <string name="timezone_eastern_standard">Horário padrão do leste</string>
+    <string name="timezone_eastern_daylight">Horário de verão do leste</string>
+    <string name="timezone_us_eastern_standard">Horário padrão do leste dos EUA</string>
+    <string name="timezone_venezuela_standard">Horário padrão da Venezuela</string>
+    <string name="timezone_paraguay_standard">Horário padrão do Paraguai</string>
+    <string name="timezone_atlantic_standard">Horário padrão do Atlântico</string>
+    <string name="timezone_central_brazilian_standard">Horário padrão central brasileiro</string>
+    <string name="timezone_sa_western_standard">Horário padrão ocidental SA</string>
+    <string name="timezone_pacific_sa_standard">Horário padrão do Pacífico SA</string>
+    <string name="timezone_newfoundland_standard">Horário padrão de Terra Nova</string>
+    <string name="timezone_e_south_america_standard">Horário padrão do leste da América do Sul</string>
+    <string name="timezone_argentina_standard">Horário padrão da Argentina</string>
+    <string name="timezone_sa_eastern_standard">Horário padrão oriental SA</string>
+    <string name="timezone_greenland_standard">Horário padrão da Groenlândia</string>
+    <string name="timezone_montevideo_standard">Horário padrão de Montevidéu</string>
+    <string name="timezone_bahia_standard">Horário padrão da Bahia</string>
+    <string name="timezone_utc_minus_2">UTC-02</string>
+    <string name="timezone_mid_atlantic_standard">Horário padrão do Atlântico médio</string>
+    <string name="timezone_azores_standard">Horário padrão dos Açores</string>
+    <string name="timezone_cape_verde_standard">Horário padrão de Cabo Verde</string>
+    <string name="timezone_morocco_standard">Horário padrão do Marrocos</string>
+    <string name="timezone_utc">Tempo universal coordenado</string>
+    <string name="timezone_gmt_standard">Horário padrão GMT</string>
+    <string name="timezone_british_summer">Horário de verão britânico</string>
+    <string name="timezone_greenwich_standard">Horário padrão de Greenwich</string>
+    <string name="timezone_w_europe_standard">Horário padrão da Europa Ocidental</string>
+    <string name="timezone_central_europe_standard">Horário padrão da Europa Central</string>
+    <string name="timezone_romance_standard">Horário padrão romance</string>
+    <string name="timezone_central_european_standard">Horário padrão centro-europeu</string>
+    <string name="timezone_w_central_africa_standard">Horário padrão da África Centro-Ocidental</string>
+    <string name="timezone_namibia_standard">Horário padrão da Namíbia</string>
+    <string name="timezone_gtb_standard">Horário padrão GTB</string>
+    <string name="timezone_middle_east_standard">Horário padrão do Oriente Médio</string>
+    <string name="timezone_egypt_standard">Horário padrão do Egito</string>
+    <string name="timezone_syria_standard">Horário padrão da Síria</string>
+    <string name="timezone_e_europe_standard">Horário padrão da Europa Oriental</string>
+    <string name="timezone_south_africa_standard">Horário padrão da África do Sul</string>
+    <string name="timezone_fle_standard">Horário padrão FLE</string>
+    <string name="timezone_turkey_standard">Horário padrão da Turquia</string>
+    <string name="timezone_israel_standard">Horário padrão de Israel</string>
+    <string name="timezone_libya_standard">Horário padrão da Líbia</string>
+    <string name="timezone_jordan_standard">Horário padrão da Jordânia</string>
+    <string name="timezone_arabic_standard">Horário padrão árabe</string>
+    <string name="timezone_kaliningrad_standard">Horário padrão de Kaliningrado</string>
+    <string name="timezone_arab_standard">Horário padrão árabe</string>
+    <string name="timezone_e_africa_standard">Horário padrão da África Oriental</string>
+    <string name="timezone_moscow_standard">Horário padrão de Moscou</string>
+    <string name="timezone_samara_time">Horário de Samara</string>
+    <string name="timezone_iran_standard">Horário padrão do Irã</string>
+    <string name="timezone_arabian_standard">Horário padrão árabe</string>
+    <string name="timezone_azerbaijan_standard">Horário padrão do Azerbaijão</string>
+    <string name="timezone_mauritius_standard">Horário padrão de Maurício</string>
+    <string name="timezone_georgian_standard">Horário padrão da Geórgia</string>
+    <string name="timezone_caucasus_standard">Horário padrão do Cáucaso</string>
+    <string name="timezone_afghanistan_standard">Horário padrão do Afeganistão</string>
+    <string name="timezone_west_asia_standard">Horário padrão da Ásia Ocidental</string>
+    <string name="timezone_yekaterinburg_time">Horário de Ecaterimburgo</string>
+    <string name="timezone_pakistan_standard">Horário padrão do Paquistão</string>
+    <string name="timezone_india_standard">Horário padrão da Índia</string>
+    <string name="timezone_sri_lanka_standard">Horário padrão do Sri Lanka</string>
+    <string name="timezone_nepal_standard">Horário padrão do Nepal</string>
+    <string name="timezone_central_asia_standard">Horário padrão da Ásia Central</string>
+    <string name="timezone_bangladesh_standard">Horário padrão de Bangladesh</string>
+    <string name="timezone_myanmar_standard">Horário padrão de Myanmar</string>
+    <string name="timezone_se_asia_standard">Horário padrão do Sudeste Asiático</string>
+    <string name="timezone_n_central_asia_standard">Horário padrão do Centro-Norte da Ásia</string>
+    <string name="timezone_china_standard">Horário padrão da China</string>
+    <string name="timezone_north_asia_standard">Horário padrão do Norte da Ásia</string>
+    <string name="timezone_singapore_standard">Horário padrão de Singapura</string>
+    <string name="timezone_w_australia_standard">Horário padrão da Austrália Ocidental</string>
+    <string name="timezone_taipei_standard">Horário padrão de Taipé</string>
+    <string name="timezone_ulaanbaatar_standard">Horário padrão de Ulan Bator</string>
+    <string name="timezone_north_asia_east_standard">Horário padrão do Nordeste da Ásia</string>
+    <string name="timezone_japan_standard">Horário padrão do Japão</string>
+    <string name="timezone_korea_standard">Horário padrão da Coreia</string>
+    <string name="timezone_cen_australia_standard">Horário padrão central da Austrália</string>
+    <string name="timezone_aus_central_standard">Horário padrão central australiano</string>
+    <string name="timezone_e_australia_standard">Horário padrão oriental da Austrália</string>
+    <string name="timezone_aus_eastern_standard">Horário padrão oriental australiano</string>
+    <string name="timezone_west_pacific_standard">Horário padrão do Pacífico Ocidental</string>
+    <string name="timezone_tasmania_standard">Horário padrão da Tasmânia</string>
+    <string name="timezone_yakutsk_standard">Horário padrão de Yakutsk</string>
+    <string name="timezone_central_pacific_standard">Horário padrão do Pacífico Central</string>
+    <string name="timezone_vladivostok_standard">Horário padrão de Vladivostok</string>
+    <string name="timezone_sakhalin_standard">Horário padrão de Sakhalin</string>
+    <string name="timezone_new_zealand_standard">Horário padrão da Nova Zelândia</string>
+    <string name="timezone_utc_plus_12">UTC+12</string>
+    <string name="timezone_fiji_standard">Horário padrão de Fiji</string>
+    <string name="timezone_magadan_standard">Horário padrão de Magadan</string>
+    <string name="timezone_kamchatka_standard">Horário padrão de Kamchatka</string>
+    <string name="timezone_tonga_standard">Horário padrão de Tonga</string>
+    <string name="timezone_samoa_standard">Horário padrão de Samoa</string>
+
+    <!-- Timezone -->
+    <string name="select_timezone">Por favor selecione seu fuso horário</string> <!-- {284} -->
+    <string name="timezone_selection_warning">Escolha com cuidado pois não poderá alterar depois</string> <!-- {285} -->
+    <string name="timezone_input_hint">Digite o fuso horário</string> <!-- {286} -->
 
     <string name="time_just_now">agora mesmo</string>
 
