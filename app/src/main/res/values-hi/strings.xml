@@ -37,6 +37,7 @@
     <string name="album_share">एल्बम शेयर करें</string> <!-- {17} -->
     <string name="create_share_link">शेयर लिंक बनाएँ</string> <!-- {224} -->
     <string name="delete_album">एल्बम हटाएँ</string> <!-- {196} -->
+    <string name="delete_confirmation_text">यदि आप डिलीट करना चाहते हैं तो \'DELETE\' टाइप करें</string>
     <string name="album_deleted">एल्बम हटा दिया गया</string> <!-- {81} -->
     <string name="view_album">एल्बम देखें</string> <!-- {249} -->
     <string name="thumbnail">थंबनेल</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">लॉगआउट</string> <!-- {214} -->
     <string name="logout_action">लॉगआउट करें</string> <!-- {251} -->
     <string name="withdrawal">सेवा से हटें</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">यदि आप छोड़ना चाहते हैं तो \'ROADCAPTURE\' टाइप करें</string>
     <string name="withdraw">हटें</string> <!-- {241} -->
     <string name="service_withdrawal">सेवा से हटें</string> <!-- {242} -->
     <string name="withdrawal_complete">सेवा से हटना पूरा हुआ</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">अलग कीवर्ड से खोजने का प्रयास करें</string> <!-- {240} -->
     <string name="view_info">जानकारी देखें</string> <!-- {250} -->
     <string name="check_info">जानकारी जांचें</string> <!-- {218} -->
+    <string name="input_hint_text">यहाँ टाइप करें</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d दि</string> <!-- {27} --> <!-- 'दि' for 'दिन' -->

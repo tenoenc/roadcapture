@@ -75,8 +75,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
 
     val vm: TripViewModel by viewModels()
 
-    private lateinit var imagePickerLauncher: ImagePickerLauncher
-
     private lateinit var map: GoogleMap
 
     private lateinit var clusterManager: ClusterManager<ClusterMarkerItem>
@@ -150,33 +148,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setupFragmentResultListeners()
-        setupImagePicker()
-    }
-
-    private fun setupImagePicker() {
-        imagePickerLauncher = registerImagePicker { result: List<Image> ->
-            result.getOrNull(0)?.let {
-                try {
-                    // 내부 캐시 디렉토리에 크롭된 이미지를 저장할 파일 생성
-                    val croppedFile = createTempImageFile()
-                    val croppedUri = getUriForFile(croppedFile)
-
-                    // uCrop 시작
-                    cropLauncher.launch(Triple(it.uri, croppedUri, getCurrentLocation()))
-                } catch (e: Exception) {
-                    Log.e("TripFragment", "uCrop 시작 오류", e)
-                    e.printStackTrace()
-                    mainActivity.vm.viewEvent(
-                        GlobalViewEvent.Toast(
-                            ToastModel(
-                                requireContext().getString(R.string.image_edit_start_error),
-                                ToastMessageType.Warning
-                            )
-                        )
-                    )
-                }
-            }
-        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -361,8 +332,7 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
                         )
                         return@setSafeClickListener
                     }
-//                    captureImageWithCameraApp()
-                    imagePickerLauncher.launch(ImagePickerConfig { mode = ImagePickerMode.SINGLE })
+                    captureImageWithCameraApp()
                 }
             }
             binding.fabTripCapture.setOnClickListener(null)

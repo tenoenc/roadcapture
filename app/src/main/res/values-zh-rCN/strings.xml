@@ -37,6 +37,7 @@
     <string name="album_share">分享相册</string> <!-- {17} -->
     <string name="create_share_link">创建分享链接</string> <!-- {224} -->
     <string name="delete_album">删除相册</string> <!-- {196} -->
+    <string name="delete_confirmation_text">如需删除，请输入 \'DELETE\'</string>
     <string name="album_deleted">已删除相册</string> <!-- {81} -->
     <string name="view_album">查看相册</string> <!-- {249} -->
     <string name="thumbnail">缩略图</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">退出登录</string> <!-- {214} -->
     <string name="logout_action">退出登录</string> <!-- {251} -->
     <string name="withdrawal">退出服务</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">如需退出，请输入 \'ROADCAPTURE\'</string>
     <string name="withdraw">退出</string> <!-- {241} -->
     <string name="service_withdrawal">退出服务</string> <!-- {242} -->
     <string name="withdrawal_complete">服务退出已完成</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">尝试使用不同的关键词搜索</string> <!-- {240} -->
     <string name="view_info">查看信息</string> <!-- {250} -->
     <string name="check_info">查看信息</string> <!-- {218} -->
+    <string name="input_hint_text">在此输入</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d天</string> <!-- {27} -->

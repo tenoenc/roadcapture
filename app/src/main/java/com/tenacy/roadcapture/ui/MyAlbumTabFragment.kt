@@ -87,6 +87,20 @@ class MyAlbumTabFragment: BaseFragment() {
             }
             bundle.getParcelable<AlbumModifyMoreBottomSheetFragment.ParamsOut.Delete>(AlbumModifyMoreBottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
                 val album = it.album
+                val bottomSheet = AlbumDeleteBeforeD2BottomSheetFragment.newInstance(
+                    bundleOf(
+                        AlbumDeleteBeforeD2BottomSheetFragment.KEY_PARAMS_IN to AlbumDeleteBeforeD2BottomSheetFragment.ParamsIn(album)
+                    )
+                )
+                bottomSheet.show(childFragmentManager, AlbumDeleteBeforeD2BottomSheetFragment.TAG)
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            AlbumDeleteBeforeD2BottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<AlbumDeleteBeforeD2BottomSheetFragment.ParamsOut.Delete>(AlbumDeleteBeforeD2BottomSheetFragment.KEY_PARAMS_OUT_DELETE)?.let {
+                val album = it.album
                 vm.deleteAlbum(album.user.id, album.id)
             }
         }

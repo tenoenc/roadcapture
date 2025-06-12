@@ -37,6 +37,7 @@
     <string name="album_share">Поделиться альбомом</string> <!-- {17} -->
     <string name="create_share_link">Создать ссылку</string> <!-- {224} -->
     <string name="delete_album">Удалить альбом</string> <!-- {196} -->
+    <string name="delete_confirmation_text">Введите \'DELETE\', если хотите удалить</string>
     <string name="album_deleted">Альбом удален</string> <!-- {81} -->
     <string name="view_album">Просмотр альбома</string> <!-- {249} -->
     <string name="thumbnail">Миниатюра</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">Выйти</string> <!-- {214} -->
     <string name="logout_action">Выйти</string> <!-- {251} -->
     <string name="withdrawal">Удаление аккаунта</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">Введите \'ROADCAPTURE\', если хотите выйти</string>
     <string name="withdraw">Удалить</string> <!-- {241} -->
     <string name="service_withdrawal">Удалить аккаунт</string> <!-- {242} -->
     <string name="withdrawal_complete">Удаление аккаунта завершено</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">Попробуйте поискать с другими ключевыми словами</string> <!-- {240} -->
     <string name="view_info">Просмотреть информацию</string> <!-- {250} -->
     <string name="check_info">Проверить информацию</string> <!-- {218} -->
+    <string name="input_hint_text">Введите здесь</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d д</string> <!-- {27} -->

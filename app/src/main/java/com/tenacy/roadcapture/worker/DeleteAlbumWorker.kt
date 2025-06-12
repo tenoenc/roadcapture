@@ -80,6 +80,7 @@ class DeleteAlbumWorker @AssistedInject constructor(
             val albumId = inputData.getString(KEY_ALBUM_ID) ?: return@withContext Result.failure()
 
             // 참조 불러오기
+            val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
             val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
             val album = albumRef.get().await().toAlbum()
 
@@ -96,6 +97,11 @@ class DeleteAlbumWorker @AssistedInject constructor(
                 .whereEqualTo("albumRef", albumRef).getAllReferences()
 
             val allOperations = mutableListOf<BatchOperation>()
+            if(album.scrapCount > 0) {
+                allOperations.add(UpdateDocumentOperation(userRef, mapOf(
+                    "scrapCount" to FieldValue.increment(-album.scrapCount.toLong())
+                )))
+            }
             allOperations.add(DeleteDocumentOperation(albumRef))
             memoryRefs.forEach { ref ->
                 allOperations.add(DeleteDocumentOperation(ref))

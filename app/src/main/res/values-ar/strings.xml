@@ -37,6 +37,7 @@
     <string name="album_share">مشاركة الألبوم</string> <!-- {17} -->
     <string name="create_share_link">إنشاء رابط مشاركة</string> <!-- {224} -->
     <string name="delete_album">حذف الألبوم</string> <!-- {196} -->
+    <string name="delete_confirmation_text">أدخل \'DELETE\' إذا كنت تريد الحذف</string>
     <string name="album_deleted">تم حذف الألبوم</string> <!-- {81} -->
     <string name="view_album">عرض الألبوم</string> <!-- {249} -->
     <string name="thumbnail">صورة مصغرة</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">تسجيل الخروج</string> <!-- {214} -->
     <string name="logout_action">تسجيل الخروج</string> <!-- {251} -->
     <string name="withdrawal">الانسحاب من الخدمة</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">أدخل \'ROADCAPTURE\' إذا كنت تريد الانسحاب</string>
     <string name="withdraw">انسحاب</string> <!-- {241} -->
     <string name="service_withdrawal">الانسحاب من الخدمة</string> <!-- {242} -->
     <string name="withdrawal_complete">اكتمل الانسحاب من الخدمة</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">حاول البحث بكلمات مفتاحية مختلفة</string> <!-- {240} -->
     <string name="view_info">عرض المعلومات</string> <!-- {250} -->
     <string name="check_info">التحقق من المعلومات</string> <!-- {218} -->
+    <string name="input_hint_text">أدخل هنا</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d ي</string> <!-- {27} --> <!-- 'ي' for 'يوم' -->

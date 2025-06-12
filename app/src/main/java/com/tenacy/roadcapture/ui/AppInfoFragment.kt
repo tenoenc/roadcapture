@@ -202,6 +202,18 @@ class AppInfoFragment : BaseFragment(), FragmentVisibilityCallback,
                 WithdrawBeforeBottomSheetFragment.KEY_PARAMS_OUT_POSITIVE
             )?.let {
                 Log.d("TAG", "Positive Button Clicked!")
+                val bottomSheet = WithdrawBeforeD2BottomSheetFragment.newInstance()
+                bottomSheet.show(childFragmentManager, WithdrawBeforeD2BottomSheetFragment.TAG)
+            }
+        }
+        childFragmentManager.setFragmentResultListener(
+            WithdrawBeforeD2BottomSheetFragment.REQUEST_KEY,
+            this
+        ) { _, bundle ->
+            bundle.getParcelable<WithdrawBeforeD2BottomSheetFragment.ParamsOut.Positive>(
+                WithdrawBeforeD2BottomSheetFragment.KEY_PARAMS_OUT_POSITIVE
+            )?.let {
+                Log.d("TAG", "Positive Button Clicked!")
                 reauthenticate()
             }
         }

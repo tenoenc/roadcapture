@@ -37,6 +37,7 @@
     <string name="album_share">Album teilen</string> <!-- {17} -->
     <string name="create_share_link">Link zum Teilen erstellen</string> <!-- {224} -->
     <string name="delete_album">Album löschen</string> <!-- {196} -->
+    <string name="delete_confirmation_text">Geben Sie \'DELETE\' ein, wenn Sie löschen möchten</string>
     <string name="album_deleted">Album gelöscht</string> <!-- {81} -->
     <string name="view_album">Album ansehen</string> <!-- {249} -->
     <string name="thumbnail">Vorschaubild</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">Abmelden</string> <!-- {214} -->
     <string name="logout_action">Abmelden</string> <!-- {251} -->
     <string name="withdrawal">Dienst kündigen</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">Geben Sie \'ROADCAPTURE\' ein, wenn Sie sich abmelden möchten</string>
     <string name="withdraw">Kündigen</string> <!-- {241} -->
     <string name="service_withdrawal">Dienst kündigen</string> <!-- {242} -->
     <string name="withdrawal_complete">Kündigung des Dienstes abgeschlossen</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">Versuche es mit anderen Suchbegriffen</string> <!-- {240} -->
     <string name="view_info">Informationen anzeigen</string> <!-- {250} -->
     <string name="check_info">Informationen prüfen</string> <!-- {218} -->
+    <string name="input_hint_text">Hier eingeben</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d T</string> <!-- {27} -->

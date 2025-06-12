@@ -37,6 +37,7 @@
     <string name="album_share">Compartilhar álbum</string> <!-- {17} -->
     <string name="create_share_link">Criar link para compartilhar</string> <!-- {224} -->
     <string name="delete_album">Excluir álbum</string> <!-- {196} -->
+    <string name="delete_confirmation_text">Digite \'DELETE\' se quiser excluir</string>
     <string name="album_deleted">Álbum excluído</string> <!-- {81} -->
     <string name="view_album">Ver álbum</string> <!-- {249} -->
     <string name="thumbnail">Miniatura</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">Sair</string> <!-- {214} -->
     <string name="logout_action">Sair</string> <!-- {251} -->
     <string name="withdrawal">Retirada do serviço</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">Digite \'ROADCAPTURE\' se quiser sair</string>
     <string name="withdraw">Retirar</string> <!-- {241} -->
     <string name="service_withdrawal">Retirar do serviço</string> <!-- {242} -->
     <string name="withdrawal_complete">Retirada do serviço concluída</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">Tente pesquisar com palavras-chave diferentes</string> <!-- {240} -->
     <string name="view_info">Ver informações</string> <!-- {250} -->
     <string name="check_info">Verificar informações</string> <!-- {218} -->
+    <string name="input_hint_text">Digite aqui</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d d</string> <!-- {27} -->

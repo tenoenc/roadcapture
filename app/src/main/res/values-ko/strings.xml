@@ -37,6 +37,7 @@
     <string name="album_share">앨범 공유하기</string> <!-- {17} -->
     <string name="create_share_link">공유 링크 생성하기</string> <!-- {224} -->
     <string name="delete_album">앨범 삭제하기</string> <!-- {196} -->
+    <string name="delete_confirmation_text">삭제를 원하시면 \'DELETE\'를 입력해주세요</string>
     <string name="album_deleted">앨범을 삭제했어요</string> <!-- {81} -->
     <string name="view_album">앨범 확인하기</string> <!-- {249} -->
     <string name="thumbnail">썸네일</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">로그아웃</string> <!-- {214} -->
     <string name="logout_action">로그아웃 하기</string> <!-- {251} -->
     <string name="withdrawal">서비스 탈퇴</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">탈퇴를 원하시면 \'ROADCAPTURE\'를 입력해주세요</string>
     <string name="withdraw">탈퇴하기</string> <!-- {241} -->
     <string name="service_withdrawal">서비스 탈퇴하기</string> <!-- {242} -->
     <string name="withdrawal_complete">서비스 탈퇴가 완료되었어요</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">다른 키워드로 검색해보세요</string> <!-- {240} -->
     <string name="view_info">정보 확인하기</string> <!-- {250} -->
     <string name="check_info">정보 확인하기</string> <!-- {218} -->
+    <string name="input_hint_text">여기에 입력</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d일</string> <!-- {27} -->

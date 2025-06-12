@@ -37,6 +37,7 @@
     <string name="album_share">Share Album</string> <!-- {17} -->
     <string name="create_share_link">Create Share Link</string> <!-- {224} -->
     <string name="delete_album">Delete Album</string> <!-- {196} -->
+    <string name="delete_confirmation_text">Please enter \'DELETE\' if you want to delete</string>
     <string name="album_deleted">Album deleted</string> <!-- {81} -->
     <string name="view_album">View Album</string> <!-- {249} -->
     <string name="thumbnail">Thumbnail</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">Logout</string> <!-- {214} -->
     <string name="logout_action">Logout</string> <!-- {251} -->
     <string name="withdrawal">Service Withdrawal</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">Please enter \'ROADCAPTURE\' if you want to withdraw</string>
     <string name="withdraw">Withdraw</string> <!-- {241} -->
     <string name="service_withdrawal">Withdraw from Service</string> <!-- {242} -->
     <string name="withdrawal_complete">Service withdrawal completed</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">Try searching with different keywords</string> <!-- {240} -->
     <string name="view_info">View Information</string> <!-- {250} -->
     <string name="check_info">Check Information</string> <!-- {218} -->
+    <string name="input_hint_text">Enter here</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d d</string> <!-- {27} -->

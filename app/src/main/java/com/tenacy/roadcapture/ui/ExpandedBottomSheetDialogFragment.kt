@@ -1,10 +1,12 @@
 package com.tenacy.roadcapture.ui
 
 import android.app.Dialog
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.core.content.ContextCompat
 import com.google.android.material.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -34,6 +36,10 @@ open class ExpandedBottomSheetDialogFragment : BottomSheetDialogFragment() {
             )
 
             bottomSheet?.let {
+                it.backgroundTintList = ColorStateList.valueOf(
+                    ContextCompat.getColor(requireContext(), com.tenacy.roadcapture.R.color.background_normal)
+                )
+
                 val behavior = BottomSheetBehavior.from(it)
 
                 // 중간 상태 방지 설정

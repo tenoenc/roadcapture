@@ -37,6 +37,7 @@
     <string name="album_share">アルバム共有</string> <!-- {17} -->
     <string name="create_share_link">共有リンク作成</string> <!-- {224} -->
     <string name="delete_album">アルバム削除</string> <!-- {196} -->
+    <string name="delete_confirmation_text">削除する場合は \'DELETE\' を入力してください</string>
     <string name="album_deleted">アルバムを削除しました</string> <!-- {81} -->
     <string name="view_album">アルバム確認</string> <!-- {249} -->
     <string name="thumbnail">サムネイル</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">ログアウト</string> <!-- {214} -->
     <string name="logout_action">ログアウトする</string> <!-- {251} -->
     <string name="withdrawal">サービス退会</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">退会する場合は \'ROADCAPTURE\' を入力してください</string>
     <string name="withdraw">退会する</string> <!-- {241} -->
     <string name="service_withdrawal">サービスを退会する</string> <!-- {242} -->
     <string name="withdrawal_complete">サービス退会が完了しました</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">別のキーワードで検索してみてください</string> <!-- {240} -->
     <string name="view_info">情報を見る</string> <!-- {250} -->
     <string name="check_info">情報を確認する</string> <!-- {218} -->
+    <string name="input_hint_text">ここに入力</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d日</string> <!-- {27} -->

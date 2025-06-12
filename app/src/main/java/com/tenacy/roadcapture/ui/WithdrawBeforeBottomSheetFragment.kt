@@ -86,7 +86,7 @@ class WithdrawBeforeBottomSheetFragment : ExpandedBottomSheetDialogFragment() {
 
         const val TAG = "WithdrawBeforeBottomSheetFragment"
 
-        const val REQUEST_KEY = "withdraw"
+        const val REQUEST_KEY = "withdraw_before"
         const val KEY_PARAMS_OUT_POSITIVE = "params_out_positive"
 
         fun newInstance(bundle: Bundle? = null): WithdrawBeforeBottomSheetFragment {

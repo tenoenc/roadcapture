@@ -37,6 +37,7 @@
     <string name="album_share">Bagikan Album</string> <!-- {17} -->
     <string name="create_share_link">Buat Tautan Berbagi</string> <!-- {224} -->
     <string name="delete_album">Hapus Album</string> <!-- {196} -->
+    <string name="delete_confirmation_text">Masukkan \'DELETE\' jika ingin menghapus</string>
     <string name="album_deleted">Album telah dihapus</string> <!-- {81} -->
     <string name="view_album">Lihat Album</string> <!-- {249} -->
     <string name="thumbnail">Gambar Kecil</string> <!-- {202} -->
@@ -136,6 +137,7 @@
     <string name="logout">Keluar</string> <!-- {214} -->
     <string name="logout_action">Keluar</string> <!-- {251} -->
     <string name="withdrawal">Penarikan Layanan</string> <!-- {215} -->
+    <string name="withdrawal_confirmation_text">Masukkan \'ROADCAPTURE\' jika ingin keluar</string>
     <string name="withdraw">Tarik Diri</string> <!-- {241} -->
     <string name="service_withdrawal">Tarik Diri dari Layanan</string> <!-- {242} -->
     <string name="withdrawal_complete">Penarikan layanan selesai</string> <!-- {148} -->
@@ -259,6 +261,7 @@
     <string name="search_different_keyword">Coba cari dengan kata kunci yang berbeda</string> <!-- {240} -->
     <string name="view_info">Lihat Informasi</string> <!-- {250} -->
     <string name="check_info">Periksa Informasi</string> <!-- {218} -->
+    <string name="input_hint_text">Masukkan di sini</string>
 
     <!-- Time Related -->
     <string name="time_days">%1$d h</string> <!-- {27} --> <!-- 'h' for 'hari' -->
