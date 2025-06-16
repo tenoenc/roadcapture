@@ -40,6 +40,7 @@ class AlbumWithAdsPagingAdapter(
     private val adCache = ConcurrentHashMap<String, NativeAd>()
     private val loadingAds = mutableSetOf<String>()
     private val mediaContentCache = ConcurrentHashMap<String, Any>()
+    private val failedAdIds = mutableSetOf<String>()
 
     companion object {
         const val VIEW_TYPE_AD = 0
@@ -296,11 +297,12 @@ class AlbumWithAdsPagingAdapter(
         // 광고 로드 시간 측정 시작
         val startTime = System.currentTimeMillis()
 
-        val adUnitId = if (BuildConfig.DEBUG || BuildConfig.DEVELOPMENT.toBoolean()) {
-            BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
-        } else {
-            BuildConfig.AD_MOB_APP_HOME_ALBUM_ID
-        }
+        val adUnitId = BuildConfig.AD_MOB_APP_HOME_ALBUM_ID
+//        val adUnitId = if (BuildConfig.DEBUG || BuildConfig.DEVELOPMENT.toBoolean()) {
+//            BuildConfig.AD_MOB_APP_UNIT_NATIVE_TEST_ID
+//        } else {
+//            BuildConfig.AD_MOB_APP_HOME_ALBUM_ID
+//        }
 
         // 광고 로드 타임아웃 추가 (5초)
         val loadTimeout = 5000L
@@ -340,6 +342,12 @@ class AlbumWithAdsPagingAdapter(
 
                     Log.e(TAG, "Failed to load ad: ${loadAdError.message}")
                     loadingAds.remove(id)
+
+                    // No fill인 경우 실패 목록에 추가
+                    if (loadAdError.code == 3) {
+                        failedAdIds.add(id)
+                        notifyItemChangedSafely(adItem)
+                    }
                 }
             })
             .build()
@@ -369,37 +377,71 @@ class AlbumWithAdsPagingAdapter(
         private var currentAd: NativeAd? = null
         private var isMediaViewPrepared = false
 
-        // AdViewHolder의 bind 메소드 수정
         override fun bind(item: AlbumItemWithAds.Ad) {
             val cachedAd = adCache[item.id]
-            if (cachedAd != null) {
-                // 광고가 로드된 경우 부드럽게 표시
-                if (currentAd != cachedAd || !isMediaViewPrepared) {
-                    // 애니메이션 추가
-                    binding.adContainer.alpha = 0.5f
-                    binding.adContainer.animate()
-                        .alpha(1.0f)
-                        .setDuration(300)
-                        .start()
+            val hasFailed = failedAdIds.contains(item.id)
 
-                    populateNativeAdView(cachedAd)
-                    isMediaViewPrepared = true
+            when {
+                cachedAd != null -> {
+                    // 광고가 성공적으로 로드된 경우만 표시
+                    showAd(cachedAd)
                 }
-            } else {
-                // 광고가 로드되지 않은 경우 로딩 표시
-                if (loadingAds.contains(item.id)) {
-                    // 이미 로딩 중인 경우
-                    binding.adContainer.alpha = 0.5f
-                } else {
-                    // 로딩 시작하는 경우
-                    binding.adContainer.alpha = 0.3f
-                    loadAdForPosition(item)
+                else -> {
+                    // 로딩 중이거나 실패했거나 아직 시도 안 한 경우 모두 숨김
+                    hideAd()
+
+                    // 아직 시도 안 했고 실패하지도 않은 경우에만 로드 시도
+                    if (!loadingAds.contains(item.id) && !hasFailed) {
+                        loadAdForPosition(item)
+                    }
                 }
             }
         }
 
         override fun bind(item: AlbumItemWithAds.Ad, payloads: List<Any>) {
-            // 페이로드 처리는 필요 없음
+            // 페이로드는 Native 광고에서 사용하지 않음
+            bind(item)
+        }
+
+        private fun showAd(nativeAd: NativeAd) {
+            // 뷰 표시
+            binding.root.visibility = View.VISIBLE
+            binding.root.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+
+            // 광고가 바뀌었거나 MediaView가 준비되지 않은 경우만 설정
+            if (currentAd != nativeAd || !isMediaViewPrepared) {
+                // 부드러운 애니메이션
+                binding.adContainer.alpha = 0.5f
+                binding.adContainer.animate()
+                    .alpha(1.0f)
+                    .setDuration(300)
+                    .start()
+
+                populateNativeAdView(nativeAd)
+                isMediaViewPrepared = true
+            }
+        }
+
+        private fun showLoading() {
+            // 뷰 표시하되 로딩 상태로
+            binding.root.visibility = View.VISIBLE
+            binding.root.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+            binding.adContainer.alpha = 0.3f
+
+            // 로딩 상태 초기화
+            currentAd = null
+            isMediaViewPrepared = false
+        }
+
+        private fun hideAd() {
+            // 뷰를 완전히 숨김
+            binding.root.visibility = View.GONE
+            binding.root.layoutParams.height = 0
+
+            // 상태 초기화
+            currentAd = null
+            isMediaViewPrepared = false
+            binding.adContainer.alpha = 1.0f
         }
 
         override fun recycle() {
@@ -468,15 +510,12 @@ class AlbumWithAdsPagingAdapter(
                 binding.adStars.visibility = View.INVISIBLE
             }
 
-            // MediaView 설정 - 캐시된 키 사용
+            // MediaView 설정
             val mediaContentKey = "media_${nativeAd.hashCode()}"
 
             nativeAd.mediaContent?.let { mediaContent ->
                 try {
-                    // MediaContent 캐싱
                     mediaContentCache[mediaContentKey] = mediaContent
-
-                    // 현재 MediaView 상태 확인
                     if (!isMediaViewPrepared) {
                         binding.adMediaView.mediaContent = mediaContent
                         binding.nativeAdView.mediaView = binding.adMediaView
@@ -489,7 +528,6 @@ class AlbumWithAdsPagingAdapter(
                     isMediaViewPrepared = false
                 }
             } ?: run {
-                // 캐시된 MediaContent 확인
                 val cachedMediaContent = mediaContentCache[mediaContentKey]
                 if (cachedMediaContent != null && !isMediaViewPrepared) {
                     try {

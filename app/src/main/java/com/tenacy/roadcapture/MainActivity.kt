@@ -4,12 +4,20 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.FragmentContainerView
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.*
 import androidx.navigation.NavController
@@ -20,7 +28,6 @@ import androidx.work.WorkManager
 import androidx.work.WorkQuery
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.firebase.exception.UpdateRequiredException
 import com.tenacy.roadcapture.data.pref.AppPrefs
 import com.tenacy.roadcapture.data.pref.WorkPref
@@ -125,9 +132,20 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
+
+        // Edge-to-Edge 활성화
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            enableEdgeToEdge()
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            window.statusBarColor = Color.TRANSPARENT
+            window.navigationBarColor = Color.TRANSPARENT
+        }
+
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
         setContentView(R.layout.activity_main)
 
+        setupWindowInsets()
         setupFragmentResultListeners()
         setupObservers()
         setupNavigationListener()
@@ -161,6 +179,26 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
             Branch.sessionBuilder(this).withCallback(branchListener).withData(intent.data).reInit()
         } else {
             Log.d("DeepLink", "onNewIntent - 인텐트 데이터 없음")
+        }
+    }
+
+    private fun setupWindowInsets() {
+        val container = findViewById<FragmentContainerView>(R.id.container)
+
+        ViewCompat.setOnApplyWindowInsetsListener(container) { view, windowInsets ->
+            val systemInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+            val imeInsets = windowInsets.getInsets(WindowInsetsCompat.Type.ime())
+            val displayCutoutInsets = windowInsets.getInsets(WindowInsetsCompat.Type.displayCutout())
+
+            // 안전한 여백 계산
+            view.updatePadding(
+                left = maxOf(systemInsets.left, displayCutoutInsets.left),
+                top = maxOf(systemInsets.top, displayCutoutInsets.top),
+                right = maxOf(systemInsets.right, displayCutoutInsets.right),
+                bottom = maxOf(systemInsets.bottom, imeInsets.bottom, displayCutoutInsets.bottom)
+            )
+
+            windowInsets
         }
     }
 

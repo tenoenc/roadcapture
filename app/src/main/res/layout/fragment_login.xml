@@ -97,6 +97,7 @@
                                                                android:layout_height="wrap_content"
                                                                android:id="@+id/card_login_facebook"
                                                                android:layout_marginTop="12dp"
+                                                               android:visibility="gone"
                                                                app:enabled="@{!vm.signingIn}"
                                                                app:safeClick="@{() -> vm.onFacebookLoginClick()}"
                                                                app:cardCornerRadius="16dp"
@@ -167,4 +168,5 @@
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </layout>
