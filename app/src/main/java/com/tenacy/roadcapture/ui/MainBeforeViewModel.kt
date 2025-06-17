@@ -9,7 +9,6 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.tenacy.roadcapture.data.firebase.exception.SystemConfigException
 import com.tenacy.roadcapture.data.pref.SubscriptionPref
-import com.tenacy.roadcapture.data.pref.SubscriptionPref.linkedAccountExists
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.util.*
@@ -43,7 +42,7 @@ class MainBeforeViewModel @Inject constructor(
             val isExistingUser = args.isExistingUser
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
 
                 auth.signInWithCredential(credential).await()
                 val userId = user!!.uid

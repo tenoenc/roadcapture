@@ -65,7 +65,7 @@ class MyAlbumTabViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
                 val albumRef = db.collection(FirebaseConstants.COLLECTION_ALBUMS).document(albumId)
                 val album = albumRef.get().await().toAlbum()
                 if(album.isLocked) {
@@ -97,7 +97,7 @@ class MyAlbumTabViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
                 DeleteAlbumWorker.enqueueOneTimeWork(context, userId, albumId)
                 emit(Unit)
             }
@@ -119,7 +119,7 @@ class MyAlbumTabViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
                 val idToken = user!!.getIdToken(false).await().token ?: throw Exception("토큰을 가져올 수 없습니다.")
                 CreateShareLinkWorker.enqueueOneTimeWork(context, albumId, idToken)
                 emit(Unit)

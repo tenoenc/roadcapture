@@ -6,11 +6,10 @@ import kotlinx.parcelize.Parcelize
 import java.time.LocalDateTime
 
 @Parcelize
-data class FirebaseSystemConfig(
-    val appVersion: String,
+data class FirebaseSystemConfigV2(
+    val minAppVersion: String,
     val underMaintenance: Boolean,
-    val updateRequired: Boolean,
 ): Parcelable {
-    fun isUpdateRequired() = updateRequired && appVersion != BuildConfig.VERSION_NAME
+//    fun isUpdateRequired() = updateRequired && appVersion != BuildConfig.VERSION_NAME
     fun isUnderMaintenance() = underMaintenance
 }

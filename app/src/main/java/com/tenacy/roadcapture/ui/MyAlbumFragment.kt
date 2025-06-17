@@ -84,7 +84,7 @@ class MyAlbumFragment: BaseFragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     // [VALIDATE_SYSTEM_CONFIG]
                     try {
-                        validateSystemConfig()
+                        validateSystemConfigV2()
                     } catch (exception: SystemConfigException) {
                         handleSystemConfigException(exception)
                         return@launch
@@ -99,7 +99,7 @@ class MyAlbumFragment: BaseFragment() {
                 lifecycleScope.launch(Dispatchers.IO) {
                     // [VALIDATE_SYSTEM_CONFIG]
                     try {
-                        validateSystemConfig()
+                        validateSystemConfigV2()
                     } catch (exception: SystemConfigException) {
                         handleSystemConfigException(exception)
                         return@launch

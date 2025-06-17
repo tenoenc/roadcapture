@@ -208,7 +208,7 @@ class AppInfoViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Default) {
             try {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
             } catch (exception: Exception) {
                 // [VALIDATE_SYSTEM_CONFIG]
                 if(exception is SystemConfigException) {

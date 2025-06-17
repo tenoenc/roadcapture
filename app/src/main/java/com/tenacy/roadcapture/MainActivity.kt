@@ -4,16 +4,16 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.WindowInsetsController
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.DialogFragment
@@ -133,13 +133,19 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
-            // Edge-to-Edge 활성화
-            enableEdgeToEdge()
+        // Edge-to-Edge 활성화
+        enableEdgeToEdge()
+
+        // 상태바 아이콘을 어둡게 설정 (Night Theme 미제공 앱 대응)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.setSystemBarsAppearance(
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
+                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+            )
         } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-            window.statusBarColor = Color.TRANSPARENT
-            window.navigationBarColor = Color.TRANSPARENT
+            @Suppress("DEPRECATION")
+            window.decorView.systemUiVisibility =
+                window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
         }
 
         ProcessLifecycleOwner.get().lifecycle.addObserver(this)
@@ -206,11 +212,14 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 val systemRef = db.collection(FirebaseConstants.COLLECTION_SYSTEMS)
-                    .document(FirebaseConstants.DOCUMENT_CONFIG)
+                    .document(FirebaseConstants.DOCUMENT_CONFIG_V2)
 
-                val systemConfig = systemRef.get().await().toSystemConfig()
+                val systemConfig = systemRef.get().await().toSystemConfigV2()
 
-                if (systemConfig.isUpdateRequired()) {
+                val version = Version(BuildConfig.VERSION_NAME)
+                val minAppVersion = Version(systemConfig.minAppVersion)
+
+                if(version < minAppVersion) {
                     throw UpdateRequiredException()
                 }
             } catch (exception: UpdateRequiredException) {

@@ -16,7 +16,7 @@ import com.tenacy.roadcapture.ui.dto.Album
 import com.tenacy.roadcapture.util.FirebaseConstants
 import com.tenacy.roadcapture.util.db
 import com.tenacy.roadcapture.util.handleSystemConfigException
-import com.tenacy.roadcapture.util.validateSystemConfig
+import com.tenacy.roadcapture.util.validateSystemConfigV2
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -58,7 +58,7 @@ class ScrapViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
 
                 val userId = UserPref.id
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)

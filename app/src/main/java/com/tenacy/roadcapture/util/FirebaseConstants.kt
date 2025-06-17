@@ -13,4 +13,5 @@ object FirebaseConstants {
     val COLLECTION_REPORTS = /*if(BuildConfig.DEBUG) "dev-reports" else */"reports"
 
     val DOCUMENT_CONFIG = "config"
+    val DOCUMENT_CONFIG_V2 = "config_v2"
 }

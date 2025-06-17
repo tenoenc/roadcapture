@@ -203,6 +203,17 @@ fun DocumentSnapshot.toSystemConfig(): FirebaseSystemConfig {
     )
 }
 
+fun DocumentSnapshot.toSystemConfigV2(): FirebaseSystemConfigV2 {
+    val minAppVersion = getString("minAppVersion") ?: BuildConfig.VERSION_NAME
+    val underMaintenance = getBoolean("underMaintenance") ?: false
+
+    return FirebaseSystemConfigV2(
+        minAppVersion = minAppVersion.trim(),
+        underMaintenance = underMaintenance,
+    )
+}
+
+
 /**
  * 배치 작업을 최대 사이즈(500)에 맞게 나누어 실행하는 확장 함수
  * @param operations 실행할 작업 목록 (각 작업은 BatchOperation 타입)
@@ -486,6 +497,7 @@ suspend fun Context.uploadImageToStorage(
     }
 }
 
+/*
 suspend fun validateSystemConfig() {
     val systemRef = db.collection(FirebaseConstants.COLLECTION_SYSTEMS)
         .document(FirebaseConstants.DOCUMENT_CONFIG)
@@ -493,6 +505,24 @@ suspend fun validateSystemConfig() {
     val systemConfig = systemRef.get().await().toSystemConfig()
 
     if(systemConfig.isUpdateRequired()) {
+        throw UpdateRequiredException()
+    }
+    if(systemConfig.isUnderMaintenance()) {
+        throw UnderMaintenanceException()
+    }
+}
+*/
+
+suspend fun validateSystemConfigV2() {
+    val systemRef = db.collection(FirebaseConstants.COLLECTION_SYSTEMS)
+        .document(FirebaseConstants.DOCUMENT_CONFIG_V2)
+
+    val systemConfig = systemRef.get().await().toSystemConfigV2()
+
+    val version = Version(BuildConfig.VERSION_NAME)
+    val minAppVersion = Version(systemConfig.minAppVersion)
+
+    if(version < minAppVersion) {
         throw UpdateRequiredException()
     }
     if(systemConfig.isUnderMaintenance()) {

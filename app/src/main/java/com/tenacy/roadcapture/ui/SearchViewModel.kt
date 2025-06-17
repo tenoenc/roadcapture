@@ -79,7 +79,7 @@ class SearchViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             flow {
                 // [VALIDATE_SYSTEM_CONFIG]
-                validateSystemConfig()
+                validateSystemConfigV2()
 
                 val userId = UserPref.id
                 val userRef = db.collection(FirebaseConstants.COLLECTION_USERS).document(userId)
