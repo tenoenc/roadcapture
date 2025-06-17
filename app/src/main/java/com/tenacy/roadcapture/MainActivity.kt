@@ -133,8 +133,8 @@ class MainActivity : AppCompatActivity(), DefaultLifecycleObserver {
     override fun onCreate(savedInstanceState: Bundle?) {
         super<AppCompatActivity>.onCreate(savedInstanceState)
 
-        // Edge-to-Edge 활성화
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            // Edge-to-Edge 활성화
             enableEdgeToEdge()
         } else {
             WindowCompat.setDecorFitsSystemWindows(window, false)
