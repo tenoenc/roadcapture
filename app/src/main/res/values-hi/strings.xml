@@ -105,6 +105,7 @@
     <string name="loading_location">स्थान जानकारी लोड हो रही है</string> <!-- {123} -->
     <string name="current_location_unavailable">वर्तमान स्थान उपलब्ध नहीं है</string> <!-- {95} -->
     <string name="copy_address">पता कॉपी करें</string> <!-- {158} -->
+    <string name="gps_signal_weak">GPS सिग्नल कमजोर है, लोकेशन ट्रैकिंग अभी रुक गई है</string>
 
     <!-- Processing States -->
     <string name="uploading_image">छवि अपलोड हो रही है</string> <!-- {110} -->

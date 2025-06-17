@@ -105,6 +105,7 @@
     <string name="loading_location">Memuat informasi lokasi</string> <!-- {123} -->
     <string name="current_location_unavailable">Lokasi saat ini tidak tersedia</string> <!-- {95} -->
     <string name="copy_address">Salin Alamat</string> <!-- {158} -->
+    <string name="gps_signal_weak">Sinyal GPS lemah, pelacakan lokasi dihentikan dulu</string>
 
     <!-- Processing States -->
     <string name="uploading_image">Mengunggah gambar</string> <!-- {110} -->

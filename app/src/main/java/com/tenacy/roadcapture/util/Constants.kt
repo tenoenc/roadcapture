@@ -30,9 +30,9 @@ object Constants {
 
     // GPS 점프 감지 관련
     const val MAX_REASONABLE_ACCELERATION = 15.0f      // 최대 합리적 가속도 (m/s²)
-    const val MAX_BEARING_CHANGE = 140f                // 급격한 방향 전환 감지 각도
+    const val MAX_BEARING_CHANGE = 140f                //
+    // 센서 기반 이동 감지 관련 급격한 방향 전환 감지 각도
 
-    // 센서 기반 이동 감지 관련
     const val MOVEMENT_THRESHOLD = 2.0f                // 이동 감지 가속도 임계값 (m/s²)
     const val STATIONARY_TIMEOUT = 120_000L            // 정지 상태 판단 시간 (2분)
 

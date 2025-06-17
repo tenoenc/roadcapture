@@ -105,6 +105,7 @@
     <string name="loading_location">正在加载位置信息</string> <!-- {123} -->
     <string name="current_location_unavailable">无法获取当前位置</string> <!-- {95} -->
     <string name="copy_address">复制地址</string> <!-- {158} -->
+    <string name="gps_signal_weak">GPS信号较弱，位置追踪暂时停止了</string>
 
     <!-- Processing States -->
     <string name="uploading_image">正在上传图片</string> <!-- {110} -->

@@ -15,6 +15,7 @@
     <color name="line_neutral">#D0E9E4</color>
     <color name="warning">#FF7A5C</color>
     <color name="warning_a40">#66FF7A5C</color>
+    <color name="warning_a50">#7FFF7A5C</color>
     <color name="description">#7B8C88</color>
     <color name="label_strong">#2D3B38</color>
     <color name="label_neutral">#4A5A56</color>

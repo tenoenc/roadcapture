@@ -105,6 +105,7 @@
     <string name="loading_location">Loading location information</string> <!-- {123} -->
     <string name="current_location_unavailable">Current location unavailable</string> <!-- {95} -->
     <string name="copy_address">Copy Address</string> <!-- {158} -->
+    <string name="gps_signal_weak">GPS signal is weak, so location tracking is paused for now</string>
 
     <!-- Processing States -->
     <string name="uploading_image">Uploading image</string> <!-- {110} -->

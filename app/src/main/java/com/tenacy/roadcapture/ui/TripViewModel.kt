@@ -15,6 +15,7 @@ import com.tenacy.roadcapture.data.pref.TravelPref
 import com.tenacy.roadcapture.data.pref.UserPref
 import com.tenacy.roadcapture.manager.SubscriptionManager
 import com.tenacy.roadcapture.manager.TravelingStateManager
+import com.tenacy.roadcapture.service.GpsStatus
 import com.tenacy.roadcapture.service.LocationProcessor
 import com.tenacy.roadcapture.ui.dto.Marker
 import com.tenacy.roadcapture.util.*
@@ -35,7 +36,7 @@ class TripViewModel @Inject constructor(
     private val locationDao: LocationDao,
     private val memoryDao: MemoryDao,
     private val travelingStateManager: TravelingStateManager,
-    val locationProcessor: LocationProcessor,
+    private val locationProcessor: LocationProcessor,
 ) : BaseViewModel() {
 
     val isSubscriptionActive: StateFlow<Boolean> = subscriptionManager.isSubscriptionActive
@@ -56,6 +57,13 @@ class TripViewModel @Inject constructor(
 
     private val _durationText = MutableStateFlow<String?>(null)
     val durationText = _durationText.asStateFlow()
+
+    val warningText = combine(locationProcessor.gpsStatusFlow, resourceProvider.configurationContextFlow) { gpsStatus, context ->
+        when {
+            gpsStatus == GpsStatus.UNDERGROUND -> context.getString(R.string.gps_signal_weak)
+            else -> null
+        }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), null)
 
     private val _subscribing = MutableStateFlow(false)
     val subscribing = _subscribing.asStateFlow()

@@ -105,6 +105,7 @@
     <string name="loading_location">Chargement des informations de localisation</string> <!-- {123} -->
     <string name="current_location_unavailable">Localisation actuelle indisponible</string> <!-- {95} -->
     <string name="copy_address">Copier l\'adresse</string> <!-- {158} -->
+    <string name="gps_signal_weak">Signal GPS faible, suivi de localisation mis en pause</string>
 
     <!-- Processing States -->
     <string name="uploading_image">Téléchargement de l\'image</string> <!-- {110} -->

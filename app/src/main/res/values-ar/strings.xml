@@ -105,6 +105,7 @@
     <string name="loading_location">جارٍ تحميل معلومات الموقع</string> <!-- {123} -->
     <string name="current_location_unavailable">الموقع الحالي غير متاح</string> <!-- {95} -->
     <string name="copy_address">نسخ العنوان</string> <!-- {158} -->
+    <string name="gps_signal_weak">إشارة GPS ضعيفة، تتبع الموقع متوقف الآن</string>
 
     <!-- Processing States -->
     <string name="uploading_image">جارٍ رفع الصورة</string> <!-- {110} -->

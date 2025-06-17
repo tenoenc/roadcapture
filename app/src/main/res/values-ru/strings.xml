@@ -105,6 +105,7 @@
     <string name="loading_location">Загрузка информации о местоположении</string> <!-- {123} -->
     <string name="current_location_unavailable">Текущее местоположение недоступно</string> <!-- {95} -->
     <string name="copy_address">Копировать адрес</string> <!-- {158} -->
+    <string name="gps_signal_weak">GPS-сигнал слабый, отслеживание местоположения пока приостановлено</string>
 
     <!-- Processing States -->
     <string name="uploading_image">Загрузка изображения</string> <!-- {110} -->

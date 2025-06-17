@@ -14,8 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.*
 import java.time.LocalDateTime
 import java.util.*
 import javax.inject.Inject
@@ -56,68 +55,11 @@ class DefaultLocationProcessor @Inject constructor(
     private var kalmanLongitude: KalmanFilter? = null
     private var kalmanAltitude: KalmanFilter? = null
 
-    // 위치 이벤트 Flow
+    // 이벤트 Flow
     private val _savedLocationsFlow = MutableSharedFlow<Location>(replay = 0)
+    private val _gpsStatusFlow = MutableStateFlow(GpsStatus.GOOD)
+    override val gpsStatusFlow: StateFlow<GpsStatus> = _gpsStatusFlow.asStateFlow()
 
-    // ===== 데이터 클래스 및 열거형 =====
-
-    enum class TransportMode(val speedRange: Pair<Float, Float>) {
-        STATIONARY(0f to 2f),
-        WALKING(2f to 15f),
-        CYCLING(15f to 50f),
-        DRIVING(50f to 200f),
-        TRAIN(80f to 350f),
-        FLIGHT(200f to 1000f),
-        UNKNOWN(0f to Float.MAX_VALUE)
-    }
-
-    data class LocationData(
-        val location: Location,
-        val timestamp: Long,
-        val speed: Float = 0f,
-        val bearing: Float = 0f,
-        val accuracy: Float = 0f
-    )
-
-    // 간단한 1차원 칼만 필터 구현
-    class KalmanFilter(
-        private var processNoise: Float = Constants.KALMAN_PROCESS_NOISE_DEFAULT,
-        private var measurementNoise: Float = Constants.KALMAN_MEASUREMENT_NOISE_DEFAULT
-    ) {
-        private var estimate = 0.0
-        private var errorCovariance = 1.0
-        private var isInitialized = false
-
-        fun update(measurement: Double, accuracy: Float): Double {
-            if (!isInitialized) {
-                estimate = measurement
-                errorCovariance = (accuracy * accuracy).toDouble()
-                isInitialized = true
-                return estimate
-            }
-
-            // 예측 단계
-            errorCovariance += processNoise
-
-            // 업데이트 단계
-            val measurementVariance = (accuracy * accuracy).toDouble()
-            val kalmanGain = errorCovariance / (errorCovariance + measurementVariance)
-
-            estimate += kalmanGain * (measurement - estimate)
-            errorCovariance *= (1 - kalmanGain)
-
-            return estimate
-        }
-
-        fun getCurrentEstimate(): Double = estimate
-        fun isInitialized(): Boolean = isInitialized
-
-        fun reset() {
-            isInitialized = false
-            estimate = 0.0
-            errorCovariance = 1.0
-        }
-    }
 
     init {
         restoreState()
@@ -140,6 +82,9 @@ class DefaultLocationProcessor @Inject constructor(
 
         // GPS 신호 품질 확인
         checkGpsSignalQuality(location, currentTime)
+
+        // GPS 상태 업데이트
+        updateGpsStatus(location)
 
         // 모의 위치 처리
         if (!handleMockLocation(isMocked)) {
@@ -222,8 +167,8 @@ class DefaultLocationProcessor @Inject constructor(
     }
 
     override fun isLocationQualityAcceptable(location: Location): Boolean {
-        // 이동 수단별 정확도 임계값
-        val accuracyThreshold = when (currentTransportMode) {
+        // 환경별 적응형 정확도 기준 (연속 불량 시 완화)
+        val baseAccuracyThreshold = when (currentTransportMode) {
             TransportMode.STATIONARY -> 20f
             TransportMode.WALKING -> 30f
             TransportMode.CYCLING -> 40f
@@ -233,19 +178,33 @@ class DefaultLocationProcessor @Inject constructor(
             TransportMode.UNKNOWN -> 50f
         }
 
+        // 🎯 산악/야외 환경 감지 시 기준 완화
+        val accuracyThreshold = if (consecutiveAccuracyFilterCount > 8) {
+            when (currentTransportMode) {
+                TransportMode.STATIONARY -> 100f
+                TransportMode.WALKING -> 200f
+                TransportMode.CYCLING -> 120f
+                TransportMode.DRIVING -> 100f
+                TransportMode.TRAIN -> 100f
+                TransportMode.FLIGHT -> 150f
+                TransportMode.UNKNOWN -> 200f
+            }
+        } else {
+            baseAccuracyThreshold
+        }
+
         if (location.accuracy > accuracyThreshold) {
             return false
         }
 
-        // 이동 수단별 위치 데이터 최대 나이
         val maxAge = when (currentTransportMode) {
-            TransportMode.STATIONARY -> 300_000L  // 5분
-            TransportMode.WALKING -> 120_000L     // 2분
-            TransportMode.CYCLING -> 60_000L      // 1분
-            TransportMode.DRIVING -> 30_000L      // 30초
-            TransportMode.TRAIN -> 60_000L        // 1분
-            TransportMode.FLIGHT -> 120_000L      // 2분
-            TransportMode.UNKNOWN -> 60_000L      // 1분
+            TransportMode.STATIONARY -> 300_000L
+            TransportMode.WALKING -> 120_000L
+            TransportMode.CYCLING -> 60_000L
+            TransportMode.DRIVING -> 30_000L
+            TransportMode.TRAIN -> 60_000L
+            TransportMode.FLIGHT -> 120_000L
+            TransportMode.UNKNOWN -> 60_000L
         }
 
         val locationAge = System.currentTimeMillis() - location.time
@@ -253,7 +212,6 @@ class DefaultLocationProcessor @Inject constructor(
             return false
         }
 
-        // 위성 개수 체크
         if (satelliteCount > 0 && satelliteCount < 4 && location.accuracy > 20f) {
             return false
         }
@@ -686,6 +644,19 @@ class DefaultLocationProcessor @Inject constructor(
         } catch (e: Exception) {
             Log.e(TAG, "위치 저장 실패", e)
             null
+        }
+    }
+
+    private fun updateGpsStatus(location: Location) {
+        val newStatus = when {
+            location.accuracy <= 50f -> GpsStatus.GOOD
+            location.accuracy <= 150f -> GpsStatus.OUTDOOR
+            location.accuracy <= 200f -> GpsStatus.POOR
+            else -> GpsStatus.UNDERGROUND
+        }
+
+        if (_gpsStatusFlow.value != newStatus) {
+            _gpsStatusFlow.value = newStatus
         }
     }
 }

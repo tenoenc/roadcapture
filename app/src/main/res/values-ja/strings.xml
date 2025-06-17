@@ -105,6 +105,7 @@
     <string name="loading_location">位置情報読み込み中</string> <!-- {123} -->
     <string name="current_location_unavailable">現在位置を確認できません</string> <!-- {95} -->
     <string name="copy_address">アドレスをコピー</string> <!-- {158} -->
+    <string name="gps_signal_weak">GPS信号が弱くて、位置追跡を一時停止しています</string>
 
     <!-- Processing States -->
     <string name="uploading_image">画像アップロード中</string> <!-- {110} -->

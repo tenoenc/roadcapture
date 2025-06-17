@@ -84,6 +84,7 @@
 
         <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
                                                            android:layout_height="wrap_content"
+                                                           android:id="@+id/card_trip_memory_today"
                                                            app:safeClick="@{() -> vm.onMemoryCountClick()}"
                                                            android:clickable="true"
                                                            android:visibility="@{vm.memoryLoaded == false ? View.GONE : View.VISIBLE}"
@@ -133,6 +134,36 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView android:layout_width="wrap_content"
+                                                           android:layout_height="wrap_content"
+                                                           android:minHeight="36dp"
+                                                           android:visibility="@{vm.warningText == null ? View.GONE : View.VISIBLE}"
+                                                           android:clickable="true"
+                                                           android:layout_marginHorizontal="20dp"
+                                                           android:layout_marginTop="12dp"
+                                                           app:cardBackgroundColor="@color/warning_a50"
+                                                           app:cardCornerRadius="100dp"
+                                                           app:cardElevation="0dp"
+                                                           app:strokeWidth="0dp"
+                                                           app:contentPaddingRight="8dp"
+                                                           app:contentPaddingLeft="8dp"
+                                                           app:contentPaddingBottom="4dp"
+                                                           app:contentPaddingTop="4dp"
+                                                           app:layout_constrainedWidth="true"
+                                                           app:layout_constraintEnd_toEndOf="parent"
+                                                           app:layout_constraintStart_toStartOf="parent"
+                                                           app:layout_constraintTop_toBottomOf="@id/card_trip_memory_today">
+
+            <TextView android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:layout_gravity="center"
+                      android:textAppearance="@style/Body_14_M"
+                      android:textAlignment="center"
+                      android:textColor="@color/background_normal"
+                      android:text="@{vm.warningText}"
+                      tools:text="GPS 신호가 약해 위치 추적이 일시 중단되었어요"/>
+
+        </com.google.android.material.card.MaterialCardView>
 
         <ImageButton android:layout_width="36dp"
                      android:layout_height="36dp"
