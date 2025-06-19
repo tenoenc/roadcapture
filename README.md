@@ -19,7 +19,23 @@
 
 ## 스크린샷
 
+로드캡처의 주요 기능에 대한 스크린샷은 다음과 같습니다. 더 자세한 내용은 [앱 설치](https://play.google.com/store/apps/details?id=com.tenacy.roadcapture) 후 확인해주세요.
 
+### 홈 / 스크랩 / 검색
+
+![Home / Scrap / Search Screenshots](docs/images/screenshot-1.png)
+
+### 내 앨범 / 앱 정보
+
+![MyAlbum / App Info Screenshots](docs/images/screenshot-2.png)
+
+### 앨범 조회
+
+![Album Screenshots](docs/images/screenshot-3.png)
+
+### 앨범 생성
+
+![Create-Album Screenshots](docs/images/screenshot-4.png)
 
 ## 주요 기능
 
@@ -217,32 +233,32 @@
 
 ### 개발 환경 설정
 
-### 1. 필수 요구사항
+#### 1. 필수 요구사항
 - Android Studio Flamingo 이상
 - JDK 17 이상
 - Kotlin 1.9.24
 - Gradle 8.7
 
-### 2. 프로젝트 클론 및 기본 설정
+#### 2. 프로젝트 클론 및 기본 설정
 
 ```bash
 git clone https://github.com/tentenacy/roadcapture.git
 cd roadcapture
 ```
 
-### 3. 외부 의존성 설정
+#### 3. 외부 의존성 설정
 
 이 내용은 [외부 의존성 설정](docs/set-dependencies.md) 문서를 참고해주세요.
 
-### 빌드 및 실행
+#### 4. 빌드 및 실행
 
-#### 1. 그래들 빌드 실행
+##### 그래들 빌드 실행
 
 ```bash
 ./gradlew clean build
 ```
 
-#### 2. 앱 설치 및 실행
+##### 앱 설치 및 실행
 
 ```bash
 ./gradlew installDebug
@@ -252,6 +268,10 @@ cd roadcapture
 - Android Studio에서 프로젝트 열기
 - 기기 또는 에뮬레이터 선택
 - Run 버튼 클릭
+
+### 구글 플레이 스토어에서 설치
+
+로드캡처는 구글 플레이 스토어에 배포되고 있습니다. [여기](https://play.google.com/store/apps/details?id=com.tenacy.roadcapture)에서 설치할 수 있습니다.
 
 ## 향후 개선 계획
 
