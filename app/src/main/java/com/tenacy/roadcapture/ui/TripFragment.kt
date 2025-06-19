@@ -422,7 +422,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         isClusterManagerInitialized = true
     }
 
-    // TripFragment.kt의 setupLocationUpdates() 함수 수정
     private fun setupLocationUpdates() {
         // 위치 업데이트 시작
         repeatOnLifecycle {
@@ -1011,7 +1010,6 @@ class TripFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnCluste
         }
     }
 
-    // Triple<소스Uri, 대상Uri, 위치> 형태로 데이터 전달
     private val cropLauncher =
         registerForActivityResult(object : ActivityResultContract<Triple<Uri, Uri, Location?>, Pair<Uri?, Location?>>() {
             override fun createIntent(context: Context, input: Triple<Uri, Uri, Location?>): Intent {

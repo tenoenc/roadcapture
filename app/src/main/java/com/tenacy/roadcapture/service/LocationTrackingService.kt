@@ -172,7 +172,7 @@ class LocationTrackingService : Service(), SensorEventListener {
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // 센서 정확도 변화 처리 (필요시)
+        // 센서 정확도 변화 처리
     }
 
     private fun detectMovement() {

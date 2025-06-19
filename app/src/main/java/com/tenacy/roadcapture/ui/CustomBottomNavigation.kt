@@ -66,9 +66,6 @@ class CustomBottomNavigation @JvmOverloads constructor(
         }
     }
 
-    /**
-     * 커스텀 네비게이션 처리를 위한 메서드 (NavController 사용하지 않음)
-     */
     fun setupWithCustomNavigation(onTabSelected: (Int) -> Unit) {
         this.onTabSelectedListener = onTabSelected
 
@@ -77,16 +74,11 @@ class CustomBottomNavigation @JvmOverloads constructor(
         onTabSelectedListener?.invoke(R.id.homeFragment)
     }
 
-    /**
-     * 새 아이템 버튼 클릭 리스너 설정
-     */
     fun setOnNewItemClickListener(listener: (() -> Unit)?) {
         this.onNewItemClickListener = listener
     }
 
-    /**
-     * 특정 목적지로 네비게이션
-     */
+    // 특정 목적지로 네비게이션
     private fun navigateTo(destinationId: Int) {
         if (currentSelectedId == destinationId) return
 
@@ -104,9 +96,6 @@ class CustomBottomNavigation @JvmOverloads constructor(
         updateSelection(destinationId)
     }
 
-    /**
-     * 선택된 메뉴 아이템 업데이트
-     */
     private fun updateSelection(destinationId: Int) {
         // 이전 선택 상태 초기화
         resetAllSelections()
@@ -124,9 +113,6 @@ class CustomBottomNavigation @JvmOverloads constructor(
         currentSelectedId = destinationId
     }
 
-    /**
-     * 모든 선택 상태 초기화
-     */
     private fun resetAllSelections() {
         updateHomeSelection(false)
         updateScrapSelection(false)
@@ -134,56 +120,36 @@ class CustomBottomNavigation @JvmOverloads constructor(
         updateAppInfoSelection(false)
     }
 
-    /**
-     * 홈 메뉴 선택 상태 업데이트
-     */
     private fun updateHomeSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_home_selected else R.drawable.ic_home
 
         binding.bnHome.findViewById<ImageView>(R.id.img_bn_home)?.setImageResource(iconResource)
     }
 
-    /**
-     * 북마크 메뉴 선택 상태 업데이트
-     */
     private fun updateScrapSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_book_marked_selected else R.drawable.ic_book_marked
 
         binding.bnScrap.findViewById<ImageView>(R.id.img_bn_scrap)?.setImageResource(iconResource)
     }
 
-    /**
-     * 내 앨범 메뉴 선택 상태 업데이트
-     */
     private fun updateAlbumSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_book_selected else R.drawable.ic_book
 
         binding.bnMyAlbum.findViewById<ImageView>(R.id.img_bn_my_album)?.setImageResource(iconResource)
     }
 
-    /**
-     * 검색 메뉴 선택 상태 업데이트
-     */
     private fun updateAppInfoSelection(isSelected: Boolean) {
         val iconResource = if (isSelected) R.drawable.ic_circle_info_selected else R.drawable.ic_circle_info
 
         binding.bnAppInfo.findViewById<ImageView>(R.id.img_bn_app_info)?.setImageResource(iconResource)
     }
 
-    /**
-     * 프로그래매틱하게 아이템 선택
-     */
     fun selectItem(destinationId: Int) {
         navigateTo(destinationId)
     }
 
-
-
     companion object {
 
-        /**
-         * onNewItemClick 바인딩 어댑터
-         */
         @JvmStatic
         @BindingAdapter("onNewItemClick")
         fun setOnNewItemClick(view: CustomBottomNavigation, listener: (() -> Unit)?) {

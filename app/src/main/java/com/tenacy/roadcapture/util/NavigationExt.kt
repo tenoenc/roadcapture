@@ -16,13 +16,6 @@ val Fragment.mainActivity get() =  (requireActivity() as MainActivity)
 val AppCompatActivity.currentFragment get() = supportFragmentManager.findFragmentById(R.id.container)
 val AppCompatActivity.currentDestinationId get() = currentFragment?.let { NavHostFragment.findNavController(it).currentDestination?.id }
 
-/**
- * 메인 액티비티에서 특정 프래그먼트의 ViewModel을 얻는 확장 함수
- *
- * @param fragmentId NavHost 프래그먼트의 ID (일반적으로 R.id.nav_host_fragment)
- * @param fragmentClass 타겟 프래그먼트의 클래스
- * @return T 타입의 ViewModel 또는 찾을 수 없는 경우 null
- */
 inline fun <reified T : ViewModel> FragmentActivity.getFragmentViewModel(
     fragmentId: Int,
     fragmentClass: Class<out Fragment>
@@ -47,9 +40,6 @@ inline fun <reified T : ViewModel> FragmentActivity.getFragmentViewModel(
     return ViewModelProvider(targetFragment as ViewModelStoreOwner)[T::class.java]
 }
 
-/**
- * 특정 클래스의 프래그먼트를 재귀적으로 찾는 함수
- */
 fun findFragmentByClass(fragment: Fragment, targetClass: Class<out Fragment>): Fragment? {
     // 현재 프래그먼트가 타겟 클래스인지 확인
     if (targetClass.isInstance(fragment)) {

@@ -31,15 +31,12 @@ class DefaultLocationProcessor @Inject constructor(
 
     private val processorScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    // 기존 필드들
     private var lastProcessedLocation: Location? = null
     private var lastProcessedTime = 0L
     private var consecutiveSpeedFilterCount = 0
     private var consecutiveAccuracyFilterCount = 0
     private var isHighSpeedModeActive = false
     private var highSpeedModeStartTime = 0L
-
-    // 향상된 기능을 위한 새로운 필드들
     private var currentTransportMode = TransportMode.UNKNOWN
     private var isUndergroundMode = false
     private var lastGoodGpsTime = 0L
@@ -55,7 +52,7 @@ class DefaultLocationProcessor @Inject constructor(
     private var kalmanLongitude: KalmanFilter? = null
     private var kalmanAltitude: KalmanFilter? = null
 
-    // 이벤트 Flow
+    // 이벤트
     private val _savedLocationsFlow = MutableSharedFlow<Location>(replay = 0)
     private val _gpsStatusFlow = MutableStateFlow(GpsStatus.GOOD)
     override val gpsStatusFlow: StateFlow<GpsStatus> = _gpsStatusFlow.asStateFlow()
@@ -65,8 +62,6 @@ class DefaultLocationProcessor @Inject constructor(
         restoreState()
         initializeKalmanFilters()
     }
-
-    // ===== 핵심 메서드들 =====
 
     override suspend fun processLocation(location: Location): LocationEntity? {
         val currentTime = System.currentTimeMillis()
@@ -178,7 +173,7 @@ class DefaultLocationProcessor @Inject constructor(
             TransportMode.UNKNOWN -> 50f
         }
 
-        // 🎯 산악/야외 환경 감지 시 기준 완화
+        // 산악/야외 환경 감지 시 기준 완화
         val accuracyThreshold = if (consecutiveAccuracyFilterCount > 8) {
             when (currentTransportMode) {
                 TransportMode.STATIONARY -> 100f
@@ -295,8 +290,6 @@ class DefaultLocationProcessor @Inject constructor(
     override fun getSavedLocationsFlow(): Flow<Location> {
         return _savedLocationsFlow
     }
-
-    // ===== 헬퍼 메서드들 =====
 
     private fun initializeKalmanFilters() {
         kalmanLatitude = KalmanFilter()
@@ -637,7 +630,6 @@ class DefaultLocationProcessor @Inject constructor(
 
             Log.d(TAG, "위치 저장: ${location.latitude}, ${location.longitude} (모드: $currentTransportMode, 정확도: ${location.accuracy}m)")
 
-            // Flow 전송
             _savedLocationsFlow.emit(location)
 
             savedEntity

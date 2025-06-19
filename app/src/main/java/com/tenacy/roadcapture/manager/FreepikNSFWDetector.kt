@@ -66,10 +66,8 @@ class FreepikNSFWDetector @Inject constructor(
         }
     }
 
-    /**
-     * 이미지를 전처리하는 함수
-     * 파이썬 구현과 일치하도록 구현됨
-     */
+
+    // 이미지 전처리
     private fun preprocess(bitmap: Bitmap): FloatBuffer {
         // 이미지 크기 조정
         val resizedBitmap = Bitmap.createScaledBitmap(bitmap, IMAGE_SIZE, IMAGE_SIZE, true)
@@ -107,10 +105,7 @@ class FreepikNSFWDetector @Inject constructor(
         return floatBuffer
     }
 
-    /**
-     * 소프트맥스 함수 구현
-     * 파이썬 구현과 일치하도록 구현됨
-     */
+    // 소프트맥스
     private fun softmax(logits: FloatArray): FloatArray {
         val maxLogit = logits.maxOrNull() ?: 0f
         val expValues = logits.map { exp((it - maxLogit).toDouble()).toFloat() }
@@ -119,10 +114,7 @@ class FreepikNSFWDetector @Inject constructor(
         return expValues.map { it / sumExp }.toFloatArray()
     }
 
-    /**
-     * 누적 확률 계산 함수
-     * 파이썬 구현과 일치하도록 구현됨
-     */
+    // 누적 확률 계산
     private fun calculateCumulativeProbs(probs: FloatArray): Map<String, Float> {
         val output = mutableMapOf<String, Float>()
         var dangerCumSum = 0f
@@ -146,10 +138,7 @@ class FreepikNSFWDetector @Inject constructor(
         val highestConfidence: Float
     )
 
-    /**
-     * NSFW 감지 함수
-     * 비트맵 이미지를 입력받아 NSFW 감지 결과를 반환
-     */
+    // NSFW 감지
     suspend fun detectNSFW(bitmap: Bitmap): NSFWDetectionResult = withContext(Dispatchers.Default) {
         require(session != null) { "ONNX 모델이 초기화되지 않았습니다" }
 

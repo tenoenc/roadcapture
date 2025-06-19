@@ -39,7 +39,7 @@ class MyAlbumTabViewModel @Inject constructor(
     private val params: MyAlbumTabFragment.ParamsIn? = savedStateHandle.get<MyAlbumTabFragment.ParamsIn>(MyAlbumTabFragment.KEY_PARAMS)
     private val userId: String = params?.userId ?: ""
 
-    // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스를 생성하도록 합니다
+    // 페이징 소스 팩토리를 변수로 분리하여 항상 새로운 인스턴스 생성
     private val pagingSourceFactory = {
         AlbumPagingSource(filter = AlbumFilter.User(id = userId))
     }
@@ -56,7 +56,6 @@ class MyAlbumTabViewModel @Inject constructor(
         pagingSourceFactory = pagingSourceFactory
     )
 
-    // 앨범 데이터 Flow
     val albums: Flow<PagingData<Album>> = pager.flow
         .flowOn(Dispatchers.IO)
         .cachedIn(viewModelScope)

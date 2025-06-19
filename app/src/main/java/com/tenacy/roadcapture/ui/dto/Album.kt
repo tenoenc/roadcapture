@@ -9,7 +9,7 @@ import java.time.LocalDateTime
 
 @Parcelize
 data class Album(
-    val id: String = "", // Firestore 문서 ID
+    val id: String = "",
     val title: String = "",
     val createdAt: LocalDateTime,
     val endedAt: LocalDateTime,

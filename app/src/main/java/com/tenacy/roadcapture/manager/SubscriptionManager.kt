@@ -26,19 +26,11 @@ import javax.inject.Singleton
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-/**
- * 단순화된 구독 관리 클래스
- *
- * Google Play Billing과만 연계하여 구독을 관리합니다.
- * - 구독 확인
- * - 구독 상태 제공 (활성/비활성)
- */
 @Singleton
 class SubscriptionManager @Inject constructor(
     private val resourceProvider: ResourceProvider,
     private val billingManager: BillingManager,
 ) {
-    // 상수 정의
     companion object {
         private const val TAG = "SubscriptionManager"
 
@@ -49,7 +41,7 @@ class SubscriptionManager @Inject constructor(
     // 코루틴 스코프
     private val coroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    // 구독 상태 Flow
+    // 구독 상태
     private val _isSubscriptionActive = MutableStateFlow(false)
     val isSubscriptionActive: Flow<Boolean> = _isSubscriptionActive
 
@@ -81,9 +73,7 @@ class SubscriptionManager @Inject constructor(
         setupPurchaseListener()
     }
 
-    /**
-     * 초기화 및 사전 로드 메서드
-     */
+    // 초기화 및 사전 로드
     fun initialize(callback: ((Boolean) -> Unit)? = null) {
         if (!listenerSetup) {
             setupPurchaseListener()
@@ -91,9 +81,7 @@ class SubscriptionManager @Inject constructor(
         preloadSubscriptionProducts(callback)
     }
 
-    /**
-     * 구독 이벤트 리스너 설정
-     */
+    // 구독 이벤트 리스너 설정
     private fun setupPurchaseListener() {
         if (listenerSetup) {
             Log.d(TAG, "리스너가 이미 설정되어 있음")
@@ -116,9 +104,7 @@ class SubscriptionManager @Inject constructor(
         Log.d(TAG, "구독 이벤트 리스너 설정 완료")
     }
 
-    /**
-     * 구독 상품 정보 사전 로드
-     */
+    // 구독 상품 정보 사전 로드
     private fun preloadSubscriptionProducts(callback: ((Boolean) -> Unit)? = null) {
         billingManager.preloadProductDetails(subscriptionProductList) { success, detailsList ->
             if (success && detailsList.isNotEmpty()) {
@@ -143,9 +129,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 이벤트 처리
-     */
+    // 구독 이벤트 처리
     private suspend fun handlePurchaseEvent(event: BillingManager.PurchaseEvent) {
         when (event.type) {
             BillingManager.PurchaseEventType.SUCCESS -> {
@@ -170,18 +154,12 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 구매 콜백 설정
-     */
+    // 구독 구매 콜백 설정
     fun setPurchaseCallback(callback: SubscriptionPurchaseCallback?) {
         this.purchaseCallback = callback
     }
 
-    /**
-     * 구독 상태 확인 (suspend 함수)
-     *
-     * Google Play에서 현재 구독 상태를 확인하고, 자동 갱신 상태 및 만료 시간을 체크합니다.
-     */
+    // 구독 상태 확인
     suspend fun checkSubscriptionStatus(): Boolean {
         val currentTime = System.currentTimeMillis()
         Log.d(TAG, "구독 상태 확인 시작")
@@ -278,9 +256,7 @@ class SubscriptionManager @Inject constructor(
         return SubscriptionPref.isSubscriptionActive
     }
 
-    /**
-     * 재시도 가능한 오류인지 확인
-     */
+    // 재시도 가능한 오류인지 확인
     private fun isRetryableError(responseCode: Int): Boolean {
         return when (responseCode) {
             BillingClient.BillingResponseCode.SERVICE_UNAVAILABLE,
@@ -291,9 +267,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 처리
-     */
+    // 구독 처리
     private suspend fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             // 만료 시간 계산
@@ -321,9 +295,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구매 확인 처리
-     */
+    // 구매 확인 처리
     private suspend fun acknowledgePurchase(purchase: Purchase, expiryTimeMillis: Long) {
         Log.d(TAG, "구매 확인 시작: 토큰=${purchase.purchaseToken.take(8)}")
 
@@ -371,12 +343,7 @@ class SubscriptionManager @Inject constructor(
         userRef.update("purchaseToken", purchaseToken ?: FieldValue.delete()).await()
     }
 
-    /**
-     * 만료 시간 정보 가져오기
-     *
-     * Google Play API에서 제공하는 실제 만료 시간을 가져오거나,
-     * 정보가 없는 경우 대체 계산을 수행합니다.
-     */
+    // 만료 시간 정보 가져오기
     private suspend fun getExpiryTimeMillis(purchase: Purchase): Long {
         try {
             // 1. 먼저 서버에서 구독 정보 확인 시도
@@ -429,9 +396,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 로컬 구독 정보 업데이트
-     */
+    // 로컬 구독 정보 업데이트
     private fun updateLocalSubscription(isActive: Boolean, purchase: Purchase?, expiryTime: Long) {
         SubscriptionPref.apply {
             this.isSubscriptionActive = isActive
@@ -456,9 +421,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 시작
-     */
+    // 구독 시작
     fun subscribe(activity: Activity, callback: SubscriptionPurchaseCallback? = null) {
         // 임시 콜백 설정 (필요한 경우)
         if (callback != null) {
@@ -485,9 +448,7 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구매 흐름 시작
-     */
+    // 구매 흐름 시작
     private fun launchBillingFlow(activity: Activity) {
         val details = productDetails[Constants.SUBSCRIPTION_PREMIUM_PRODUCT_ID]
         if (details == null) {
@@ -513,35 +474,24 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 상태 관찰을 위한 이벤트 핸들러 인터페이스
-     */
+    // 구독 상태 관찰을 위한 이벤트 핸들러 인터페이스
     interface SubscriptionStateListener {
         fun onSubscriptionStateChanged(isActive: Boolean, isCanceled: Boolean)
     }
 
-    /**
-     * 구독 상태 리스너 등록
-     */
+    // 구독 상태 리스너 등록
     fun addSubscriptionStateListener(listener: SubscriptionStateListener) {
         if (!subscriptionStateListeners.contains(listener)) {
             subscriptionStateListeners.add(listener)
         }
     }
 
-    /**
-     * 구독 상태 리스너 제거
-     */
+    // 구독 상태 리스너 제거
     fun removeSubscriptionStateListener(listener: SubscriptionStateListener) {
         subscriptionStateListeners.remove(listener)
     }
 
-    /**
-     * Google 계정 변경 감지 및 업데이트
-     *
-     * 이 메서드는 Google 계정 변경을 감지하면 구독 상태를 다시 확인합니다.
-     * Activity나 Fragment에서 계정 변경 이벤트를 감지할 때 호출해야 합니다.
-     */
+    // Google 계정 변경 감지 및 업데이트
     fun onGoogleAccountChanged() {
         Log.d(TAG, "Google 계정 변경 감지됨, 구독 상태 확인 중...")
         coroutineScope.launch {
@@ -554,36 +504,13 @@ class SubscriptionManager @Inject constructor(
         }
     }
 
-    /**
-     * 구독 정보 가져오기 (BillingManager 확장 메서드)
-     *
-     * 실제 구현은 사용 중인 Billing 라이브러리 버전에 맞게 조정해야 합니다.
-     */
-    private fun BillingManager.getSubscriptionInfo(purchase: Purchase): SubscriptionInfo? {
-        // 이 부분은 실제 BillingManager와 Billing 라이브러리 구현에 맞게 수정 필요
-        try {
-            // 예시: Purchase 객체에서 구독 정보 추출
-            Log.d(TAG, "구독 정보 가져오기 시도")
-
-            // 임시 반환값 (실제 구현에서는 대체)
-            return null
-        } catch (e: Exception) {
-            Log.e(TAG, "구독 정보 가져오기 실패", e)
-            return null
-        }
-    }
-
-    /**
-     * 구독 정보 데이터 클래스
-     */
+    // 구독 정보 데이터 클래스
     data class SubscriptionInfo(
         val expiryTimeMillis: Long = 0,
         val isAutoRenewing: Boolean = false
     )
 
-    /**
-     * 구독 구매 콜백 인터페이스
-     */
+    // 구독 구매 콜백 인터페이스
     interface SubscriptionPurchaseCallback {
         fun onSubscriptionPurchaseCompleted(purchase: Purchase)
         fun onSubscriptionPurchaseFailed(errorCode: Int, errorMessage: String)

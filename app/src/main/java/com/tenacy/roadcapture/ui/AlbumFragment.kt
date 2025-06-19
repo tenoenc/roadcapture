@@ -77,7 +77,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         _binding = null
     }
 
-    // ===== 4. 인터페이스 구현 메서드 그룹 =====
+    // ===== 1. 인터페이스 구현 메서드 그룹 =====
     override fun onMapReady(map: GoogleMap) {
         this@AlbumFragment.map = map
 
@@ -96,7 +96,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         }
     }
 
-    // ===== 5. 초기 설정 메서드 그룹 =====
+    // ===== 2. 초기 설정 메서드 그룹 =====
     private fun setupFragmentResultListeners() {
         childFragmentManager.setFragmentResultListener(
             RangeSelectBottomSheetFragment.REQUEST_KEY,
@@ -213,7 +213,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         isClusterManagerInitialized = true
     }
 
-    // ===== 7. 데이터 관찰 메서드 그룹 =====
+    // ===== 3. 데이터 관찰 메서드 그룹 =====
     private fun observeData() {
         repeatOnLifecycle {
             vm.routePoints.collectLatest { points ->
@@ -249,7 +249,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         }
     }
 
-    // ===== 8. 이벤트 처리 메서드 그룹 =====
+    // ===== 4. 이벤트 처리 메서드 그룹 =====
     private fun handleViewEvents(event: ViewEvent) {
         // [VALIDATE_SYSTEM_CONFIG]
         if(event is CommonSystemViewEvent) {
@@ -384,7 +384,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         }
     }
 
-    // ===== 9. 지도 컨트롤 메서드 그룹 =====
+    // ===== 5. 지도 컨트롤 메서드 그룹 =====
     @SuppressLint("MissingPermission")
     private fun moveCameraTo(location: Location? = null, zoom: Float = map.cameraPosition.zoom) {
         location?.let { map.animateCamera(CameraUpdateFactory.newLatLngZoom(it.toLatLng(), zoom)) }
@@ -414,7 +414,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         map.animateCamera(CameraUpdateFactory.zoomTo(newZoom))
     }
 
-    // ===== 10. 경로 처리 메서드 그룹 =====
+    // ===== 6. 경로 처리 메서드 그룹 =====
     private fun updateRouteOnMap(routePoints: List<Location>) {
         if (!::map.isInitialized || routePoints.isEmpty()) return
 
@@ -521,7 +521,7 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         return (a shl 24) or (r shl 16) or (g shl 8) or b
     }
 
-    // ===== 11. 마커 처리 메서드 그룹 =====
+    // ===== 7. 마커 처리 메서드 그룹 =====
     private fun updatePhotoMarkers(markers: List<Marker>) {
         if (!::map.isInitialized || !::clusterManager.isInitialized) return
 
@@ -565,11 +565,9 @@ class AlbumFragment : BaseFragment(), OnMapReadyCallback, ClusterManager.OnClust
         photoUrl: String = ""
     ) {
         try {
-            // Create cluster item
             val clusterItem =
                 ClusterMarkerItem(markerId, position, "Photo: $markerId", "", photoUri = photoUri, photoUrl = photoUrl)
 
-            // Add to cluster manager
             clusterManager.addItem(clusterItem)
             vm.addClusterItem(markerId, clusterItem)
         } catch (e: Exception) {

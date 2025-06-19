@@ -87,8 +87,7 @@ class NestedCoordinatorLayout @JvmOverloads constructor(
         type: Int,
         consumed: IntArray
     ) {
-        // 이 메소드에서 중요한 부분: 자식 → 부모 전파의 결과를 어떻게 처리할 것인가
-
+        // 자식 -> 부모 전파의 결과를 어떻게 처리할 것인가
         // 1. 먼저 부모에게 스크롤 전달 (CollapsingToolbarLayout과의 상호작용 때문)
         val parentConsumed = intArrayOf(0, 0)
         if (dxUnconsumed != 0 || dyUnconsumed != 0) {

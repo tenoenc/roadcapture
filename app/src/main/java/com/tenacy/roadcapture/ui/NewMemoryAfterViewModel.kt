@@ -153,8 +153,6 @@ class NewMemoryAfterViewModel @Inject constructor(
         }
     }
     
-    // 1. 숫자가 포함되지 않은 경우
-    // 2. 숫자 및 문자가 포함된 경우
     private fun validateIncludePattern(value: String) = (!value.containsDigit() || value.containsLetter())
 
     private fun saveLocationToLocal(address: Address): Long {

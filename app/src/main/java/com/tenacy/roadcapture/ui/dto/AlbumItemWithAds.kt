@@ -3,9 +3,6 @@ package com.tenacy.roadcapture.ui.dto
 import java.util.UUID
 
 sealed class AlbumItemWithAds {
-    /**
-     * 앨범 데이터를 담는 아이템
-     */
     sealed class Album(
         open val id: String,
         open val value: com.tenacy.roadcapture.ui.dto.Album,
@@ -26,9 +23,6 @@ sealed class AlbumItemWithAds {
         ): Album(value.id, value, onItemClick)
     }
 
-    /**
-     * 광고 아이템
-     */
     data class Ad(
         val id: String = UUID.randomUUID().toString(),
         val position: Int = -1

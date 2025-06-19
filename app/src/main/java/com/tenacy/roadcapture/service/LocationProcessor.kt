@@ -9,42 +9,26 @@ import kotlinx.coroutines.flow.StateFlow
 interface LocationProcessor {
     val gpsStatusFlow: StateFlow<GpsStatus>
 
-    /**
-     * 위치 업데이트 처리
-     * @param location 새로 수신된 위치
-     * @return 저장 성공 여부
-     */
+    // 위치 업데이트 처리
     suspend fun processLocation(location: Location): LocationEntity?
 
-    /**
-     * 위치 저장 여부 결정
-     */
+    // 위치 저장 여부 결정
     fun shouldSaveLocation(location: Location): Boolean
 
-    /**
-     * 최근 저장된 위치 가져오기
-     */
+    // 최근 저장된 위치 가져오기
     fun getLastSavedLocation(): Location?
 
-    /**
-     * 위치 품질 검사
-     */
+    // 최근 저장된 위치 이벤트 Flow
+    fun getSavedLocationsFlow(): Flow<Location>
+
+    // 위치 품질 검사
     fun isLocationQualityAcceptable(location: Location): Boolean
 
-    /**
-     * 현재 상태 정보를 영구 저장소에 저장
-     */
+    // 현재 상태 정보를 영구 저장소에 저장
     fun saveState()
 
-    /**
-     * 저장된 상태 정보 복원
-     */
+    // 저장된 상태 정보 복원
     fun restoreState()
-
-    /**
-     * 최근 저장된 위치 이벤트 Flow
-     */
-    fun getSavedLocationsFlow(): Flow<Location>
 }
 
 enum class GpsStatus {
@@ -72,7 +56,7 @@ data class LocationData(
     val accuracy: Float = 0f
 )
 
-// 간단한 1차원 칼만 필터 구현
+// 간단한 1차원 칼만 필터
 class KalmanFilter(
     private var processNoise: Float = Constants.KALMAN_PROCESS_NOISE_DEFAULT,
     private var measurementNoise: Float = Constants.KALMAN_MEASUREMENT_NOISE_DEFAULT

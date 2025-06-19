@@ -14,10 +14,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * Google 계정 변경 감지 매니저
- *
- * 이 클래스는 Google 계정 변경을 감지하고 SubscriptionManager에 알립니다.
- * 앱의 핵심 기능이 구독과 연결된 경우 활성화하는 것이 좋습니다.
+ * Google 계정 변경을 감지하고 SubscriptionManager에 알림
  */
 @Singleton
 class GoogleAccountManager @Inject constructor(
@@ -54,18 +51,14 @@ class GoogleAccountManager @Inject constructor(
         startPeriodicChecks()
     }
 
-    /**
-     * 현재 Google 계정 정보 저장
-     */
+    // 현재 Google 계정 정보 저장
     private fun saveCurrentAccountInfo() {
         val account = GoogleSignIn.getLastSignedInAccount(context)
         lastAccountName = account?.email
         Log.d(TAG, "현재 Google 계정 저장: ${maskEmail(lastAccountName)}")
     }
 
-    /**
-     * 계정 변경 확인
-     */
+    // 계정 변경 확인
     fun checkForAccountChanges() {
         val currentAccount = GoogleSignIn.getLastSignedInAccount(context)
         val currentAccountName = currentAccount?.email
@@ -84,42 +77,32 @@ class GoogleAccountManager @Inject constructor(
         scheduleNextCheck()
     }
 
-    /**
-     * 주기적 확인 시작
-     */
+    // 주기적 확인 시작
     fun startPeriodicChecks() {
         accountCheckHandler.removeCallbacks(accountCheckRunnable)
         accountCheckHandler.postDelayed(accountCheckRunnable, ACCOUNT_CHECK_INTERVAL_MS)
         Log.d(TAG, "Google 계정 감지 주기적 확인 시작")
     }
 
-    /**
-     * 주기적 확인 중지
-     */
+    // 주기적 확인 중지
     fun stopPeriodicChecks() {
         accountCheckHandler.removeCallbacks(accountCheckRunnable)
         Log.d(TAG, "Google 계정 감지 주기적 확인 중지")
     }
 
-    /**
-     * 다음 확인 예약
-     */
+    // 다음 확인 예약
     private fun scheduleNextCheck() {
         accountCheckHandler.removeCallbacks(accountCheckRunnable)
         accountCheckHandler.postDelayed(accountCheckRunnable, ACCOUNT_CHECK_INTERVAL_MS)
     }
 
-    /**
-     * 즉시 확인 강제 트리거
-     */
+    // 즉시 확인 강제 트리거
     fun forceCheck() {
         accountCheckHandler.removeCallbacks(accountCheckRunnable)
         accountCheckRunnable.run()
     }
 
-    /**
-     * 이메일 마스킹 (로깅용)
-     */
+    // 이메일 마스킹 (로깅용)
     private fun maskEmail(email: String?): String {
         if (email.isNullOrEmpty()) return "없음"
 

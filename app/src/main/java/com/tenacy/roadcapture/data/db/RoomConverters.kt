@@ -45,7 +45,6 @@ class RoomConverters {
         return when (cacheType) {
             is CacheType.Album -> "ALBUM"
             null -> null
-            // 새로운 CacheType 서브클래스가 추가되면 여기에 케이스 추가
         }
     }
 

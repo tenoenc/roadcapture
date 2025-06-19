@@ -1,7 +1,7 @@
 [versions]
 activity = "1.9.3"
 playServicesAds = "22.6.0"
-agp = "8.6.0-alpha07"
+agp = "8.6.1"
 algoliasearchAndroid = "3.27.0"
 mapsUtils = "2.3.0"
 appcompat = "1.7.0"

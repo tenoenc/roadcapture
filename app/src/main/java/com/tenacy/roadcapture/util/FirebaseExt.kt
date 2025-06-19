@@ -47,7 +47,7 @@ suspend fun setDefaultProfileImage(storagePath: String): String = withContext(Di
         // 2. 새 사용자 이미지 경로 생성
         val userImageRef = storageRef.child(storagePath)
 
-        // 3. 이미지 복사 (기본 이미지 → 사용자 이미지)
+        // 3. 이미지 복사 (기본 이미지 -> 사용자 이미지)
         return@withContext copyImage(defaultImageRef, userImageRef)
 
     } catch (e: Exception) {

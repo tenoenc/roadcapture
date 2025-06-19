@@ -19,10 +19,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/**
- * 보상형 전면 광고를 관리하는 클래스
- * Hilt를 통해 싱글톤으로 주입받아 사용
- */
 @Singleton
 class RewardedAdManager @Inject constructor(
     @ApplicationContext private val context: Context
@@ -35,9 +31,6 @@ class RewardedAdManager @Inject constructor(
         loadAd()
     }
 
-    /**
-     * 보상형 전면 광고 로드
-     */
     fun loadAd() {
         val adRequest = AdRequest.Builder().build()
 
@@ -69,9 +62,6 @@ class RewardedAdManager @Inject constructor(
         )
     }
 
-    /**
-     * 광고 콜백 설정
-     */
     private fun setupAdCallbacks() {
         rewardedInterstitialAd?.fullScreenContentCallback = object : FullScreenContentCallback() {
             override fun onAdDismissedFullScreenContent() {
@@ -93,12 +83,6 @@ class RewardedAdManager @Inject constructor(
         }
     }
 
-    /**
-     * 보상형 전면 광고 표시
-     * @param mainActivity 현재 활성화된 Activity
-     * @param onRewarded 광고 시청 완료 후 실행될 콜백
-     * @param onFailed 광고 표시 실패 시 실행될 콜백 (선택 사항)
-     */
     fun showAd(
         mainActivity: MainActivity,
         onRewarded: () -> Unit,

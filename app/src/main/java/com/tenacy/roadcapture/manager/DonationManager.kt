@@ -38,7 +38,6 @@ class DonationManager @Inject constructor(
 
     private val productDetails = mutableMapOf<String, ProductDetails>()
 
-    // 콜백 변수
     private var donationCallback: DonationCallback? = null
 
     init {
@@ -144,7 +143,7 @@ class DonationManager @Inject constructor(
         }
     }
 
-    // 후원 구매 처리 - 수정됨
+    // 후원 구매 처리
     private fun handlePurchase(purchase: Purchase) {
         if (purchase.purchaseState == Purchase.PurchaseState.PURCHASED) {
             if (!purchase.isAcknowledged) {
@@ -169,7 +168,7 @@ class DonationManager @Inject constructor(
         }
     }
 
-    // 소비성 상품 소비 처리 - 수정됨
+    // 소비성 상품 소비 처리
     private fun consumePurchase(purchase: Purchase) {
         billingManager.consumePurchase(purchase.purchaseToken) { billingResult ->
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {

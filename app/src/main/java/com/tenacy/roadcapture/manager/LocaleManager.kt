@@ -63,9 +63,6 @@ object LocaleManager {
         }
     }
 
-    /**
-     * 현재 설정된 로케일을 가져옵니다
-     */
     fun getCurrentLocale(context: Context): Locale {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             context.resources.configuration.locales[0]

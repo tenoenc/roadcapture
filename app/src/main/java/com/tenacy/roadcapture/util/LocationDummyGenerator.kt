@@ -149,22 +149,3 @@ class LocationDummyGenerator @Inject constructor(
         return@withContext pathsList
     }
 }
-
-/**
- * LocationDummyGenerator 사용 예시:
- *
- * fun generateDummyData() {
- *     val db = RoadCaptureDatabase.getInstance(applicationContext)
- *     val locationDao = db.locationDao()
- *
- *     // 방법 1: 단순 랜덤 데이터 3,000개 생성
- *     lifecycleScope.launch {
- *         LocationDummyGenerator.generateDummyLocations(locationDao)
- *     }
- *
- *     // 방법 2: 실제 경로와 유사한 데이터 생성 (10개 경로, 각 300포인트 = 총 3,000개)
- *     lifecycleScope.launch {
- *         LocationDummyGenerator.generateDummyPaths(locationDao)
- *     }
- * }
- */

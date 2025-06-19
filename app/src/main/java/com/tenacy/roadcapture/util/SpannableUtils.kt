@@ -12,19 +12,8 @@ import android.text.style.UnderlineSpan
 import android.view.View
 import android.widget.TextView
 
-/**
- * SpannableString을 쉽게 생성하고 관리하기 위한 유틸리티 클래스
- */
 object SpannableUtils {
 
-    /**
-     * 텍스트의 일부에 클릭 리스너를 추가하는 함수 (동일 텍스트 위치 지정 가능)
-     *
-     * @param context 컨텍스트
-     * @param textView 설정할 TextView
-     * @param fullText 전체 텍스트
-     * @param clickableParts 클릭 가능한 부분 목록 (텍스트, 검색 시작 인덱스, 클릭 리스너, 색상)
-     */
     fun setClickableText(
         context: Context,
         textView: TextView,
@@ -90,9 +79,6 @@ object SpannableUtils {
         textView.highlightColor = Color.TRANSPARENT
     }
 
-    /**
-     * 클릭 가능한 텍스트 부분에 대한 정보를 담는 데이터 클래스 (검색 시작 위치 포함)
-     */
     data class ClickablePart(
         val text: String,
         val textColor: Int,

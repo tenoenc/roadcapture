@@ -15,7 +15,6 @@ import javax.inject.Singleton
 class BillingManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
-    // 방법 1: Flow 대신 StateFlow 사용 (가장 간단한 방법)
     private val _purchaseEvents = MutableStateFlow<PurchaseEvent?>(null)
     val purchaseEvents = _purchaseEvents
         .filterNotNull() // null 값은 필터링
@@ -29,7 +28,6 @@ class BillingManager @Inject constructor(
 
     private lateinit var billingClient: BillingClient
 
-    // 1. 개선된 초기화 메서드 추가
     fun initialize(callback: ((Boolean) -> Unit)? = null) {
         if (::billingClient.isInitialized && billingClient.isReady) {
             callback?.invoke(true)
@@ -60,7 +58,6 @@ class BillingManager @Inject constructor(
     }
 
     // 구매 업데이트 리스너
-    // 구매 업데이트 리스너
     private val purchasesUpdatedListener = PurchasesUpdatedListener { billingResult, purchases ->
         // 현재 진행 중인 구매 타입 가져오기
         val currentPurchaseType = lastPurchaseType
@@ -73,20 +70,17 @@ class BillingManager @Inject constructor(
                 newPurchases.forEach { it.orderId?.let(processedOrderIds::add) }
                 // 이벤트 발행 (구매 타입 포함)
                 _purchaseEvents.value = PurchaseEvent(PurchaseEventType.SUCCESS, billingResult, newPurchases, currentPurchaseType)
-                // 또는 SharedFlow를 사용하는 경우: _purchaseEvents.tryEmit(...)
             }
         } else if (billingResult.responseCode == BillingClient.BillingResponseCode.USER_CANCELED) {
             // 사용자 취소 (구매 타입 포함)
             _purchaseEvents.value = PurchaseEvent(PurchaseEventType.CANCELED, billingResult, null, currentPurchaseType)
-            // 또는: _purchaseEvents.tryEmit(...)
         } else {
             // 기타 오류 (구매 타입 포함)
             _purchaseEvents.value = PurchaseEvent(PurchaseEventType.ERROR, billingResult, null, currentPurchaseType)
-            // 또는: _purchaseEvents.tryEmit(...)
         }
     }
 
-    // 2. 개선된 상품 정보 로드 메서드
+    // 상품 정보 로드
     fun preloadProductDetails(
         productList: List<QueryProductDetailsParams.Product>,
         callback: ((Boolean, List<ProductDetails>) -> Unit)? = null
@@ -187,7 +181,7 @@ class BillingManager @Inject constructor(
         billingClient.queryProductDetailsAsync(params, callback)
     }
 
-    // 구매 흐름 시작 - 구매 타입 설정 추가
+    // 구매 흐름 시작
     fun launchBillingFlow(
         activity: Activity,
         productDetails: ProductDetails,
@@ -222,12 +216,12 @@ class BillingManager @Inject constructor(
         return billingClient.launchBillingFlow(activity, flowParams)
     }
 
-    // 명시적으로 구매 타입 재설정 메서드 추가
+    // 명시적으로 구매 타입 재설정
     fun resetPurchaseType() {
         lastPurchaseType = null
     }
 
-    // 현재 구매 타입 확인 메서드 추가
+    // 현재 구매 타입 확인
     fun getCurrentPurchaseType(): PurchaseType? {
         return lastPurchaseType
     }
@@ -286,7 +280,7 @@ class BillingManager @Inject constructor(
         }
     }
 
-    // 3. 클라이언트 상태 확인 메서드 개선
+    // 클라이언트 상태 확인
     fun isClientReady(): Boolean {
         return ::billingClient.isInitialized && billingClient.isReady
     }
@@ -355,7 +349,7 @@ class BillingManager @Inject constructor(
         ERROR     // 구매 실패
     }
 
-    // 구매 이벤트 데이터 클래스 - 구매 타입 추가
+    // 구매 이벤트 데이터 클래스
     data class PurchaseEvent(
         val type: PurchaseEventType,
         val billingResult: BillingResult,

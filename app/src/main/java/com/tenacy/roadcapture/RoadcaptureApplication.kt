@@ -105,9 +105,6 @@ class RoadcaptureApplication: Application(), androidx.work.Configuration.Provide
             .setWorkerFactory(EntryPoints.get(this, HiltWorkerFactoryEntryPoint::class.java).workerFactory())
             .build()
 
-    /**
-     * 사용자가 선택한 로케일 적용 (디버그 모드에서만 활성화)
-     */
     private fun applyUserSelectedLocale() {
         try {
             val localeCode = DebugSettings.getSelectedLocale(this)

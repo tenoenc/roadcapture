@@ -126,7 +126,6 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // 개선된 preloadAds 함수
     private fun preloadAds(startPosition: Int, count: Int) {
         val items = snapshot().items
         if (items.isNullOrEmpty()) {
@@ -151,7 +150,6 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // 개선된 onAttachedToRecyclerView 메소드
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
@@ -224,7 +222,6 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // 개선된 onBindViewHolder
     override fun onBindViewHolder(holder: AlbumWithAdsViewHolder<AlbumItemWithAds>, position: Int) {
         try {
             when (val item = getItem(position)) {
@@ -267,7 +264,6 @@ class AlbumWithAdsPagingAdapter(
         notifyItemRangeChanged(0, itemCount, listOf("time"))
     }
 
-    // 안전한 notifyItemChanged 헬퍼 함수
     private fun notifyItemChangedSafely(adItem: AlbumItemWithAds.Ad) {
         try {
             val items = snapshot().items
@@ -287,7 +283,6 @@ class AlbumWithAdsPagingAdapter(
         }
     }
 
-    // 개선된 loadAdForPosition 메소드
     private fun loadAdForPosition(adItem: AlbumItemWithAds.Ad) {
         val id = adItem.id
         if (context == null || loadingAds.contains(id) || adCache.containsKey(id)) return
@@ -357,13 +352,11 @@ class AlbumWithAdsPagingAdapter(
         adLoader.loadAd(adRequest)
     }
 
-    // AlbumWithAdsPagingAdapter.kt에 추가
     override fun onViewRecycled(holder: AlbumWithAdsViewHolder<AlbumItemWithAds>) {
         super.onViewRecycled(holder)
         holder.recycle()
     }
 
-    // destroyAds 메소드 수정
     private fun destroyAds() {
         adCache.values.forEach { it.destroy() }
         adCache.clear()

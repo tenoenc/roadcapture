@@ -13,7 +13,7 @@ import java.time.temporal.ChronoUnit
 
 object TravelPref : KotprefModel() {
 
-    // ===== 기존 핵심 프로퍼티들 =====
+    // 핵심 프로퍼티
     var isTraveling by booleanPref(default = false, key = "is_traveling")
 
     private var _thumbnailMemoryId by longPref(default = -1L, key = "thumbnail_memory_id")
@@ -28,15 +28,13 @@ object TravelPref : KotprefModel() {
     var lastSavedTime by longPref(default = 0L, key = "last_saved_time")
     var travelStartedAt by longPref(default = 0L, key = "travel_started_at")
 
-    // ===== 기존 고속 모드 관련 =====
+    // 기존 고속 모드 관련
     var isHighSpeedModeActive by booleanPref(default = false, key = "is_high_speed_mode_active")
     var highSpeedModeStartTime by longPref(default = 0L, key = "high_speed_mode_start_time")
     var consecutiveSpeedFilterCount by intPref(default = 0, key = "consecutive_speed_filter_count")
 
-    // ===== 기존 최근 위치 저장 =====
+    // 최근 위치 저장 관련
     var recentLocationsJson by stringPref(default = "", key = "recent_locations_json")
-
-    // ===== 향상된 위치 추적을 위한 새로운 프로퍼티들 =====
 
     // 이동 수단 감지 관련
     var currentTransportMode by stringPref(default = "UNKNOWN", key = "current_transport_mode")
@@ -75,7 +73,13 @@ object TravelPref : KotprefModel() {
     var lowAccuracyModeStartTime by longPref(default = 0L, key = "low_accuracy_mode_start_time")
     var consecutiveLocationUpdates by intPref(default = 0, key = "consecutive_location_updates")
 
-    // ===== 기존 핵심 메서드들 (기능 향상) =====
+    val createdAt: Long
+        get() = travelStartedAt
+
+    override fun clear() {
+        stopTravel()
+        super.clear()
+    }
 
     fun startTravel() {
         isTraveling = true
@@ -174,8 +178,6 @@ object TravelPref : KotprefModel() {
         return location
     }
 
-    // ===== 기존 최근 위치 목록 관련 메서드들 (대폭 향상) =====
-
     fun saveRecentLocations(locations: List<Pair<Location, Long>>) {
         try {
             val locationDataList = locations.map { (location, timestamp) ->
@@ -248,8 +250,6 @@ object TravelPref : KotprefModel() {
         }
     }
 
-    // ===== 기존 유틸리티 메서드들 =====
-
     fun isOverOneMonth(): Boolean {
         if (!isTraveling || travelStartedAt == 0L) {
             return false
@@ -262,16 +262,6 @@ object TravelPref : KotprefModel() {
         return monthsBetween >= 1
     }
 
-    override fun clear() {
-        stopTravel()
-        super.clear()
-    }
-
-    val createdAt: Long
-        get() = travelStartedAt
-
-    // ===== 새로운 향상된 기능 메서드들 =====
-
     // 이동 수단 관리
     fun updateTransportMode(newMode: String): Boolean {
         val wasChanged = currentTransportMode != newMode
@@ -281,14 +271,6 @@ object TravelPref : KotprefModel() {
             lastTransportModeChangeTime = System.currentTimeMillis()
         }
         return wasChanged
-    }
-
-    fun getTimeSinceTransportModeChange(): Long {
-        return if (lastTransportModeChangeTime > 0) {
-            System.currentTimeMillis() - lastTransportModeChangeTime
-        } else {
-            0L
-        }
     }
 
     // 지하/터널 모드 관리
@@ -310,22 +292,6 @@ object TravelPref : KotprefModel() {
         }
     }
 
-    fun getTimeSinceLastGoodGps(): Long {
-        return if (lastGoodGpsTime > 0) {
-            System.currentTimeMillis() - lastGoodGpsTime
-        } else {
-            Long.MAX_VALUE
-        }
-    }
-
-    fun getUndergroundModeDuration(): Long {
-        return if (isUndergroundMode && undergroundModeStartTime > 0) {
-            System.currentTimeMillis() - undergroundModeStartTime
-        } else {
-            0L
-        }
-    }
-
     // 칼만 필터 상태 관리
     fun saveKalmanState(latEstimate: Double, lonEstimate: Double, altEstimate: Double, errorCovariance: Float) {
         kalmanLatitudeEstimate = latEstimate.toString()
@@ -335,118 +301,7 @@ object TravelPref : KotprefModel() {
         kalmanIsInitialized = true
     }
 
-    fun getKalmanState(): KalmanState {
-        return KalmanState(
-            latEstimate = kalmanLatitudeEstimate.toDoubleOrNull() ?: 0.0,
-            lonEstimate = kalmanLongitudeEstimate.toDoubleOrNull() ?: 0.0,
-            altEstimate = kalmanAltitudeEstimate.toDoubleOrNull() ?: 0.0,
-            errorCovariance = kalmanErrorCovariance,
-            isInitialized = kalmanIsInitialized
-        )
-    }
-
-    fun resetKalmanFilter() {
-        kalmanLatitudeEstimate = "0.0"
-        kalmanLongitudeEstimate = "0.0"
-        kalmanAltitudeEstimate = "0.0"
-        kalmanErrorCovariance = 1.0f
-        kalmanIsInitialized = false
-        Log.d("TravelPref", "칼만 필터 상태 리셋")
-    }
-
-    // 센서 기반 이동 감지 관리
-    fun updateMovementState(isMoving: Boolean, acceleration: Float = 0f) {
-        val wasMoving = isMovingState
-        isMovingState = isMoving
-        lastAccelerationValue = acceleration
-
-        if (isMoving) {
-            lastDetectedMovementTime = System.currentTimeMillis()
-            stationaryStartTime = 0L
-            if (!wasMoving) {
-                Log.d("TravelPref", "이동 시작 감지 (가속도: ${acceleration}m/s²)")
-            }
-        } else {
-            if (wasMoving && stationaryStartTime == 0L) {
-                stationaryStartTime = System.currentTimeMillis()
-                Log.d("TravelPref", "정지 상태 시작")
-            }
-        }
-    }
-
-    fun getTimeSinceLastMovement(): Long {
-        return if (lastDetectedMovementTime > 0) {
-            System.currentTimeMillis() - lastDetectedMovementTime
-        } else {
-            0L
-        }
-    }
-
-    fun getStationaryDuration(): Long {
-        return if (stationaryStartTime > 0) {
-            System.currentTimeMillis() - stationaryStartTime
-        } else {
-            0L
-        }
-    }
-
-    // 적응형 업데이트 간격 관리
-    fun updateLocationInterval(newInterval: Long) {
-        if (currentUpdateInterval != newInterval) {
-            Log.d("TravelPref", "업데이트 간격 변경: ${currentUpdateInterval/1000}초 -> ${newInterval/1000}초")
-            currentUpdateInterval = newInterval
-        }
-        lastLocationUpdateTime = System.currentTimeMillis()
-        consecutiveLocationUpdates++
-    }
-
-    // 배터리 최적화 모드 관리
-    fun enterLowAccuracyMode() {
-        if (!isLowAccuracyMode) {
-            isLowAccuracyMode = true
-            lowAccuracyModeStartTime = System.currentTimeMillis()
-            Log.d("TravelPref", "저전력 모드 진입")
-        }
-    }
-
-    fun exitLowAccuracyMode() {
-        if (isLowAccuracyMode) {
-            isLowAccuracyMode = false
-            val duration = System.currentTimeMillis() - lowAccuracyModeStartTime
-            Log.d("TravelPref", "저전력 모드 해제 (지속시간: ${duration/1000}초)")
-            lowAccuracyModeStartTime = 0L
-        }
-    }
-
-    fun getLowAccuracyModeDuration(): Long {
-        return if (isLowAccuracyMode && lowAccuracyModeStartTime > 0) {
-            System.currentTimeMillis() - lowAccuracyModeStartTime
-        } else {
-            0L
-        }
-    }
-
-    // 통계 및 디버깅 정보
-    fun getTrackingStatistics(): TrackingStatistics {
-        return TrackingStatistics(
-            travelDuration = if (travelStartedAt > 0) System.currentTimeMillis() - travelStartedAt.toLocalDateTime().toTimestamp() else 0L,
-            currentTransportMode = currentTransportMode,
-            isUndergroundMode = isUndergroundMode,
-            isLowAccuracyMode = isLowAccuracyMode,
-            isMoving = isMovingState,
-            lastAccuracy = lastLocationAccuracy,
-            satelliteCount = satelliteCount,
-            consecutiveSpeedFilters = consecutiveSpeedFilterCount,
-            consecutiveAccuracyFilters = consecutiveAccuracyFilterCount,
-            currentUpdateInterval = currentUpdateInterval,
-            timeSinceLastGoodGps = getTimeSinceLastGoodGps(),
-            timeSinceLastMovement = getTimeSinceLastMovement()
-        )
-    }
-
-    // ===== 데이터 클래스들 =====
-
-    // 기존 호환성을 위한 기본 위치 데이터 클래스
+    // 기본 위치 데이터 클래스
     private data class BasicLocationData(
         val latitude: Double,
         val longitude: Double,
@@ -466,30 +321,5 @@ object TravelPref : KotprefModel() {
         val bearing: Float = 0f,
         val time: Long = 0L,
         val satellites: Int = 0
-    )
-
-    // 칼만 필터 상태 데이터 클래스
-    data class KalmanState(
-        val latEstimate: Double,
-        val lonEstimate: Double,
-        val altEstimate: Double,
-        val errorCovariance: Float,
-        val isInitialized: Boolean
-    )
-
-    // 추적 통계 데이터 클래스
-    data class TrackingStatistics(
-        val travelDuration: Long,
-        val currentTransportMode: String,
-        val isUndergroundMode: Boolean,
-        val isLowAccuracyMode: Boolean,
-        val isMoving: Boolean,
-        val lastAccuracy: Float,
-        val satelliteCount: Int,
-        val consecutiveSpeedFilters: Int,
-        val consecutiveAccuracyFilters: Int,
-        val currentUpdateInterval: Long,
-        val timeSinceLastGoodGps: Long,
-        val timeSinceLastMovement: Long
     )
 }

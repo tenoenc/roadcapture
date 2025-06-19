@@ -16,7 +16,6 @@ import java.time.LocalDateTime
             onDelete = ForeignKey.CASCADE,
         )
     ],
-    // 인덱스 추가
     indices = [
         Index("locationId")
     ]
