@@ -352,12 +352,9 @@ class LocationTrackingService : Service(), SensorEventListener {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        val movementStatus = if (isMoving) "이동 중" else "정지"
-        val intervalText = "${currentUpdateInterval / 1000}초"
-
         val builder = NotificationCompat.Builder(this, Constants.TRACKING_NOTIFICATION_CHANNEL_ID)
             .setContentTitle(getString(R.string.location_tracking_active))
-            .setContentText("경로 기록 중 • $movementStatus • 간격: $intervalText")
+            .setContentText(getString(R.string.travel_route_recording))
             .setSmallIcon(R.drawable.ic_pin)
             .setColor(ContextCompat.getColor(this, R.color.primary_normal))
             .setContentIntent(pendingIntent)
